@@ -155,7 +155,7 @@ function reqData(chunk) {
 					req.contents[req.contents.length-1][pair[0].trim()]=duc(pair[1].trim().replace(/"/g,''));
 				}
 				if(req.contents[req.contents.length-1]['filename']){
-					if(req.lastWritable){req.lastWritable.end();}
+					if(req.lastWritable){req.lastWritable.end(req.lasRest);}
 					req.lastWritable = fs.createWriteStream('./uploads/'+req.contents[req.contents.length-1]['filename']);
 				}
 			}
