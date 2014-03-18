@@ -1,0 +1,23 @@
+{
+  "name": "pillars",
+  "description": "Pillars nodejs web engine",
+  "version": "0.0.1",
+  "author": {
+    "name": "Bifuer",
+    "email": "bifuer@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bifuer/pillars"
+  },
+  "main": "./pillars.js",
+  "scripts": {
+    "start": "node pillars.js"
+  },
+  "dependencies": {
+    "jade": "*",
+    "mongodb": "*"
+  },
+  "readme":"www.pillarsjs.com",
+  "readmeFilename": "README.md"
+}

@@ -1,0 +1,49 @@
+//-//includes
+mixin layout()
+	doctype html
+	html
+		head
+			title= title
+			//link(rel='stylesheet', href='/stylesheets/style.css')
+		body
+			block
+			+trace(trace)
+
+mixin trace(trace)
+	if trace
+		.pillar-trace
+			hr
+			pre=trace
+
+//-//error
+.pillar-error
+	+layout
+		h1=h1
+		h2=error
+		pre=stack
+
+//-//form
+.pillar-form
+	+layout
+		h1= h1
+		form(method='POST', enctype='multipart/form-data')
+			fieldset
+				legend Test
+				input(type='hidden', name='_method', value='post')
+				.pillar-field
+					label(for='f_A') A:
+					input(type='text', class=['pillar-input','pillar-input-text'], id="f_A", name="A[]")
+				.pillar-field
+					label(for='f_B') B:
+					input(type='text', class=['pillar-input','pillar-input-text'], id="f_B", name="B[]")
+				.pillar-field
+					label(for='f_C') C:
+					input(type='file', class=['pillar-input','pillar-input-text'], id="f_C", name="C[]", multiple)
+				.pillar-field
+					label(for='f_D') D:
+					input(type='file', class=['pillar-input','pillar-input-text'], id="f_D", name="D[]", multiple)
+				.buttons
+					input(type='submit', value='Post', onclick="this.form._method.value=\'post\';")
+					input(type='submit', value='Get', onclick="this.form._method.value=\'get\';")
+					input(type='submit', value='Put', onclick="this.form._method.value=\'put\';")
+					input(type='submit', value='Delete', onclick="this.form._method.value=\'delete\';")
