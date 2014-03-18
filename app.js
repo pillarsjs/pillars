@@ -95,12 +95,14 @@ function serverReq(req,res){
 	console.log(' + Mount events...');
 
 	req.contents = [];
+	req.search = '\n'.charCodeAt();
+	//console.log(":"+req.search);
 	req.boundary = new RegExp(req.info.datatype.boundary);
 	req.isBoundary = false;
 	req.isHeader = false;
-	req.lasRest = new Buffer(0);
 
 	req.lastWritable = false;
+	req.towrite = false;
 
 	req
 		.on('error',resSend)
@@ -128,18 +130,17 @@ function reqData(chunk) {
 	var size = chunk.length;
 	var timer = Date.now();
 
-	var search = '\n'.charCodeAt();
-	var chunk = Buffer.concat([req.lasRest,chunk]);
-	req.lasRest = new Buffer(0);
+	
+	var chunk = chunk;
 
 	var lines = [];
 	var line = 0;
 	for (var i = 0 ; i < chunk.length ; i++) {
 		if(!lines[line]){lines[line]=[];}
 		lines[line].push(chunk[i]);
-		if(chunk[i] == search){lines[line] = new Buffer(lines[line]);line++;}
+		if(chunk[i] == req.search){lines[line] = new Buffer(lines[line]);line++;}
 	}
-	if(lines[line] && !isBuffer(lines[line])){req.lasRest = new Buffer(lines[line]);lines[line] = new Buffer(0);}
+	if(lines[line] && !isBuffer(lines[line])){lines[line] = new Buffer(lines[line]);}
 
 	for(var i = 0; i < lines.length; i++){
 		var sline = lines[i].toString('utf8');
@@ -154,8 +155,14 @@ function reqData(chunk) {
 					var pair = sline[n].split(/(?::|=)/);
 					req.contents[req.contents.length-1][pair[0].trim()]=duc(pair[1].trim().replace(/"/g,''));
 				}
+				if(req.towrite && req.lastWritable){
+					req.towrite = req.towrite.slice(0, -2);
+					req.lastWritable.write(req.towrite);
+					req.towrite = false;
+				}
+				if(req.lastWritable){req.lastWritable.end();req.lastWritable = false;}
+				
 				if(req.contents[req.contents.length-1]['filename']){
-					if(req.lastWritable){req.lastWritable.end(req.lasRest);}
 					req.lastWritable = fs.createWriteStream('./uploads/'+req.contents[req.contents.length-1]['filename']);
 				}
 			}
@@ -177,7 +184,8 @@ function reqData(chunk) {
 		if(!done && sline.replace(/[\r\n]/gm,'')==""){done = true;}
 
 		if(!done){
-			if(req.lastWritable){req.lastWritable.write(lines[i]);}
+			if(req.towrite && req.lastWritable){req.lastWritable.write(req.towrite);}
+			if(req.lastWritable){req.towrite = lines[i];}
 		}
 
 	}
@@ -190,7 +198,11 @@ function reqData(chunk) {
 }
 function reqEnd(){
 	var req = this;
-	if(req.lastWritable){req.lastWritable.end(req.lasRest);}
+	if(req.towrite){
+		req.towrite = req.towrite.slice(0, -2);
+		req.lastWritable.write(req.towrite);
+	}
+	if(req.lastWritable){req.lastWritable.end();}
 	console.log(' + Request end '+(Date.now()-req.timer)+'ms');	
 	reqRoute(req);
 }
