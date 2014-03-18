@@ -124,13 +124,14 @@ function resClose(){var res = this;console.log(' + Response broken!');resSend.ca
 /// Normal process
 function reqData(chunk) {
 	var req = this;
+
+	var size = chunk.length;
+	var timer = Date.now();
+
+	var search = '\n'.charCodeAt();
 	var chunk = Buffer.concat([req.lasRest,chunk]);
 	req.lasRest = new Buffer(0);
 
-	console.log(" + Request data received");
-	var search = '\n'.charCodeAt();
-
-	console.time(" + Process buffer");
 	var lines = [];
 	var line = 0;
 	for (var i = 0 ; i < chunk.length ; i++) {
@@ -138,10 +139,8 @@ function reqData(chunk) {
 		lines[line].push(chunk[i]);
 		if(chunk[i] == search){lines[line] = new Buffer(lines[line]);line++;}
 	}
-	if(lines[line] && !isBuffer(lines[line])){lines[line] = new Buffer(0);req.lasRest = new Buffer(lines[line]);}
-	console.timeEnd(" + Process buffer");
+	if(lines[line] && !isBuffer(lines[line])){req.lasRest = new Buffer(lines[line]);lines[line] = new Buffer(0);}
 
-	console.time(" + Process buffer lines");
 	for(var i = 0; i < lines.length; i++){
 		var sline = lines[i].toString('utf8');
 		var done = false;
@@ -150,25 +149,15 @@ function reqData(chunk) {
 			done = true;
 			req.isHeader = false;
 			if(/Content-Type:/.test(sline)){
-				console.log(" + Boundary contentype");
-
-					sline = sline.trim().split(';');
-					for(var n in sline){
-						var pair = sline[n].split(/(?::|=)/);
-						req.contents[req.contents.length-1][pair[0].trim()]=duc(pair[1].trim().replace(/"/g,''));
-					}
-
-					if(req.contents[req.contents.length-1]['filename']){
-
-						if(req.lastWritable){
-							req.lastWritable.end();
-						}
-
-						req.lastWritable = fs.createWriteStream('./uploads/'+req.contents[req.contents.length-1]['filename']);
-					}
-
-
-				lines[i] = new Buffer(0);
+				sline = sline.trim().split(';');
+				for(var n in sline){
+					var pair = sline[n].split(/(?::|=)/);
+					req.contents[req.contents.length-1][pair[0].trim()]=duc(pair[1].trim().replace(/"/g,''));
+				}
+				if(req.contents[req.contents.length-1]['filename']){
+					if(req.lastWritable){req.lastWritable.end();}
+					req.lastWritable = fs.createWriteStream('./uploads/'+req.contents[req.contents.length-1]['filename']);
+				}
 			}
 		}
 		if(req.isBoundary && !done){
@@ -176,37 +165,32 @@ function reqData(chunk) {
 			req.isBoundary = false;
 			req.isHeader = true;
 
-				req.contents.push({});
-				console.log(" + Boundary header");
-				sline = sline.trim().split(';');
-				for(var n in sline){
-					var pair = sline[n].split(/(?::|=)/);
-					req.contents[req.contents.length-1][pair[0].trim()]=duc(pair[1].trim().replace(/"/g,''));
-				}
-				
-
-			lines[i] = new Buffer(0);
-		}
-		if(req.boundary.test(sline) && !done){
-			done = true;
-			req.isBoundary = true;
-			lines[i] = new Buffer(0);
-		}
-		if(!done && sline.replace(/[\r\n]/gm,'')==""){
-			lines[i] = new Buffer(0);
-		}
-		if(!done){
-			if(req.lastWritable){
-				req.lastWritable.write(lines[i]);
+			req.contents.push({});
+			sline = sline.trim().split(';');
+			for(var n in sline){
+				var pair = sline[n].split(/(?::|=)/);
+				req.contents[req.contents.length-1][pair[0].trim()]=duc(pair[1].trim().replace(/"/g,''));
 			}
+		}
+		if(req.boundary.test(sline) && !done){done = true;req.isBoundary = true;}
+
+		if(!done && sline.replace(/[\r\n]/gm,'')==""){done = true;}
+
+		if(!done){
+			if(req.lastWritable){req.lastWritable.write(lines[i]);}
 		}
 
 	}
-	console.timeEnd(" + Process buffer lines");
+
+	var timeend = Date.now()-timer;
+	var prod = 1000*size/timeend;
+	prod = prod/1048576;
+	console.log(" + Parsed at "+prod+"MB/sec.");
+
 }
 function reqEnd(){
 	var req = this;
-	req.lastWritable.end(req.lasRest);
+	if(req.lastWritable){req.lastWritable.end(req.lasRest);}
 	console.log(' + Request end '+(Date.now()-req.timer)+'ms');	
 	reqRoute(req);
 }
