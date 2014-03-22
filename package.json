@@ -16,7 +16,10 @@
   },
   "dependencies": {
     "jade": "*",
-    "mongodb": "*"
+    "mongodb": "*",
+    "formidable": "*",
+    "cookie": "*",
+    "mime": "*"
   },
   "readme":"www.pillarsjs.com",
   "readmeFilename": "README.md"

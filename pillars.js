@@ -436,6 +436,7 @@ function Template(_path){
 					console.log('TemplateBlocks['+name+'] from:'+_path);
 				}
 			}
+			caching();
 			delete templatefile;
 		} catch(error){
 			console.log('Can not read template blocks from:'+_path,error);
@@ -446,8 +447,6 @@ function Template(_path){
 	function render(block,locals,cacheid){
 		return Render(cache,blocks,block,locals,cacheid);
 	}
-
-	load();
 
 	this.blockList = function(){
 		return Object.keys(blocks);
@@ -461,16 +460,22 @@ function Template(_path){
 		blocks = {};
 		load();
 	}
+	var caching = this.caching = function(){
+		for(var b in Object.keys(blocks)){render(Object.keys(blocks)[b]);}
+	}
+
+	load();
 }
 
 function Render(cache,blocks,block,locals,cacheid){
 	var cacheid = cacheid || block;
-	if(!cache[cacheid]){
+	if(!locals || !cache[cacheid]){
+		if(!blocks[block]){console.log("TemplateBlock["+cacheid+"] no exist");return "";}
 		var timetag = 'TemplateCache['+cacheid+']';
 		console.time(timetag);
 		//return (blocks['includes'] || "")+"\n"+(blocks[block] || "");
 		cache[cacheid]=jade.compile((blocks['includes'] || "")+"\n"+(blocks[block] || ""));
 		console.timeEnd(timetag);
 	}
-	return cache[cacheid](locals);
+	if(locals){return cache[cacheid](locals);}
 }
