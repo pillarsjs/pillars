@@ -9,8 +9,13 @@ var formidable = require('formidable');
 var cookie = require('cookie');
 var mime = require('mime'); 
 
+var MongoClient = require('mongodb').MongoClient;
+var ObjectID = require('mongodb').ObjectID;
+
 var pillars = require('./pillars');
 var template = new pillars.Template('./pillars.jade');
+
+
 
 function isUndefined(arg) {
   return arg === void 0;
@@ -45,7 +50,6 @@ function mongoInit(dbName,url,port){
 	var url = url || 'localhost';
 	var port = port || 27017;
 	if(!server.database){
-		var MongoClient = require('mongodb').MongoClient;
 		MongoClient.connect(
 			"mongodb://"+url+":"+port+"/"+dbName,{
 				db:{native_parser:false},
@@ -70,30 +74,31 @@ function serverInit(port,hostname){
 	var hostname = hostname || undefined;
 	var server = http.createServer()
 	.on('error',function(error){
-		var server = this;console.log('Server error:');console.log(error);
+		console.log('Server error:');console.log(error);
 	})
 	.on('listening',function(){
-		var server = this;server.timer=Date.now();console.log('Server listening on "'+server.hostname+':'+server.port+'"');
+		server.timer=Date.now();console.log('Server listening on "'+server.hostname+':'+server.port+'"');
 	})
 	.on('close',function(){
-		var server = this;console.log('Server closed '+parseInt((Date.now()-server.timer)/1000/60*100)/100+'m');
+		console.log('Server closed '+parseInt((Date.now()-server.timer)/1000/60*100)/100+'m');
 	})
 	.on('connection',function(socket){
-		var server = this;
-		var socket = socket;
-		server.pool.push(socket);
-		socket.poolid = server.pool.length-1;
+		socket.poolid = Date.now().toString(36)+Math.round(Math.random()*10).toString(36);
+		server.pool[socket.poolid] = socket;
 		socket.timer = Date.now();
 		socket.on('close',function(had_error){
-			server.pool.splice(this.poolid,1);
-			console.log('Connection close ['+this.poolid+'] '+parseInt((Date.now()-this.timer)/1000/60*100)/100+'m');
+			console.log('Connection close ['+socket.poolid+'] '+parseInt((Date.now()-socket.timer)/1000/60*100)/100+'m');
+			delete server.pool[socket.poolid];
 		});
 		console.log('New connection ['+socket.poolid+']');
 	})
-	.on('request',serverReq)
+	.on('request',function(req,res){
+		new passage(server,req,res,router);
+	})
 	.listen(port, hostname);
 
-	server.pool = [];
+	server.pool = {};
+	server.passages = {};
 	server.port = port;
 	server.hostname = hostname || '*';
 	server.timeout = 120*1000;
@@ -109,279 +114,49 @@ function serverInit(port,hostname){
 var server = serverInit().mongodb('primera');
 
 
-function serverReq(req,res){
-	var server = this;
-	reqSetup(req,res);
-}
 
-function reqSetup(req,res){
-	req.res = res;
-	req.timer=Date.now();
-
-	res.req = req;
-	res.resSend = resSend;
-	res.resError = resError;
-	res.resFile = resFile;
-	res.resHeaders = resHeaders;
-	res.res304 = res304;
-	res.resRedirect = resRedirect;
-	res.resAuth = resAuth;
-
-	req.info = requestInfo(req);
-	res.encoding = req.info.getEncoding();
-
-	res
-	.on('timeout',function(){console.log(' + Response timeout!');res.resError(408,'Request Timeout');})
-	.on('close',function(){console.log(' + Response fail');})
-	.on('finish',function(){console.log(' + Response end in '+parseInt((Date.now()-req.timer)*100)/100+'ms');});
-
-	reqRouter(req,res);
-}
-
-function reqRouter(req,res){
+function router(){
+	var pssg = this;
 	try { // In this point all error can trace to response.
 
-		if(!res.encoding){
+		if(!pssg.encoding){
 			console.log(' Encoding not aceptable');
-			res.encoding = "identity";
-			res.resError(406,'Not Acceptable');
-		} else if(/^\/contenido\/?$/.test(req.info.path)){
+			pssg.encoding = "identity";
+			pssg.error(406,'Not Acceptable');
+		} else if(/^\/contenido\/?$/.test(pssg.path)){
 
-			console.log(' + Pillar HTTP handler at '+(Date.now()-req.timer)+'ms...');
+			if(!pssg.session.counter){pssg.session.counter=0;}
+			pssg.session.counter++;
+
 			var body = template.view('form',{
-				trace: util.format(req.info),
+				trace: util.format(pssg),
 				title:'Method test',
 				h1:'Method testing:'
 			});
-			res.resSend(body);	
+			pssg.send(body);	
 
-		} else if(/^\/yalotengo\/?$/.test(req.info.path)){
-			if(!res.res304(new Date(false))){
-				res.resSend('Este contenido es fijo y se cachea');
+		} else if(/^\/yalotengo\/?$/.test(pssg.path)){
+			if(!pssg.cacheck(new Date(false))){
+				pssg.send('Este contenido es fijo y se cachea');
 			}
-		} else if(/^\/espera\/?$/.test(req.info.path)){
+		} else if(/^\/espera\/?$/.test(pssg.path)){
 			// Force timeout!
-		} else if(/^\/redirecciona\/?$/.test(req.info.path)){
-			res.resRedirect('http://localhost:3000/yalotengo');
-		} else if(/^\/auth\/?$/.test(req.info.path)){
-			res.resAuth();
-		} else if(/^\/malapeticion\/?$/.test(req.info.path)){
-			res.resError(400,'Bad Request');// 405 Method not allowed 	Allow: GET, HEAD
-		} else if(/^\/archivo\/?$/.test(req.info.path)){
-			res.resFile('./uploads/exquisite0002.png','prueba.txt',false);
-		} else if(/^\/error\/?$/.test(req.info.path)){
+		} else if(/^\/redirecciona\/?$/.test(pssg.path)){
+			pssg.redirect('http://localhost:3000/yalotengo');
+		} else if(/^\/auth\/?$/.test(pssg.path)){
+			pssg.authenticate();
+		} else if(/^\/malapeticion\/?$/.test(pssg.path)){
+			pssg.error(400,'Bad Request');// 405 Method not allowed 	Allow: GET, HEAD
+		} else if(/^\/archivo\/?$/.test(pssg.path)){
+			pssg.file('./uploads/exquisite0002.png','prueba.txt',false);
+		} else if(/^\/error\/?$/.test(pssg.path)){
 			throw new Error("Crashhh!");
 		} else {
-			res.resError(404,'Page not found');
+			pssg.error(404,'Page not found');
 		}
 
 	} catch(error){
-		res.resError(500,'Internal Server Error',error);
-	}
-}
-
-function resError(code,explain,data){
-	var res = this;
-	var req = this.req;
-	console.log(' + Sending response Error'+code+' '+explain+'!');
-	res.statusCode = code;
-	if(util.isError(data)){
-		body = template.view('error',{
-			error:util.format(data),
-			stack:data.stack.toString(),
-			title:explain,
-			h1:'Error '+code+' '+explain
-		});	
-	} else {
-		body = template.view('error',{
-			title:explain,
-			h1:'Error '+code+' '+explain
-		});		
-	}
-	this.resSend(body);
-}
-function resFile(path,clientname,download){
-	var res = this;
-	var req = this.req;
-	var filename = clientname || path.replace(/^.*[\\\/]/,'');
-	var download = download?'attachment':'inline';
-	var stats;
-
-	fs.stat(path, function(error, _stats){
-		if(error){
-			res.resError(404,'Not Found',error);
-		} else if(!res.res304(_stats.mtime)) {
-			stats = _stats;
-			if(stats.size>20*1024*1024){res.encoding='identity';}
-			if(res.encoding!='identity'){
-				filecname = path+((res.encoding=='deflate')?".zz":".gz");
-				fs.stat(filecname, function(error, _cstats){
-					if(error || stats.mtime.getTime()>_cstats.mtime.getTime()){
-						fileCompress(filecname);
-					} else {
-						fileStream(filecname,_cstats);
-					}
-				});
-			} else {
-				fileStream();
-			}
-		}
-	});
-
-	function fileCompress(filecname){
-		var errormsg = "Error on encoding response by "+res.encoding+" => ";
-		var source = fs.createReadStream(path);
-		var compressor = (res.encoding=='deflate')?zlib.createDeflate():zlib.createGzip();
-		var compressed = fs.createWriteStream(filecname)
-		.on('close',function(){
-			fs.stat(filecname, function(error, _cstats){
-				if(error){
-					error.message=errormsg+error.message;throw error;
-				} else {
-					fileStream(filecname,_cstats);
-				}
-			});
-		})
-		.on('error',function(error){
-			error.message=errormsg+error.message;throw error;
-		});
-		source.pipe(compressor).pipe(compressed);
-	}
-
-	function fileStream(_path,_stats){
-		var _stats = _stats || stats;
-		var _path = _path || path;
-		var size = _stats.size;
-		var start,end,ranges=false;
-		var etag = '"'+path+':'+stats.mtime.getTime()+'"';
-		if(((new Date(req.info.ifrange)).getTime() === stats.mtime.getTime() || req.info.ifrange===etag) && req.info.ranges && req.info.ranges.unit=='bytes'){
-			ranges = true;
-			start = req.info.ranges.start;
-			end = req.info.ranges.end;
-		}
-		var file = fs.createReadStream(_path,{start: start,end: end}).
-		on('open',function(fd){
-			res.resHeaders();
-			res.setHeader("ETag", etag);
-			res.setHeader("Accept-Ranges", 'bytes');
-			res.setHeader("Content-Location", '"'+path+'"');
-			res.setHeader('Content-Disposition', download+'; filename="'+clientname+'"');
-			res.setHeader("Content-Length", (end+1 || size)-(start || 0));
-			res.setHeader('Content-type',mime.lookup(path));
-			if(ranges){
-				res.setHeader("Content-Range", "bytes "+(start || '0')+"-"+(end || size-1)+"/"+size);
-				res.writeHead(206, 'Partial Content');
-			}
-			//file.pipe(res);
-			/* Slow pipe */
-			file.on('data',function(chunk){
-				res.write(chunk);
-				if(!file._readableState.ended){
-					file.pause();
-					setTimeout(function(){file.resume();},2*1000);
-				}
-			}).on('end',function(){
-				res.end();
-			});
-			/* */
-		}).on('error',function(error){
-			var errormsg = "Error on file stream => ";
-			error.message=errormsg+error.message;throw error;
-		});
-	}
-}
-
-function res304(lastmod){
-	var res = this;
-	var req = this.req;
-	res.lastmod = lastmod || res.lastmod;
-	if(req.info.modsince && (new Date(req.info.modsince)).getTime() === res.lastmod.getTime()){
-		res.writeHead(304, 'Not Modified'); res.end();
-		return true;
-	}
-	return false;
-	//If-None-Match + eTag
-	//var eTag = "Cookietag";
-	//res.setHeader("Etag", '"'+eTag+'"');
-}
-
-function resAuth(msg){
-	var msg = msg || 'Restricted area, insert your credentials.';
-	var res = this;
-	res.writeHead (401, 'Not Authorized',{'WWW-Authenticate': 'Basic realm="'+msg+'"'});
-	res.end();
-}
-
-function resRedirect(location){
-	var res = this;
-	res.writeHead (301, 'Moved Permanently',{'Location': location});
-	res.end();
-}
-
-function resHeaders(){
-	var res = this;
-	var req = this.req;
-	/* 
-	Expires Gives the date/time after which the response is considered stale 	Expires: Thu, 01 Dec 1994 16:00:00 GMT 	Permanent: standard
-	Cache-Control: max-age=3600 seconds
-	*/
-	/*
-	res.setCookie = function(name,value){
-		this.setHeader("Set-Cookie", cookie.parse(name,value,{
-			path:'/',
-			expires: new Date(Date.now()+days*24*60*60*1000),
-			//maxAge:60, // seconds
-			//domain:'',
-			secure: false, // true
-			httpOnly: true // false
-		}));
-	};
-	*/
-	if(res.encoding!='identity'){
-		//res.setHeader("Vary", "Accept-Encoding");
-		res.setHeader("Content-Encoding", res.encoding);
-	}
-	if(!res.lastmod){res.lastmod = new Date();}
-	res.setHeader("Last-Modified", res.lastmod.toUTCString());
-	res.setHeader("Server", 'Node-JS');
-	res.setHeader("X-CPID", req.socket.poolid);
-	res.setHeader("Transfer-Encoding", 'chunked');
-	res.setHeader("X-Powered-By", 'Pillars-JS');
-	res.setHeader("Pragma", 'no-cache');
-}
-function resSend(data){
-	var res = this;
-	var req = this.req;
-	var body = "";
-	// Pre format
-	if(isString(data) || isBuffer(data)) {
-		res.setHeader("Content-Type", "text/html"); // "text/javascript" // "text/css"
-		body = data;
-	} else {
-		res.setHeader("Content-Type", "application/json");
-		body = JSON.stringify(data);
-	}
-	body = isBuffer(body) ? body : new Buffer(body || "");
-
-	// Enconding
-	if(res.encoding!='identity'){
-		zlib[res.encoding](body, function (error, body) {
-			if(error){
-				var errormsg = "Error on encoding response by "+res.encoding+" => ";
-				error.message=errormsg+error.message;throw error;
-			} else {
-				end(body);
-			}
-		});
-	} else {
-		end(body);
-	}
-
-	function end(body){
-		res.resHeaders();
-		res.setHeader("Content-Language", 'es_ES');
-		res.setHeader("Content-Length", body.length);
-		res.end(body);
+		pssg.error(500,'Internal Server Error',error);
 	}
 }
 
@@ -391,97 +166,75 @@ function resSend(data){
 
 
 
-function requestInfo(req){
+
+
+
+
+
+function passage(server,req,res,router){
+	var pssg = this;
 	var headers = req.headers || {};
-	var urlparsed = url.parse(req.url,true,true);
-	var info = {
-		http: req.httpVersion,
-		auth: authParser(headers['authorization'] || false),
-		host : headers['host'] || '',
-		ua : uaParser(headers['user-agent'] || false),
-		accept : acceptsParser(headers['accept'] || false),
-		languages : acceptsParser(headers['accept-language'] || false),
-		encodings : acceptsParser(headers['accept-encoding'] || false),
-		cache: headers['cache-control'] || false,
-		referer: headers['referer'] || false,
-		connection : headers['connection'] || '',
-		path : urlparsed.pathname || '/',
-		query : urlparsed.query || {},
-		cookie : cookie.parse((headers['cookie'] || '')),
-		method : req.method || 'unknow',
-		datatype: datatypeParser(headers['content-type'] || false),
-		datalength: headers['content-length'] || 0,
-		nonematch: headers['if-none-match'] || false,
-		modsince: headers['if-modified-since'] || false,
-		ranges: rangeParser(headers['range'] || false),
-		ifrange: headers['if-range'] || false,
-		reqip: req.socket.remoteAddress,
-		reqport: req.socket.remotePort,
-		poolid: req.socket.poolid,
-		getEncoding:getEncoding
+	var server = server;
+	var req = req;
+	var res = res;
+	var router = router;
+
+	pssg.id = Date.now().toString(36)+Math.round(Math.random()*10).toString(36);
+	server.passages[pssg.id] = pssg;
+
+	pssg.timer=Date.now();
+	pssg.server = server;
+	pssg.socket = req.socket;
+	pssg.poolid = pssg.socket.poolid;
+	pssg.headers = headers;
+	pssg.router = router;
+	pssg.req = req;
+	pssg.res = res;
+	pssg.res
+	.on('timeout',function(){console.log(' + Response['+pssg.poolid+':'+pssg.id+'] timeout!');pssg.error(408,'Request Timeout');})
+	.on('close',function(){saveSession();console.log(' + Response['+pssg.poolid+':'+pssg.id+'] fail');delete server.passages[pssg.id];})
+	.on('finish',function(){saveSession();console.log(' + Response['+pssg.poolid+':'+pssg.id+'] end in '+parseInt((Date.now()-pssg.timer)*100)/100+'ms');delete server.passages[pssg.id];});
+
+	pssg.statusCode = function(code){if(arguments.length==0){return res.statusCode;};res.statusCode=code;}
+	pssg.setHeader = function(){res.setHeader.apply(res,arguments);};
+	pssg.writeHead = function(){res.writeHead.apply(res,arguments);};
+	pssg.write = function(){res.write.apply(res,arguments);};
+	pssg.end = function(){res.end.apply(res,arguments);};
+
+	pssg.prot = req.httpVersion;
+	pssg.auth = authParser();
+	pssg.host = headers['host'] || '';
+	pssg.ua = uaParser();
+	pssg.accepts = {
+		types: acceptsParser(headers['accept'] || false),
+		languages: acceptsParser(headers['accept-language'] || false),
+		encodings: acceptsParser(headers['accept-encoding'] || false),
 	};
-	return info;
+	pssg.ranges = rangesParser();
+	pssg.referer = headers['referer'] || false;
+	pssg.connection = headers['connection'] || '';
 
-	function rangeParser(ranges){
-		if(!ranges){return false;}
-		var ranges = ranges.split('=');
-		var unit = ranges[0];
-		var start;
-		var end;
-		if(ranges[1]){
-			ranges[1]=ranges[1].split('-');
-			if(ranges[1][0]===''){
-				return false;
-			} else {
-				if(ranges[1][0]!=='' && ranges[1][0]>=0){start=parseInt(ranges[1][0]);}
-				if(ranges[1][1]!=='' && ranges[1][1]>0){end=parseInt(ranges[1][1]);}
-			}
-		}
-		return {
-			unit:unit,
-			start:start,
-			end:end
-		}
+	pssg.url = url.parse(req.url,true,true);
+	pssg.path = pssg.url.pathname || '/';
+	pssg.query = pssg.url.query || {};
+	pssg.cookie = cookie.parse((headers['cookie'] || ''));
+	pssg.method = req.method || 'unknow';
+	pssg.content = contentParser();
+	pssg.cache = {
+		control: headers['cache-control'] || false,
+		nonematch: headers['if-none-match'] || false,
+		modsince: headers['if-modified-since'] || false
 	}
+	pssg.ip = req.socket.remoteAddress;
+	pssg.port = req.socket.remotePort;
 
-	function getEncoding(){
-		var all = (this.encodings['*'] && this.encodings['*']>0) || this.encodings == '';
-	
-		if(
-			(all && (!req.info.encodings.deflate || req.info.encodings.deflate>0)) // all valids & no except deflate
-			|| (!all && req.info.encodings.deflate && req.info.encodings.deflate>0 // not all valids but deflate is ok & best than gzip
-				&& (
-					!req.info.encodings.gzip
-			 		|| req.info.encodings.deflate>req.info.encodings.gzip
-				)
-			)
-		){
-			return 'deflate';
-		} else if(
-			(all && (!req.info.encodings.gzip || req.info.encodings.gzip>0)) // all valids & no except gzip
-			|| (!all && req.info.encodings.gzip && req.info.encodings.gzip>0 // not all valids but gzip is ok & best than identity
-				&& (
-					!req.info.encodings.identity
-			 		|| req.info.encodings.gzip>req.info.encodings.identity
-				)
-			)
-		){
-			return 'gzip';
-		} else if(all && (!req.info.encodings.identity || req.info.encodings.identity>0)){ // all valids & no except identity
-			return 'identity';
-		} else {
-			return false;
-		}
-	}
-
-	function datatypeParser(datatype){
-		if(datatype){
-			var parts = datatype.split(';');
-			datatype = {type:parts[0]};
-			if(parts[1]){datatype.boundary=parts[1].replace(' boundary=','');}
-		}
-		return datatype;
-	}
+	pssg.encoding = getEncoding();
+	//pssg.language = getLanguage();
+	pssg.lastmod = new Date();
+	pssg.session = false;
+	pssg.location = false;
+	pssg.etag = false;
+	pssg.size = 0;
 
 	function acceptsParser(accepts){
 		if(!accepts){return false;}
@@ -501,9 +254,130 @@ function requestInfo(req){
 		return parsed;
 	}
 
+	function contentParser(){
+		var type = (headers['content-type'] || false);
+		var length = headers['content-length'] || 0;
+		var boundary = false;
+		if(type){
+			var parts = datatype.split(';');
+			datatype = {type:parts[0]};
+			if(parts[1]){boundary = parts[1].replace(' boundary=','');}
+		}
+		return {type:type,length:length,boundary:boundary};
+	}
+
+	function newSession(callback){
+		var sessions = server.database.collection('sessions');
+		sessions.insert({timestamp:Date.now()},function(error, result) {
+			if(!error && result[0]){
+				pssg.cookie.sid = result[0]._id;
+				pssg.session = result[0];	
+			} else {
+				console.log("Error on create new session.");
+			}
+			callback();
+		});
+	}
+
+	function getSession(callback){
+		var sid = pssg.cookie.sid || false;
+		var sessions = server.database.collection('sessions');
+		if(!sid){
+			newSession(callback);
+		} else {
+			sid = new ObjectID.createFromHexString(sid);
+			sessions.findOne({_id:sid},function(error, result) {
+				if(!error && result){
+					pssg.session = result;
+				} else {
+					console.log("Error on get session.");
+				}
+				callback();
+			});
+		}
+	}
+
+	function saveSession(){
+		var sid = pssg.cookie.sid || false;
+		var sessions = server.database.collection('sessions');
+		if(sid){
+			sid = new ObjectID.createFromHexString(sid);
+			sessions.update({_id:sid},pssg.session,function(error, result) {
+				if(!error && result>0){
+					// Ok
+				} else {
+					console.log("Error on session save.");
+				}
+			});
+		}
+	}
+
+	function getEncoding(){
+		var encodings = pssg.accepts.encodings || false;
+		if(!encodings){return false;}
+		var all = (encodings['*'] && encodings['*']>0) || encodings == '';
+	
+		if(
+			(all && (!encodings.deflate || encodings.deflate>0)) // all valids & no except deflate
+			|| (!all && encodings.deflate && encodings.deflate>0 // not all valids but deflate is ok & best than gzip
+				&& (
+					!encodings.gzip
+			 		|| encodings.deflate>encodings.gzip
+				)
+			)
+		){
+			return 'deflate';
+		} else if(
+			(all && (!encodings.gzip || encodings.gzip>0)) // all valids & no except gzip
+			|| (!all && encodings.gzip && encodings.gzip>0 // not all valids but gzip is ok & best than identity
+				&& (
+					!encodings.identity
+			 		|| encodings.gzip>encodings.identity
+				)
+			)
+		){
+			return 'gzip';
+		} else if(all && (!encodings.identity || encodings.identity>0)){ // all valids & no except identity
+			return 'identity';
+		} else {
+			return false;
+		}
+	}
+	function rangesParser(){
+		var range = headers['range'] || false;
+		if(!range){return false;}
+		var range = range.split('=');
+		var unit = range[0];
+		if(unit!='bytes'){return false;}
+		var start;
+		var end;
+		if(range[1]){
+			range[1]=range[1].split('-');
+			if(range[1][0]===''){
+				return false;
+			} else {
+				if(range[1][0]!=='' && range[1][0]>=0){start=parseInt(range[1][0]);}
+				if(range[1][1]!=='' && range[1][1]>0){end=parseInt(range[1][1]);}
+			}
+		}
+		return {
+			check: headers['if-range'] || false,
+			unit:unit,
+			start:start,
+			end:end
+		}
+	}
+	function authParser(){
+		var auth = headers['authorization'] || false;
+		if(auth){
+			auth = (new Buffer(auth.split(' ').pop(), 'base64')).toString().split(':');
+			auth = {user:auth[0] || '',pass:auth[1] || ''};
+		}
+		return auth;
+	}
 	function uaParser(ua){
+		var ua  = headers['user-agent'] || false;
 		if(!ua){return false;}
-		var ua = ua || '';
 		var mobile = /mobi/.test(ua);
 		var os = /\(([^\(\)]+)\)/.exec(ua);
 		if(os){os=os[1];} else {os='unknow';}
@@ -534,13 +408,216 @@ function requestInfo(req){
 		return {mobile:mobile,os:os,engine:engine,browser:browser};
 	}
 
-	function authParser(auth){
-		if(auth){
-			auth = (new Buffer(auth.split(' ').pop(), 'base64')).toString().split(':');
-			auth = {user:auth[0] || '',pass:auth[1] || ''};
+	this.file = function(path,clientname,download){
+		var filename = clientname || path.replace(/^.*[\\\/]/,'');
+		var download = download?'attachment':'inline';
+		var stats;
+
+		fs.stat(path, function(error, _stats){
+			if(error){
+				pssg.error(404,'Not Found',error);
+			} else if(!pssg.cacheck(_stats.mtime)) {
+				stats = _stats;
+				if(stats.size>20*1024*1024){pssg.encoding='identity';}
+				if(pssg.encoding!='identity'){
+					filecname = path+((pssg.encoding=='deflate')?".zz":".gz");
+					fs.stat(filecname, function(error, _cstats){
+						if(error || stats.mtime.getTime()>_cstats.mtime.getTime()){
+							fileCompress(filecname);
+						} else {
+							fileStream(filecname,_cstats);
+						}
+					});
+				} else {
+					fileStream();
+				}
+			}
+		});
+
+		function fileCompress(filecname){
+			var errormsg = "Error on encoding response by "+pssg.encoding+" => ";
+			var source = fs.createReadStream(path);
+			var compressor = (pssg.encoding=='deflate')?zlib.createDeflate():zlib.createGzip();
+			var compressed = fs.createWriteStream(filecname)
+			.on('close',function(){
+				fs.stat(filecname, function(error, _cstats){
+					if(error){
+						error.message=errormsg+error.message;throw error;
+					} else {
+						fileStream(filecname,_cstats);
+					}
+				});
+			})
+			.on('error',function(error){
+				error.message=errormsg+error.message;throw error;
+			});
+			source.pipe(compressor).pipe(compressed);
 		}
-		return auth;
+
+		function fileStream(_path,_stats){
+			var _stats = _stats || stats;
+			var _path = _path || path;
+			var size = _stats.size;
+			var start,end,ranges=false;
+			var etag = '"'+path+':'+stats.mtime.getTime()+'"';
+			if(pssg.ranges && ((new Date(pssg.ranges.check)).getTime() === stats.mtime.getTime() || pssg.ranges.check===etag)){
+				ranges = true;
+				start = pssg.ranges.start;
+				end = pssg.ranges.end;
+			}
+			var file = fs.createReadStream(_path,{start: start,end: end}).
+			on('open',function(fd){
+				pssg.head();
+				pssg.setHeader("ETag", etag);
+				pssg.setHeader("Accept-Ranges", 'bytes');
+				pssg.setHeader("Content-Location", '"'+path+'"');
+				pssg.setHeader('Content-Disposition', download+'; filename="'+clientname+'"');
+				pssg.setHeader("Content-Length", (end+1 || size)-(start || 0));
+				pssg.setHeader('Content-type',mime.lookup(path));
+				if(ranges){
+					pssg.setHeader("Content-Range", "bytes "+(start || '0')+"-"+(end || size-1)+"/"+size);
+					pssg.writeHead(206, 'Partial Content');
+				}
+				//file.pipe(pssg.res);
+				/* Slow pipe */
+				file.on('data',function(chunk){
+					pssg.write(chunk);
+					if(!file._readableState.ended){
+						file.pause();
+						setTimeout(function(){file.resume();},2*1000);
+					}
+				}).on('end',function(){
+					pssg.end();
+				});
+				/* */
+			}).on('error',function(error){
+				var errormsg = "Error on file stream => ";
+				error.message=errormsg+error.message;throw error;
+			});
+		}
 	}
+
+	this.cacheck = function(lastmod){
+		pssg.lastmod = lastmod || pssg.lastmod;
+		if(pssg.cache.modsince && (new Date(pssg.cache.modsince)).getTime() === pssg.lastmod.getTime()){
+			pssg.writeHead(304, 'Not Modified'); pssg.end();
+			return true;
+		}
+		return false;
+		//If-None-Match + eTag
+		//var eTag = "Cookietag";
+		//res.setHeader("Etag", '"'+eTag+'"');
+	}
+
+	this.authenticate = function(msg){
+		var msg = msg || 'Restricted area, insert your credentials.';
+		pssg.writeHead (401, 'Not Authorized',{'WWW-Authenticate': 'Basic realm="'+msg+'"'});
+		pssg.end();
+	}
+
+	this.redirect = function(location){
+		var location = location || 'http://'+pssg.server.hostname+'/';
+		pssg.writeHead (301, 'Moved Permanently',{'Location': location});
+		pssg.end();
+	}
+
+	this.head = function(){
+		/* 
+		Expires Gives the date/time after which the response is considered stale 	Expires: Thu, 01 Dec 1994 16:00:00 GMT 	Permanent: standard
+		Cache-Control: max-age=3600 seconds
+		*/
+		if(pssg.session){
+			pssg.setHeader("Set-Cookie", cookie.serialize('sid',pssg.cookie.sid,{
+				path:'/',
+				expires: new Date(Date.now()+2*24*60*60*1000),
+				//maxAge:60, // seconds
+				//domain:'',
+				secure: false, // true
+				httpOnly: true // false
+			}));
+		}
+
+		if(pssg.encoding!='identity'){
+			pssg.setHeader("Vary", "Accept-Encoding");
+			pssg.setHeader("Content-Encoding", pssg.encoding);
+		}
+		if(!pssg.lastmod){pssg.lastmod = new Date();}
+		pssg.setHeader("Last-Modified", pssg.lastmod.toUTCString());
+		pssg.setHeader("Server", 'Node-JS');
+		pssg.setHeader("X-CPID", pssg.socket.poolid);
+		pssg.setHeader("Transfer-Encoding", 'chunked');
+		pssg.setHeader("X-Powered-By", 'Pillars-JS');
+		pssg.setHeader("Pragma", 'no-cache');
+	}
+
+	this.send = function(data){
+		var body = "";
+		// Pre format
+		if(isString(data) || isBuffer(data)) {
+			pssg.setHeader("Content-Type", "text/html"); // "text/javascript" // "text/css"
+			body = data;
+		} else {
+			pssg.setHeader("Content-Type", "application/json");
+			body = JSON.stringify(data);
+		}
+		body = isBuffer(body) ? body : new Buffer(body || "");
+
+		// Enconding
+		if(pssg.encoding!='identity'){
+			zlib[pssg.encoding](body, function (error, body) {
+				if(error){
+					var errormsg = "Error on encoding response by "+pssg.encoding+" => ";
+					error.message=errormsg+error.message;throw error;
+				} else {
+					end(body);
+				}
+			});
+		} else {
+			end(body);
+		}
+
+		function end(body){
+			pssg.head();
+			pssg.setHeader("Content-Language", 'es_ES');
+			pssg.setHeader("Content-Length", body.length);
+			pssg.end(body);
+		}
+	}
+
+	this.error = function(code,explain,data){
+		console.log(' + Sending response Error'+code+' '+explain+'!');
+		pssg.statusCode(code);
+		if(util.isError(data)){
+			body = template.view('error',{
+				error:util.format(data),
+				stack:data.stack.toString(),
+				title:explain,
+				h1:'Error '+code+' '+explain
+			});	
+		} else {
+			body = template.view('error',{
+				title:explain,
+				h1:'Error '+code+' '+explain
+			});		
+		}
+		pssg.send(body);
+	}
+
+	getSession(function(){
+		pssg.router();
+	});
 }
 
+/*
+var memwatch = require('memwatch');
+var hd = new memwatch.HeapDiff();
+memwatch.on('stats', function(stats) {
+	stats.diff = hd.end();
+	console.log(util.inspect(stats, { depth: 7, colors: true }));
+	hd = new memwatch.HeapDiff();
+});
+memwatch.on('leak', function(info) {
+	console.log(util.inspect(info, { depth: 7, colors: true }));
+});
+*/
 

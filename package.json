@@ -19,7 +19,8 @@
     "mongodb": "*",
     "formidable": "*",
     "cookie": "*",
-    "mime": "*"
+    "mime": "*",
+    "memwatch":"*"
   },
   "readme":"www.pillarsjs.com",
   "readmeFilename": "README.md"

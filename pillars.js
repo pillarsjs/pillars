@@ -189,7 +189,7 @@ function Pillars(){
 	var beams = {};
 
 	this.Beam = function(_id){
-		if(id){var id=_id.toString();} else {var id=(+new Date()).toString(36);}
+		if(id){var id=_id.toString();} else {var id=Date.now().toString(36);}
 		beams[id]=this;
 		var beam = this;
 		var title = "untitled";
