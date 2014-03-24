@@ -1,0 +1,32 @@
+doctype html
+html
+	head
+		title= title
+		//link(rel='stylesheet', href='/stylesheets/style.css')
+	body
+		h1= h1
+		form(method='POST', enctype='multipart/form-data')
+			fieldset
+				legend Test
+				input(type='hidden', name='_method', value='post')
+				.field
+					label(for='f_A') A:
+					input(type='text', id="f_A", name="A[]")
+				.field
+					label(for='f_B') B:
+					input(type='text', id="f_B", name="B[]")
+				.field
+					label(for='f_C') C:
+					input(type='file', id="f_C", name="C[]", multiple)
+				.field
+					label(for='f_D') D:
+					input(type='file', id="f_D", name="D[]", multiple)
+				.buttons
+					input(type='submit', value='Post', onclick="this.form._method.value=\'post\';")
+					input(type='submit', value='Get', onclick="this.form._method.value=\'get\';")
+					input(type='submit', value='Put', onclick="this.form._method.value=\'put\';")
+					input(type='submit', value='Delete', onclick="this.form._method.value=\'delete\';")
+		if trace
+				.pillar-trace
+					hr
+					pre=trace

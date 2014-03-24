@@ -31,14 +31,20 @@ EventEmitter.prototype.emit = function(){
 }
 /* */
 
-var template = new Template('./pillars.jade');
-module.exports.Fields = new Fields();
-module.exports.Pillars = new Pillars();
-module.exports.Template = Template;
-module.exports.template = template;
-module.exports.Render = Render;
+
+
+var pillars = new Pillars();
+var fields = new Fields();
+var templates = new Templates();
+
+module.exports.pillars = pillars;
+module.exports.fields = fields;
+module.exports.templates = templates;
+
 module.exports.formwork = formwork;
 module.exports.Gangway = Gangway;
+
+templates.load('./error.jade');
 
 function isUndefined(arg) {
   return arg === void 0;
@@ -52,6 +58,44 @@ function isBuffer(arg) {
 }
 function isObject(arg) {
   return typeof arg === 'object' && arg !== null;
+}
+
+function Templates(){
+	var cache = {};
+
+	this.cacheList = function(){
+		return Object.keys(cache);
+	}
+
+	this.refresh = function(){
+		var reloads = this.cacheList();
+		cache = {};
+		for(var t in reloads){
+			this.load(reloads[t]);
+		}
+	}
+
+	this.load = function(_path){
+		try {
+			var source = fs.readFileSync(_path,'utf8');
+			var timetag = 'TemplateCache['+_path+']';console.time(timetag);
+			cache[_path]=jade.compile(source);
+			console.timeEnd(timetag);
+			delete source;
+			return true;
+		} catch(error){
+			console.log('Can not read template from:'+_path,error);
+			return false;
+		}
+	}
+
+	this.render = function(_path,locals){
+		if(cache[_path] || this.load(path)){
+			return cache[_path](locals);
+		} else {
+			return "";
+		}
+	}
 }
 
 function Fields(){
@@ -461,69 +505,6 @@ function Pillars(){
 		}
 		this.ini = launch;
 	}
-}
-
-function Template(_path){
-	var _path = _path || "";
-	var cache = {};
-	var blocks = {};
-
-	function load(){
-		try {
-			var templatefile = fs.readFileSync(_path,'utf8');
-			templatefile = templatefile.trim().split("//-//");
-			for(var b in templatefile){
-				var block = templatefile[b];
-				if(block.trim()!=""){
-					var head = block.indexOf("\n");
-					var name = block.slice(0,head).trim();
-					var body = block.slice(head).trim();
-					blocks[name] = body;
-					console.log('TemplateBlocks['+name+'] from:'+_path);
-				}
-			}
-			caching();
-			delete templatefile;
-		} catch(error){
-			console.log('Can not read template blocks from:'+_path,error);
-		}
-	}
-
-	this.view = render;
-	function render(block,locals,cacheid){
-		return Render(cache,blocks,block,locals,cacheid);
-	}
-
-	this.blockList = function(){
-		return Object.keys(blocks);
-	}
-	this.cacheList = function(){
-		return Object.keys(cache);
-	}
-
-	this.refresh = function(){
-		cache = {};
-		blocks = {};
-		load();
-	}
-	var caching = this.caching = function(){
-		for(var b in Object.keys(blocks)){render(Object.keys(blocks)[b]);}
-	}
-
-	load();
-}
-
-function Render(cache,blocks,block,locals,cacheid){
-	var cacheid = cacheid || block;
-	if(!locals || !cache[cacheid]){
-		if(!blocks[block]){console.log("TemplateBlock["+cacheid+"] no exist");return "";}
-		var timetag = 'TemplateCache['+cacheid+']';
-		console.time(timetag);
-		//return (blocks['includes'] || "")+"\n"+(blocks[block] || "");
-		cache[cacheid]=jade.compile((blocks['includes'] || "")+"\n"+(blocks[block] || ""));
-		console.timeEnd(timetag);
-	}
-	if(locals){return cache[cacheid](locals);}
 }
 
 function formwork(routes,port,hostname){
@@ -1004,14 +985,14 @@ function Gangway(server,req,res,router){
 		console.log(' + Sending response Error'+code+' '+explain+'!');
 		gw.statusCode(code);
 		if(util.isError(data)){
-			body = template.view('error',{
+			body = templates.render('./error.jade',{
 				error:util.format(data),
 				stack:data.stack.toString(),
 				title:explain,
 				h1:'Error '+code+' '+explain
 			});	
 		} else {
-			body = template.view('error',{
+			body = templates.render('./error.jade',{
 				title:explain,
 				h1:'Error '+code+' '+explain
 			});		

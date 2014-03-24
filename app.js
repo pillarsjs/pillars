@@ -1,7 +1,8 @@
 
 var util = require('util');
 var pillars = require('./pillars');
-var template = pillars.template;
+var templates = pillars.templates;
+templates.load('./form.jade');
 
 var server = pillars.formwork(function(){
 	var gw = this;
@@ -10,7 +11,7 @@ var server = pillars.formwork(function(){
 		if(!gw.session.counter){gw.session.counter=0;}
 		gw.session.counter++;
 
-		var body = template.view('form',{
+		var body = templates.render('./form.jade',{
 			//trace: util.format(gw),
 			title:'Method test',
 			h1:'Method testing:'
