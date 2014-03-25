@@ -20,7 +20,8 @@
     "formidable": "*",
     "cookie": "*",
     "mime": "*",
-    "memwatch":"*"
+    "memwatch":"*",
+    "colors":"*"
   },
   "readme":"www.pillarsjs.com",
   "readmeFilename": "README.md"
