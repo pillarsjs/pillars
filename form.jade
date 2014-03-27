@@ -10,17 +10,38 @@ html
 				legend Test
 				input(type='hidden', name='_method', value='post')
 				.field
-					label(for='f_A') A:
-					input(type='text', id="f_A", name="A[]")
+					label(for='f_A1') A:
+					input(type='text', id="f_A1", name="A")
 				.field
-					label(for='f_B') B:
-					input(type='text', id="f_B", name="B[]")
+					label(for='f_A2') B:
+					input(type='text', id="f_A2", name="A")
 				.field
 					label(for='f_C') C:
-					input(type='file', id="f_C", name="C[]", multiple)
+					input(type='file', id="f_C", name="C", multiple="multiple")
 				.field
 					label(for='f_D') D:
-					input(type='file', id="f_D", name="D[]", multiple)
+					input(type='file', id="f_D", name="D", multiple="multiple")
+				.buttons
+					input(type='submit', value='Post', onclick="this.form._method.value=\'post\';")
+					input(type='submit', value='Get', onclick="this.form._method.value=\'get\';")
+					input(type='submit', value='Put', onclick="this.form._method.value=\'put\';")
+					input(type='submit', value='Delete', onclick="this.form._method.value=\'delete\';")
+		form(method='POST')
+			fieldset
+				legend Test
+				input(type='hidden', name='_method', value='post')
+				.field
+					label(for='f_A1') A:
+					input(type='text', id="f_A1", name="A")
+				.field
+					label(for='f_A2') B:
+					input(type='text', id="f_A2", name="A")
+				.field
+					label(for='f_C') C:
+					input(type='file', id="f_C", name="C", multiple="multiple")
+				.field
+					label(for='f_D') D:
+					input(type='file', id="f_D", name="D", multiple="multiple")
 				.buttons
 					input(type='submit', value='Post', onclick="this.form._method.value=\'post\';")
 					input(type='submit', value='Get', onclick="this.form._method.value=\'get\';")

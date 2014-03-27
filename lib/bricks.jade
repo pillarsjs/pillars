@@ -1,0 +1,62 @@
+
+mixin notifier(msgs)
+	if msgs
+		ul.pillar-notifier
+		each msg, key in msgs
+			li=msg
+
+mixin fieldset(fieldset,name,data)
+	.pillar-fieldset
+	each field,fkey in fieldset.fields
+		- fname = name+"["+fkey+"]";
+		- fid = fieldidr(fname);
+		- fdata = data[fkey] || "";
+		+field(field,fname,fid,fdata)
+
+mixin array(field,name,id,data)
+	fieldset.pillar-array
+		legend=field.label
+		p.pillar-field-details=field.details
+		each adata,dkey in data
+			each sfield,fkey in field.fields
+				- var fname = name+"["+dkey+"]["+fkey+"]";
+				- var fid = fieldidr(fname);
+				- var fdata = adata[fkey] || "";
+				+field(sfield,fname,fid,fdata)
+
+mixin subset(field,name,id,data)
+	fieldset.pillar-subset
+		legend=field.label
+		p.pillar-field-details=field.details
+		each sfield,fkey in field.fields
+			- var fname = name+"["+fkey+"]";
+			- var fid = fieldidr(fname);
+			- var fdata = data[fkey] || "";
+			+field(sfield,fname,fid,fdata)
+
+mixin field(field,name,id,data)
+	.pillar-field
+		label(for=fieldid)=field.label
+		if field.i18n
+			+field-i18n(field,name,id,data)
+		else
+			+#{field.template}(field,name,id,data)
+		p.pillar-field-details=field.details
+
+mixin field-i18n(field,name,id,data)
+	.pillar-langfields
+	each lang in langlist
+		- var fname = name+'['+lang+']';
+		- var fid = fieldidr(fname);
+		- var fdata = data[lang] || "";
+		- var classes = "";
+		- if(defaultlang==lang){var classes = ['defaultlang'];}
+		+#{field.template}(field,fname,fid,fdata,classes)
+
+mixin text(field,name,id,data,classes)
+	input(type='text', class=classes, class=['pillar-input','pillar-input-text'], id=id, name=name, value=data)
+
+mixin textarea(field,name,id,data,classes)
+	textarea(class=classes, class=['pillar-input','pillar-input-textarea'], id=id, name=name)=data
+
+

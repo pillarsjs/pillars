@@ -1,77 +1,202 @@
 
 var util = require('util');
 var formwork = require('./lib/formwork');
-var tiles = require('./lib/tiles');
-tiles.load('./form.jade');
+var project = require('./lib/project');
+var Pillar = require('./lib/Pillar');
+var bricks = require('./lib/bricks');
+var Beam = require('./lib/Beam');
+var template = require('./lib/template');
+//template.preload('./form.jade');
+template.preload('lib/crud.jade');
 
-var myserver = formwork(function(){
-	var gw = this;
-	if(/^\/contenido\/?$/.test(gw.path)){
-
-		if(!gw.session.counter){gw.session.counter=0;}
-		gw.session.counter++;
-
-		var body = tiles.render('./form.jade',{
-			//trace: util.format(gw),
-			title:'Method test',
-			h1:'Method testing:'
-		});
-		gw.send(body);	
-
-	} else if(/^\/yalotengo\/?$/.test(gw.path)){
-		if(!gw.cacheck(new Date(false))){
-			gw.send('Este contenido es fijo y se cachea');
-		}
-	} else if(/^\/espera\/?$/.test(gw.path)){
-		// Force timeout!
-	} else if(/^\/redirecciona\/?$/.test(gw.path)){
-		gw.redirect('http://localhost:3000/yalotengo');
-	} else if(/^\/auth\/?$/.test(gw.path)){
-		gw.authenticate();
-	} else if(/^\/malapeticion\/?$/.test(gw.path)){
-		gw.error(400,'Bad Request');// 405 Method not allowed 	Allow: GET, HEAD
-	} else if(/^\/archivo\/?$/.test(gw.path)){
-		gw.file('./uploads/exquisite0002.png','prueba.txt',false);
-	} else if(/^\/error\/?$/.test(gw.path)){
-		throw new Error("Crashhh!");
-	} else {
-		return false;
+function Msg(msg,type,details,params){
+	this.msg = msg;
+	this.type = type || "info";
+	this.details = details || "";
+	this.params = params || {};
+	this.toString = function(){
+		return '['+this.type+']'+this.msg+': '+this.details;
 	}
-	return true;
-}).mongodb('primera');
+}
 
-/*
-El beam hace de agrupador de controladores,
-basicamente es un conjunto de acciones que puede tener un modelo asociado y extensiones (submodelos)
-El modelo es el que se encarga de la validación de los datos y el formateo etc
-El action es el que se encarga de la logica, bdd, llamada a template
-El beam coordina los puntos comunes de los actions, el modelo comun, la ruta base comun, titulo comun
-credenciales comunes del modulo (integracion con el sistema general de credenciales)
+var myserver = formwork(project).mongodb('primera');
 
-La mecanica: Creamos un new pillars, este internamente gestiona su alta en el listado de pillars, le añadimos beams.
-Al crear el servidor le pasamos como parametro a pillars.router, un metodo estatico del objeto que gestiona las rutas a todos
-los pillars.
+var myPillar = new Pillar();
+myPillar
+.setId('sample-pillar')
+.setPath('/system')
+.addBeam(new Beam('list','/',{session:true},crudList))
+.addBeam(new Beam('one','/:_id',{session:true},BeamIds,crudOne))
+.addBeam(new Beam('update','/update/:_id',{session:true},BeamIds,crudUpdate))
+;
 
-*
+var mymodel = new bricks.Fieldset({
+	title : 'Un fieldset',
+	details : 'Completa los campos',
+	fields : {
+		field1 : new bricks.fields.Text({
+			label : 'Field1',
+			details : 'Rellena este campo...'
+		}),
+		field2 : new bricks.fields.Text({
+			label : 'Field2',
+			details : 'Rellena este campo...'
+		})
+	}
+});
 
-var sampleBeam = new pillars.Beam();
-sampleBeam.setId('sample-beam');
-sampleBeam.addAction(new pillars.Action('list',{path:'/'},GenericList));
-
-var GenericList = function(){
-	beam = this;
-	beam.db.find().toArray(function(error, result) {
+function crudList(){
+	var gw = this;
+	var pillar = gw.beam.getPillar();
+	var db = gw.server.database.collection('system');
+	db.find().toArray(function(error, result) {
 		if(!error && result && result.length>0){
 			for(var i in result){
 				var _id = result[i]._id;
-				result[i] = beam.fields.getter(result[i]);
+				result[i] = mymodel.getter(result[i]);
 				result[i]._id = _id;
 			}
 		}
-		if(error){res.msgs.push(new msg("pillar.database.errors.list","model",error));}
-		beam.template.view('list',req,res,result);
+		if(error){gw.msgs.push(new Msg("pillar.database.errors.list","model",error));}
+		var body = template.render('./lib/crud.jade',{
+			title:'List',
+			h1:'Listado de system:',
+			view:'crud-list',
+			data:result,
+			msgs:gw.msgs,
+			util:util,
+			pillar:pillar
+		});
+		gw.send(body);
 	});
 }
+
+
+function crudOne(){
+	var gw = this;
+	var pillar = gw.beam.getPillar();
+	var db = gw.server.database.collection('system');
+	db.findOne({_id:gw.params._id},function(error, result) {
+		if(!error && result){
+			var _id = result._id;
+			result = mymodel.getter(result);
+			result._id = _id;
+		}
+		if(error){gw.msgs.push(new Msg("pillar.database.errors.one","model",error));}
+		if(!result){
+			gw.msgs.push(new Msg("pillar.actions.one.noexist","actions",""));
+			var body = template.render('./lib/crud.jade',{
+				title:'Error',
+				h1:'Error:',
+				view:'crud-error',
+				msgs:gw.msgs,
+				util:util,
+				pillar:pillar
+			});
+			gw.send(body);
+		} else {
+			var body = template.render('./lib/crud.jade',{
+				title:'Update',
+				h1:'Update:',
+				view:'crud-update',
+				data:result,
+				model:mymodel,
+				msgs:gw.msgs,
+				util:util,
+				pillar:pillar,
+				fieldidr:fieldIdr
+			});
+			gw.send(body);
+		}
+	});
+}
+
+function crudUpdate(){
+	var gw = this;
+	var pillar = gw.beam.getPillar();
+	var db = gw.server.database.collection('system');
+
+	var doc = gw.params['uname'];
+	var validate = mymodel.validate(doc);
+	doc._id = gw.params._id;
+	if(validate.length>0){
+		gw.msgs.push(validate);
+		var body = template.render('./lib/crud.jade',{
+			title:'Error',
+			h1:'Error:',
+			view:'crud-update',
+			data:doc,
+			model:mymodel,
+			msgs:gw.msgs,
+			util:util,
+			pillar:pillar,
+			fieldidr:fieldIdr
+		});
+		gw.send(body);
+	} else {
+		doc = mymodel.setter(doc);
+		db.update({_id:gw.params._id},doc,function(error, result) {
+			if(error){gw.msgs.push(new Msg("pillar.database.errors.update","model",error));}
+			if(!error && result>0){
+				gw.msgs.push(new Msg("pillar.actions.update.updated","actions",""));
+				crudOne.call(gw);
+			} else {
+				gw.msgs.push(new Msg("pillar.actions.update.fail","actions",""));
+				var body = template.render('./lib/crud.jade',{
+					title:'Error',
+					h1:'Error:',
+					view:'crud-update',
+					data:doc,
+					model:mymodel,
+					msgs:gw.msgs,
+					util:util,
+					pillar:pillar,
+					fieldidr:fieldIdr
+				});
+				gw.send(body);
+			}
+		});
+	}
+}
+
+
+var ObjectID = require('mongodb').ObjectID;
+function BeamIds(next){
+	var gw = this;
+	var _id = gw.params._id || "";
+	var checkhexid = /^[a-f0-9]{24}$/;
+	if(checkhexid.test(_id)){gw.params._id = new ObjectID.createFromHexString(_id);}
+	next();
+}
+
+function fieldIdr(id){
+	if(!name){return "";}
+	var name = name.replace('][','_');
+	name = name.replace('[','_');
+	name = name.replace(']','');
+	return name;
+}
+
+/*
+
+function(){
+		var gw = this;
+		if(!gw.session.counter){gw.session.counter=0;}
+		gw.session.counter++;
+
+		var body = template.render('./form.jade',{
+			trace: util.format(gw),
+			title:'Method test',
+			h1:'Method testing:'
+		});
+		gw.send(gw.beam.status());	
+	}
+
+*/
+
+//myPillar.status();
+
+
 
 /* *
 var memwatch = require('memwatch');
