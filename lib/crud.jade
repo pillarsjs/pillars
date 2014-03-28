@@ -1,66 +1,67 @@
 include lib/bricks
 
 mixin crud-error()
-	.pillar-error
-		h1 Upppps!
-		a(href=pillar.makeLink('list')) [Go to list]
+	a(href=pillar.makeLink('list')) [Go to list]
 
 mixin crud-list()
-	.pillar-list
-		h1 Listing elements
-		if data.length==0
-			p: strong No results
+	if data.length==0
+		p: strong No results
+	hr
+	each doc, key in data
+		pre=util.format(doc)
+		a(href=pillar.makeLink('update',doc._id)) [Edit this element]
+		a(href=pillar.makeLink('one',doc._id)) [View this element]
 		hr
-		each doc, key in data
-			pre=util.format(doc)
-			a(href=pillar.makeLink('update',doc._id)) [Edit this element]
-			a(href=pillar.makeLink('one',doc._id)) [View this element]
-			hr
-		a(href=pillar.makeLink('insert')) [Insert new element]
+	a(href=pillar.makeLink('insert')) [Insert new element]
 
 mixin crud-one
-	.pillar-one
-		h1 Viewing element #{data._id}
-		pre=util.format(data)
-		a(href=path.update(data._id)) [Edit this element]
-		a(href=path.list()) [Go to list]
-		a(href=path.insert()) [Insert new element]
+	pre=util.format(data)
+	a(href=path.update(data._id)) [Edit this element]
+	a(href=path.list()) [Go to list]
+	a(href=path.insert()) [Insert new element]
 
 mixin crud-update
-	.pillar-update
-		h1 Edit element #{data._id}
-		form(method='POST', action=pillar.makeLink('update',data._id))
-			fieldset
-				legend=model.title
-				p.details=model.details
-				+fieldset(model,'uname',data)
-				.buttons
-					input(type='submit', value='Save')
-					input(type='submit', value='Delete', formaction=pillar.makeLink('remove',data._id))
-					a(href=pillar.makeLink('list')) [Go to list]
-					a(href=pillar.makeLink('insert')) [Insert new element]
+	form(method='POST', action=pillar.makeLink('update',data._id))
+		fieldset
+			legend=model.title
+			p.details=model.details
+			+fieldset(model,'uname',data)
+			.buttons
+				input(type='submit', value='Save')
+				input(type='submit', value='Delete', formaction=pillar.makeLink('remove',data._id))
+				a(href=pillar.makeLink('list')) [Go to list]
+				a(href=pillar.makeLink('insert')) [Insert new element]
 
 mixin crud-insert
-	.pillar-insert
-		h1 Inserting new element
-		form(method='POST', action=path.insert(), id=fieldidr(panel.uname), name=panel.uname)
-			fieldset
-				legend=panel.fields.title
-				p.details=panel.fields.details
-				+fieldset(panel.fields,panel.uname,data)
-				.buttons
-					input(type='submit', value='Save')
-					a(href=path.list()) [Go to list]
+	form(method='POST', action=path.insert(), id=fieldidr(panel.uname), name=panel.uname)
+		fieldset
+			legend=panel.fields.title
+			p.details=panel.fields.details
+			+fieldset(panel.fields,panel.uname,data)
+			.buttons
+				input(type='submit', value='Save')
+				a(href=path.list()) [Go to list]
 
 doctype html
-html
+html(lang="es")
 	head
-		title= title
+		title=title
+		meta(charset="UTF-8") 
+		meta(name="viewport", content="width=device-width")
+		style
+			:css
+				body {
+					padding: 10px;
+					font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+				}
+				a {
+					color: #00B7FF;
+				}
 		//link(rel='stylesheet', href='/stylesheets/style.css')
 	body
-		h1= h1
+		h1=h1
 		+notifier(msgs)
-		+#{view}
+		+#{template}
 		if trace
 		.pillar-trace
 			hr

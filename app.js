@@ -5,9 +5,6 @@ var project = require('./lib/project');
 var Pillar = require('./lib/Pillar');
 var bricks = require('./lib/bricks');
 var Beam = require('./lib/Beam');
-var template = require('./lib/template');
-//template.preload('./form.jade');
-template.preload('lib/crud.jade');
 
 function Msg(msg,type,details,params){
 	this.msg = msg;
@@ -24,10 +21,12 @@ var myserver = formwork(project).mongodb('primera');
 var myPillar = new Pillar();
 myPillar
 .setId('sample-pillar')
+.setTitle('Configuración')
 .setPath('/system')
-.addBeam(new Beam('list','/',{session:true},crudList))
-.addBeam(new Beam('one','/:_id',{session:true},BeamIds,crudOne))
-.addBeam(new Beam('update','/update/:_id',{session:true},BeamIds,crudUpdate))
+.setTemplate('lib/crud.jade')
+.addBeam(new Beam('list','/',{session:true,template:'crud-list'},crudList))
+.addBeam(new Beam('one','/:_id',{session:true,template:'crud-update'},BeamIds,crudOne))
+.addBeam(new Beam('update','/:_id',{method:'post',session:true,template:'crud-update'},BeamIds,crudUpdate))
 ;
 
 var mymodel = new bricks.Fieldset({
@@ -47,7 +46,6 @@ var mymodel = new bricks.Fieldset({
 
 function crudList(){
 	var gw = this;
-	var pillar = gw.beam.getPillar();
 	var db = gw.server.database.collection('system');
 	db.find().toArray(function(error, result) {
 		if(!error && result && result.length>0){
@@ -58,23 +56,17 @@ function crudList(){
 			}
 		}
 		if(error){gw.msgs.push(new Msg("pillar.database.errors.list","model",error));}
-		var body = template.render('./lib/crud.jade',{
-			title:'List',
-			h1:'Listado de system:',
-			view:'crud-list',
+		gw.render({
+			h1:'listado',
 			data:result,
-			msgs:gw.msgs,
-			util:util,
-			pillar:pillar
+			trace:util.format(gw)
 		});
-		gw.send(body);
 	});
 }
 
 
 function crudOne(){
 	var gw = this;
-	var pillar = gw.beam.getPillar();
 	var db = gw.server.database.collection('system');
 	db.findOne({_id:gw.params._id},function(error, result) {
 		if(!error && result){
@@ -85,35 +77,24 @@ function crudOne(){
 		if(error){gw.msgs.push(new Msg("pillar.database.errors.one","model",error));}
 		if(!result){
 			gw.msgs.push(new Msg("pillar.actions.one.noexist","actions",""));
-			var body = template.render('./lib/crud.jade',{
-				title:'Error',
-				h1:'Error:',
+			gw.render({
+				h1:'Error al mostrar el elemento'+gw.params._id,
 				view:'crud-error',
-				msgs:gw.msgs,
-				util:util,
-				pillar:pillar
+				trace:util.format(gw)
 			});
-			gw.send(body);
 		} else {
-			var body = template.render('./lib/crud.jade',{
-				title:'Update',
-				h1:'Update:',
-				view:'crud-update',
+			gw.render({
+				h1:'Viendo '+gw.params._id,
 				data:result,
 				model:mymodel,
-				msgs:gw.msgs,
-				util:util,
-				pillar:pillar,
-				fieldidr:fieldIdr
+				trace:util.format(gw)
 			});
-			gw.send(body);
 		}
 	});
 }
 
 function crudUpdate(){
 	var gw = this;
-	var pillar = gw.beam.getPillar();
 	var db = gw.server.database.collection('system');
 
 	var doc = gw.params['uname'];
@@ -121,18 +102,12 @@ function crudUpdate(){
 	doc._id = gw.params._id;
 	if(validate.length>0){
 		gw.msgs.push(validate);
-		var body = template.render('./lib/crud.jade',{
-			title:'Error',
-			h1:'Error:',
-			view:'crud-update',
+		gw.render({
+			h1:'Modificar '+gw.params._id,
 			data:doc,
 			model:mymodel,
-			msgs:gw.msgs,
-			util:util,
-			pillar:pillar,
-			fieldidr:fieldIdr
+			trace:util.format(gw)
 		});
-		gw.send(body);
 	} else {
 		doc = mymodel.setter(doc);
 		db.update({_id:gw.params._id},doc,function(error, result) {
@@ -142,18 +117,12 @@ function crudUpdate(){
 				crudOne.call(gw);
 			} else {
 				gw.msgs.push(new Msg("pillar.actions.update.fail","actions",""));
-				var body = template.render('./lib/crud.jade',{
-					title:'Error',
-					h1:'Error:',
-					view:'crud-update',
+				gw.render({
+					h1:'Error al modificar el elemento '+gw.params._id,
 					data:doc,
 					model:mymodel,
-					msgs:gw.msgs,
-					util:util,
-					pillar:pillar,
-					fieldidr:fieldIdr
+					trace:util.format(gw)
 				});
-				gw.send(body);
 			}
 		});
 	}
@@ -169,13 +138,7 @@ function BeamIds(next){
 	next();
 }
 
-function fieldIdr(id){
-	if(!name){return "";}
-	var name = name.replace('][','_');
-	name = name.replace('[','_');
-	name = name.replace(']','');
-	return name;
-}
+
 
 /*
 
