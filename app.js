@@ -1,32 +1,24 @@
 
 var util = require('util');
 var formwork = require('./lib/formwork');
-var project = require('./lib/project');
 var Pillar = require('./lib/Pillar');
 var bricks = require('./lib/bricks');
 var Beam = require('./lib/Beam');
 
-function Msg(msg,type,details,params){
-	this.msg = msg;
-	this.type = type || "info";
-	this.details = details || "";
-	this.params = params || {};
-	this.toString = function(){
-		return '['+this.type+']'+this.msg+': '+this.details;
-	}
-}
 
-var myserver = formwork(project).mongodb('primera');
 
-var myPillar = new Pillar();
+var server = formwork().mongodb('primera');
+
+var myPillar = new Pillar({
+	id:'sample-pillar',
+	title:'Configuración',
+	path:'/system',
+	template:'lib/crud.jade'
+});
 myPillar
-.setId('sample-pillar')
-.setTitle('Configuración')
-.setPath('/system')
-.setTemplate('lib/crud.jade')
-.addBeam(new Beam('list','/',{session:true,template:'crud-list'},crudList))
-.addBeam(new Beam('one','/:_id',{session:true,template:'crud-update'},BeamIds,crudOne))
-.addBeam(new Beam('update','/:_id',{method:'post',session:true,template:'crud-update'},BeamIds,crudUpdate))
+.addBeam(new Beam('list',{session:true,template:'crud-list'},crudList))
+.addBeam(new Beam('one',{path:'/:_id',session:true,template:'crud-update'},BeamIds,crudOne))
+.addBeam(new Beam('update',{path:'/:_id',method:'post',session:true,template:'crud-update'},BeamIds,crudUpdate))
 ;
 
 var mymodel = new bricks.Fieldset({
@@ -79,7 +71,7 @@ function crudOne(){
 			gw.msgs.push(new Msg("pillar.actions.one.noexist","actions",""));
 			gw.render({
 				h1:'Error al mostrar el elemento'+gw.params._id,
-				view:'crud-error',
+				template:'crud-error',
 				trace:util.format(gw)
 			});
 		} else {
@@ -136,6 +128,16 @@ function BeamIds(next){
 	var checkhexid = /^[a-f0-9]{24}$/;
 	if(checkhexid.test(_id)){gw.params._id = new ObjectID.createFromHexString(_id);}
 	next();
+}
+
+function Msg(msg,type,details,params){
+	this.msg = msg;
+	this.type = type || "info";
+	this.details = details || "";
+	this.params = params || {};
+	this.toString = function(){
+		return '['+this.type+']'+this.msg+': '+this.details;
+	}
 }
 
 
