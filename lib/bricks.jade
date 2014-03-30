@@ -5,11 +5,11 @@ mixin notifier(msgs)
 		each msg, key in msgs
 			li=msg
 
-mixin fieldset(fieldset,name,data)
+mixin fieldset(fieldset,data)
 	.pillar-fieldset
 	each field,fkey in fieldset.fields
-		- fname = name+"["+fkey+"]";
-		- fid = fieldidr(fname);
+		- fname = fieldset.id+"["+fkey+"]";
+		- fid = fieldIdr(fname);
 		- fdata = data[fkey] || "";
 		+field(field,fname,fid,fdata)
 
@@ -20,7 +20,7 @@ mixin array(field,name,id,data)
 		each adata,dkey in data
 			each sfield,fkey in field.fields
 				- var fname = name+"["+dkey+"]["+fkey+"]";
-				- var fid = fieldidr(fname);
+				- var fid = fieldIdr(fname);
 				- var fdata = adata[fkey] || "";
 				+field(sfield,fname,fid,fdata)
 
@@ -30,7 +30,7 @@ mixin subset(field,name,id,data)
 		p.pillar-field-details=field.details
 		each sfield,fkey in field.fields
 			- var fname = name+"["+fkey+"]";
-			- var fid = fieldidr(fname);
+			- var fid = fieldIdr(fname);
 			- var fdata = data[fkey] || "";
 			+field(sfield,fname,fid,fdata)
 
@@ -47,7 +47,7 @@ mixin field-i18n(field,name,id,data)
 	.pillar-langfields
 	each lang in langlist
 		- var fname = name+'['+lang+']';
-		- var fid = fieldidr(fname);
+		- var fid = fieldIdr(fname);
 		- var fdata = data[lang] || "";
 		- var classes = "";
 		- if(defaultlang==lang){var classes = ['defaultlang'];}

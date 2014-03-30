@@ -25,7 +25,7 @@ mixin crud-update
 		fieldset
 			legend=model.title
 			p.details=model.details
-			+fieldset(model,'uname',data)
+			+fieldset(model,data)
 			.buttons
 				input(type='submit', value='Save')
 				input(type='submit', value='Delete', formaction=pillar.link('remove',data._id))
@@ -33,7 +33,7 @@ mixin crud-update
 				a(href=pillar.link('insert')) [Insert new element]
 
 mixin crud-insert
-	form(method='POST', action=path.insert(), id=fieldidr(panel.uname), name=panel.uname)
+	form(method='POST', action=path.insert(), id=fieldIdr(panel.uname), name=panel.uname)
 		fieldset
 			legend=panel.fields.title
 			p.details=panel.fields.details
