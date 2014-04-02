@@ -1,30 +1,20 @@
 
 var util = require('util');
+var textualization = require('./lib/t12n');
+textualization.languages(['es','en']);
 var formwork = require('./lib/formwork');
 var Pillar = require('./lib/Pillar');
 var bricks = require('./lib/bricks');
 var Beam = require('./lib/Beam');
 var templates = require('./lib/template');
+var fs = require('fs');
 
-
-
-
-var server = formwork().mongodb('primera');
-
-var myPillar = new Pillar({
-	id:'sample-pillar',
-	title:'Configuración',
-	path:'/system',
-	template:'lib/crud.jade'
-})
-	.addBeam(new Beam('list',{session:true,template:'crud-list'},crudList))
-	.addBeam(new Beam('one',{path:'/:_id',session:true,template:'crud-update'},BeamIds,crudOne))
-	.addBeam(new Beam('update',{path:'/:_id',method:'post',session:true,template:'crud-update'},BeamIds,crudUpdate))
-;
+var server = formwork().mongodb('primera')
 
 var mymodel = new bricks.Fieldset('system',{
 	title : 'Un fieldset',
-	details : 'Completa los campos'
+	details : 'Completa los campos',
+	collection : 'system'
 })
 	.addField(new bricks.Text('field1',{
 		label : 'Field1',
@@ -48,149 +38,157 @@ var mymodel = new bricks.Fieldset('system',{
 	}))
 ;
 
-/*
-function crudList(){
-	var gw = this;
-	var collection = gw.server.database.collection('system');
-	mymodel.list(collection,gw,function(docs){
-		gw.render({
-			h1:'listado',
-			data:docs,
-			trace:util.format(gw)
-		});
-	},function(error){
-		gw.render({ // aqui mostar detalles del error, la operación no e puede continuar
-			h1:'Error gravisimo...',
-			template:'crud-error',
-			trace:util.format(gw)
-		});
-	});
-}
-
-function crudOne(){
-	var gw = this;
-	var collection = gw.server.database.collection('system');
-	mymodel.one(collection,gw,function(doc){
-		gw.render({
-			h1:'Viendo '+doc._id,
-			data:doc,
-			model:mymodel,
-			trace:util.format(gw)
-		});
-	},function(error){
-		gw.render({ // aqui mostar detalles del error, la operación no e puede continuar
-			h1:'El elento no existe',
-			template:'crud-error',
-			trace:util.format(gw)
-		});
-	});
-}
-
-function crudUpdate(){
-	var gw = this;
-	var collection = gw.server.database.collection('system');
-	mymodel.update(collection,gw,function(doc){
-		gw.render({
-			h1:'Editando '+doc._id,
-			data:doc,
-			model:mymodel,
-			trace:util.format(gw)
-		});
-	},function(error){
-		gw.render({ // aqui mostar detalles del error, la operación no e puede continuar
-			h1:'El elento no existe',
-			template:'crud-error',
-			trace:util.format(gw)
-		});
-	});
-}
-*/
-
-function crudList(){
-	var gw = this;
-	var db = gw.server.database.collection('system');
-	db.find().toArray(function(error, result) {
-		if(!error && result && result.length>0){
-			/*
-			for(var i in result){
-				var _id = result[i]._id;
-				result[i] = mymodel.getter(result[i]);
-				result[i]._id = _id;
-			}
-			*/
-		}
-		if(error){gw.msgs.push(new Msg("pillar.database.errors.list","model",error));}
-		gw.render({
-			h1:'listado',
-			data:result,
-			trace:util.format(gw)
-		});
-	});
-}
+server.addPillar(new Pillar({
+	id:'sample-pillar',
+	title:'Configuración',
+	path:'/system',
+	template:'lib/crud.jade',
+	t12n:'./lib/crud.t12n'
+})
+	.addBeam(new Beam('main',{session:true},function(){
+		var gw = this;
+		mymodel.list(gw,function(result){
 
 
-function crudOne(){
-	var gw = this;
-	var db = gw.server.database.collection('system');
-	db.findOne({_id:gw.params._id},function(error, result) {
-		if(!error && result){
-			var _id = result._id;
-			result = mymodel.getter(result);
-			result._id = _id;
-		}
-		if(error){gw.msgs.push(new Msg("pillar.database.errors.one","model",error));}
-		if(!result){
-			gw.msgs.push(new Msg("pillar.actions.one.noexist","actions",""));
+			var timetag = ('TranslationTime').cyan;console.time(timetag);
+			var translations = [
+				gw.t12n("general.actionbutton",{context:'post',action:'new',num:5}),
+				gw.t12n("general.actionbutton",{context:'post',action:'new',num:1}),
+				gw.t12n("general.welcome",{genre:'female',num:3}),
+				gw.t12n("general.welcome",{num:2}),
+				gw.t12n("general.goobye",{genre:'female',num:3}),
+				gw.t12n("general.logout"),
+				gw.t12n("general.error",{error:'crashhhh!!!'}),
+				gw.t12n("general.you_have_new_messages",0),
+				gw.t12n("general.you_have_new_messages",1),
+				gw.t12n("general.you_have_new_messages",20),
+				gw.t12n("general.noexist",2),
+				gw.t12nc(["clasical basic"]),
+				gw.t12nc(["clasical %s here %s ..."],["Translation","now"]),
+				gw.t12nc(["You have 1 mail","You have %s mails"],[0]),
+				gw.t12nc(["You have 1 mail","You have %s mails"],[1]),
+				gw.t12nc(["You have 1 mail","You have %s mails"],[30]),
+				gw.t12nc("You have 1 message",[0]),
+				gw.t12nc("You have 1 message",[1]),
+				gw.t12nc("You have 1 message",[30]),
+				gw.t12nc(["You no have mails","You have 1 mail","You have %s mails"],[0]),
+				gw.t12nc(["You no have mails","You have 1 mail","You have %s mails"],[1]),
+				gw.t12nc(["You no have mails","You have 1 mail","You have %s mails"],[18]),
+				gw.t12nc("You no have messages",0),
+				gw.t12nc("You no have messages",1),
+				gw.t12nc("You no have messages",18)
+			];
+			console.timeEnd(timetag);
+
+
 			gw.render({
-				h1:'Error al mostrar el elemento'+gw.params._id,
-				template:'crud-error',
-				trace:util.format(gw)
-			});
-		} else {
-			gw.render({
-				h1:'Viendo '+gw.params._id,
+				template:'crud-list',
+				h1:'listado',
 				data:result,
-				model:mymodel,
-				trace:util.format(gw)
+				trace:util.format(translations)
 			});
-		}
-	});
-}
-
-function crudUpdate(){
-	var gw = this;
-	var db = gw.server.database.collection('system');
-	var doc = gw.params[mymodel.id] || {};
-	var validate = mymodel.validate(doc);
-	doc._id = gw.params._id;
-	if(validate.length>0){
-		gw.msgs.push(validate);
-		gw.render({
-			h1:'Hay campos completados de forma incorrecta '+gw.params._id,
-			data:doc,
-			model:mymodel,
-			trace:util.format(gw)
 		});
-	} else {
-		doc = mymodel.setter(doc);
-		db.update({_id:gw.params._id},doc,function(error, result) {
-			if(error){gw.msgs.push(new Msg("pillar.database.errors.update","model",error));}
-			if(!error && result>0){
-				gw.msgs.push(new Msg("pillar.actions.update.updated","actions",""));
-				crudOne.call(gw);
-			} else {
-				gw.msgs.push(new Msg("pillar.actions.update.fail","actions",""));
+	}))
+	.addBeam(new Beam('update',{path:'/edit/:_id',method:'(get|post)',session:true},BeamIds,function(){
+		var gw = this;
+		mymodel.update(gw,function(result){
+			if(!result){
 				gw.render({
-					h1:'Error al modificar el elemento '+gw.params._id,
-					data:doc,
+					template:'crud-error',
+					h1:'El elemento no existe'
+				});
+			} else {
+				gw.render({
+					template:'crud-update',
+					h1:'Editando '+result._id,
+					data:result,
 					model:mymodel,
-					trace:util.format(gw)
+					trace:util.format(gw.pillar.beams)
 				});
 			}
 		});
-	}
-}
+	}))
+	.addBeam(new Beam('insert',{path:'/new',method:'(get|post)',session:true},BeamIds,function(){
+		var gw = this;
+		mymodel.insert(gw,function(result){
+			if(!result._id){
+				gw.render({
+					template:'crud-insert',
+					h1:'Nuevo ',
+					data:result,
+					model:mymodel
+				});
+			} else {
+				gw.render({
+					template:'crud-inserted',
+					h1:'Insertado '+result._id,
+					data:result,
+					model:mymodel
+				});
+			}
+		});
+	}))
+	.addBeam(new Beam('remove',{path:'/remove/:_id',method:'(get|post)',session:true},BeamIds,function(){
+		var gw = this;
+		mymodel.remove(gw,function(result){
+			if(!result){
+				gw.render({
+					template:'crud-error',
+					h1:'El elemento no existe'
+				});
+			} else {
+				gw.render({
+					template:'crud-removed',
+					h1:'Borrado',
+					data:result
+				});
+			}
+		});
+	}))
+	.addBeam(new Beam('api-get',{path:'/api/get/:_id',session:true},BeamIds,function(){
+		var gw = this;
+		mymodel.one(gw,function(result){
+			gw.send(result);
+		});
+	}))
+);
 
+
+server.addPillar(new Pillar({
+	id:'staticfiles',
+	title:'Static',
+	path:'',
+	template:'lib/static.jade'
+})
+	.addBeam(new Beam('css',{path:'/css/*:path',directory:'./static/css'},directory))
+	.addBeam(new Beam('file',{path:'/file/*:path',directory:'./static/file'},directory))
+	.addBeam(new Beam('img',{path:'/img/*:path',directory:'./static/img'},directory))
+	.addBeam(new Beam('js',{path:'/js/*:path',directory:'./static/js'},directory))
+);
+
+function directory(){
+	var gw = this;
+	var path = gw.beam.config.directory+(gw.params.path || '');
+	fs.stat(path, function(error, stats){
+		if(error || (!stats.isFile() && !stats.isDirectory())){
+			gw.error(404,'Not Found',error);
+		} else if(stats.isDirectory()) {
+			fs.readdir(path, function(error,files){
+				if(error){
+					gw.error(404,'Not Found',error);
+				} else {
+					gw.render({
+						h1:decodeURIComponent(gw.originalPath.replace(/\/$/,'')),
+						path:decodeURIComponent(gw.originalPath.replace(/\/$/,'')),
+						data:files
+					});
+				}
+			});
+		} else if(stats.isFile()) {
+			gw.file(path);
+		}
+	});
+}
 
 var ObjectID = require('mongodb').ObjectID;
 function BeamIds(next){
@@ -201,15 +199,7 @@ function BeamIds(next){
 	next();
 }
 
-function Msg(msg,type,details,params){
-	this.msg = msg;
-	this.type = type || "info";
-	this.details = details || "";
-	this.params = params || {};
-	this.toString = function(){
-		return '['+this.type+']'+this.msg+': '+this.details;
-	}
-}
+
 
 /* *
 var memwatch = require('memwatch');

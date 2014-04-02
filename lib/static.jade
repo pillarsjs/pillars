@@ -1,0 +1,13 @@
+include lib/layout
+
+doctype html
++layout
+	if data.length==0
+		p empty directory
+	if path!=path.replace(/[^\\\/]*$/,'')
+		a(href=path.replace(/[^\\\/]*$/,'')) ../
+	hr
+	each file, key in data
+		if !/^\./i.test(file)
+			a(href=path+'/'+file)=file
+			hr

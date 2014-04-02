@@ -21,7 +21,9 @@
     "cookie": "*",
     "mime": "*",
     "memwatch":"*",
-    "colors":"*"
+    "colors":"*",
+    "sprintf-js":"*",
+    "jshint":"*"
   },
   "readme":"www.pillarsjs.com",
   "readmeFilename": "README.md"

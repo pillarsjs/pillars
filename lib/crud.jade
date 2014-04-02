@@ -1,68 +1,53 @@
 include lib/bricks
+include lib/layout
 
 mixin crud-error()
-	a(href=pillar.link('list')) [Go to list]
+	a(href=link('main')) [Go to list]
 
 mixin crud-list()
 	if data.length==0
-		p: strong No results
+		p strong No results
 	hr
 	each doc, key in data
 		pre=util.format(doc)
-		a(href=pillar.link('update',doc._id)) [Edit this element]
-		a(href=pillar.link('one',doc._id)) [View this element]
+		a(href=link('update',doc._id)) [Edit this element]
+		a(href=link('api-get',doc._id)) [API-GET this element]
 		hr
-	a(href=pillar.link('insert')) [Insert new element]
-
-mixin crud-one
-	pre=util.format(data)
-	a(href=path.update(data._id)) [Edit this element]
-	a(href=path.list()) [Go to list]
-	a(href=path.insert()) [Insert new element]
+	a(href=link('insert')) [Insert new element]
 
 mixin crud-update
-	form(method='POST', action=pillar.link('update',data._id))
+	form(method='POST', action=link('update',data._id))
 		fieldset
 			legend=model.title
 			p.details=model.details
 			+fieldset(model,data)
 			.buttons
 				input(type='submit', value='Save')
-				input(type='submit', value='Delete', formaction=pillar.link('remove',data._id))
-				a(href=pillar.link('list')) [Go to list]
-				a(href=pillar.link('insert')) [Insert new element]
+				input(type='submit', value='Delete', formaction=link('remove',data._id))
+				a(href=link('api-get',data._id)) [API-GET this element]
+				a(href=link('main')) [Go to list]
+				a(href=link('insert')) [Insert new element]
 
 mixin crud-insert
-	form(method='POST', action=path.insert(), id=fieldIdr(panel.uname), name=panel.uname)
+	form(method='POST', action=link('insert',data._id))
 		fieldset
-			legend=panel.fields.title
-			p.details=panel.fields.details
-			+fieldset(panel.fields,panel.uname,data)
+			legend=model.title
+			p.details=model.details
+			+fieldset(model,data)
 			.buttons
 				input(type='submit', value='Save')
-				a(href=path.list()) [Go to list]
+				a(href=link('main')) [Go to list]
+
+mixin crud-inserted
+	a(href=link('update',data._id)) [Edit inserted element]
+	a(href=link('api-get',data._id)) [API-GET inserted element]
+	a(href=link('main')) [Go to list]
+	a(href=link('insert')) [Insert new element]
+
+mixin crud-removed
+	a(href=link('main')) [Go to list]
+	a(href=link('insert')) [Insert new element]
 
 doctype html
-html(lang="es")
-	head
-		title=title
-		meta(charset="UTF-8") 
-		meta(name="viewport", content="width=device-width")
-		style
-			:css
-				body {
-					padding: 10px;
-					font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-				}
-				a {
-					color: #00B7FF;
-				}
-		//link(rel='stylesheet', href='/stylesheets/style.css')
-	body
-		h1=h1
-		+notifier(msgs)
-		+#{template}
-		if trace
-		.pillar-trace
-			hr
-			pre=trace
++layout
+	+#{template}

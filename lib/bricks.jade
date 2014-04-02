@@ -1,10 +1,4 @@
 
-mixin notifier(msgs)
-	if msgs
-		ul.pillar-notifier
-		each msg, key in msgs
-			li=msg
-
 mixin fieldset(fieldset,data)
 	.pillar-fieldset
 	each field,fkey in fieldset.fields

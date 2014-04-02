@@ -1,0 +1,31 @@
+
+mixin notifier(msgs)
+	if msgs
+		ul.pillar-notifier
+		each msg, key in msgs
+			li=msg
+
+mixin layout
+	html(lang="es")
+		head
+			title=title
+			meta(charset="UTF-8") 
+			meta(name="viewport", content="width=device-width")
+			style
+				:css
+					body {
+						padding: 10px;
+						font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+					}
+					a {
+						color: #00B7FF;
+					}
+			//link(rel='stylesheet', href='/stylesheets/style.css')
+		body
+			h1=h1
+			+notifier(msgs)
+			block
+			if trace
+			.pillar-trace
+				hr
+				pre=trace
