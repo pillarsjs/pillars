@@ -1,20 +1,21 @@
 
 var util = require('util');
-var textualization = require('./lib/t12n');
-textualization.languages(['es','en']);
+var fs = require('fs');
+var textualization = require('./lib/textualization').languages(['es','en']);
 var formwork = require('./lib/formwork');
 var Pillar = require('./lib/Pillar');
 var bricks = require('./lib/bricks');
 var Beam = require('./lib/Beam');
-var templates = require('./lib/template');
-var fs = require('fs');
+var templates = require('./lib/templates');
+
 
 var server = formwork().mongodb('primera')
 
 var mymodel = new bricks.Fieldset('system',{
 	title : 'Un fieldset',
 	details : 'Completa los campos',
-	collection : 'system'
+	collection : 'system',
+	//t12n : './lib/crud.t12n'
 })
 	.addField(new bricks.Text('field1',{
 		label : 'Field1',
@@ -42,8 +43,8 @@ server.addPillar(new Pillar({
 	id:'sample-pillar',
 	title:'Configuración',
 	path:'/system',
-	template:'lib/crud.jade',
-	t12n:'./lib/crud.t12n'
+	template:'examples/crud.jade',
+	//t12n:'./lib/crud.t12n'
 })
 	.addBeam(new Beam('main',{session:true},function(){
 		var gw = this;
@@ -158,7 +159,7 @@ server.addPillar(new Pillar({
 	id:'staticfiles',
 	title:'Static',
 	path:'',
-	template:'lib/static.jade'
+	template:'templates/static.jade'
 })
 	.addBeam(new Beam('css',{path:'/css/*:path',directory:'./static/css'},directory))
 	.addBeam(new Beam('file',{path:'/file/*:path',directory:'./static/file'},directory))
