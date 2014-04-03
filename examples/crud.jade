@@ -18,15 +18,20 @@ mixin crud-list()
 mixin crud-update
 	form(method='POST', action=link('update',data._id))
 		fieldset
-			legend=model.title
-			p.details=model.details
+			- locals.depth = 0;
+			- locals.headings = 3;
+			legend
+				#{'h'+(locals.depth+locals.headings)}.text-primary=model.title
+					small=' '+model.details
 			+fieldset(model,data)
-			.buttons
-				input(type='submit', value='Save')
-				input(type='submit', value='Delete', formaction=link('remove',data._id))
-				a(href=link('api-get',data._id)) [API-GET this element]
-				a(href=link('main')) [Go to list]
-				a(href=link('insert')) [Insert new element]
+			div(style="background-color: #F7F7F7;border-top: 1px solid #BFBFBF;bottom: 0;box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);height: 80px;left: 0;padding: 10px 20px;position: fixed;width: 100%;")
+				style.
+					body{padding-bottom: 150px;}
+				input(class='btn btn-primary', type='submit', value='Save')
+				input(class='btn btn-danger', type='submit', value='Delete', formaction=link('remove',data._id))
+				+buttonlink('api-get this element', link('api-get',data._id))
+				+buttonlink('Go to list', link('main'))
+				+buttonlink('Insert new element', link('insert'))
 
 mixin crud-insert
 	form(method='POST', action=link('insert',data._id))

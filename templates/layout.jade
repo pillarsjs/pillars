@@ -1,31 +1,35 @@
 
 mixin notifier(msgs)
 	if msgs
-		ul.pillar-notifier
+		ul.notifier
 		each msg, key in msgs
 			li=msg
+
+mixin trace(trace)
+	if trace
+		.trace
+			hr
+			pre=trace
 
 mixin layout
 	html(lang="es")
 		head
 			title=title
-			meta(charset="UTF-8") 
-			meta(name="viewport", content="width=device-width")
-			style
-				:css
-					body {
-						padding: 10px;
-						font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-					}
-					a {
-						color: #00B7FF;
-					}
-			//link(rel='stylesheet', href='/stylesheets/style.css')
+			meta(charset="utf-8")
+			meta(http-equiv='X-UA-Compatible', content='IE=edge')
+			meta(name="viewport", content="width=device-width, initial-scale=1")
+			link(rel='stylesheet', href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css')
+			//link(rel='stylesheet', href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css')
+
 		body
-			h1=h1
-			+notifier(msgs)
-			block
-			if trace
-			.pillar-trace
-				hr
-				pre=trace
+			#space.container
+				header#header
+					h1=h1
+				#page
+					+notifier(msgs)
+					block
+					+trace(trace)
+				footer#footer
+			script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.4/angular.min.js')
+			script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
+			script(src='//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js')

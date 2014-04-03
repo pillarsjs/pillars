@@ -1,6 +1,9 @@
 
+mixin buttonlink(value,link)
+	input(class='btn btn-default', type='button', value=value, onclick="window.location.href='"+link+"'")
+
 mixin fieldset(fieldset,data)
-	.pillar-fieldset
+	.form-horizontal
 		each field,fkey in fieldset.fields
 			- fname = fieldset.id+"["+fkey+"]";
 			- fid = fieldIdr(fname);
@@ -12,27 +15,33 @@ mixin fieldset(fieldset,data)
 
 mixin subset(field,name,id,data)
 	fieldset.pillar-subset
-		legend=field.label
-		p.pillar-field-details=field.details
+		- locals.depth++;
+		legend
+			#{'h'+(locals.depth+locals.headings)}.text-primary=field.label
+				small=' '+field.details
 		each sfield,fkey in field.fields
 			- var fname = name+"["+fkey+"]";
 			- var fid = fieldIdr(fname);
 			- var fdata = data[fkey] || "";
 			+field(sfield,fname,fid,fdata)
+		- locals.depth--;
 
 mixin list(field,name,id,data)
-	.pillar-list
-		label(for=fieldid)=field.label
-		p.pillar-list-details=field.details
-		- counter = 0;
-		each li,likey in data
-			if likey!='radio' && likey!='check'
-				- if(!data[likey]){data[likey]={};}
-				- var fdata = data[likey] || "";
-				+list-item(field,name,id,fdata,data['radio'],data['check'],counter)
-				- counter++;
+	.form-group
+		- locals.depth++;
+		label(class="control-label col-sm-2",for=fieldid)=field.label
+		div(class="container col-sm-10",style="background-color: #F7F7F7;border-radius: 20px;padding: 20px 25px;")
+			p(class="help-block")=field.details
+			- counter = 0;
+			each li,likey in data
+				if likey!='radio' && likey!='check'
+					- if(!data[likey]){data[likey]={};}
+					- var fdata = data[likey] || "";
+					+list-item(field,name,id,fdata,data['radio'],data['check'],counter)
+					- counter++;
 
-		+list-item(field,name,id,'',data['radio'],data['check'],counter,true)
+			+list-item(field,name,id,'',data['radio'],data['check'],counter,true)
+			- locals.depth--;
 
 mixin list-item-buttons(field,name,radio,check,counter)
 	- var fname = name+"[radio]";
@@ -45,12 +54,15 @@ mixin list-item(field,name,id,data,radio,check,counter,insert)
 	fieldset(class='pillar-list-item',disabled=insert)
 		if !insert
 			legend
-				+list-item-buttons(field,name,radio,check,counter)
-				= field.items.label
-			p.pillar-list-item-details=field.items.details
+				#{'h'+(locals.depth+locals.headings)}.text-primary
+					+list-item-buttons(field,name,radio,check,counter)
+					= field.items.label
+					small=' '+field.items.details
 		else
-			legend=field.insert.label
-			p.pillar-list-item-details=field.insert.details
+			legend
+				#{'h'+(locals.depth+locals.headings)}.text-primary
+					= field.items.label
+					small=' '+field.items.details
 
 		each sfield,fkey in field.fields
 			- var fname = name+"["+counter+"]"+"["+fkey+"]";
@@ -59,13 +71,14 @@ mixin list-item(field,name,id,data,radio,check,counter,insert)
 			+field(sfield,fname,fid,fdata)
 
 mixin field(field,name,id,data)
-	.pillar-field
-		label(for=fieldid)=field.label
-		if field.i18n
-			+field-i18n(field,name,id,data)
-		else
-			+#{field.template}(field,name,id,data)
-		p.pillar-field-details=field.details
+	.form-group
+		label(class="control-label col-sm-2",for=fieldid)=field.label
+		div(class="col-sm-10")
+			if field.i18n
+				+field-i18n(field,name,id,data)
+			else
+				+#{field.template}(field,name,id,data)
+			p.help-block=field.details
 
 mixin field-i18n(field,name,id,data)
 	.pillar-langfields
@@ -80,9 +93,9 @@ mixin field-i18n(field,name,id,data)
 			+#{field.template}(field,fname,fid,fdata,classes)
 
 mixin text(field,name,id,data,classes)
-	input(type='text', class=classes, class=['pillar-input','pillar-input-text'], id=id, name=name, value=data)
+	input(type='text', class=classes, class=['form-control','field-text'], id=id, name=name, value=data)
 
 mixin textarea(field,name,id,data,classes)
-	textarea(class=classes, class=['pillar-input','pillar-input-textarea'], id=id, name=name)=data
+	textarea(class=classes, class=['form-control','field-textarea'], id=id, name=name)=data
 
 

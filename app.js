@@ -14,7 +14,7 @@ var server = formwork().mongodb('primera')
 textualization.load('crud-example','examples/crud.t12n');
 
 var mymodel = new bricks.Fieldset('system',{
-	title : 'Un fieldset',
+	title : 'Formulario',
 	details : 'Completa los campos',
 	collection : 'system',
 	//t12n : './lib/crud.t12n'
