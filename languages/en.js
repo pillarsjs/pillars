@@ -18,36 +18,38 @@
 	}
 },
 'server':{
-	'error':"Server error on %(hostname)s:%(port)s",
-	'listening':"Server listening on %(hostname)s:%(port)s",
-	'closed':"Server closed on %(hostname)s:%(port)s",
-	'socket-closed': "%(poolid)s Socket closed",
-	'socket-open': "%(poolid)s Socket open",
+	'error':"Server error ".red+"%(hostname)s:%(port)s".yellow,
+	'listening':"Server listening on ".green+"%(hostname)s:%(port)s".yellow,
+	'closed':"Server closed ".red+"%(hostname)s:%(port)s".yellow+" %(timer)sm".grey,
+	'socket-closed': "%(poolid)s".magenta+" Socket closed".red+" %(timer)sm".grey,
+	'socket-open': "%(poolid)s".magenta+" Socket open".green,
 	'database':{
-		'connection-ok':"Database '%(dbname)s' connected on %(url)s:%(port)s",
-		'connection-error':"Database '%(dbname)s' error on %(url)s:%(port)s"
+		'connection-ok':"Database ".green+"'%(dbname)s'".yellow+" connected on ".green+"%(url)s:%(port)s".yellow,
+		'connection-error':"Error on database ".red+"'%(dbname)s'".yellow+" on ".red+"%(url)s:%(port)s".yellow
 	}
 },
 'textualization':{
 	'langs':function(){
 		if(langs && langs.length>0){
-			return "Textualization languages: "+langs.join(',');
+			return "Avaliable textualization languages: ".cyan+langs.join(',').yellow;
 		} else {
-			return "Textualization languages empty";
+			return "No exist textualization languages".cyan;
 		}
 	},
-	'load-ok':"Textualization sheet loaded for domain:'%(domain)s', path:'%(path)s', locale:'%(locale)s'",
-	'load-error':"Textualization sheet fail load for domain:'%(domain)s', path:'%(path)s', locale:'%(locale)s'"
+	'load-ok':"Textualization sheet loaded ".cyan+"(%(count)s nodos)".yellow+" for domain: ".cyan+"%(domain)s".yellow+", path: ".cyan+"'%(path)s'".yellow+", lenguage: ".cyan+"%(lang)s".yellow,
+	'load-error':"Textualization sheet load error for domain: ".red+"%(domain)s".yellow+" , path: ".red+"'%(path)s'".yellow+", lenguage: ".red+"%(lang)s".yellow,
+	'heap-rewrite':"Textualization node overwrite ".red+"'%(element)s'".yellow+" for domain: ".red+"%(domain)s".yellow+", language: ".red+"%(lang)s".yellow
 },
 'templates':{
-	'cache-ok':"Template '%(path)s' loaded",
-	'cache-error':"Fail on load template '%(path)s'"
+	'cache-ok':"Template ".cyan+"'%(path)s'".yellow+" loaded".cyan,
+	'cache-error':"Template load error ".red+"'%(path)s'".yellow
 },
 'gangway':{
 	'unlinktemp':{
-		'ok':"Temp 'file %(file)s' deleted",
-		'error':"Fail on delete temp file '%(file)s'"
+		'ok':"Temp file %(file)s' deleted".green.inverse.white,
+		'error':"Delete temp file error '%(file)s'".red.inverse.white
 	},
+	'close':"%(poolid)s %(id)s".magenta+" %(method)s:".cyan+" %(path)s".white+" [%(code)s]".cyan+"  %(size)sbytes %(timer)sms".grey,
 	'error':{
 		'h1':"Error %(code)s %(explain)s"
 	}

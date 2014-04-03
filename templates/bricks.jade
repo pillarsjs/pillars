@@ -1,22 +1,14 @@
 
 mixin fieldset(fieldset,data)
 	.pillar-fieldset
-	each field,fkey in fieldset.fields
-		- fname = fieldset.id+"["+fkey+"]";
-		- fid = fieldIdr(fname);
-		- fdata = data[fkey] || "";
-		+field(field,fname,fid,fdata)
-
-mixin array(field,name,id,data)
-	fieldset.pillar-array
-		legend=field.label
-		p.pillar-field-details=field.details
-		each adata,dkey in data
-			each sfield,fkey in field.fields
-				- var fname = name+"["+dkey+"]["+fkey+"]";
-				- var fid = fieldIdr(fname);
-				- var fdata = adata[fkey] || "";
-				+field(sfield,fname,fid,fdata)
+		each field,fkey in fieldset.fields
+			- fname = fieldset.id+"["+fkey+"]";
+			- fid = fieldIdr(fname);
+			- fdata = data[fkey] || "";
+			if field.template=='subset' || field.template=='list' 
+				+#{field.template}(field,fname,fid,fdata)
+			else
+				+field(field,fname,fid,fdata)
 
 mixin subset(field,name,id,data)
 	fieldset.pillar-subset
@@ -24,6 +16,44 @@ mixin subset(field,name,id,data)
 		p.pillar-field-details=field.details
 		each sfield,fkey in field.fields
 			- var fname = name+"["+fkey+"]";
+			- var fid = fieldIdr(fname);
+			- var fdata = data[fkey] || "";
+			+field(sfield,fname,fid,fdata)
+
+mixin list(field,name,id,data)
+	.pillar-list
+		label(for=fieldid)=field.label
+		p.pillar-list-details=field.details
+		- counter = 0;
+		each li,likey in data
+			if likey!='radio' && likey!='check'
+				- if(!data[likey]){data[likey]={};}
+				- var fdata = data[likey] || "";
+				+list-item(field,name,id,fdata,data['radio'],data['check'],counter)
+				- counter++;
+
+		+list-item(field,name,id,'',data['radio'],data['check'],counter,true)
+
+mixin list-item-buttons(field,name,radio,check,counter)
+	- var fname = name+"[radio]";
+	- var fid = fieldIdr(fname);
+	- var checked = false;
+	- if(radio==counter){var checked=true;}
+	input(type='radio', class=['pillar-list-radio','pillar-input-radio'], id=fid, name=fname, value=counter,checked=checked)
+
+mixin list-item(field,name,id,data,radio,check,counter,insert)
+	fieldset(class='pillar-list-item',disabled=insert)
+		if !insert
+			legend
+				+list-item-buttons(field,name,radio,check,counter)
+				= field.items.label
+			p.pillar-list-item-details=field.items.details
+		else
+			legend=field.insert.label
+			p.pillar-list-item-details=field.insert.details
+
+		each sfield,fkey in field.fields
+			- var fname = name+"["+counter+"]"+"["+fkey+"]";
 			- var fid = fieldIdr(fname);
 			- var fdata = data[fkey] || "";
 			+field(sfield,fname,fid,fdata)
@@ -39,13 +69,15 @@ mixin field(field,name,id,data)
 
 mixin field-i18n(field,name,id,data)
 	.pillar-langfields
-	each lang in langlist
-		- var fname = name+'['+lang+']';
-		- var fid = fieldIdr(fname);
-		- var fdata = data[lang] || "";
-		- var classes = "";
-		- if(defaultlang==lang){var classes = ['defaultlang'];}
-		+#{field.template}(field,fname,fid,fdata,classes)
+		each lang in gw.textualization.langs
+			- var fname = name+'['+lang+']';
+			- var fid = fieldIdr(fname);
+			- var fdata = data[lang] || "";
+			- var classes = [];
+			- classes.push('lang-'+lang);
+			- if(gw.language==lang){classes.push('lang-active');}
+			- if(gw.textualization.langs[0]==lang){classes.push('lang-default');}
+			+#{field.template}(field,fname,fid,fdata,classes)
 
 mixin text(field,name,id,data,classes)
 	input(type='text', class=classes, class=['pillar-input','pillar-input-text'], id=id, name=name, value=data)

@@ -11,6 +11,8 @@ var templates = require('./lib/templates');
 
 var server = formwork().mongodb('primera')
 
+textualization.load('crud-example','examples/crud.t12n');
+
 var mymodel = new bricks.Fieldset('system',{
 	title : 'Un fieldset',
 	details : 'Completa los campos',
@@ -29,9 +31,33 @@ var mymodel = new bricks.Fieldset('system',{
 		label : 'Reverse',
 		details : 'Este va invertido en la bdd'
 	}))
+	.addField(new bricks.List('list',{
+		label : 'listado',
+		details : 'esto es un listado',
+		radio : true,
+		check : true,
+		items : {
+			label : 'Elemento de lista',
+			details : 'Esto es repetitivo'
+		},
+		insert : {
+			label : 'Nuevo elemento',
+			details : 'Añade mas cosas a la lista'	
+		}
+	})
+		.addField(new bricks.Text('field2',{
+			label : 'Field2',
+			details : 'Rellena este campo...'
+		}))
+		.addField(new bricks.Reverse('reverse',{
+			label : 'Reverse',
+			details : 'Este va invertido en la bdd'
+		}))
+	)
 	.addField(new bricks.Textarea('textarea',{
 		label : 'Textarea i18n',
-		details : 'Un campo internacional'
+		details : 'Un campo internacional',
+		i18n : true
 	}))
 	.addField(new bricks.Text('field3',{
 		label : 'Field3',
@@ -44,7 +70,7 @@ server.addPillar(new Pillar({
 	title:'Configuración',
 	path:'/system',
 	template:'examples/crud.jade',
-	//t12n:'./lib/crud.t12n'
+	//t12n:'examples/crud.t12n'
 })
 	.addBeam(new Beam('main',{session:true},function(){
 		var gw = this;
@@ -103,8 +129,7 @@ server.addPillar(new Pillar({
 					template:'crud-update',
 					h1:'Editando '+result._id,
 					data:result,
-					model:mymodel,
-					trace:util.format(gw.pillar.beams)
+					model:mymodel
 				});
 			}
 		});

@@ -18,70 +18,39 @@
 	}
 },
 'server':{
-	'error':"Error en el servidor %(hostname)s:%(port)s",
-	'listening':"Servidor escuchando en %(hostname)s:%(port)s",
-	'closed':"Servidor detenido %(hostname)s:%(port)s",
-	'socket-closed': "%(poolid)s Socket cerrado",
-	'socket-open': "%(poolid)s Socket abierto",
+	'error':"Error en el servidor ".red+"%(hostname)s:%(port)s".yellow,
+	'listening':"Servidor escuchando en ".green+"%(hostname)s:%(port)s".yellow,
+	'closed':"Servidor detenido ".red+"%(hostname)s:%(port)s".yellow+" %(timer)sm".grey,
+	'socket-closed': "%(poolid)s".magenta+" Socket cerrado".red+" %(timer)sm".grey,
+	'socket-open': "%(poolid)s".magenta+" Socket abierto".green,
 	'database':{
-		'connection-ok':"Base de datos '%(dbname)s' connectada en %(url)s:%(port)s",
-		'connection-error':"Error en la base de datos '%(dbname)s' en %(url)s:%(port)s"
+		'connection-ok':"Base de datos ".green+"'%(dbname)s'".yellow+" connectada en ".green+"%(url)s:%(port)s".yellow,
+		'connection-error':"Error en la base de datos ".red+"'%(dbname)s'".yellow+" en ".red+"%(url)s:%(port)s".yellow
 	}
 },
 'textualization':{
 	'langs':function(){
 		if(langs && langs.length>0){
-			return "Lenguajes de textualización habilitados: "+langs.join(',');
+			return "Lenguajes de textualización habilitados: ".cyan+langs.join(',').yellow;
 		} else {
-			return "No existen lenguajes habilitados para textualización";
+			return "No existen lenguajes habilitados para textualización".cyan;
 		}
 	},
-	'load-ok':"Hoja de textualización cargada para el dominio:'%(domain)s', ruta:'%(path)s', lenguaje:'%(locale)s'",
-	'load-error':"Error al carga la hoja de textualización para el dominio:'%(domain)s', ruta:'%(path)s', lenguaje:'%(locale)s'"
+	'load-ok':"Hoja de textualización cargada ".cyan+"(%(count)s nodos)".yellow+" para el dominio: ".cyan+"%(domain)s".yellow+", ruta: ".cyan+"'%(path)s'".yellow+", lenguaje: ".cyan+"%(lang)s".yellow,
+	'load-error':"Error al carga la hoja de textualización para el dominio: ".red+"%(domain)s".yellow+" , ruta: ".red+"'%(path)s'".yellow+", lenguaje: ".red+"%(lang)s".yellow,
+	'heap-rewrite':"Nodo de textualización sobrescrito ".red+"'%(element)s'".yellow+" en el dominio: ".red+"%(domain)s".yellow+", languaje: ".red+"%(lang)s".yellow
 },
 'templates':{
-	'cache-ok':"Plantilla '%(path)s' cargada",
-	'cache-error':"Error al cargar la plantilla '%(path)s'"
+	'cache-ok':"Plantilla ".cyan+"'%(path)s'".yellow+" cargada".cyan,
+	'cache-error':"Error al cargar la plantilla ".red+"'%(path)s'".yellow
 },
 'gangway':{
 	'unlinktemp':{
-		'ok':"Archivo temporal %(file)s' borrado",
-		'error':"Error al borrar el archivo temporal '%(file)s'"
+		'ok':"Archivo temporal %(file)s' borrado".green.inverse.white,
+		'error':"Error al borrar el archivo temporal '%(file)s'".red.inverse.white
 	},
+	'close':"%(poolid)s %(id)s".magenta+" %(method)s:".cyan+" %(path)s".white+" [%(code)s]".cyan+"  %(size)sbytes %(timer)sms".grey,
 	'error':{
 		'h1':"Error %(code)s %(explain)s, disculpe las molestias"
 	}
-},
-general:{
-	welcome:{ // genre, num
-		'genre=="female" && num==1':'Bienvenida',
-		'genre=="female"':'Bienvenidas todas vosotras que sois %(num)s',
-		'num>1':'Bienvenidos',
-		'default':'Bienvenido'
-	},
-	goobye:{ // genre, num
-		'genre=="female" && num==1':'Chao chica',
-		'genre=="female"':'Chao %(num)s chicas',
-		'num>1':'chao tios',
-		'default':'chao tio'
-	},
-	logout:"Salir y cerrar sesión",
-	error:"Ha ocurrido un error: %(error)s",
-	you_have_new_messages:["Tienes un mensaje nuevo","Tienes %s mensajes nuevos"],
-	actionbutton:function(){ // context, action, num
-		if(context=="post"){
-			if(action=="new"){
-				if(num==1){
-					return "Crear un Post";
-				} else if(num>1){
-					return "Crear %(num)s Posts";
-				}
-			}
-		}
-		return "Unknow context";
-	}
-},
-"clasical basic":"Formato clasico",
-"clasical %s here %s ...":"%s clasica aqui %s ...",
-"You have 1 message":["Tienes un mensaje","Tienes %s mensajes"],
-"You no have messages":["No tienes mensajes","Tienes un mensaje","Tienes %s mensajes"]
+}
