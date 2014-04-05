@@ -34,8 +34,6 @@ var mymodel = new bricks.Fieldset('system',{
 	.addField(new bricks.List('list',{
 		label : 'listado',
 		details : 'esto es un listado',
-		radio : true,
-		check : true,
 		items : {
 			label : 'Elemento de lista',
 			details : 'Esto es repetitivo'
@@ -174,7 +172,26 @@ server.addPillar(new Pillar({
 	.addBeam(new Beam('api-get',{path:'/api/get/:_id',session:true},BeamIds,function(){
 		var gw = this;
 		mymodel.one(gw,function(result){
-			gw.send(result);
+			gw.send({
+				msgs:gw.msgs,
+				data:result
+			});
+		});
+	}))
+	.addBeam(new Beam('api-update',{path:'/api/update/:_id',method:'post',session:true},BeamIds,function(){
+		var gw = this;
+		mymodel.update(gw,function(result){
+			if(!result){
+				gw.send({
+					msgs:gw.msgs,
+					data:false
+				});
+			} else {
+				gw.send({
+					msgs:gw.msgs,
+					data:result
+				});
+			}
 		});
 	}))
 );
