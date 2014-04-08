@@ -1,19 +1,59 @@
 .form-progressbar {
+  -webkit-transition: all linear 0.5s;
+  transition: all linear 0.5s;
   position: fixed;
   top: 0;
   left: 0;
-  bottom: 0;
-  right: 0;
-  width: auto;
-  height: auto;
-  background-color: rgba(255, 255, 255, 0.5);
+  width: 100%;
+  height: 100%;
+  background-color: #f7f7f7;
   z-index: 1000;
+  opacity: 1;
+  display: block!important;
+}
+.form-progressbar .progress {
+  border-color: #888888 #FEFEFE #FEFEFE #888888;
+  border-radius: 2px;
+  border-style: solid;
+  border-width: 1px;
+  box-shadow: 0 10px 40px 4px rgba(0, 0, 0, 0.2);
+  height: 20px;
+  margin: -20px 25% 0;
+  overflow: hidden;
+  position: relative;
+  top: 50%;
+}
+.form-progressbar .progress .progress-bar {
+  box-shadow: 0 -10px 2px rgba(255, 255, 255, 0.1) inset;
+}
+.form-progressbar.ng-hide {
+  opacity: 0;
+  z-index: -1;
+}
+.form-progressbar.ng-show {
+  opacity: 1;
+}
+.form-horizontal {
+  max-width: 750px;
+}
+.form-group {
+  margin-bottom: 5px;
+}
+.list-container {
+  background-color: #F7F7F7;
+  border-radius: 20px;
+  box-shadow: 0 0px 3px rgba(0, 0, 0, 0.15) inset;
+  margin: 10px 0 20px;
+  padding: 20px 25px;
 }
 .navbar-fixed-bottom {
   background-color: #F7F7F7;
   border-top: 1px solid #BFBFBF;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   padding: 0 20px;
+}
+.table td pre {
+  white-space: pre-wrap;
 }
 body {
   padding-bottom: 150px;

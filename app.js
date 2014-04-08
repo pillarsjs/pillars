@@ -18,14 +18,19 @@ var mymodel = new bricks.Fieldset('system',{
 	details : 'Completa los campos',
 	collection : 'system',
 	//t12n : './lib/crud.t12n'
+	headers : [
+		{id: '_id',label: 'Identificador'},
+		{id: 'field1',label: 'Field1'},
+		{id: 'field2',label: 'Field2'},
+		{id: 'reverse',label: 'Reverse'}
+	]
 })
 	.addField(new bricks.Text('field1',{
 		label : 'Field1',
 		details : 'Rellena este campo...'
 	}))
 	.addField(new bricks.Text('field2',{
-		label : 'Field2',
-		details : 'Rellena este campo...'
+		label : 'Field2'
 	}))
 	.addField(new bricks.Reverse('reverse',{
 		label : 'Reverse',
@@ -55,7 +60,12 @@ var mymodel = new bricks.Fieldset('system',{
 	.addField(new bricks.Textarea('textarea',{
 		label : 'Textarea i18n',
 		details : 'Un campo internacional',
-		i18n : true
+		i18n : true,
+		validations : {
+			"Debe contener al menos 5 caracteres":function(value){
+				if(value && value.length>=5){return true;}
+			}
+		}
 	}))
 	.addField(new bricks.Text('field3',{
 		label : 'Field3',
@@ -72,126 +82,60 @@ server.addPillar(new Pillar({
 })
 	.addBeam(new Beam('main',{session:true},function(){
 		var gw = this;
+		gw.render({
+			h1:'Administración de cosas',
+			model:mymodel,
+			//trace:util.format(gw)
+		});
+	}))
+	.addBeam(new Beam('search',{path:'/api',session:true},BeamIds,function(){
+		var gw = this;
 		mymodel.list(gw,function(result){
-
-
-			var timetag = ('TranslationTime').cyan;console.time(timetag);
-			var translations = [
-				gw.t12n("general.actionbutton",{context:'post',action:'new',num:5}),
-				gw.t12n("general.actionbutton",{context:'post',action:'new',num:1}),
-				gw.t12n("general.welcome",{genre:'female',num:3}),
-				gw.t12n("general.welcome",{num:2}),
-				gw.t12n("general.goobye",{genre:'female',num:3}),
-				gw.t12n("general.logout"),
-				gw.t12n("general.error",{error:'crashhhh!!!'}),
-				gw.t12n("general.you_have_new_messages",0),
-				gw.t12n("general.you_have_new_messages",1),
-				gw.t12n("general.you_have_new_messages",20),
-				gw.t12n("general.noexist",2),
-				gw.t12nc(["clasical basic"]),
-				gw.t12nc(["clasical %s here %s ..."],["Translation","now"]),
-				gw.t12nc(["You have 1 mail","You have %s mails"],[0]),
-				gw.t12nc(["You have 1 mail","You have %s mails"],[1]),
-				gw.t12nc(["You have 1 mail","You have %s mails"],[30]),
-				gw.t12nc("You have 1 message",[0]),
-				gw.t12nc("You have 1 message",[1]),
-				gw.t12nc("You have 1 message",[30]),
-				gw.t12nc(["You no have mails","You have 1 mail","You have %s mails"],[0]),
-				gw.t12nc(["You no have mails","You have 1 mail","You have %s mails"],[1]),
-				gw.t12nc(["You no have mails","You have 1 mail","You have %s mails"],[18]),
-				gw.t12nc("You no have messages",0),
-				gw.t12nc("You no have messages",1),
-				gw.t12nc("You no have messages",18)
-			];
-			console.timeEnd(timetag);
-
-
-			gw.render({
-				template:'crud-list',
-				h1:'listado',
-				data:result,
-				trace:util.format(translations)
-			});
-		});
-	}))
-	.addBeam(new Beam('update',{path:'/edit/:_id',method:'(get|post)',session:true},BeamIds,function(){
-		var gw = this;
-		mymodel.update(gw,function(result){
-			if(!result){
-				gw.render({
-					template:'crud-error',
-					h1:'El elemento no existe'
-				});
-			} else {
-				gw.render({
-					template:'crud-update',
-					h1:'Editando '+result._id,
-					data:result,
-					model:mymodel
-				});
-			}
-		});
-	}))
-	.addBeam(new Beam('insert',{path:'/new',method:'(get|post)',session:true},BeamIds,function(){
-		var gw = this;
-		mymodel.insert(gw,function(result){
-			if(!result._id){
-				gw.render({
-					template:'crud-insert',
-					h1:'Nuevo ',
-					data:result,
-					model:mymodel
-				});
-			} else {
-				gw.render({
-					template:'crud-inserted',
-					h1:'Insertado '+result._id,
-					data:result,
-					model:mymodel
-				});
-			}
-		});
-	}))
-	.addBeam(new Beam('remove',{path:'/remove/:_id',method:'(get|post)',session:true},BeamIds,function(){
-		var gw = this;
-		mymodel.remove(gw,function(result){
-			if(!result){
-				gw.render({
-					template:'crud-error',
-					h1:'El elemento no existe'
-				});
-			} else {
-				gw.render({
-					template:'crud-removed',
-					h1:'Borrado',
-					data:result
-				});
-			}
-		});
-	}))
-	.addBeam(new Beam('api-get',{path:'/api/get/:_id',session:true},BeamIds,function(){
-		var gw = this;
-		mymodel.one(gw,function(result){
 			gw.send({
 				msgs:gw.msgs,
+				validations:gw.validations,
 				data:result
 			});
 		});
 	}))
-	.addBeam(new Beam('api-update',{path:'/api/update/:_id',method:'post',session:true},BeamIds,function(){
+	.addBeam(new Beam('get',{path:'/api/:_id',session:true},BeamIds,function(){
+		var gw = this;
+		mymodel.one(gw,function(result){
+			gw.send({
+				msgs:gw.msgs,
+				validations:gw.validations,
+				data:result
+			});
+		});
+	}))
+	.addBeam(new Beam('update',{path:'/api/:_id',method:'put',session:true},BeamIds,function(){
 		var gw = this;
 		mymodel.update(gw,function(result){
-			if(!result){
-				gw.send({
-					msgs:gw.msgs,
-					data:false
-				});
-			} else {
-				gw.send({
-					msgs:gw.msgs,
-					data:result
-				});
-			}
+			gw.send({
+				msgs:gw.msgs,
+				validations:gw.validations,
+				data:result
+			});
+		});
+	}))
+	.addBeam(new Beam('insert',{path:'/api',method:'post',session:true},BeamIds,function(){
+		var gw = this;
+		mymodel.insert(gw,function(result){
+			gw.send({
+				msgs:gw.msgs,
+				validations:gw.validations,
+				data:result
+			});
+		});
+	}))
+	.addBeam(new Beam('remove',{path:'/api/:_id',method:'delete',session:true},BeamIds,function(){
+		var gw = this;
+		mymodel.remove(gw,function(result){
+			gw.send({
+				msgs:gw.msgs,
+				validations:gw.validations,
+				data:result
+			});
 		});
 	}))
 );
@@ -242,7 +186,39 @@ function BeamIds(next){
 	next();
 }
 
+/*
 
+var timetag = ('TranslationTime').cyan;console.time(timetag);
+var translations = [
+	gw.t12n("general.actionbutton",{context:'post',action:'new',num:5}),
+	gw.t12n("general.actionbutton",{context:'post',action:'new',num:1}),
+	gw.t12n("general.welcome",{genre:'female',num:3}),
+	gw.t12n("general.welcome",{num:2}),
+	gw.t12n("general.goobye",{genre:'female',num:3}),
+	gw.t12n("general.logout"),
+	gw.t12n("general.error",{error:'crashhhh!!!'}),
+	gw.t12n("general.you_have_new_messages",0),
+	gw.t12n("general.you_have_new_messages",1),
+	gw.t12n("general.you_have_new_messages",20),
+	gw.t12n("general.noexist",2),
+	gw.t12nc(["clasical basic"]),
+	gw.t12nc(["clasical %s here %s ..."],["Translation","now"]),
+	gw.t12nc(["You have 1 mail","You have %s mails"],[0]),
+	gw.t12nc(["You have 1 mail","You have %s mails"],[1]),
+	gw.t12nc(["You have 1 mail","You have %s mails"],[30]),
+	gw.t12nc("You have 1 message",[0]),
+	gw.t12nc("You have 1 message",[1]),
+	gw.t12nc("You have 1 message",[30]),
+	gw.t12nc(["You no have mails","You have 1 mail","You have %s mails"],[0]),
+	gw.t12nc(["You no have mails","You have 1 mail","You have %s mails"],[1]),
+	gw.t12nc(["You no have mails","You have 1 mail","You have %s mails"],[18]),
+	gw.t12nc("You no have messages",0),
+	gw.t12nc("You no have messages",1),
+	gw.t12nc("You no have messages",18)
+];
+console.timeEnd(timetag);
+
+*/
 
 /* *
 var memwatch = require('memwatch');

@@ -1,13 +1,44 @@
-//angular.module('crudNg', ['ngRoute'])
-angular.module('crudNg',[])
-	/*
+angular.module('Pillars', ['ngRoute'])
+//angular.module('crudNg',[])
+	.factory('$loader', ['$rootScope', function ($rootScope) {
+
+		var loader = new xhrLoader();
+
+		loader.start = function(){
+			$rootScope.loading=true;// Sync
+		};
+		loader.sending = function(percent){
+			$rootScope.sending=percent;
+			$rootScope.$digest();
+		};
+		loader.receiving = function(percent){
+			$rootScope.receiving=percent;
+			$rootScope.$digest();
+		};
+		loader.fail = function(){
+			console.log("Request error");
+		};
+		loader.end = function(){
+			console.log("Request complete",loader.xhr.status,loader.xhr.statusText);
+			console.log(loader.xhr.json);
+			$rootScope.msgs=[];
+			if($rootScope.lostmsgs){$rootScope.msgs = $rootScope.lostmsgs;$rootScope.lostmsgs=false;}
+			$rootScope.msgs = $rootScope.msgs.concat(loader.xhr.json.msgs || []);
+			$rootScope.loading=false;
+			$rootScope.$apply();
+			loader.data(loader.xhr);
+		};
+
+		return loader;
+
+	}])
 	.config(function($routeProvider) {
 		$routeProvider
 			.when('/', {
 				controller:'crudList',
 				templateUrl:'crud-list.html'
 			})
-			.when('/edit/:projectId', {
+			.when('/edit/:_id', {
 				controller:'crudUpdate',
 				templateUrl:'crud-update.html'
 			})
@@ -19,281 +50,145 @@ angular.module('crudNg',[])
 				redirectTo:'/'
 			});
 	})
-	*/
-	.factory('xhr', ['$rootScope', function ($rootScope) {
-		return function($scope,method, url){
-			$scope.sending=1;
-			var xhr = new XMLHttpRequest();
-			xhr.addEventListener("loadstart", function(){
-				console.log("Request started");
-			},false);
-			xhr.addEventListener("progress", function(e){
-				if (e.lengthComputable) {
-					$scope.$apply(function () {
-						$scope.sending = Math.round(e.loaded / e.total);
-					});
-				}
-				console.log("Request progress",$scope.sending+"%");
-			},false);
-			xhr.addEventListener("load", function(){
-				$scope.$apply(function () {
-					$scope.sending = 100;
-				});
-				console.log("Request complete",xhr.status,xhr.statusText);
-				if(xhr.status==200){
-					if(xhr.response.msgs){
-						console.log("msgs:",xhr.response.msgs);
-					}
-					if(xhr.response.data){
-						console.log("data:",xhr.response.data);
-						$scope.$apply(function () {
-							$scope.system = xhr.response.data;
-							$scope.sending=0;
-						});
-					}
-				}
-
-			},false);
-			xhr.addEventListener("error", function(){
-				console.log("Request error");
-			},false);
-			xhr.addEventListener("abort",function(){
-				console.log("Request aborted");
-			},false);
-			xhr.upload.addEventListener("progress", function(e){
-				if (e.lengthComputable) {
-					$scope.sending = Math.round(e.loaded / e.total);
-				}
-				console.log("Upload progress",$scope.sending+"%");
-			}, false);
-			xhr.upload.addEventListener("load", function(){
-				console.log("Upload complete");
-			}, false);
-			xhr.upload.addEventListener("error", function(){
-				console.log("Upload error");
-			}, false);
-			xhr.upload.addEventListener("abort", function(){
-				console.log("Upload aborted");
-			}, false);
-			xhr.open(method, url, true)
-			return xhr;
-		};
-	}])
-	.service('crudActions', function (xhr) {
-		this.list = function () {
-		} 
-		this.update = function (form,method,url,upload) {
-			openedxhr = xhr.open(method, url);
-			openedxhr.responseType="json";
-			var formData = false;
-			if(upload){
-				formData = new FormData(form);
+	.controller('crudList', function($rootScope, $scope,$loader, $location, $routeParams) {
+		$scope.data = {};
+		$loader.data = function(xhr){
+			if(xhr.json.data===true){
+				$rootScope.lostmsgs = xhr.json.msgs;
+				$loader.send('get','http://localhost:3000/system/api',false,false);
 			} else {
-				formData=$(form).serialize();
-				openedxhr.setRequestHeader("Content-Type", "application\/x-www-form-urlencoded");
+				$scope.data = xhr.json.data || false;
+				$scope.$apply();
 			}
-			openedxhr.send(formData);
-		}
-		this.insert = function (data) {
-		}
-		this.get = function ($scope,url) {
-			var ohxr = xhr($scope,'get', url, true);
-			ohxr.responseType="json";
-			ohxr.send();
-		}
-		this.delete = function (id) {
-		}
-	})
-	.controller('crudUpdate', function($scope,crudActions) {
-		$scope.sending=0;
-		$scope.system = {};
-
-		crudActions.get($scope,'http://localhost:3000/system/api/get/531769aaefe6c71a34ae3418');
-		$scope.addListItem = function(list){
-			list.push({});
 		};
-		$scope.sendForm = function(method,url,upload){
-			crudActions.update(crudUpdateForm,method,url,upload);
+
+		$loader.send('get','http://localhost:3000/system/api',false,false);
+
+		$scope.removeElement = function(id){
+			$loader.send('delete','http://localhost:3000/system/api/'+id,false,false);
+		}
+	})
+	.controller('crudUpdate', function($rootScope, $scope, $loader, $location, $routeParams) {
+		$scope.data = {};
+		$loader.data = function(xhr){
+			if(xhr.json.data===true){
+				$rootScope.lostmsgs = xhr.json.msgs;
+				$location.path('/');
+				$scope.$apply();
+			} else {
+				$scope.data = xhr.json.data || false;
+				$scope.validations = xhr.json.validations || {};
+				$scope.$apply();
+			}
+		};
+
+		$loader.send('get','http://localhost:3000/system/api/'+$routeParams._id,false,false);
+
+		$scope.addListItem = function(parent,list){
+			if(!parent[list]){parent[list]=[];}
+			parent[list].push({});
+		};
+		$scope.sendForm = function(){
+			$loader.send('put','http://localhost:3000/system/api/'+$routeParams._id,crudUpdateForm,false);
+		}
+		$scope.removeElement = function(){
+			$loader.send('delete','http://localhost:3000/system/api/'+$routeParams._id,false,false);
+		}
+	})
+	.controller('crudInsert', function($rootScope, $scope, $loader, $location, $routeParams) {
+		$scope.data = {};
+		$loader.data = function(xhr){
+			if(xhr.json.data._id){
+				$rootScope.lostmsgs = xhr.json.msgs;
+				$location.path('/edit/'+xhr.json.data._id);
+				$scope.$apply();
+			} else {
+				$scope.data = xhr.json.data || false;
+				$scope.validations = xhr.json.validations || {};
+				$scope.$apply();
+			}
+		};
+
+		$scope.addListItem = function(parent,list){
+			if(!parent[list]){parent[list]=[];}
+			parent[list].push({});
+		};
+		$scope.sendForm = function(){
+			$loader.send('post','http://localhost:3000/system/api',crudInsertForm,false);
 		}
 	})
 
-	
 
-/*
-app.controller('crudUpdate', function($scope) {
-	$scope.sending=0;
-	$scope.system = {
-		"field1":"fsdf",
-		"field2":"sdfsdf",
-		"reverse":"12345",
-		"list":[
-			{"field2":"a","reverse":"12345"},
-			{"field2":"b","reverse":"12345"},
-			{"field2":"c","reverse":"12345"},
-			{"field2":"d","reverse":"12345"}
-		],
-		"textarea":{"es":"es","en":"en"},
-		"field3":"","_id":"531769aaefe6c71a34ae3418"
-	};
-	$scope.addListItem = function(list){
-		list.push({});
-	};
-	$scope.sendForm = function(method,url,upload){
-		$scope.sending=20;
-		var xhr = new XMLHttpRequest();
-		xhr.addEventListener("loadstart", function(){
-			console.log("Request started");
-		},false);
-		xhr.addEventListener("progress", function(e){
-			if (e.lengthComputable) {
-				$scope.$apply(function () {
-					$scope.sending = Math.round(e.loaded / e.total);
-				});
+function xhrLoader(){
+	var loader = this;
+	loader.xhr = new XMLHttpRequest();
+	loader.xhr.json = false;
+	loader.start = false;
+	loader.sending = false;
+	loader.receiving = false;
+	loader.fail = false;
+	loader.end = false;
+	loader.send = function(method, url, form, files){
+		loader.xhr.open(method, url, true);
+		//loader.xhr.responseType="json";
+		if(form){
+			if(files){
+				loader.xhr.send(new FormData(form));
+			} else {
+				loader.xhr.setRequestHeader("Content-Type", "application\/x-www-form-urlencoded");
+				loader.xhr.send($(form).serialize());
 			}
-			console.log("Request progress",$scope.sending+"%");
-		},false);
-		xhr.addEventListener("load", function(){
-			$scope.$apply(function () {
-				$scope.sending = 100;
-			});
-			console.log("Request complete",xhr.status,xhr.statusText);
-			if(xhr.status==200){
-				if(xhr.response.msgs){
-					console.log(xhr.response.msgs);
-				}
-				if(xhr.response.data){
-					$scope.$apply(function () {
-						$scope.system = xhr.response.data;
-					});
-				}
-			}
-			setTimeout(function(){
-					$scope.$apply(function () {
-						$scope.sending=0;
-					});
-			},0);
-		},false);
-		xhr.addEventListener("error", function(){
-			console.log("Request error");
-		},false);
-		xhr.addEventListener("abort",function(){
-			console.log("Request aborted");
-		},false);
-		xhr.upload.addEventListener("progress", function(e){
-			if (e.lengthComputable) {
-				$scope.sending = Math.round(e.loaded / e.total);
-			}
-			console.log("Upload progress",$scope.sending+"%");
-		}, false);
-		xhr.upload.addEventListener("load", function(){
-			console.log("Upload complete");
-		}, false);
-		xhr.upload.addEventListener("error", function(){
-			console.log("Upload error");
-		}, false);
-		xhr.upload.addEventListener("abort", function(){
-			console.log("Upload aborted");
-		}, false);
-		xhr.open(method, url, true);
-		xhr.responseType="json";
-		var formData = false;
-		if(upload){
-			formData = new FormData(crudUpdateForm);
 		} else {
-			formData=$(crudUpdateForm).serialize();
-			xhr.setRequestHeader("Content-Type", "application\/x-www-form-urlencoded");
+			loader.xhr.send();
 		}
-		xhr.send(formData);
+		return loader;
 	};
-});
-*/
 
-/*
-var app = angular.module('crudNg',[]);
-app.controller('crudUpdate', function($scope, $http) {
-	$scope.sending=0;
-	$scope.system = {
-		"field1":"fsdf",
-		"field2":"sdfsdf",
-		"reverse":"12345",
-		"list":[
-			{"field2":"a","reverse":"12345"},
-			{"field2":"b","reverse":"12345"},
-			{"field2":"c","reverse":"12345"},
-			{"field2":"d","reverse":"12345"}
-		],
-		"textarea":{"es":"es","en":"en"},
-		"field3":"","_id":"531769aaefe6c71a34ae3418"
-	};
-	$scope.addListItem = function(list){
-		list.push({});
-	};
-	$scope.sendForm = function(method,url,upload){
-		$scope.sending=20;
-		var xhr = new XMLHttpRequest();
-		xhr.addEventListener("loadstart", function(){
-			console.log("Request started");
-		},false);
-		xhr.addEventListener("progress", function(e){
-			if (e.lengthComputable) {
-				$scope.$apply(function () {
-					$scope.sending = Math.round(e.loaded / e.total);
-				});
-			}
-			console.log("Request progress",$scope.sending+"%");
-		},false);
-		xhr.addEventListener("load", function(){
-			$scope.$apply(function () {
-				$scope.sending = 100;
-			});
-			console.log("Request complete",xhr.status,xhr.statusText);
-			if(xhr.status==200){
-				if(xhr.response.msgs){
-					console.log(xhr.response.msgs);
-				}
-				if(xhr.response.data){
-					$scope.$apply(function () {
-						$scope.system = xhr.response.data;
-					});
-				}
-			}
-			setTimeout(function(){
-					$scope.$apply(function () {
-						$scope.sending=0;
-					});
-			},0);
-		},false);
-		xhr.addEventListener("error", function(){
-			console.log("Request error");
-		},false);
-		xhr.addEventListener("abort",function(){
-			console.log("Request aborted");
-		},false);
-		xhr.upload.addEventListener("progress", function(e){
-			if (e.lengthComputable) {
-				$scope.sending = Math.round(e.loaded / e.total);
-			}
-			console.log("Upload progress",$scope.sending+"%");
-		}, false);
-		xhr.upload.addEventListener("load", function(){
-			console.log("Upload complete");
-		}, false);
-		xhr.upload.addEventListener("error", function(){
-			console.log("Upload error");
-		}, false);
-		xhr.upload.addEventListener("abort", function(){
-			console.log("Upload aborted");
-		}, false);
-		xhr.open(method, url, true);
-		xhr.responseType="json";
-		var formData = false;
-		if(upload){
-			formData = new FormData(crudUpdateForm);
-		} else {
-			formData=$(crudUpdateForm).serialize();
-			xhr.setRequestHeader("Content-Type", "application\/x-www-form-urlencoded");
+	fire = function(e){
+		if(typeof loader[e] == 'function'){
+			loader[e].apply(loader[e],Array.prototype.slice.call(arguments).slice(1));
 		}
-		xhr.send(formData);
-	};
-});
-*/
+	}
+
+	loader.data = function (xhr) {
+		fire('data',xhr);
+	}
+
+	loader.xhr.addEventListener("loadstart", function(){
+		fire('start');
+	},false);
+	loader.xhr.addEventListener("progress", function(e){
+		if(e.lengthComputable) {fire('receiving',Math.round(e.loaded / e.total));}
+	},false);
+	loader.xhr.addEventListener("load", function(){
+		fire('receiving',100);
+		if(loader.xhr.getResponseHeader('Content-Type')=='application/json'){
+			try {
+				loader.xhr.json = JSON.parse(loader.xhr.response);
+				fire('end');
+			} catch(e) {
+				fire('fail','parse:error');
+			}
+		} else {
+			fire('fail','content:error');
+		}
+	},false);
+	loader.xhr.addEventListener("error", function(){
+		fire('fail','request:error');
+	},false);
+	loader.xhr.addEventListener("abort",function(){
+		fire('fail','request:aborted');
+	},false);
+	loader.xhr.upload.addEventListener("progress", function(e){
+		if(e.lengthComputable) {fire('sending',Math.round(e.loaded / e.total));}
+	},false);
+	loader.xhr.upload.addEventListener("load", function(){
+		fire('sending',100);
+	},false);
+	loader.xhr.upload.addEventListener("error", function(){
+		fire('fail','upload:error');
+	},false);
+	loader.xhr.upload.addEventListener("abort", function(){
+		fire('fail','upload:aborted');
+	},false);
+}

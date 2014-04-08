@@ -4,23 +4,50 @@ include templates/bricks
 mixin crud-error()
 	a(href=link('main')) [Go to list]
 
-mixin crud-list()
-	if data.length==0
-		p strong No results
-	hr
-	each doc, key in data
-		pre=util.format(doc)
-		a(href=link('update',doc._id)) [Edit this element]
-		a(href=link('api-get',doc._id)) [API-GET this element]
-		hr
-	a(href=link('insert')) [Insert new element]
+mixin crud-list
+	table(class="table table-striped")
+		thead
+			tr
+				each header in model.headers
+					th=header.label
+				th
+
+		tbody
+			tr(ng-repeat="record in data")
+				each header in model.headers
+					td="{{record."+header.id+"}}"
+				td
+					a(href="#/edit/{{record._id}}",class="btn btn-primary", role="button")
+						span(class="glyphicon glyphicon-pencil")
+						|  Edit
+					button(class="btn btn-danger navbar-btn", type='button', ng-click="removeElement(record._id)")
+						span(class="glyphicon glyphicon-remove")
+						|  Delete
+
+	nav(class="navbar navbar-default navbar-fixed-bottom", role="navigation")
+		.container-fluid
+			.navbar-header
+				button(type="button", class="navbar-toggle", data-toggle="collapse" data-target="#navbar-update")
+					span(class="sr-only") Toggle navigation
+					span(class="icon-bar")
+					span(class="icon-bar")
+					span(class="icon-bar")
+				a(class="navbar-brand", href="#") Pillars
+			div(id="navbar-update" class="collapse navbar-collapse")
+				form(class="navbar-form navbar-left", role="search")
+					.form-group
+						input(type="text", class="form-control", placeholder="Search")
+						button(type="submit", class="btn btn-default") Submit
+				ul.nav.navbar-nav
+					li: a(href="#/") 
+						span(class="glyphicon glyphicon-list")
+						|  List
+					li: a(href="#/new") 
+						span(class="glyphicon glyphicon-plus")
+						|  New
 
 mixin crud-update
-	form(id="crudUpdateForm", ng-submit="sendForm('POST','"+link('api-update',data._id)+"',false)", name="crudUpdateForm", ng-controller="crudUpdate")
-		div(ng-show="sending>0",class="ng-hide form-progressbar")
-			.progress.progress-striped.active
-				.progress-bar(role="progressbar", aria-valuenow="45", aria-valuemin="0", aria-valuemax="100", style="width: {{sending}}%")
-					span.sr-only Guardando... {{sending}}%
+	form(id="crudUpdateForm", ng-submit="sendForm()", name="crudUpdateForm")
 		fieldset
 			- locals.depth = 0;
 			- locals.headings = 3;
@@ -47,37 +74,108 @@ mixin crud-update
 						input(type="text", class="form-control", placeholder="Search")
 						button(type="submit", class="btn btn-default") Submit
 				ul.nav.navbar-nav
-					li: a(href=link('main')) Go to list
-					li: a(href=link('insert')) insert new
-					li: a(href=link('api-get',data._id)) api-get this element
+					li: a(href="#/") 
+						span(class="glyphicon glyphicon-list")
+						|  List
+					li: a(href="#/new") 
+						span(class="glyphicon glyphicon-plus")
+						|  New
+					//li: a(href=link('api-get',data._id)) api-get this element
 				ul.nav.navbar-nav.navbar-right
-					button(class="btn btn-danger navbar-btn", type='button', onclick="window.location.href='"+link('remove',data._id)+"'") Delete
+					button(class="btn btn-danger navbar-btn", type='button', ng-click="removeElement()")
+						span(class="glyphicon glyphicon-remove")
+						|  Delete
 
 mixin crud-insert
-	form(method='POST', action=link('insert',data._id))
+	form(id="crudInsertForm", ng-submit="sendForm()", name="crudInsertForm")
 		fieldset
-			legend=model.title
-			p.details=model.details
+			- locals.depth = 0;
+			- locals.headings = 3;
+			legend
+				#{'h'+(locals.depth+locals.headings)}.text-primary=model.title
+					small=' '+model.details
+
 			+fieldset(model,data)
-			.buttons
-				input(type='submit', value='Save')
-				a(href=link('main')) [Go to list]
 
-mixin crud-inserted
-	a(href=link('update',data._id)) [Edit inserted element]
-	a(href=link('api-get',data._id)) [API-GET inserted element]
-	a(href=link('main')) [Go to list]
-	a(href=link('insert')) [Insert new element]
+	nav(class="navbar navbar-default navbar-fixed-bottom", role="navigation")
+		.container-fluid
+			.navbar-header
+				button(type="button", class="navbar-toggle", data-toggle="collapse" data-target="#navbar-update")
+					span(class="sr-only") Toggle navigation
+					span(class="icon-bar")
+					span(class="icon-bar")
+					span(class="icon-bar")
+				a(class="navbar-brand", href="#") Pillars
+			div(id="navbar-update" class="collapse navbar-collapse")
+				ul.nav.navbar-nav
+					button(form="crudInsertForm", type='submit', class="btn btn-primary navbar-btn") Save
+				form(class="navbar-form navbar-left", role="search")
+					.form-group
+						input(type="text", class="form-control", placeholder="Search")
+						button(type="submit", class="btn btn-default") Submit
+				ul.nav.navbar-nav
+					li: a(href="#/") 
+						span(class="glyphicon glyphicon-list")
+						|  List
+					li: a(href="#/new") 
+						span(class="glyphicon glyphicon-plus")
+						|  New
 
-mixin crud-removed
-	a(href=link('main')) [Go to list]
-	a(href=link('insert')) [Insert new element]
+mixin notifier
+	ul(class="notifier list-unstyled ng-hide", ng-show="msgs")
+		li(ng-repeat="msg in msgs")
+			div(class="alert alert-{{msg.lvl}}")
+				strong {{msg.msg}}
+				|  {{msg.details}}
+
+mixin trace(trace)
+	if trace
+		.trace
+			hr
+			pre=trace
 
 doctype html
-+layout
-	//script(type="text/ng-template", id=template+".html")
-	+#{template}
+html(lang="es",ng-app="Pillars")
+	head
+		title=title
+		meta(charset="utf-8")
+		meta(http-equiv='X-UA-Compatible', content='IE=edge')
+		meta(name="viewport", content="width=device-width, initial-scale=1")
+		link(rel='stylesheet', href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css')
+		link(rel='stylesheet', href='/css/pillars.css')
+		//link(rel='stylesheet', href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css')
 
+	body
+		#space.container
+			header#header
+				h1=h1
+				+notifier
+			#page
+				script(type="text/ng-template", id="crud-list.html")
+					+crud-list
+				script(type="text/ng-template", id="crud-insert.html")
+					+crud-insert
+				script(type="text/ng-template", id="crud-update.html")
+					+crud-update
+				div(ng-view ng-hide="loading" class="ng-hide")
+				div(ng-show="loading",class="ng-hide form-progressbar")
+					div(class="progress progress-striped active ng-hide", ng-show="sending>0")
+						.progress-bar.progress-bar-info(role="progressbar", aria-valuenow="45", aria-valuemin="0", aria-valuemax="100", style="width: {{sending}}%")
+							span.sr-only Sending... {{sending}}%
+					div(class="progress progress-striped active ng-hide", ng-show="receiving>0")
+						.progress-bar.progress-bar-success(role="progressbar", aria-valuenow="45", aria-valuemin="0", aria-valuemax="100", style="width: {{receiving}}%")
+							span.sr-only Receiving... {{receiving}}%
+				+trace(trace)
+			footer#footer
+		script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.4/angular.min.js')
+		script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.4/angular-route.min.js')
+		//script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.4/angular-animate.min.js')
+		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
+		script(src='//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js')
+		script(src='/js/pillars.js')
+
+
+	
 
 
 
