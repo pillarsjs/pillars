@@ -1,11 +1,11 @@
 
 var util = require('util');
-var fs = require('fs');
 var textualization = require('./lib/textualization').languages(['es','en']);
 var formwork = require('./lib/formwork');
 var Pillar = require('./lib/Pillar');
 var bricks = require('./lib/bricks');
 var Beam = require('./lib/Beam');
+var beams = require('./lib/beams');
 var templates = require('./lib/templates');
 
 
@@ -18,10 +18,12 @@ var mymodel = new bricks.Fieldset('system',{
 	details : 'Completa los campos',
 	collection : 'system',
 	//t12n : './lib/crud.t12n'
+	limit : 3,
 	headers : [
 		{id: '_id',label: 'Identificador'},
 		{id: 'field1',label: 'Field1'},
 		{id: 'field2',label: 'Field2'},
+		//{id: 'file',label: 'Filetest'},
 		{id: 'reverse',label: 'Reverse'}
 	]
 })
@@ -31,6 +33,9 @@ var mymodel = new bricks.Fieldset('system',{
 	}))
 	.addField(new bricks.Text('field2',{
 		label : 'Field2'
+	}))
+	.addField(new bricks.File('file',{
+		label : 'FileTest'
 	}))
 	.addField(new bricks.Reverse('reverse',{
 		label : 'Reverse',
@@ -78,66 +83,14 @@ server.addPillar(new Pillar({
 	title:'Configuración',
 	path:'/system',
 	template:'examples/crud.jade',
-	//t12n:'examples/crud.t12n'
+	schema:mymodel
 })
-	.addBeam(new Beam('main',{session:true},function(){
-		var gw = this;
-		gw.render({
-			h1:'Administración de cosas',
-			model:mymodel,
-			//trace:util.format(gw)
-		});
-	}))
-	.addBeam(new Beam('search',{path:'/api',session:true},BeamIds,function(){
-		var gw = this;
-		mymodel.list(gw,function(result){
-			gw.send({
-				msgs:gw.msgs,
-				validations:gw.validations,
-				data:result
-			});
-		});
-	}))
-	.addBeam(new Beam('get',{path:'/api/:_id',session:true},BeamIds,function(){
-		var gw = this;
-		mymodel.one(gw,function(result){
-			gw.send({
-				msgs:gw.msgs,
-				validations:gw.validations,
-				data:result
-			});
-		});
-	}))
-	.addBeam(new Beam('update',{path:'/api/:_id',method:'put',session:true},BeamIds,function(){
-		var gw = this;
-		mymodel.update(gw,function(result){
-			gw.send({
-				msgs:gw.msgs,
-				validations:gw.validations,
-				data:result
-			});
-		});
-	}))
-	.addBeam(new Beam('insert',{path:'/api',method:'post',session:true},BeamIds,function(){
-		var gw = this;
-		mymodel.insert(gw,function(result){
-			gw.send({
-				msgs:gw.msgs,
-				validations:gw.validations,
-				data:result
-			});
-		});
-	}))
-	.addBeam(new Beam('remove',{path:'/api/:_id',method:'delete',session:true},BeamIds,function(){
-		var gw = this;
-		mymodel.remove(gw,function(result){
-			gw.send({
-				msgs:gw.msgs,
-				validations:gw.validations,
-				data:result
-			});
-		});
-	}))
+	.addBeam(new Beam('main',{session:true},beams.apiTemplate))
+	.addBeam(new Beam('search',{path:'/api',session:true},beams.apiList))
+	.addBeam(new Beam('get',{path:'/api/:_id',session:true},beams.apiGet))
+	.addBeam(new Beam('update',{path:'/api/:_id',method:'put',upload:true,session:true},beams.apiUpdate))
+	.addBeam(new Beam('insert',{path:'/api',method:'post',session:true},beams.apiInsert))
+	.addBeam(new Beam('remove',{path:'/api/:_id',method:'delete',session:true},beams.apiRemove))
 );
 
 
@@ -147,44 +100,13 @@ server.addPillar(new Pillar({
 	path:'',
 	template:'templates/static.jade'
 })
-	.addBeam(new Beam('css',{path:'/css/*:path',directory:'./static/css'},directory))
-	.addBeam(new Beam('file',{path:'/file/*:path',directory:'./static/file'},directory))
-	.addBeam(new Beam('img',{path:'/img/*:path',directory:'./static/img'},directory))
-	.addBeam(new Beam('js',{path:'/js/*:path',directory:'./static/js'},directory))
+	.addBeam(new Beam('css',{path:'/css/*:path',directory:'./static/css'},beams.directory))
+	.addBeam(new Beam('file',{path:'/file/*:path',directory:'./static/file'},beams.directory))
+	.addBeam(new Beam('img',{path:'/img/*:path',directory:'./static/img'},beams.directory))
+	.addBeam(new Beam('js',{path:'/js/*:path',directory:'./static/js'},beams.directory))
 );
 
-function directory(){
-	var gw = this;
-	var path = gw.beam.config.directory+(gw.params.path || '');
-	fs.stat(path, function(error, stats){
-		if(error || (!stats.isFile() && !stats.isDirectory())){
-			gw.error(404,'Not Found',error);
-		} else if(stats.isDirectory()) {
-			fs.readdir(path, function(error,files){
-				if(error){
-					gw.error(404,'Not Found',error);
-				} else {
-					gw.render({
-						h1:decodeURIComponent(gw.originalPath.replace(/\/$/,'')),
-						path:decodeURIComponent(gw.originalPath.replace(/\/$/,'')),
-						data:files
-					});
-				}
-			});
-		} else if(stats.isFile()) {
-			gw.file(path);
-		}
-	});
-}
 
-var ObjectID = require('mongodb').ObjectID;
-function BeamIds(next){
-	var gw = this;
-	var _id = gw.params._id || "";
-	var checkhexid = /^[a-f0-9]{24}$/;
-	if(checkhexid.test(_id)){gw.params._id = new ObjectID.createFromHexString(_id);}
-	next();
-}
 
 /*
 

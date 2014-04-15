@@ -1,11 +1,17 @@
 angular.module('Pillars', ['ngRoute'])
 //angular.module('crudNg',[])
+	.service('languages', function() {
+		this.active = 'en';
+		this.list = ['es','en'];
+	})
 	.factory('$loader', ['$rootScope', function ($rootScope) {
 
 		var loader = new xhrLoader();
 
 		loader.start = function(){
-			$rootScope.loading=true;// Sync
+			$rootScope.loading=true;
+			$rootScope.sending=0;
+			$rootScope.receiving=0;
 		};
 		loader.sending = function(percent){
 			$rootScope.sending=percent;
@@ -15,18 +21,17 @@ angular.module('Pillars', ['ngRoute'])
 			$rootScope.receiving=percent;
 			$rootScope.$digest();
 		};
-		loader.fail = function(){
+		loader.fail = function(error){
 			console.log("Request error");
 		};
 		loader.end = function(){
 			console.log("Request complete",loader.xhr.status,loader.xhr.statusText);
-			console.log(loader.xhr.json);
 			$rootScope.msgs=[];
 			if($rootScope.lostmsgs){$rootScope.msgs = $rootScope.lostmsgs;$rootScope.lostmsgs=false;}
 			$rootScope.msgs = $rootScope.msgs.concat(loader.xhr.json.msgs || []);
 			$rootScope.loading=false;
-			$rootScope.$apply();
 			loader.data(loader.xhr);
+			$rootScope.$digest();
 		};
 
 		return loader;
@@ -40,72 +45,87 @@ angular.module('Pillars', ['ngRoute'])
 			})
 			.when('/edit/:_id', {
 				controller:'crudUpdate',
-				templateUrl:'crud-update.html'
+				templateUrl:'crud-editor.html'
 			})
 			.when('/new', {
 				controller:'crudInsert',
-				templateUrl:'crud-insert.html'
+				templateUrl:'crud-editor.html'
 			})
 			.otherwise({
 				redirectTo:'/'
 			});
 	})
-	.controller('crudList', function($rootScope, $scope,$loader, $location, $routeParams) {
+	.controller('crudList', function($rootScope, $scope, $loader, $location, $routeParams, languages) {
+		$rootScope.languages = languages;
+		$rootScope.navsave = false;
+		$rootScope.navremove = false;
 		$scope.data = {};
 		$loader.data = function(xhr){
 			if(xhr.json.data===true){
 				$rootScope.lostmsgs = xhr.json.msgs;
-				$loader.send('get','http://localhost:3000/system/api',false,false);
+				$loader.send('get','api',false,false);
+			} else if(xhr.json.data.skip || xhr.json.data.range) {
+				var cache = $scope.data.list;
+				$scope.data = xhr.json.data || false;
+				$scope.data.list = cache.concat(xhr.json.data.list);
 			} else {
 				$scope.data = xhr.json.data || false;
-				$scope.$apply();
 			}
 		};
 
-		$loader.send('get','http://localhost:3000/system/api',false,false);
+		$loader.send('get','api',false,false);
+
+		$scope.more = function(){
+			var skip = parseInt($scope.data.skip || 0);
+			var limit = parseInt($scope.data.limit || 0);
+			var range = $scope.data.range || false;
+			$loader.send('get','api?_skip='+(skip+limit),false,false);
+		}
 
 		$scope.removeElement = function(id){
-			$loader.send('delete','http://localhost:3000/system/api/'+id,false,false);
+			$loader.send('delete','api/'+id,false,false);
 		}
 	})
-	.controller('crudUpdate', function($rootScope, $scope, $loader, $location, $routeParams) {
+	.controller('crudUpdate', function($rootScope, $scope, $loader, $location, $routeParams, languages) {
+		$rootScope.languages = languages;
+		$rootScope.navsave = true;
+		$rootScope.navremove = true;
 		$scope.data = {};
 		$loader.data = function(xhr){
 			if(xhr.json.data===true){
 				$rootScope.lostmsgs = xhr.json.msgs;
 				$location.path('/');
-				$scope.$apply();
 			} else {
 				$scope.data = xhr.json.data || false;
 				$scope.validations = xhr.json.validations || {};
-				$scope.$apply();
 			}
 		};
 
-		$loader.send('get','http://localhost:3000/system/api/'+$routeParams._id,false,false);
+		$loader.send('get','api/'+$routeParams._id,false,false);
 
 		$scope.addListItem = function(parent,list){
 			if(!parent[list]){parent[list]=[];}
 			parent[list].push({});
 		};
 		$scope.sendForm = function(){
-			$loader.send('put','http://localhost:3000/system/api/'+$routeParams._id,crudUpdateForm,false);
+			$loader.send('put','api/'+$routeParams._id,$form,true);
 		}
 		$scope.removeElement = function(){
-			$loader.send('delete','http://localhost:3000/system/api/'+$routeParams._id,false,false);
+			$loader.send('delete','api/'+$routeParams._id,false,false);
 		}
 	})
-	.controller('crudInsert', function($rootScope, $scope, $loader, $location, $routeParams) {
+	.controller('crudInsert', function($rootScope, $scope, $loader, $location, $routeParams, languages) {
+		$rootScope.languages = languages;
+		$rootScope.navsave = true;
+		$rootScope.navremove = false;
 		$scope.data = {};
 		$loader.data = function(xhr){
 			if(xhr.json.data._id){
 				$rootScope.lostmsgs = xhr.json.msgs;
 				$location.path('/edit/'+xhr.json.data._id);
-				$scope.$apply();
 			} else {
 				$scope.data = xhr.json.data || false;
 				$scope.validations = xhr.json.validations || {};
-				$scope.$apply();
 			}
 		};
 
@@ -114,7 +134,7 @@ angular.module('Pillars', ['ngRoute'])
 			parent[list].push({});
 		};
 		$scope.sendForm = function(){
-			$loader.send('post','http://localhost:3000/system/api',crudInsertForm,false);
+			$loader.send('post','api',$form,false);
 		}
 	})
 
@@ -158,7 +178,7 @@ function xhrLoader(){
 		fire('start');
 	},false);
 	loader.xhr.addEventListener("progress", function(e){
-		if(e.lengthComputable) {fire('receiving',Math.round(e.loaded / e.total));}
+		if(e.lengthComputable) {fire('receiving',Math.round(e.loaded / e.total * 100));}
 	},false);
 	loader.xhr.addEventListener("load", function(){
 		fire('receiving',100);
@@ -180,10 +200,10 @@ function xhrLoader(){
 		fire('fail','request:aborted');
 	},false);
 	loader.xhr.upload.addEventListener("progress", function(e){
-		if(e.lengthComputable) {fire('sending',Math.round(e.loaded / e.total));}
+		if(e.lengthComputable) {fire('sending',Math.round(e.loaded / e.total * 100));}
 	},false);
 	loader.xhr.upload.addEventListener("load", function(){
-		fire('sending',100);
+		fire('sending',0);
 	},false);
 	loader.xhr.upload.addEventListener("error", function(){
 		fire('fail','upload:error');
