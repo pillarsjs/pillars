@@ -55,15 +55,26 @@ angular.module('Pillars', ['ngRoute'])
 				redirectTo:'/'
 			});
 	})
+	.controller('crudListFilter', function($rootScope, $scope, $loader, $location, $routeParams, languages) {
+		$scope.applyFilter = function(){
+			$rootScope.listFilter = $scope.listFilter || "";
+			if($location.path()=="/"){
+				$loader.send('get','api?_filter='+$rootScope.listFilter,false,false);
+			} else {
+				$location.path('/');
+			}
+		}
+	})
 	.controller('crudList', function($rootScope, $scope, $loader, $location, $routeParams, languages) {
 		$rootScope.languages = languages;
 		$rootScope.navsave = false;
 		$rootScope.navremove = false;
+		$rootScope.listFilter = $scope.listFilter || "";
 		$scope.data = {};
 		$loader.data = function(xhr){
 			if(xhr.json.data===true){
 				$rootScope.lostmsgs = xhr.json.msgs;
-				$loader.send('get','api',false,false);
+				$loader.send('get','api?_filter='+$rootScope.listFilter,false,false);
 			} else if(xhr.json.data.skip || xhr.json.data.range) {
 				var cache = $scope.data.list;
 				$scope.data = xhr.json.data || false;
@@ -73,13 +84,13 @@ angular.module('Pillars', ['ngRoute'])
 			}
 		};
 
-		$loader.send('get','api',false,false);
+		$loader.send('get','api?_filter='+$rootScope.listFilter,false,false);
 
 		$scope.more = function(){
 			var skip = parseInt($scope.data.skip || 0);
 			var limit = parseInt($scope.data.limit || 0);
 			var range = $scope.data.range || false;
-			$loader.send('get','api?_skip='+(skip+limit),false,false);
+			$loader.send('get','api?_skip='+(skip+limit)+'&_filter='+$rootScope.listFilter,false,false);
 		}
 
 		$scope.removeElement = function(id){

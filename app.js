@@ -19,6 +19,7 @@ var mymodel = new bricks.Fieldset('system',{
 	collection : 'system',
 	//t12n : './lib/crud.t12n'
 	limit : 3,
+	filter : ['_id','field1','field2'], 
 	headers : [
 		{id: '_id',label: 'Identificador'},
 		{id: 'field1',label: 'Field1'},
