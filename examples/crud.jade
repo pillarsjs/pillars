@@ -9,7 +9,10 @@ mixin crud-list
 		thead
 			tr
 				each header in schema.headers
-					th=header.label
+					th(ng-class="{'text-primary':listSort=='"+header.id+"'}")
+						span(class="ng-hide glyphicon glyphicon-sort-by-attributes", ng-show="listSort=='"+header.id+"' && listOrder==1") &nbsp;
+						span(class="ng-hide glyphicon glyphicon-sort-by-attributes-alt", ng-show="listSort=='"+header.id+"' && listOrder==-1") &nbsp;
+						=header.label
 				th
 
 		tbody
@@ -23,7 +26,7 @@ mixin crud-list
 					button(class="btn btn-danger navbar-btn", type='button', ng-click="removeElement(record._id)")
 						span(class="glyphicon glyphicon-remove")
 						|  Delete
-	button(class="btn btn-info navbar-btn", type='button', ng-click="more()")
+	button(class="btn btn-info", type='button', ng-click="more()", ng-hide="end")
 		span(class="glyphicon glyphicon-forward")
 		|  More...
 
@@ -31,7 +34,7 @@ mixin crud-editor
 	+fieldset(schema)
 
 mixin navbar
-	nav(class="navbar navbar-default navbar-fixed-bottom", role="navigation")
+	nav(class="navbar navbar-default navbar-fixed-top", role="navigation")
 		.container-fluid
 			.navbar-header
 				button(type="button", class="navbar-toggle", data-toggle="collapse" data-target="#navbar-update")
@@ -45,7 +48,23 @@ mixin navbar
 					button(ng-if="navsave", form="activeForm", type='submit', class="btn btn-primary navbar-btn") Save
 				form(class="navbar-form navbar-left", role="search", ng-controller="crudListFilter")
 					.form-group
-						input(type="text", class="form-control", ng-change="applyFilter()",placeholder="Search", ng-model="listFilter")
+						.input-group
+							input(type="text", class="form-control", ng-change="applyFilter()",placeholder="Search", ng-model="listFilter")
+							.input-group-btn.dropup
+								button(type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown")
+									span(class="caret")
+								ul(class="dropdown-menu",role="menu")
+									each header, i in schema.headers
+										li
+											a(href="",ng-click="sortBy('"+header.id+"',1)")
+												span(class="glyphicon glyphicon-sort-by-attributes") &nbsp;
+												=header.label
+										li
+											a(href="",ng-click="sortBy('"+header.id+"',-1)")
+												span(class="glyphicon glyphicon-sort-by-attributes-alt") &nbsp;
+												=header.label
+										if i<schema.headers.length-1
+											li(role="presentation" class="divider")
 				ul.nav.navbar-nav
 					li: a(href="#/") 
 						span(class="glyphicon glyphicon-list")
@@ -79,6 +98,79 @@ mixin trace(trace)
 			hr
 			pre=trace
 
+mixin datepicker
+	input(type='text', class="ng-hide", name="{{datepickerName}}" ng-model="value")
+	.row
+		.col-date.col-md-6
+			.input-group
+				span.input-group-addon
+					span.glyphicon.glyphicon-calendar
+				input(type="text",class="form-control datepicker-year",ng-model="calendar.selection.year",ng-change="setDate()",placeholder="Year")
+				select(ng-model="calendar.selection.month",ng-change="setDate()",class="form-control datepicker-month")
+					option(ng-repeat="(mk, m) in localeDateTime.MONTH" value="{{mk}}") {{m}}
+				input(type="text",class="form-control datepicker-date",ng-model="calendar.selection.date",ng-change="setDate()",placeholder="Date")
+				span.input-group-addon.clear-button
+					span(class="glyphicon glyphicon-remove",ng-click="clearDate()")
+		.col-time.col-md-6
+			.input-group
+				span.input-group-addon
+					span.glyphicon.glyphicon-time
+					|  24h
+				input(type="text",class="form-control datepicker-hours",ng-model="calendar.selection.hours",ng-change="setDate()",placeholder="H")
+				span.input-group-addon.input-group-separator :
+				input(type="text",class="form-control datepicker-minutes",ng-model="calendar.selection.minutes",ng-change="setDate()",placeholder="M")
+				span.input-group-addon {{calendar.tz}}
+	.calendar
+		table.calendar-table.table.table-bordered
+			tr(class="datepicker-header")
+				th(colspan="7")
+					span(class="datepicker-month")
+						span(class="glyphicon glyphicon-chevron-left",ng-click="calendar.prevMonth()")
+						span(class="name") {{localeDateTime.MONTH[calendar.month]}}
+						span(class="glyphicon glyphicon-chevron-right",ng-click="calendar.nextMonth()")
+					span(class="datepicker-year")
+						span(class="glyphicon glyphicon-chevron-left",ng-click="calendar.prevYear()")
+						span(class="name") {{calendar.year}}
+						span(class="glyphicon glyphicon-chevron-right",ng-click="calendar.nextYear()")
+			tr(class="datepicker-week")
+				th(ng-repeat="wd in calendar.weekformat") {{localeDateTime.SHORTDAY[wd]}}
+			tr(class="datepicker-days", ng-repeat="(wk, w) in calendar.days")
+				td(ng-repeat="(dk, d) in w", ng-click="selectDate(d)", ng-class="{'bg-primary':calendar.isSelection(d),'text-info':calendar.isToday(d),'outMonth':d.month!=calendar.month}") {{d.date}}
+
+mixin referencepicker
+	input(type='text', class="ng-hide", name="{{referenceName}}" ng-model="set")
+	div(class="input-group reference-search")
+		input(type="text", class="form-control",ng-model="search",ng-change="load(true)",placeholder="Select items...")
+		.input-group-btn
+			button(type="button", class="btn btn-default dropdown-toggle", ng-click="load()")
+				span(class="caret",ng-hide="loading")
+				span(class="glyphicon glyphicon-refresh",ng-show="loading",class="ng-hide")
+			ul(class="dropdown-menu ng-hide", ng-show="opened", style="display:block;", scroll-end="more()",scroll-end-margin="5")
+				li(ng-repeat="(lk, l) in data.list", ng-click="addReference(l)",ng-class="{'selected':references[l._id]}")
+					div(class="reference-img ng-hide",ng-show="l._img")
+						img(ng-src="/{{l._img.path}}")
+					div(ng-repeat="(vk,v) in l",class="reference-item reference-item-{{vk}}")
+						strong.item-label {{vk}}
+						| &nbsp;
+						span.item-value {{v}}
+	ul(class="references")
+		li(ng-repeat="(lk, l) in references")
+			div(class="reference-img ng-hide",ng-show="l._img")
+				img(ng-src="/{{l._img.path}}")
+			div(ng-repeat="(vk,v) in l",class="reference-item reference-item-{{vk}}")
+				strong.item-label.col-sm-2 {{vk}}
+				span.item-value.col-sm-10 {{v}}
+			button(class="btn btn-info btn-remove", type='button', ng-click="addReference(l)")
+				span(class="glyphicon glyphicon-remove")
+
+mixin imagepicker
+	div.current-file.imagebox
+		img(ng-src="{{value.path}}" ng-hide="!value.path")
+		input(type='file', class="", name="{{imagepickerName}}",ng-model="filePicker",  onchange="angular.element(this).scope().fileChange(this)")
+	div.new-file
+		//img(ng-repeat="(imgk, imgf) in readedFiles",ng-src="{{imgf}}")
+		//imagedit(ng-repeat="(imgk, imgf) in readedFiles")
+
 doctype html
 html(lang="es",ng-app="Pillars")
 	head
@@ -108,20 +200,22 @@ html(lang="es",ng-app="Pillars")
 					+crud-list
 				script(type="text/ng-template", id="crud-editor.html")
 					+crud-editor
+				script(type="text/ng-template", id="bricks.datepicker.html")
+					+datepicker
+				script(type="text/ng-template", id="bricks.referencepicker.html")
+					+referencepicker
+				script(type="text/ng-template", id="bricks.imagepicker.html")
+					+imagepicker
 				div(ng-view)
 				+navbar
 				+trace(trace)
 			footer#footer
-		script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.4/angular.min.js')
-		script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.4/angular-route.min.js')
-		//script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.4/angular-animate.min.js')
+		script(src='https://code.angularjs.org/snapshot/angular.min.js')
+		script(src='https://code.angularjs.org/snapshot/i18n/angular-locale_'+gw.language+'.js')
+		script(src='https://code.angularjs.org/snapshot/angular-route.min.js')
+		//script(src='https://code.angularjs.org/snapshot/angular-animate.min.js')
 		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
 		script(src='//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js')
+		script(src='/js/kinetic-v5.1.0.min.js')
 		script(src='/js/pillars.js')
-
-
-	
-
-
-
 

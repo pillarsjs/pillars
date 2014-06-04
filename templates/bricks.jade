@@ -6,7 +6,7 @@ mixin fieldset(fieldset)
 	form(id="activeForm", ng-submit="sendForm()", name="$form")
 		fieldset
 			legend
-				#{'h'+(3+locals.depth)}.text-primary=fieldset.title
+				h3.text-primary=fieldset.title
 					small=' '+fieldset.details
 
 			div(class="form-horizontal")
@@ -29,27 +29,38 @@ mixin list(list)
 		label(class="control-label col-sm-2")=list.label
 		div(class="list-container container col-sm-10")
 			p(class="help-block")=list.details
-			fieldset(ng-repeat="($lk"+list.depth+", $lf"+list.depth+") in "+list.fieldset.NgScope+"."+list.id)
+			- var lk = "$lk"+list.depth;
+			- var lf = "$lf"+list.depth;
+			input(type='text', class="ng-hide",ng-repeat="("+lk+", "+lf+") in "+list.NgScope, ng-disabled=lf, id=list.NgId+"{{"+lk+"}}", name=list.NgName+"[{{"+lk+"}}]", value="unset")
+			fieldset(ng-repeat="("+lk+", "+lf+") in "+list.NgScope, ng-disabled="!"+lf, ng-hide="!"+lf)
 				legend
 					#{'h'+(3+list.depth)}.text-primary
-						= list.items.label
+						= list.items.label + "{{"+lk+"}}"
 						small=' '+list.items.details
 				each field in list.fields
 					+field(field)
+				button(ng-if="navsave", class="btn btn-danger navbar-btn", type='button', ng-click="deleteListItem("+list.NgScope+","+lk+")")
+					span(class="glyphicon glyphicon-remove")
+					|  Delete
 			
-			input(class='btn btn-primary', type='button', value='Add',ng-click="addListItem("+list.fieldset.NgScope+",'"+list.id+"')")
+			input(class='btn btn-primary', type='button', value='Add',ng-click="addListItem("+list.parent.NgScope+",'"+list.id+"')")
 
 mixin field(field)
 	- var ngExp = field.NgExp;
-	div(class="form-group", ng-class="{'has-error':validations['"+ngExp+"']}")
+	div(class="form-group", ng-class="{'has-error':(validations['"+ngExp+"'] || $form['"+field.NgName+"'].$invalid)}")
 		label(class="control-label col-sm-2",for=field.NgId)=field.label
+			div(class="popover fade right in")
+				.arrow
+				.popover-title Field Object
+				.popover-content
+					pre="{{"+field.NgScope+"}}\n"+util.format(field)
 
 		if field.i18n
 			+field-i18n(field)
 		else
 			div(class="col-sm-10")
 				+field-validation(field.NgExp)
-				+#{field.template}({id:field.NgId,name:field.NgName,value:field.NgScope})
+				+#{field.template}({field:field,id:field.NgId,name:field.NgName,value:field.NgScope})
 				p.help-block=field.details
 
 mixin field-i18n(field)
@@ -59,7 +70,7 @@ mixin field-i18n(field)
 			- classes.push('lang-'+lang);
 			div(class="col-sm-10 ng-hide", ng-show="languages.active=='"+lang+"'")
 				+field-validation(field.NgExp+"."+lang)
-				+#{field.template}({id:field.NgId+"_"+lang,name:field.NgName+"["+lang+"]",value:field.NgScope+"."+lang,classes:classes})
+				+#{field.template}({field:field,id:field.NgId+"_"+lang,name:field.NgName+"["+lang+"]",value:field.NgScope+"."+lang,classes:classes})
 				p.help-block=field.details
 
 mixin field-validation(ngExp)
@@ -70,10 +81,46 @@ mixin field-validation(ngExp)
 mixin text(config)
 	input(type='text', class=config.classes, class=['form-control','field-text'], id=config.id, name=config.name, ng-model=config.value)
 
-mixin file(config)
+mixin file_(config)
 	input(type='file', class=config.classes, class=['form-control','field-file'], id=config.id, name=config.name)
-	span="{{"+config.value+"}}"
+
+mixin file(config)
+	imagepicker(class=config.classes, id=config.id, name=config.name, ng-model=config.value)
 
 mixin textarea(config)
 	textarea(class=config.classes, class=['form-control','field-textarea'], id=config.id, name=config.name, ng-model=config.value)
+
+mixin select(config)
+	select(class=config.classes, class=['form-control','field-select'], id=config.id, name=config.name, ng-model=config.value)
+		each option,i in config.field.values
+			option(value=i)=option
+
+mixin checkbox(config)
+	.checkbox
+		label
+			input(type='checkbox', class=config.classes, class=['field-checkbox'], id=config.id, name=config.name, ng-model=config.value, ng-true-value='true', ng-false-value='false')
+
+mixin checkboxes(config)
+	each option,i in config.field.values
+		.checkbox
+			label
+				input(type='checkbox', class=config.classes, class=['field-checkbox'], id=config.id, name=config.name+"["+i+"]", ng-model=config.value+"."+i, ng-true-value='true', ng-false-value='false')
+				=option
+
+mixin radios(config)
+	each option,i in config.field.values
+		.radio
+			label
+				input(type='radio', class=config.classes, class=['field-radio'], id=config.id, name=config.name, ng-model=config.value, value=i)
+				=option
+
+mixin time(config)
+	datepicker(class=config.classes, id=config.id, ng-model=config.value, name=config.name)
+
+mixin reference(config)
+	reference(class=config.classes, id=config.id, ng-model=config.value, name=config.name)
+
+
+
+
 

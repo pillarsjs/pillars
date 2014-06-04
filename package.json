@@ -23,7 +23,8 @@
     "memwatch":"*",
     "colors":"*",
     "sprintf-js":"*",
-    "jshint":"*"
+    "jshint":"*",
+    "node-fs":"*"
   },
   "readme":"www.pillarsjs.com",
   "readmeFilename": "README.md"

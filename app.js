@@ -22,6 +22,7 @@ var mymodel = new bricks.Fieldset('system',{
 	filter : ['_id','field1','field2'], 
 	headers : [
 		{id: '_id',label: 'Identificador'},
+		{id: '_img',label: 'Imagen'},
 		{id: 'field1',label: 'Field1'},
 		{id: 'field2',label: 'Field2'},
 		//{id: 'file',label: 'Filetest'},
@@ -32,16 +33,74 @@ var mymodel = new bricks.Fieldset('system',{
 		label : 'Field1',
 		details : 'Rellena este campo...'
 	}))
-	.addField(new bricks.Text('field2',{
-		label : 'Field2'
+	.addField(new bricks.Checkbox('fieldCheck',{
+		label : 'Field checkbox',
+		details : 'Si o no?'
 	}))
-	.addField(new bricks.File('file',{
-		label : 'FileTest'
+	.addField(new bricks.Checkboxes('fieldCheckboxes',{
+		label : 'Field checkboxes',
+		details : 'Que eliges?',
+		values : {
+			'A':'Opción 1',
+			'B':'Opción 2',
+			'C':'Opción 3',
+			'D':'Opción 4'	
+		}
+	}))
+	.addField(new bricks.Radios('fieldRadios',{
+		label : 'Field radios',
+		details : 'Que eliges?',
+		values : {
+			'A':'Opción 1',
+			'B':'Opción 2',
+			'C':'Opción 3',
+			'D':'Opción 4'	
+		}
+	}))
+	.addField(new bricks.Select('field2',{
+		label : 'Field2',
+		values : {
+			'A':'Opción 1',
+			'B':'Opción 2',
+			'C':'Opción 3',
+			'D':'Opción 4'
+		}
+	}))
+	.addField(new bricks.Time('fieldTime',{
+		label : 'Field Time',
+		details : 'Seleccione una fecha'
+	}))
+	.addField(new bricks.Reference('fieldRef',{
+		label : 'Field Reference',
+		details : 'Seleccione un algo'
+	}))
+	.addField(new bricks.File('_img',{
+		label : 'Imagen destacada'
 	}))
 	.addField(new bricks.Reverse('reverse',{
 		label : 'Reverse',
 		details : 'Este va invertido en la bdd'
 	}))
+	.addField(new bricks.List('listFiles',{
+		label : 'listado de imagenes',
+		details : 'esto es un listado de imagenes',
+		items : {
+			label : 'Elemento de lista',
+			details : 'Esto es repetitivo'
+		},
+		insert : {
+			label : 'Nuevo elemento',
+			details : 'Añade mas cosas a la lista'	
+		}
+	})
+		.addField(new bricks.File('file',{
+			label : 'Imagen',
+		}))
+		.addField(new bricks.Text('text',{
+			label : 'Alt',
+			details : 'Describe la imagen'
+		}))
+	)
 	.addField(new bricks.List('list',{
 		label : 'listado',
 		details : 'esto es un listado',
@@ -65,13 +124,7 @@ var mymodel = new bricks.Fieldset('system',{
 	)
 	.addField(new bricks.Textarea('textarea',{
 		label : 'Textarea i18n',
-		details : 'Un campo internacional',
-		i18n : true,
-		validations : {
-			"Debe contener al menos 5 caracteres":function(value){
-				if(value && value.length>=5){return true;}
-			}
-		}
+		details : 'Un campo internacional'
 	}))
 	.addField(new bricks.Text('field3',{
 		label : 'Field3',
@@ -105,6 +158,7 @@ server.addPillar(new Pillar({
 	.addBeam(new Beam('file',{path:'/file/*:path',directory:'./static/file'},beams.directory))
 	.addBeam(new Beam('img',{path:'/img/*:path',directory:'./static/img'},beams.directory))
 	.addBeam(new Beam('js',{path:'/js/*:path',directory:'./static/js'},beams.directory))
+	.addBeam(new Beam('uploads',{path:'/uploads/*:path',directory:'./uploads'},beams.directory))
 );
 
 

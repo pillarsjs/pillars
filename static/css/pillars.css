@@ -1,3 +1,11 @@
+#header .notifier {
+  position: fixed;
+}
+#header .notifier li {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+}
 .form-progressbar {
   -webkit-transition: all linear 0.5s;
   transition: all linear 0.5s;
@@ -32,12 +40,263 @@
 .form-group {
   margin-bottom: 5px;
 }
+label.control-label .popover {
+  left: 100%;
+  margin-left: -2px;
+  margin-top: -30px;
+  max-width: 500%;
+  min-width: 200px;
+  right: auto;
+}
+label.control-label .popover .arrow {
+  top: 46px;
+}
+label.control-label:hover .popover {
+  display: block;
+}
+datepicker {
+  display: block;
+}
+datepicker .row .col-date .clear-button {
+  cursor: pointer;
+}
+datepicker .row .col-date .input-group {
+  max-width: 350px;
+  margin: 0 0 5px 0;
+}
+datepicker .row .col-date .input-group .datepicker-year {
+  width: 30% !important;
+  border-right-style: none;
+}
+datepicker .row .col-date .input-group .datepicker-month {
+  width: 50% !important;
+  border-right-style: none;
+}
+datepicker .row .col-date .input-group .datepicker-date {
+  width: 20% !important;
+}
+datepicker .row .col-time .input-group {
+  max-width: 250px;
+  margin: 0 0 5px 0;
+}
+datepicker .row .col-time .input-group .datepicker-hours {
+  width: 40% !important;
+}
+datepicker .row .col-time .input-group .input-group-separator {
+  width: 20% !important;
+}
+datepicker .row .col-time .input-group .datepicker-minutes {
+  width: 40% !important;
+}
+datepicker .calendar {
+  padding: 10px 0 0;
+  clear: both;
+}
+datepicker .calendar table.calendar-table {
+  clear: both;
+  margin: 0;
+}
+datepicker .calendar table.calendar-table th,
+datepicker .calendar table.calendar-table td {
+  text-align: center;
+  padding: 4px 4px;
+}
+datepicker .calendar table.calendar-table tr.datepicker-header th span.glyphicon-chevron-left {
+  margin: 0 10px;
+  cursor: pointer;
+}
+datepicker .calendar table.calendar-table tr.datepicker-header th span.glyphicon-chevron-right {
+  margin: 0 10px;
+  cursor: pointer;
+}
+datepicker .calendar table.calendar-table tr.datepicker-header th span.name {
+  font-weight: 700;
+}
+datepicker .calendar table.calendar-table tr.datepicker-header th .datepicker-month {
+  width: 50%;
+}
+datepicker .calendar table.calendar-table tr.datepicker-header th .datepicker-year {
+  width: 50%;
+}
+datepicker .calendar table.calendar-table tr.datepicker-days td {
+  cursor: pointer;
+}
+datepicker .calendar table.calendar-table tr.datepicker-days td.text-info {
+  font-weight: 700;
+}
+datepicker .calendar table.calendar-table tr.datepicker-days td.outMonth {
+  color: #CCCCCC;
+}
+reference .reference-search .input-group-btn .dropdown-menu {
+  width: 100%;
+  max-height: 180px;
+  overflow: auto;
+  padding: 0;
+}
+reference .reference-search .input-group-btn .dropdown-menu li {
+  padding: 10px 130px 10px 25px;
+  border-bottom: 1px solid #CCCCCC;
+  clear: both;
+  position: relative;
+}
+reference .reference-search .input-group-btn .dropdown-menu li.selected:before {
+  background-color: #5BC0DE;
+  bottom: 5px;
+  content: "";
+  display: block;
+  height: auto;
+  left: 5px;
+  position: absolute;
+  top: 5px;
+  width: 10px;
+}
+reference .reference-search .input-group-btn .dropdown-menu li input {
+  display: block;
+  left: 5px;
+  position: absolute;
+  top: 5px;
+}
+reference .reference-search .input-group-btn .dropdown-menu li .reference-img {
+  display: inline-block;
+  height: 100%;
+  padding: 10px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 140px;
+}
+reference .reference-search .input-group-btn .dropdown-menu li .reference-img img {
+  border: 1px solid #CCCCCC;
+  float: right;
+  max-height: 100%;
+  max-width: 100%;
+  right: 0;
+  top: 0;
+  width: auto;
+}
+reference .reference-search .input-group-btn .dropdown-menu li .reference-item {
+  display: block;
+}
+reference .reference-search .input-group-btn .dropdown-menu li .reference-item .item-label {
+  display: inline-block;
+}
+reference .reference-search .input-group-btn .dropdown-menu li .reference-item .item-value {
+  display: inline-block;
+}
+reference .reference-search .input-group-btn .dropdown-menu li .reference-item-_img,
+reference .reference-search .input-group-btn .dropdown-menu li .reference-item-_id {
+  display: none;
+}
+reference .references {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+reference .references li {
+  background-color: #FFFFFF;
+  border: 1px solid #CCCCCC;
+  border-radius: 4px;
+  box-shadow: 0 -30px 80px -35px rgba(0, 0, 0, 0.1) inset;
+  clear: both;
+  margin: 10px 15px 0 0;
+  padding: 15px 140px 6px 0;
+  position: relative;
+}
+reference .references li .reference-img {
+  display: inline-block;
+  height: 100%;
+  padding: 10px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 140px;
+}
+reference .references li .reference-img img {
+  border: 1px solid #CCCCCC;
+  float: right;
+  max-height: 100%;
+  max-width: 100%;
+  right: 0;
+  top: 0;
+  width: auto;
+}
+reference .references li .reference-item {
+  border-bottom: 1px solid #F5F5F5;
+  display: block;
+  margin: 0 0 5px;
+  padding: 0 0 5px;
+  overflow: auto;
+}
+reference .references li .reference-item:last-child {
+  border-bottom-style: none;
+}
+reference .references li .btn-remove {
+  border-radius: 0 4px 4px 0;
+  height: 80%;
+  left: 100%;
+  padding: 4px 6px;
+  position: absolute;
+  top: 10%;
+}
+reference .references li .reference-item-_img,
+reference .references li .reference-item-_id {
+  display: none;
+}
+imagepicker .new-file img {
+  max-width: 200px;
+  max-height: 200px;
+}
+.input-group-separator {
+  background-color: #EEEEEE;
+  border-color: #CCCCCC;
+  border-style: solid none;
+  border-width: 1px;
+  color: #555555;
+  display: table-cell;
+  float: left;
+  font-weight: 400;
+  padding: 6px;
+  text-align: center;
+  width: auto;
+  line-height: inherit;
+}
 .list-container {
   background-color: #F7F7F7;
   border-radius: 20px;
   box-shadow: 0 0px 3px rgba(0, 0, 0, 0.15) inset;
   margin: 10px 0 20px;
   padding: 20px 25px;
+}
+.imagebox {
+  background-color: #FFFFFF;
+  border: 1px solid #CCCCCC;
+  border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+  display: inline-block;
+  margin: 0 0 10px;
+  max-width: 100%;
+  min-height: 34px;
+  overflow: hidden;
+  padding: 12px;
+  position: relative;
+  width: auto;
+}
+.imagebox img {
+  background-color: #FFFFFF;
+  border: 1px solid #FFFFFF;
+  box-shadow: 0 0 2px 1px #D6D6D6;
+  display: block;
+  max-height: 250px;
+  max-width: 100%;
+  width: 100%;
+}
+.imagebox input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
 }
 .navbar-fixed-bottom {
   background-color: #F7F7F7;
