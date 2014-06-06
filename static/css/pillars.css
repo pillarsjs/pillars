@@ -54,6 +54,63 @@ label.control-label .popover .arrow {
 label.control-label:hover .popover {
   display: block;
 }
+.form-list {
+  background-color: #F2F2F2;
+  border: 1px solid #CCCCCC;
+  border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
+  margin-bottom: 35px;
+  margin-top: 25px;
+  padding-bottom: 15px;
+}
+.form-list .list-header {
+  padding: 5px 15px 0;
+}
+.form-list .list-header .control-label {
+  text-align: left;
+  float: left;
+  clear: left;
+  margin-bottom: 10px;
+}
+.form-list .list-header .help-block {
+  text-align: left;
+  float: left;
+  clear: left;
+  margin-top: 0;
+}
+.form-list .list-header .btn-add {
+  float: right;
+  margin: 0px 0 10px;
+}
+.form-list .list-items {
+  clear: both;
+}
+.form-list .list-items > fieldset {
+  background-color: #F9F9F9;
+  border-top: 1px solid #CCCCCC;
+  border-bottom: 1px solid #CCCCCC;
+  margin: -1px -15px 0;
+  padding-top: 15px;
+}
+.form-list .list-items > fieldset legend {
+  display: block;
+}
+.form-list .list-items > fieldset > .form-group {
+  margin: 0;
+}
+.form-list .list-items > fieldset > .fieldset-controls {
+  padding: 0 10px;
+  height: 0;
+  overflow: hidden;
+  -webkit-transition: all linear 0.2s;
+  transition: all linear 0.2s;
+}
+.form-list .list-items > fieldset > .fieldset-controls .btn-remove {
+  border-radius: 4px 4px 0 0;
+}
+.form-list .list-items > fieldset:hover .fieldset-controls {
+  height: 34px;
+}
 datepicker {
   display: block;
 }
@@ -133,13 +190,13 @@ reference .reference-search .input-group-btn .dropdown-menu {
   overflow: auto;
   padding: 0;
 }
-reference .reference-search .input-group-btn .dropdown-menu li {
+reference .reference-search .input-group-btn .dropdown-menu li.reference {
   padding: 10px 130px 10px 25px;
   border-bottom: 1px solid #CCCCCC;
   clear: both;
   position: relative;
 }
-reference .reference-search .input-group-btn .dropdown-menu li.selected:before {
+reference .reference-search .input-group-btn .dropdown-menu li.reference.selected:before {
   background-color: #5BC0DE;
   bottom: 5px;
   content: "";
@@ -150,13 +207,7 @@ reference .reference-search .input-group-btn .dropdown-menu li.selected:before {
   top: 5px;
   width: 10px;
 }
-reference .reference-search .input-group-btn .dropdown-menu li input {
-  display: block;
-  left: 5px;
-  position: absolute;
-  top: 5px;
-}
-reference .reference-search .input-group-btn .dropdown-menu li .reference-img {
+reference .reference-search .input-group-btn .dropdown-menu li.reference .reference-img {
   display: inline-block;
   height: 100%;
   padding: 10px;
@@ -165,7 +216,7 @@ reference .reference-search .input-group-btn .dropdown-menu li .reference-img {
   top: 0;
   width: 140px;
 }
-reference .reference-search .input-group-btn .dropdown-menu li .reference-img img {
+reference .reference-search .input-group-btn .dropdown-menu li.reference .reference-img img {
   border: 1px solid #CCCCCC;
   float: right;
   max-height: 100%;
@@ -174,17 +225,20 @@ reference .reference-search .input-group-btn .dropdown-menu li .reference-img im
   top: 0;
   width: auto;
 }
-reference .reference-search .input-group-btn .dropdown-menu li .reference-item {
+reference .reference-search .input-group-btn .dropdown-menu li.reference .reference-items {
+  padding: 0;
+}
+reference .reference-search .input-group-btn .dropdown-menu li.reference .reference-items .reference-item {
   display: block;
 }
-reference .reference-search .input-group-btn .dropdown-menu li .reference-item .item-label {
+reference .reference-search .input-group-btn .dropdown-menu li.reference .reference-items .reference-item .item-label {
   display: inline-block;
 }
-reference .reference-search .input-group-btn .dropdown-menu li .reference-item .item-value {
+reference .reference-search .input-group-btn .dropdown-menu li.reference .reference-items .reference-item .item-value {
   display: inline-block;
 }
-reference .reference-search .input-group-btn .dropdown-menu li .reference-item-_img,
-reference .reference-search .input-group-btn .dropdown-menu li .reference-item-_id {
+reference .reference-search .input-group-btn .dropdown-menu li.reference .reference-items.reference-item-_img,
+reference .reference-search .input-group-btn .dropdown-menu li.reference .reference-items.reference-item-_id {
   display: none;
 }
 reference .references {
@@ -192,17 +246,18 @@ reference .references {
   padding: 0;
   margin: 0;
 }
-reference .references li {
-  background-color: #FFFFFF;
+reference .references li.reference {
+  background-color: #F9F9F9;
   border: 1px solid #CCCCCC;
   border-radius: 4px;
-  box-shadow: 0 -30px 80px -35px rgba(0, 0, 0, 0.1) inset;
-  clear: both;
-  margin: 10px 15px 0 0;
-  padding: 15px 140px 6px 0;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
+  margin: 10px 0 0 0;
+}
+reference .references li.reference .reference-data {
+  padding: 15px 140px 0 0;
   position: relative;
 }
-reference .references li .reference-img {
+reference .references li.reference .reference-data .reference-img {
   display: inline-block;
   height: 100%;
   padding: 10px;
@@ -211,7 +266,8 @@ reference .references li .reference-img {
   top: 0;
   width: 140px;
 }
-reference .references li .reference-img img {
+reference .references li.reference .reference-data .reference-img img {
+  background-color: #FFFFFF;
   border: 1px solid #CCCCCC;
   float: right;
   max-height: 100%;
@@ -219,28 +275,43 @@ reference .references li .reference-img img {
   right: 0;
   top: 0;
   width: auto;
+  border-radius: 4px 4px 4px 4px;
 }
-reference .references li .reference-item {
+reference .references li.reference .reference-data .reference-items {
+  padding: 0;
+}
+reference .references li.reference .reference-data .reference-items .reference-item {
   border-bottom: 1px solid #F5F5F5;
   display: block;
   margin: 0 0 5px;
   padding: 0 0 5px;
   overflow: auto;
 }
-reference .references li .reference-item:last-child {
+reference .references li.reference .reference-data .reference-items .reference-item:last-child {
   border-bottom-style: none;
 }
-reference .references li .btn-remove {
-  border-radius: 0 4px 4px 0;
-  height: 80%;
-  left: 100%;
-  padding: 4px 6px;
-  position: absolute;
-  top: 10%;
+reference .references li.reference .reference-data .reference-items .reference-item .item-label {
+  display: block;
 }
-reference .references li .reference-item-_img,
-reference .references li .reference-item-_id {
+reference .references li.reference .reference-data .reference-items .reference-item .item-value {
+  display: block;
+}
+reference .references li.reference .reference-data .reference-items .reference-item.reference-item-_img,
+reference .references li.reference .reference-data .reference-items .reference-item.reference-item-_id {
   display: none;
+}
+reference .references li.reference .reference-controls {
+  padding: 0 10px;
+  height: 0;
+  overflow: hidden;
+  -webkit-transition: all linear 0.2s;
+  transition: all linear 0.2s;
+}
+reference .references li.reference .reference-controls .btn-remove {
+  border-radius: 4px 4px 0 0;
+}
+reference .references li.reference:hover .reference-controls {
+  height: 34px;
 }
 imagepicker .new-file img {
   max-width: 200px;
@@ -259,13 +330,6 @@ imagepicker .new-file img {
   text-align: center;
   width: auto;
   line-height: inherit;
-}
-.list-container {
-  background-color: #F7F7F7;
-  border-radius: 20px;
-  box-shadow: 0 0px 3px rgba(0, 0, 0, 0.15) inset;
-  margin: 10px 0 20px;
-  padding: 20px 25px;
 }
 .imagebox {
   background-color: #FFFFFF;

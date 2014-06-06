@@ -142,26 +142,30 @@ mixin referencepicker
 	div(class="input-group reference-search")
 		input(type="text", class="form-control",ng-model="search",ng-change="load(true)",placeholder="Select items...")
 		.input-group-btn
-			button(type="button", class="btn btn-default dropdown-toggle", ng-click="load()")
+			button(type="button", class="btn btn-default dropdown-toggle", ng-click="dropdown()")
 				span(class="caret",ng-hide="loading")
 				span(class="glyphicon glyphicon-refresh",ng-show="loading",class="ng-hide")
 			ul(class="dropdown-menu ng-hide", ng-show="opened", style="display:block;", scroll-end="more()",scroll-end-margin="5")
-				li(ng-repeat="(lk, l) in data.list", ng-click="addReference(l)",ng-class="{'selected':references[l._id]}")
+				li(class="reference", ng-repeat="(lk, l) in data.list", ng-click="addReference(l)",ng-class="{'selected':references[l._id]}")
 					div(class="reference-img ng-hide",ng-show="l._img")
 						img(ng-src="/{{l._img.path}}")
-					div(ng-repeat="(vk,v) in l",class="reference-item reference-item-{{vk}}")
-						strong.item-label {{vk}}
-						| &nbsp;
-						span.item-value {{v}}
+					ul.reference-items
+						li(ng-repeat="(vk,v) in l",class="reference-item reference-item-{{vk}}")
+							strong.item-label {{vk}}
+							span.item-value {{v}}
 	ul(class="references")
-		li(ng-repeat="(lk, l) in references")
-			div(class="reference-img ng-hide",ng-show="l._img")
-				img(ng-src="/{{l._img.path}}")
-			div(ng-repeat="(vk,v) in l",class="reference-item reference-item-{{vk}}")
-				strong.item-label.col-sm-2 {{vk}}
-				span.item-value.col-sm-10 {{v}}
-			button(class="btn btn-info btn-remove", type='button', ng-click="addReference(l)")
-				span(class="glyphicon glyphicon-remove")
+		li(class="reference", ng-repeat="(lk, l) in references")
+			div.reference-data
+				div(class="reference-img ng-hide",ng-show="l._img")
+					img(ng-src="/{{l._img.path}}")
+				ul.reference-items
+					li(ng-repeat="(vk,v) in l",class="reference-item reference-item-{{vk}}")
+						strong.item-label.col-sm-2 {{vk}}
+						span.item-value.col-sm-10 {{v}}
+			div.reference-controls
+				button(class="btn btn-danger btn-remove pull-right", type='button', ng-click="addReference(l)")
+					span(class="glyphicon glyphicon-remove")
+					|  Delete
 
 mixin imagepicker
 	div.current-file.imagebox

@@ -265,6 +265,17 @@ angular.module('Pillars', ['ngRoute'])
 					scope.opened = true;
 				}
 
+				scope.dropdown = function(){
+					console.log('hola');
+					if(!scope.opened){
+						scope.load();
+						console.log('a');
+					} else {
+						scope.opened = false;
+						console.log('b');
+					}
+				}
+
 				scope.more = function(){
 					var skip = parseInt(scope.data.skip || 0);
 					var limit = parseInt(scope.data.limit || 0);
@@ -416,6 +427,53 @@ angular.module('Pillars', ['ngRoute'])
 				});
 			}
 		};
+	})
+	.filter('object_order', function() {
+		return function(input) {
+			/*
+			var order = [];
+			var out = {};
+			console.log("input",input);
+			for(i in input){
+				input[i].$$$ = i;
+				order.push(input[i]);
+			}
+			console.log("order",order);
+			order.sort(function(a,b){
+				var a = a._order || 0;
+				var b = b._order || 0;
+				return a-b;
+			});
+			console.log("orderend",order);
+			for(i in order){
+				var id = order[i].$$$;
+				delete order[i].$$$;
+				//delete input[id];
+				out[id]=order[id];
+			}
+			console.log("out",out);
+			return out;
+			*/
+			console.log("in",input);
+			var sorting = [];
+			for(i in input){
+				input[i]._id = i;
+				sorting.push(input[i]);
+			}
+			sorting.sort(function(a,b){
+				var a = a._order || 0;
+				var b = b._order || 0;
+				return a-b;
+			});
+			for(i in sorting){
+				var id = sorting[i]._id;
+				delete sorting[i]._id;
+				delete input[id];
+				input[id] = sorting[i];
+			}
+			console.log("out",input);
+			return input;
+		}
 	})
 
 

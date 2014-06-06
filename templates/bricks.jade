@@ -25,25 +25,42 @@ mixin subset(subset)
 			+field(field)
 
 mixin list(list)
-	.form-group
-		label(class="control-label col-sm-2")=list.label
-		div(class="list-container container col-sm-10")
+	.form-group.form-list
+		div(class="list-header")
+			label(class="control-label")=list.label
 			p(class="help-block")=list.details
+			input(class='btn btn-add btn-primary', type='button', value='Add',ng-click="addListItem("+list.parent.NgScope+",'"+list.id+"')")
+		div(class="list-items col-sm-12")
 			- var lk = "$lk"+list.depth;
 			- var lf = "$lf"+list.depth;
 			input(type='text', class="ng-hide",ng-repeat="("+lk+", "+lf+") in "+list.NgScope, ng-disabled=lf, id=list.NgId+"{{"+lk+"}}", name=list.NgName+"[{{"+lk+"}}]", value="unset")
-			fieldset(ng-repeat="("+lk+", "+lf+") in "+list.NgScope, ng-disabled="!"+lf, ng-hide="!"+lf)
-				legend
-					#{'h'+(3+list.depth)}.text-primary
-						= list.items.label + "{{"+lk+"}}"
-						small=' '+list.items.details
+			fieldset(ng-repeat="("+lk+", "+lf+") in "+list.NgScope+" | object_order", ng-disabled="!"+lf, ng-hide="!"+lf)
+				p="{{"+lk+"}}"
+				p="{{"+lf+"}}"
+				//ol.breadcrumb
+				//	li
+				//		a(href="#") Home
+				//	li
+				//		a(href="#") Library
+				//	li.active Data
+
+				//legend
+				//	#{'h'+(3+list.depth)}.text-primary
+				//		= list.items.label + "{{"+lk+"}}"
+				//		small=' '+list.items.details
 				each field in list.fields
 					+field(field)
-				button(ng-if="navsave", class="btn btn-danger navbar-btn", type='button', ng-click="deleteListItem("+list.NgScope+","+lk+")")
-					span(class="glyphicon glyphicon-remove")
-					|  Delete
+				div(class="fieldset-controls",ng-init=lf+"._order=$index")
+					button(ng-if="navsave", class="btn btn-remove btn-danger pull-right", type='button', ng-click="deleteListItem("+list.NgScope+","+lk+")")
+						span(class="glyphicon glyphicon-remove")
+						|  Delete
+					span="{{$index}}"
+					span="{{"+lf+"._order}}"
+					// name=list.NgName+"[{{"+lk+"}}][_order]"
+					select(ng-model="_order", ng-change=lf+"._order=_order;")
+						option(ng-repeat="(ok, oe) in "+list.NgScope+" track by $index", value="{{$index}}",ng-selected="{{$index == "+lf+"._order }}") {{$index+1}}
 			
-			input(class='btn btn-primary', type='button', value='Add',ng-click="addListItem("+list.parent.NgScope+",'"+list.id+"')")
+		
 
 mixin field(field)
 	- var ngExp = field.NgExp;
