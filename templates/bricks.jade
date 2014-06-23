@@ -9,6 +9,9 @@ mixin fieldset(fieldset)
 				h3.text-primary=fieldset.title
 					small=' '+fieldset.details
 
+			div.unseters.ng-hide
+				input(ng-repeat="(nstk,nst) in nstlist",ng-value="nst",name="unset[{{nstk}}]")
+
 			div(class="form-horizontal")
 				each field in fieldset.fields
 					if field.template=='subset' || field.template=='list' 
@@ -17,26 +20,36 @@ mixin fieldset(fieldset)
 						+field(field)
 
 mixin subset(subset)
-	fieldset.pillar-subset
-		legend
-			#{'h'+(3+subset.depth)}.text-primary=subset.label
-				small=' '+subset.details
-		each field in subset.fields
-			+field(field)
+	.form-group.form-list
+		div(class="list-header", ng-class="{'has-error':validations['"+subset.NgExp.replace(/^data./,'')+"']}")
+			label(class="control-label")=subset.label
+			p(class="help-block")=subset.details
+			button(class="btn btn-open btn-default", type='button')
+				span(class="glyphicon glyphicon-eye-open")
+				= " Show items"
+			button(class="btn btn-open btn-default ng-hide", type='button')
+				span(class="glyphicon glyphicon-eye-close")
+				= " Close"
+		div(class="list-items col-sm-12")
+			each field in subset.fields
+				+field(field)
 
 mixin list(list)
 	.form-group.form-list
-		div(class="list-header")
+		div(class="list-header", ng-class="{'has-error':validations['"+list.NgExp.replace(/^data./,'')+"']}")
 			label(class="control-label")=list.label
 			p(class="help-block")=list.details
-			input(class='btn btn-add btn-primary', type='button', value='Add',ng-click="addListItem("+list.parent.NgScope+",'"+list.id+"')")
+			button(class="btn btn-open btn-default", type='button')
+				span(class="glyphicon glyphicon-eye-open")
+				= " Show {{"+list.NgScope+".length}} items"
+			button(class="btn btn-open btn-default ng-hide", type='button')
+				span(class="glyphicon glyphicon-eye-close")
+				= " Close"
 		div(class="list-items col-sm-12")
 			- var lk = "$lk"+list.depth;
 			- var lf = "$lf"+list.depth;
-			input(type='text', class="ng-hide",ng-repeat="("+lk+", "+lf+") in "+list.NgScope, ng-disabled=lf, id=list.NgId+"{{"+lk+"}}", name=list.NgName+"[{{"+lk+"}}]", value="unset")
-			fieldset(ng-repeat="("+lk+", "+lf+") in "+list.NgScope+" | object_order", ng-disabled="!"+lf, ng-hide="!"+lf)
-				p="{{"+lk+"}}"
-				p="{{"+lf+"}}"
+			//- var deleteName = list.NgName.replace('data[','delete[');
+			fieldset(ng-repeat="("+lk+", "+lf+") in "+list.NgScope)
 				//ol.breadcrumb
 				//	li
 				//		a(href="#") Home
@@ -48,29 +61,45 @@ mixin list(list)
 				//	#{'h'+(3+list.depth)}.text-primary
 				//		= list.items.label + "{{"+lk+"}}"
 				//		small=' '+list.items.details
+				input(type='text',class="ng-hide",ng-value=list.NgScope+"["+lk+"]._id",name=list.NgName+"[{{"+lk+"}}][_id]")
 				each field in list.fields
 					+field(field)
-				div(class="fieldset-controls",ng-init=lf+"._order=$index")
-					button(ng-if="navsave", class="btn btn-remove btn-danger pull-right", type='button', ng-click="deleteListItem("+list.NgScope+","+lk+")")
+				div(class="fieldset-controls")
+					- var unsetid = "'"+list.NgScope.replace(/^data./,'')+".'+"+lf+"._id";
+					button(ng-if="navsave", class="btn btn-remove btn-danger pull-right", type='button', ng-click="deleteListItem("+list.NgScope+","+lk+","+unsetid+")")
 						span(class="glyphicon glyphicon-remove")
 						|  Delete
-					span="{{$index}}"
-					span="{{"+lf+"._order}}"
-					// name=list.NgName+"[{{"+lk+"}}][_order]"
-					select(ng-model="_order", ng-change=lf+"._order=_order;")
-						option(ng-repeat="(ok, oe) in "+list.NgScope+" track by $index", value="{{$index}}",ng-selected="{{$index == "+lf+"._order }}") {{$index+1}}
-			
+					.input-group.list-sort-select
+						span.input-group-addon
+							span.glyphicon.glyphicon-sort
+						select(class="form-control", ng-model=lf+"._order", ng-change="orderListItem("+list.NgScope+","+lk+")",ng-options="ork as ork*1+1 for (ork, ore) in "+list.NgScope+"")
+
+		div(class="list-footer")
+			input(class='btn btn-add btn-primary', type='button', value='Add',ng-click="addListItem("+list.parent.NgScope+",'"+list.id+"')")
 		
 
 mixin field(field)
 	- var ngExp = field.NgExp;
-	div(class="form-group", ng-class="{'has-error':(validations['"+ngExp+"'] || $form['"+field.NgName+"'].$invalid)}")
-		label(class="control-label col-sm-2",for=field.NgId)=field.label
-			div(class="popover fade right in")
-				.arrow
-				.popover-title Field Object
-				.popover-content
-					pre="{{"+field.NgScope+"}}\n"+util.format(field)
+	div(class="form-group", ng-class="{'has-error':(validations['"+ngExp.replace(/^data./,'')+"'] || $form['"+field.NgName+"'].$invalid)}")
+		label(class="control-label col-sm-2",for=field.NgId)
+
+			div(class="label-text")=field.label
+				div(class="popover fade right in")
+					.arrow
+					.popover-title Field Object
+					.popover-content
+						pre="{{"+field.NgScope+"}}\n"+util.format(field)
+
+			if field.i18n
+				div(class="dropdown lang-selector")
+					button(type="button", class="btn btn-default navbar-btn dropdown-toggle", data-toggle="dropdown") {{languages.active}} 
+						span(class="caret")
+						span(class="sr-only") Toggle Dropdown
+					ul(class="dropdown-menu", role="menu")
+						li(ng-repeat="lang in languages.list", ng-class="{active:languages.active==lang}")
+							a(ng-click="languages.active=lang",href="") {{lang}}
+
+
 
 		if field.i18n
 			+field-i18n(field)
@@ -91,9 +120,9 @@ mixin field-i18n(field)
 				p.help-block=field.details
 
 mixin field-validation(ngExp)
-	div(class="alert alert-danger ng-hide",ng-show="validations['"+ngExp+"']")
+	div(class="alert alert-danger ng-hide",ng-show="validations['"+ngExp.replace(/^data./,'')+"']")
 		ul(class="list-unstyled")
-			li(ng-repeat="msg in validations['"+ngExp+"']") {{msg}}
+			li(ng-repeat="msg in validations['"+ngExp.replace(/^data./,'')+"']") {{msg}}
 
 mixin text(config)
 	input(type='text', class=config.classes, class=['form-control','field-text'], id=config.id, name=config.name, ng-model=config.value)
@@ -106,6 +135,22 @@ mixin file(config)
 
 mixin textarea(config)
 	textarea(class=config.classes, class=['form-control','field-textarea'], id=config.id, name=config.name, ng-model=config.value)
+
+mixin editor(config)
+	div(id=config.id+"_toolbar", style="display: none;")
+		a(data-wysihtml5-command="bold") bold
+		a(data-wysihtml5-command="italic") italic
+		a(data-wysihtml5-command="foreColor", data-wysihtml5-command-value="red") red
+		a(data-wysihtml5-command="foreColor", data-wysihtml5-command-value="green") green
+		a(data-wysihtml5-command="foreColor", data-wysihtml5-command-value="blue") blue
+		a(data-wysihtml5-command="createLink") insert link
+		div(data-wysihtml5-dialog="createLink", style="display: none;")
+			label Link:
+				input(data-wysihtml5-dialog-field="href", value="http://", class="text")
+			a(data-wysihtml5-dialog-action="save") OK
+			a(data-wysihtml5-dialog-action="cancel") Cancel
+
+	textarea(class=config.classes, class=['form-control','field-editor'], id=config.id, name=config.name, ng-model=config.value, html-editor="true")
 
 mixin select(config)
 	select(class=config.classes, class=['form-control','field-select'], id=config.id, name=config.name, ng-model=config.value)

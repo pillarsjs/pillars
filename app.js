@@ -1,21 +1,19 @@
-
-var util = require('util');
 var textualization = require('./lib/textualization').languages(['es','en']);
 var formwork = require('./lib/formwork');
 var Pillar = require('./lib/Pillar');
 var bricks = require('./lib/bricks');
 var Beam = require('./lib/Beam');
 var beams = require('./lib/beams');
-var templates = require('./lib/templates');
 
 
 var server = formwork().mongodb('primera')
 
-textualization.load('crud-example','examples/crud.t12n');
+//textualization.load('crud-example','examples/crud.t12n');
 
 var mymodel = new bricks.Fieldset('system',{
-	title : 'Formulario',
+	title : 'System administration',
 	details : 'Completa los campos',
+	server : server,
 	collection : 'system',
 	//t12n : './lib/crud.t12n'
 	limit : 3,
@@ -122,37 +120,48 @@ var mymodel = new bricks.Fieldset('system',{
 			details : 'Este va invertido en la bdd'
 		}))
 	)
-	.addField(new bricks.Textarea('textarea',{
-		label : 'Textarea i18n',
+	.addField(new bricks.Editor('texti18n',{
+		label : 'Text i18n',
+		i18n : true,
 		details : 'Un campo internacional'
 	}))
 	.addField(new bricks.Text('field3',{
 		label : 'Field3',
 		details : 'Rellena este campo...'
 	}))
+	.addField(new bricks.Subset('thesubset',{
+		label : 'Un subset',
+		details : 'Conjunto de campos independiente'
+	})
+		.addField(new bricks.Text('subset1',{
+			label : 'Campo1'
+		}))
+		.addField(new bricks.Text('subset2',{
+			label : 'Campo2'
+		}))
+		.addField(new bricks.Text('subset3',{
+			label : 'Campo3'
+		}))
+	)
 ;
 
 server.addPillar(new Pillar({
 	id:'sample-pillar',
-	title:'Configuración',
-	path:'/system',
-	template:'examples/crud.jade',
-	schema:mymodel
+	path:'/system'
 })
-	.addBeam(new Beam('main',{session:true},beams.apiTemplate))
-	.addBeam(new Beam('search',{path:'/api',session:true},beams.apiList))
-	.addBeam(new Beam('get',{path:'/api/:_id',session:true},beams.apiGet))
-	.addBeam(new Beam('update',{path:'/api/:_id',method:'put',upload:true,session:true},beams.apiUpdate))
-	.addBeam(new Beam('insert',{path:'/api',method:'post',session:true},beams.apiInsert))
-	.addBeam(new Beam('remove',{path:'/api/:_id',method:'delete',session:true},beams.apiRemove))
+	.addBeam(new Beam('main',{session:true,schema:mymodel},beams.apiTemplate))
+	.addBeam(new Beam('search',{path:'/api',session:true,schema:mymodel},beams.apiList))
+	.addBeam(new Beam('get',{path:'/api/:_id',session:true,schema:mymodel},beams.apiGet))
+	.addBeam(new Beam('update',{path:'/api/:_id',method:'put',upload:true,session:true,schema:mymodel},beams.apiUpdate))
+	.addBeam(new Beam('insert',{path:'/api',method:'post',session:true,schema:mymodel},beams.apiInsert))
+	.addBeam(new Beam('remove',{path:'/api/:_id',method:'delete',session:true,schema:mymodel},beams.apiRemove))
+	.addBeam(new Beam('files',{path:'/files/*:path',method:'get',session:true,schema:mymodel,directory:'./files/system'},beams.apiFiles))
 );
 
 
 server.addPillar(new Pillar({
 	id:'staticfiles',
-	title:'Static',
-	path:'',
-	template:'templates/static.jade'
+	path:''
 })
 	.addBeam(new Beam('css',{path:'/css/*:path',directory:'./static/css'},beams.directory))
 	.addBeam(new Beam('file',{path:'/file/*:path',directory:'./static/file'},beams.directory))

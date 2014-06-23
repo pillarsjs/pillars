@@ -1,8 +1,4 @@
-include templates/layout
 include templates/bricks
-
-mixin crud-error()
-	a(href=link('main')) [Go to list]
 
 mixin crud-list
 	table(class="table table-striped")
@@ -73,24 +69,23 @@ mixin navbar
 						span(class="glyphicon glyphicon-plus")
 						|  New
 				ul.nav.navbar-nav.navbar-right
-					li.dropdown
-							button(type="button", class="btn btn-info navbar-btn dropdown-toggle", data-toggle="dropdown") Languages {{languages.active}} 
-								span(class="caret")
-								span(class="sr-only") Toggle Dropdown
-							ul(class="dropdown-menu", role="menu")
-								li(ng-repeat="lang in languages.list", ng-class="{active:languages.active==lang}")
-									a(ng-click="languages.active=lang",href="") {{lang}}
-					|&nbsp;
 					button(ng-if="navsave", class="btn btn-danger navbar-btn", type='button', ng-click="removeElement()")
 						span(class="glyphicon glyphicon-remove")
 						|  Delete
 
+		div(ng-show="loading",class="ng-show form-progressbar")
+					div(class="progress progress-striped active ng-hide", ng-show="sending>0")
+						.progress-bar.progress-bar-info(role="progressbar", aria-valuenow="45", aria-valuemin="0", aria-valuemax="100", style="width: {{sending}}%")
+							span.sr-only Sending... {{sending}}%
+					div(class="progress progress-striped active ng-hide", ng-show="receiving>0")
+						.progress-bar.progress-bar-success(role="progressbar", aria-valuenow="45", aria-valuemin="0", aria-valuemax="100", style="width: {{receiving}}%")
+							span.sr-only Receiving... {{receiving}}%
+
 mixin notifier
 	ul(class="notifier list-unstyled ng-hide", ng-show="msgs")
-		li(ng-repeat="msg in msgs")
-			div(class="alert alert-{{msg.lvl}}")
-				strong {{msg.msg}}
-				|  {{msg.details}}
+		li(ng-repeat="msg in msgs", class="alert alert-{{msg.lvl}}")
+			strong {{msg.msg}}
+			|  {{msg.details}}
 
 mixin trace(trace)
 	if trace
@@ -146,9 +141,9 @@ mixin referencepicker
 				span(class="caret",ng-hide="loading")
 				span(class="glyphicon glyphicon-refresh",ng-show="loading",class="ng-hide")
 			ul(class="dropdown-menu ng-hide", ng-show="opened", style="display:block;", scroll-end="more()",scroll-end-margin="5")
-				li(class="reference", ng-repeat="(lk, l) in data.list", ng-click="addReference(l)",ng-class="{'selected':references[l._id]}")
+				li(class="reference", ng-repeat="(lk, l) in data.list", ng-click="addReference(l)",ng-class="{'selected':set.indexOf(l._id)>=0}")
 					div(class="reference-img ng-hide",ng-show="l._img")
-						img(ng-src="/{{l._img.path}}")
+						img(ng-src="files/{{l._img.path}}")
 					ul.reference-items
 						li(ng-repeat="(vk,v) in l",class="reference-item reference-item-{{vk}}")
 							strong.item-label {{vk}}
@@ -157,7 +152,7 @@ mixin referencepicker
 		li(class="reference", ng-repeat="(lk, l) in references")
 			div.reference-data
 				div(class="reference-img ng-hide",ng-show="l._img")
-					img(ng-src="/{{l._img.path}}")
+					img(ng-src="files/{{l._img.path}}")
 				ul.reference-items
 					li(ng-repeat="(vk,v) in l",class="reference-item reference-item-{{vk}}")
 						strong.item-label.col-sm-2 {{vk}}
@@ -166,6 +161,10 @@ mixin referencepicker
 				button(class="btn btn-danger btn-remove pull-right", type='button', ng-click="addReference(l)")
 					span(class="glyphicon glyphicon-remove")
 					|  Delete
+				.input-group.reference-sort-select
+					span.input-group-addon
+						span.glyphicon.glyphicon-sort
+					select(class="form-control", ng-model="sorts[lk]", ng-change="moveReference(lk)",ng-options="ork as ork*1+1 for (ork, ore) in references")
 
 mixin imagepicker
 	div.current-file.imagebox
@@ -176,7 +175,7 @@ mixin imagepicker
 		//imagedit(ng-repeat="(imgk, imgf) in readedFiles")
 
 doctype html
-html(lang="es",ng-app="Pillars")
+html(lang=gw.language,ng-app="Pillars")
 	head
 		title=title
 		meta(charset="utf-8")
@@ -190,13 +189,6 @@ html(lang="es",ng-app="Pillars")
 		#space.container
 			header#header
 				h1=h1
-				div(ng-show="loading",class="ng-hide form-progressbar")
-					div(class="progress progress-striped active ng-hide", ng-show="sending>0")
-						.progress-bar.progress-bar-info(role="progressbar", aria-valuenow="45", aria-valuemin="0", aria-valuemax="100", style="width: {{sending}}%")
-							span.sr-only Sending... {{sending}}%
-					div(class="progress progress-striped active ng-hide", ng-show="receiving>0")
-						.progress-bar.progress-bar-success(role="progressbar", aria-valuenow="45", aria-valuemin="0", aria-valuemax="100", style="width: {{receiving}}%")
-							span.sr-only Receiving... {{receiving}}%
 				+notifier
 
 			#page
@@ -221,5 +213,7 @@ html(lang="es",ng-app="Pillars")
 		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
 		script(src='//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js')
 		script(src='/js/kinetic-v5.1.0.min.js')
+		script(src='/js/wysihtml5-advanced.js')
+		script(src='/js/wysihtml5-0.4.0pre.js')
 		script(src='/js/pillars.js')
 

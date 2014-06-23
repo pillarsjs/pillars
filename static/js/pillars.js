@@ -111,6 +111,7 @@ angular.module('Pillars', ['ngRoute'])
 		$rootScope.navsave = true;
 		$rootScope.navremove = true;
 		$scope.data = {};
+		$scope.nstlist = [];
 		$loader.data = function(xhr){
 			$scope.validations = xhr.json.validations || {};
 			if(xhr.json.data===true){
@@ -125,12 +126,22 @@ angular.module('Pillars', ['ngRoute'])
 		$loader.send('get','api/'+$routeParams._id,false,false);
 
 		$scope.addListItem = function(parent,list){
-			if(!parent[list]){parent[list]={};}
+			if(!parent[list]){parent[list]=[];}
 			var newid = Date.now().toString(36)+Math.round(Math.random()*10).toString(36);
-			parent[list][newid]={};
+			parent[list].push({_id:newid,_order:''+parent[list].length+''});
 		};
-		$scope.deleteListItem = function(list,k){
-			list[k]=false;
+		$scope.deleteListItem = function(list,k,id){
+			$scope.nstlist.push(id);
+			list.splice(k,1);
+		};
+		$scope.orderListItem = function(parent,list){
+			var tomove = parent[list];
+			var order = parent[list]._order;
+			parent.splice(list,1);
+			parent.splice(order,0,tomove);
+			parent.forEach(function(element,index,array){
+				element._order = ''+index+'';
+			});
 		};
 		$scope.sendForm = function(){
 			$loader.send('put','api/'+$routeParams._id,$form,true);
@@ -214,13 +225,16 @@ angular.module('Pillars', ['ngRoute'])
 			link: function(scope, element, attr, ngModel) {
 				scope.search = "";
 				scope.referenceName = attr['name'];
-				scope.references = {};
+				scope.references = [];
 				scope.set = [];
 
 				scope.$watch('value', function() {
 					if(typeof scope.value != "undefined" && scope.value!=""){
 						scope.references = scope.value;
-						scope.set = Object.keys(scope.references).join(',');
+						scope.setOrders();
+						scope.set = scope.references.map(function(element,index,array){
+							return element._id;
+						}).join(',');
 					}
 				});
 
@@ -284,16 +298,38 @@ angular.module('Pillars', ['ngRoute'])
 				}
 
 				scope.addReference = function(reference){
-
-					if(scope.references[reference._id]){
-						delete scope.references[reference._id];
+					var set = scope.references.map(function(element,index,array){
+						return element._id;
+					});
+					var index = set.indexOf(reference._id);
+					if(index>=0){
+						set.splice(index,1);
+						scope.references.splice(index,1);
 					} else {
-						scope.references[reference._id]=reference;
+						set.push(reference._id);
+						scope.references.push(reference);
 					}
-					scope.set = Object.keys(scope.references).join(',');
-					console.log("addReference",scope.references,reference);
+					scope.setOrders();
+					scope.set = set.join(',');
 				}
-					
+
+				scope.setOrders = function(){
+					scope.sorts = scope.references.map(function(element,index,array){
+						return ''+index+'';
+					});
+				}
+
+				scope.moveReference = function(i){
+					var tomove = scope.references[i];
+					var order = scope.sorts[i];
+					scope.references.splice(i,1);
+					scope.references.splice(order,0,tomove);
+					scope.setOrders();
+					var set = scope.references.map(function(element,index,array){
+						return element._id;
+					});
+					scope.set = set.join(',');
+				}
 
 				element.bind('click', function(e) {
 					e.stopPropagation();
@@ -321,6 +357,17 @@ angular.module('Pillars', ['ngRoute'])
 			});
 		};
 	})
+	.directive('htmlEditor', function() {
+		return function(scope, element, attr) {
+			var raw = element[0];
+			var id = attr.id;
+			var editor = new wysihtml5.Editor(id, {
+				toolbar: id+"_toolbar",
+				parserRules:  wysihtml5ParserRules,
+				stylesheets: "/css/wysihtml5.css"
+			});
+		};
+	})
 	.directive('imagepicker', function($locale) {
 		return {
 			require: 'ngModel',
@@ -336,7 +383,7 @@ angular.module('Pillars', ['ngRoute'])
 				scope.$watch('value', function() {
 					if(typeof scope.value != "undefined" && scope.value.path){
 						if(scope.value.path.substring(0,5)!="data:"){
-							scope.value.path="/"+scope.value.path;
+							scope.value.path="files/"+scope.value.path;
 						}
 					}
 				});
@@ -428,53 +475,6 @@ angular.module('Pillars', ['ngRoute'])
 			}
 		};
 	})
-	.filter('object_order', function() {
-		return function(input) {
-			/*
-			var order = [];
-			var out = {};
-			console.log("input",input);
-			for(i in input){
-				input[i].$$$ = i;
-				order.push(input[i]);
-			}
-			console.log("order",order);
-			order.sort(function(a,b){
-				var a = a._order || 0;
-				var b = b._order || 0;
-				return a-b;
-			});
-			console.log("orderend",order);
-			for(i in order){
-				var id = order[i].$$$;
-				delete order[i].$$$;
-				//delete input[id];
-				out[id]=order[id];
-			}
-			console.log("out",out);
-			return out;
-			*/
-			console.log("in",input);
-			var sorting = [];
-			for(i in input){
-				input[i]._id = i;
-				sorting.push(input[i]);
-			}
-			sorting.sort(function(a,b){
-				var a = a._order || 0;
-				var b = b._order || 0;
-				return a-b;
-			});
-			for(i in sorting){
-				var id = sorting[i]._id;
-				delete sorting[i]._id;
-				delete input[id];
-				input[id] = sorting[i];
-			}
-			console.log("out",input);
-			return input;
-		}
-	})
 
 
 function xhrLoader(){
@@ -491,7 +491,20 @@ function xhrLoader(){
 		//loader.xhr.responseType="json";
 		if(form){
 			if(files){
-				loader.xhr.send(new FormData(form));
+				var formdata = new FormData(form);
+				/*
+				var fieldscount = form.length;
+				for(var i = 0; i<fieldscount; i++){
+					if(form[i].name && !form[i].disabled && (!form[i].className || form[i].className.indexOf('ng-pristine')<0)){
+						console.log(form[i].name);
+						if(form[i].type=="file"){
+							console.log(form[i]);
+						} else {
+							formdata.append(form[i].name,form[i].value);
+						}
+					}
+				}*/
+				loader.xhr.send(formdata);
 			} else {
 				loader.xhr.setRequestHeader("Content-Type", "application\/x-www-form-urlencoded");
 				loader.xhr.send($(form).serialize());

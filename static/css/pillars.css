@@ -1,19 +1,26 @@
 #header .notifier {
+  background-color: rgba(0, 0, 0, 0.8);
+  border-bottom: 1px solid #202020;
+  left: 0;
+  padding: 8px 10px 2px;
   position: fixed;
+  top: 50px;
+  width: 100%;
+  z-index: 100;
 }
 #header .notifier li {
+  margin: 0 auto 6px;
+  max-width: 530px;
+  padding: 5px 15px;
   width: 100%;
-  max-width: 700px;
-  margin: 0 auto;
 }
 .form-progressbar {
   -webkit-transition: all linear 0.5s;
   transition: all linear 0.5s;
   display: block !important;
-  height: 20px;
-  margin: 0 0 10px;
-  opacity: 1;
-  width: 100%;
+  height: 0;
+  margin: 0 15px;
+  opacity: 0;
   z-index: 1000;
 }
 .form-progressbar .progress {
@@ -22,7 +29,7 @@
   border-style: solid;
   border-width: 1px;
   box-shadow: 0 2px 10px -5px rgba(0, 0, 0, 0.3);
-  height: 20px;
+  height: 100%;
   margin: 0;
 }
 .form-progressbar .progress .progress-bar {
@@ -33,6 +40,8 @@
 }
 .form-progressbar.ng-show {
   opacity: 1;
+  height: 20px;
+  margin: 0 15px 5px;
 }
 .form-horizontal {
   max-width: 750px;
@@ -40,7 +49,10 @@
 .form-group {
   margin-bottom: 5px;
 }
-label.control-label .popover {
+label.control-label .label-text {
+  display: inline-block;
+}
+label.control-label .label-text .popover {
   left: 100%;
   margin-left: -2px;
   margin-top: -30px;
@@ -48,11 +60,24 @@ label.control-label .popover {
   min-width: 200px;
   right: auto;
 }
-label.control-label .popover .arrow {
+label.control-label .label-text .popover .arrow {
   top: 46px;
 }
-label.control-label:hover .popover {
+label.control-label .label-text:hover .popover {
   display: block;
+}
+label.control-label .lang-selector {
+  display: inline-block;
+  margin: 3px 0 0 5px;
+}
+label.control-label .lang-selector .dropdown-toggle {
+  margin: 0;
+  padding: 0 6px 2px;
+}
+label.control-label .lang-selector .dropdown-menu {
+  left: auto;
+  right: 0;
+  min-width: 100%;
 }
 .form-list {
   background-color: #F2F2F2;
@@ -61,24 +86,30 @@ label.control-label:hover .popover {
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
   margin-bottom: 35px;
   margin-top: 25px;
-  padding-bottom: 15px;
 }
 .form-list .list-header {
   padding: 5px 15px 0;
+  border-bottom: 1px solid #DFDFDF;
+  position: relative;
 }
 .form-list .list-header .control-label {
   text-align: left;
-  float: left;
-  clear: left;
   margin-bottom: 10px;
 }
 .form-list .list-header .help-block {
   text-align: left;
-  float: left;
-  clear: left;
   margin-top: 0;
 }
-.form-list .list-header .btn-add {
+.form-list .list-header .btn-open {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+.form-list .list-footer {
+  padding: 10px 15px 0;
+  overflow: auto;
+}
+.form-list .list-footer .btn-add {
   float: right;
   margin: 0px 0 10px;
 }
@@ -107,6 +138,14 @@ label.control-label:hover .popover {
 }
 .form-list .list-items > fieldset > .fieldset-controls .btn-remove {
   border-radius: 4px 4px 0 0;
+}
+.form-list .list-items > fieldset > .fieldset-controls .list-sort-select {
+  max-width: 120px;
+}
+.form-list .list-items > fieldset > .fieldset-controls .list-sort-select > * {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-style: none;
 }
 .form-list .list-items > fieldset:hover .fieldset-controls {
   height: 34px;
@@ -183,6 +222,9 @@ datepicker .calendar table.calendar-table tr.datepicker-days td.text-info {
 }
 datepicker .calendar table.calendar-table tr.datepicker-days td.outMonth {
   color: #CCCCCC;
+}
+reference .reference-search .input-group-btn {
+  position: static;
 }
 reference .reference-search .input-group-btn .dropdown-menu {
   width: 100%;
@@ -310,6 +352,14 @@ reference .references li.reference .reference-controls {
 reference .references li.reference .reference-controls .btn-remove {
   border-radius: 4px 4px 0 0;
 }
+reference .references li.reference .reference-controls .reference-sort-select {
+  max-width: 120px;
+}
+reference .references li.reference .reference-controls .reference-sort-select > * {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-style: none;
+}
 reference .references li.reference:hover .reference-controls {
   height: 34px;
 }
@@ -341,7 +391,7 @@ imagepicker .new-file img {
   max-width: 100%;
   min-height: 34px;
   overflow: hidden;
-  padding: 12px;
+  padding: 4px;
   position: relative;
   width: auto;
 }
@@ -350,7 +400,7 @@ imagepicker .new-file img {
   border: 1px solid #FFFFFF;
   box-shadow: 0 0 2px 1px #D6D6D6;
   display: block;
-  max-height: 250px;
+  max-height: 100px;
   max-width: 100%;
   width: 100%;
 }
@@ -372,5 +422,9 @@ imagepicker .new-file img {
   white-space: pre-wrap;
 }
 body {
-  padding-bottom: 150px;
+  padding-top: 50px;
+}
+.wysiwyg {
+  width: 500px;
+  height: 500px;
 }
