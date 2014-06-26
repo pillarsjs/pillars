@@ -127,10 +127,10 @@ mixin field-validation(ngExp)
 mixin text(config)
 	input(type='text', class=config.classes, class=['form-control','field-text'], id=config.id, name=config.name, ng-model=config.value)
 
-mixin file_(config)
+mixin file(config)
 	input(type='file', class=config.classes, class=['form-control','field-file'], id=config.id, name=config.name)
 
-mixin file(config)
+mixin fileimg(config)
 	imagepicker(class=config.classes, id=config.id, name=config.name, ng-model=config.value)
 
 mixin textarea(config)

@@ -228,15 +228,22 @@ reference .reference-search .input-group-btn {
 }
 reference .reference-search .input-group-btn .dropdown-menu {
   width: 100%;
-  max-height: 180px;
-  overflow: auto;
+  max-height: 250px;
+  overflow: scroll;
   padding: 0;
+  padding: 5px;
+  float: none;
+  background-clip: none;
+  z-index: 3000;
+  -webkit-overflow-scrolling: touch;
 }
 reference .reference-search .input-group-btn .dropdown-menu li.reference {
   padding: 10px 130px 10px 25px;
   border-bottom: 1px solid #CCCCCC;
   clear: both;
   position: relative;
+  max-width: 100%;
+  overflow: hidden;
 }
 reference .reference-search .input-group-btn .dropdown-menu li.reference.selected:before {
   background-color: #5BC0DE;
@@ -250,22 +257,26 @@ reference .reference-search .input-group-btn .dropdown-menu li.reference.selecte
   width: 10px;
 }
 reference .reference-search .input-group-btn .dropdown-menu li.reference .reference-img {
-  display: inline-block;
-  height: 100%;
-  padding: 10px;
+  display: block;
   position: absolute;
-  right: 0;
-  top: 0;
+  right: 10px;
+  top: 10px;
+  bottom: 10px;
+  height: auto;
+  overflow: hidden;
   width: 140px;
 }
 reference .reference-search .input-group-btn .dropdown-menu li.reference .reference-img img {
-  border: 1px solid #CCCCCC;
-  float: right;
-  max-height: 100%;
-  max-width: 100%;
+  display: block;
+  position: absolute;
   right: 0;
   top: 0;
+  background-color: #FFFFFF;
+  border: 1px solid #CCCCCC;
+  max-height: 100%;
+  max-width: 100%;
   width: auto;
+  border-radius: 4px 4px 4px 4px;
 }
 reference .reference-search .input-group-btn .dropdown-menu li.reference .reference-items {
   padding: 0;
@@ -300,22 +311,24 @@ reference .references li.reference .reference-data {
   position: relative;
 }
 reference .references li.reference .reference-data .reference-img {
-  display: inline-block;
-  height: 100%;
-  padding: 10px;
+  display: block;
   position: absolute;
-  right: 0;
-  top: 0;
+  right: 10px;
+  top: 10px;
+  bottom: 10px;
+  height: auto;
+  overflow: hidden;
   width: 140px;
 }
 reference .references li.reference .reference-data .reference-img img {
-  background-color: #FFFFFF;
-  border: 1px solid #CCCCCC;
-  float: right;
-  max-height: 100%;
-  max-width: 100%;
+  display: block;
+  position: absolute;
   right: 0;
   top: 0;
+  background-color: #FFFFFF;
+  border: 1px solid #CCCCCC;
+  max-height: 100%;
+  max-width: 100%;
   width: auto;
   border-radius: 4px 4px 4px 4px;
 }
@@ -402,7 +415,7 @@ imagepicker .new-file img {
   display: block;
   max-height: 100px;
   max-width: 100%;
-  width: 100%;
+  width: auto;
 }
 .imagebox input {
   position: absolute;
@@ -412,11 +425,14 @@ imagepicker .new-file img {
   height: 100%;
   opacity: 0;
 }
-.navbar-fixed-bottom {
+.navbar-fixed-top {
   background-color: #F7F7F7;
   border-top: 1px solid #BFBFBF;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   padding: 0 20px;
+}
+.navbar-fixed-top form .form-group .input-group {
+  width: 200px;
 }
 .table td pre {
   white-space: pre-wrap;

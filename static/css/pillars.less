@@ -265,14 +265,21 @@ reference {
 			}
 			.dropdown-menu {
 				width: 100%;
-				max-height: 180px;
-				overflow: auto;
+				max-height: 250px;
+				overflow: scroll;
 				padding: 0;
+				padding: 5px;
+				float: none;
+				background-clip: none;
+				z-index: 3000;
+				-webkit-overflow-scrolling: touch;
 				li.reference {
 					padding: 10px 130px 10px 25px;
 					border-bottom: 1px solid #CCCCCC;
 					clear: both;
 					position: relative;
+					max-width: 100%;
+					overflow: hidden;
 					&.selected {
 						&:before {
 							background-color: #5BC0DE;
@@ -287,21 +294,25 @@ reference {
 						}
 					}
 					.reference-img {
-						display: inline-block;
-						height: 100%;
-						padding: 10px;
+						display: block;
 						position: absolute;
-						right: 0;
-						top: 0;
+						right: 10px;
+						top: 10px;
+						bottom: 10px;
+						height: auto;
+						overflow: hidden;
 						width: 140px;
 						img {
-							border: 1px solid #CCCCCC;
-							float: right;
-							max-height: 100%;
-							max-width: 100%;
+							display: block;
+							position: absolute;
 							right: 0;
 							top: 0;
+							background-color: #FFFFFF;
+							border: 1px solid #CCCCCC;
+							max-height: 100%;
+							max-width: 100%;
 							width: auto;
+							border-radius: 4px 4px 4px 4px;
 						}
 					}
 					.reference-items {
@@ -337,21 +348,23 @@ reference {
 				padding: 15px 140px 0 0;
 				position: relative;
 				.reference-img {
-					display: inline-block;
-					height: 100%;
-					padding: 10px;
+					display: block;
 					position: absolute;
-					right: 0;
-					top: 0;
+					right: 10px;
+					top: 10px;
+					bottom: 10px;
+					height: auto;
+					overflow: hidden;
 					width: 140px;
 					img {
-						background-color: #FFFFFF;
-						border: 1px solid #CCCCCC;
-						float: right;
-						max-height: 100%;
-						max-width: 100%;
+						display: block;
+						position: absolute;
 						right: 0;
 						top: 0;
+						background-color: #FFFFFF;
+						border: 1px solid #CCCCCC;
+						max-height: 100%;
+						max-width: 100%;
 						width: auto;
 						border-radius: 4px 4px 4px 4px;
 					}
@@ -456,7 +469,7 @@ imagepicker {
 		display: block;
 		max-height: 100px;
 		max-width: 100%;
-		width: 100%;
+		width: auto;
 	}
 	input {
 		position: absolute;
@@ -468,11 +481,14 @@ imagepicker {
 	}
 }
 
-.navbar-fixed-bottom {
+.navbar-fixed-top {
 	background-color: #F7F7F7;
 	border-top: 1px solid #BFBFBF;
 	box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 	padding: 0 20px;
+	form .form-group .input-group {
+		width: 200px;
+	}
 }
 
 .table td pre {

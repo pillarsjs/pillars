@@ -28,7 +28,7 @@ angular.module('Pillars', ['ngRoute'])
 			//console.log("Request complete",loader.xhr.status,loader.xhr.statusText);
 			$rootScope.msgs=[];
 			if($rootScope.lostmsgs){$rootScope.msgs = $rootScope.lostmsgs;$rootScope.lostmsgs=false;}
-			$rootScope.msgs = $rootScope.msgs.concat(loader.xhr.json.msgs || []);
+			if(loader.xhr.json.error){$rootScope.msgs = $rootScope.msgs.push(loader.xhr.json.error);}
 			$rootScope.loading=false;
 			loader.data(loader.xhr);
 			$rootScope.$digest();
@@ -78,8 +78,10 @@ angular.module('Pillars', ['ngRoute'])
 		$rootScope.navsave = false;
 		$rootScope.navremove = false;
 		$scope.data = {};
+		$scope.end = false;
 		$loader.data = function(xhr){
-			if(xhr.json.data===true){
+			$scope.end = false;
+			if(xhr.json.data===true){ // remove case
 				$rootScope.lostmsgs = xhr.json.msgs;
 				$loader.send('get','api?_filter='+$rootScope.listFilter+'&_sort='+$rootScope.listSort+'&_order='+$rootScope.listOrder,false,false);
 			} else if(xhr.json.data.skip || xhr.json.data.range) {
@@ -113,12 +115,8 @@ angular.module('Pillars', ['ngRoute'])
 		$scope.data = {};
 		$scope.nstlist = [];
 		$loader.data = function(xhr){
-			$scope.validations = xhr.json.validations || {};
-			if(xhr.json.data===true){
-				$rootScope.lostmsgs = xhr.json.msgs;
-				$loader.send('get','api/'+$routeParams._id,false,false);
-			} else if(xhr.json.data===false) {
-			} else {
+			$scope.validations = xhr.json.ads || {};
+			if(!xhr.json.error) {
 				$scope.data = xhr.json.data;
 			}
 		};
@@ -156,12 +154,12 @@ angular.module('Pillars', ['ngRoute'])
 		$rootScope.navremove = false;
 		$scope.data = {};
 		$loader.data = function(xhr){
-			if(xhr.json.data!==false){
-				$rootScope.lostmsgs = xhr.json.msgs;
-				$location.path('/edit/'+xhr.json.data);
+			if(!xhr.json.error){
+				//$rootScope.lostmsgs = xhr.json.error;
+				$location.path('/edit/'+xhr.json.data._id);
 			} else {
 				//$scope.data = xhr.json.data || false;
-				$scope.validations = xhr.json.validations || {};
+				$scope.validations = xhr.json.ads || {};
 			}
 		};
 
@@ -280,13 +278,10 @@ angular.module('Pillars', ['ngRoute'])
 				}
 
 				scope.dropdown = function(){
-					console.log('hola');
 					if(!scope.opened){
 						scope.load();
-						console.log('a');
 					} else {
 						scope.opened = false;
-						console.log('b');
 					}
 				}
 
@@ -383,7 +378,6 @@ angular.module('Pillars', ['ngRoute'])
 				scope.$watch('value', function() {
 					if(typeof scope.value != "undefined" && scope.value.path){
 						if(scope.value.path.substring(0,5)!="data:"){
-							scope.value.path="files/"+scope.value.path;
 						}
 					}
 				});
@@ -487,6 +481,9 @@ function xhrLoader(){
 	loader.fail = false;
 	loader.end = false;
 	loader.send = function(method, url, form, files){
+		if(!/^(http|https):\/\//.test(url)){
+			url = document.URL.replace(/#.*$/,'').replace(/\/*$/,'')+"/"+url.replace(/^\.\//,'').replace(/^\/*/,'');
+		} 
 		loader.xhr.open(method, url, true);
 		//loader.xhr.responseType="json";
 		if(form){

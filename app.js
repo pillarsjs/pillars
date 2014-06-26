@@ -29,7 +29,11 @@ var mymodel = new bricks.Fieldset('system',{
 })
 	.addField(new bricks.Text('field1',{
 		label : 'Field1',
-		details : 'Rellena este campo...'
+		details : 'Rellena este campo...',
+		keys : {
+			see : 'edit_system',
+			edit : 'manager'
+		}
 	}))
 	.addField(new bricks.Checkbox('fieldCheck',{
 		label : 'Field checkbox',
@@ -70,9 +74,18 @@ var mymodel = new bricks.Fieldset('system',{
 	}))
 	.addField(new bricks.Reference('fieldRef',{
 		label : 'Field Reference',
-		details : 'Seleccione un algo'
+		details : 'Seleccione un algo',
+		collection : 'system',
+		headers : [
+			{id: '_id',label: 'Identificador'},
+			{id: '_img',label: 'Imagen'},
+			{id: 'field1',label: 'Field1'},
+			{id: 'field2',label: 'Field2'},
+			//{id: 'file',label: 'Filetest'},
+			{id: 'reverse',label: 'Reverse'}
+		]
 	}))
-	.addField(new bricks.File('_img',{
+	.addField(new bricks.Img('_img',{
 		label : 'Imagen destacada'
 	}))
 	.addField(new bricks.Reverse('reverse',{
@@ -81,17 +94,9 @@ var mymodel = new bricks.Fieldset('system',{
 	}))
 	.addField(new bricks.List('listFiles',{
 		label : 'listado de imagenes',
-		details : 'esto es un listado de imagenes',
-		items : {
-			label : 'Elemento de lista',
-			details : 'Esto es repetitivo'
-		},
-		insert : {
-			label : 'Nuevo elemento',
-			details : 'Añade mas cosas a la lista'	
-		}
+		details : 'esto es un listado de imagenes'
 	})
-		.addField(new bricks.File('file',{
+		.addField(new bricks.Img('file',{
 			label : 'Imagen',
 		}))
 		.addField(new bricks.Text('text',{
@@ -102,15 +107,10 @@ var mymodel = new bricks.Fieldset('system',{
 	.addField(new bricks.List('list',{
 		label : 'listado',
 		details : 'esto es un listado',
-		items : {
-			label : 'Elemento de lista',
-			details : 'Esto es repetitivo'
-		},
-		insert : {
-			label : 'Nuevo elemento',
-			details : 'Añade mas cosas a la lista'	
-		}
 	})
+		.addField(new bricks.File('file',{
+			label : 'Imagen',
+		}))
 		.addField(new bricks.Text('field2',{
 			label : 'Field2',
 			details : 'Rellena este campo...'
@@ -149,7 +149,7 @@ server.addPillar(new Pillar({
 	id:'sample-pillar',
 	path:'/system'
 })
-	.addBeam(new Beam('main',{session:true,schema:mymodel},beams.apiTemplate))
+	.addBeam(new Beam('template',{session:true,schema:mymodel},beams.apiTemplate))
 	.addBeam(new Beam('search',{path:'/api',session:true,schema:mymodel},beams.apiList))
 	.addBeam(new Beam('get',{path:'/api/:_id',session:true,schema:mymodel},beams.apiGet))
 	.addBeam(new Beam('update',{path:'/api/:_id',method:'put',upload:true,session:true,schema:mymodel},beams.apiUpdate))
@@ -159,17 +159,168 @@ server.addPillar(new Pillar({
 );
 
 
-server.addPillar(new Pillar({
-	id:'staticfiles',
-	path:''
-})
+server.addPillar(new Pillar({id:'staticfiles'})
 	.addBeam(new Beam('css',{path:'/css/*:path',directory:'./static/css'},beams.directory))
 	.addBeam(new Beam('file',{path:'/file/*:path',directory:'./static/file'},beams.directory))
 	.addBeam(new Beam('img',{path:'/img/*:path',directory:'./static/img'},beams.directory))
 	.addBeam(new Beam('js',{path:'/js/*:path',directory:'./static/js'},beams.directory))
+	.addBeam(new Beam('data',{path:'/data/*:path',directory:'./static/data'},beams.directory))
 	.addBeam(new Beam('uploads',{path:'/uploads/*:path',directory:'./uploads'},beams.directory))
 );
 
+server.addPillar(new Pillar({id:'login'})
+	.addBeam(new Beam('login',{path:'/login',method:'(get|post)',session:true},function(){
+		var gw = this;
+		var redirect = gw.params.redirect || gw.referer || gw.host;
+		console.log(redirect);
+		if(typeof gw.params.user === "string" && typeof gw.params.password === "string"){
+			var login = {
+				user : gw.params.user,
+				password : gw.params.password
+			};
+			var users = gw.server.database.collection('users');
+			users.findOne({user:login.user,password:login.password},function(error, result) {
+				if(!error && result){
+					gw.session.user = result._id.toString();
+					gw.redirect(redirect);
+				} else {
+					gw.render('templates/login.jade',{redirect:redirect,msg:'login.fail'});
+				}
+			});
+		} else {
+			gw.render('templates/login.jade',{redirect:redirect});
+		}
+	}))
+);
+
+
+
+var usersSchema = new bricks.Fieldset('users',{
+	title : 'Usuarios',
+	details : 'Gestión de cuentas de usuario',
+	server : server,
+	collection : 'users',
+	//t12n : './lib/crud.t12n'
+	limit : 3,
+	filter : ['_id','user','firstname','lastname'], 
+	headers : [
+		{id: '_id',label: 'Identificador'},
+		{id: 'user',label: 'Usuario'},
+		{id: 'firstname',label: 'Nombre'},
+		{id: 'lastname',label: 'Apellidos'}
+	]
+})
+	.addField(new bricks.Text('user',{
+		label : 'Usuario',
+		details : 'Nombre para su cuenta y acceso a la misma',
+	}))
+	.addField(new bricks.Text('firstname',{
+		label : 'Nombre',
+	}))
+	.addField(new bricks.Text('lastname',{
+		label : 'Apellidos',
+	}))
+	.addField(new bricks.Text('password',{
+		label : 'Clave',
+	}))
+	.addField(new bricks.Text('keys',{
+		label : 'Llaves',
+		details : 'Indicar las llaves separadas por comas sin espacios.'
+	}))
+
+server.addPillar(new Pillar({
+	id:'users',
+	path:'/users'
+})
+	.addBeam(new Beam('template',{session:true,schema:usersSchema},beams.apiTemplate))
+	.addBeam(new Beam('search',{path:'/api',session:true,schema:usersSchema},beams.apiList))
+	.addBeam(new Beam('get',{path:'/api/:_id',session:true,schema:usersSchema},beams.apiGet))
+	.addBeam(new Beam('update',{path:'/api/:_id',method:'put',upload:true,session:true,schema:usersSchema},beams.apiUpdate))
+	.addBeam(new Beam('insert',{path:'/api',method:'post',session:true,schema:usersSchema},beams.apiInsert))
+	.addBeam(new Beam('remove',{path:'/api/:_id',method:'delete',session:true,schema:usersSchema},beams.apiRemove))
+	.addBeam(new Beam('files',{path:'/files/*:path',method:'get',session:true,schema:usersSchema,directory:'./files/system'},beams.apiFiles))
+);
+
+/*
+var options = new bricks.Fieldset('options',{
+	title : 'Opciones de sistema',
+	details : 'Configura tu entorno Pillars',
+	server : server,
+	collection : 'config',
+	panel : 'options'
+})
+	.addField(new bricks.Text('title',{
+		label : 'Titulo',
+		details : 'Titulo del sitio'
+	}))
+	.addField(new bricks.Text('description',{
+		label : 'Descripción',
+		details : 'Descripción corta del sitio'
+	}))
+
+server.addPillar(new Pillar({
+	id:'sample-pillar',
+	path:'/config'
+})
+	.addBeam(new Beam('options',{path:'/options',session:true,schema:mymodel},beams.apiPanelTemplate))
+	.addBeam(new Beam('options-get',{path:'/options/api',session:true,schema:mymodel},beams.apiPanelGet))
+	.addBeam(new Beam('options-update',{path:'/options/api',method:'put',upload:true,session:true,schema:mymodel},beams.apiPanelUpdate))
+
+	.addBeam(new Beam('files',{path:'/files/*:path',method:'get',session:true,schema:mymodel,directory:'./files/config'},beams.apiFiles))
+);
+*/
+
+/*
+
+new Chain().add(function(chain){
+    console.log('1');
+    setTimeout(function(){
+       chain.data.midata1 = "one";
+       chain.next();
+    },Math.round(Math.random()*1000));
+}).add(function(chain){
+    console.log('2');
+    setTimeout(function(){
+       chain.data.midata2 = "two";
+       chain.next();
+    },Math.round(Math.random()*1000));
+}).add(function(chain){
+    console.log('3');
+    console.log(chain.data);
+}).onfail(function(error,chain){
+    console.log("Fail!");
+}).pull();
+
+*/
+
+function Chain(){
+	var chain = this;
+	var chainlinks = [];
+	var failhandler = false;
+	chain.data = {};
+	chain.add = function(chainlink){
+		chainlinks.push(chainlink);
+		return chain;
+	}
+	chain.onfail = function(_failhandler){
+		failhandler = _failhandler;
+		return chain;
+	}
+	chain.pull = function(){
+		if(chainlinks.length>0){
+			chainlinks[0](chain);
+		}
+	}
+	chain.next = function(){
+		chainlinks.shift();
+		chain.pull();
+	}
+	chain.fail = function(error){
+		if(failhandler){
+			failhandler(error,chain);
+		}
+	}
+}
 
 
 /*
