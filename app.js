@@ -270,36 +270,14 @@ server.addPillar(new Pillar({
 );
 */
 
-/*
-
-new Chain().add(function(chain){
-    console.log('1');
-    setTimeout(function(){
-       chain.data.midata1 = "one";
-       chain.next();
-    },Math.round(Math.random()*1000));
-}).add(function(chain){
-    console.log('2');
-    setTimeout(function(){
-       chain.data.midata2 = "two";
-       chain.next();
-    },Math.round(Math.random()*1000));
-}).add(function(chain){
-    console.log('3');
-    console.log(chain.data);
-}).onfail(function(error,chain){
-    console.log("Fail!");
-}).pull();
-
-*/
-
 function Chain(){
 	var chain = this;
 	var chainlinks = [];
 	var failhandler = false;
 	chain.data = {};
-	chain.add = function(chainlink){
-		chainlinks.push(chainlink);
+	chain.add = function(func){
+        var args = Array.slice(arguments,1);
+        chainlinks.push({func:func,args:args});
 		return chain;
 	}
 	chain.onfail = function(_failhandler){
@@ -308,7 +286,7 @@ function Chain(){
 	}
 	chain.pull = function(){
 		if(chainlinks.length>0){
-			chainlinks[0](chain);
+			chainlinks[0].func.apply(chain,chainlinks[0].args);
 		}
 	}
 	chain.next = function(){
