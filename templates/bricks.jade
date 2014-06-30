@@ -2,18 +2,18 @@
 mixin buttonlink(value,link)
 	input(class='btn btn-default', type='button', value=value, onclick="window.location.href='"+link+"'")
 
-mixin fieldset(fieldset)
+mixin schema(schema)
 	form(id="activeForm", ng-submit="sendForm()", name="$form")
 		fieldset
 			legend
-				h3.text-primary=fieldset.title
-					small=' '+fieldset.details
+				h3.text-primary=schema.title
+					small=' '+schema.details
 
 			div.unseters.ng-hide
 				input(ng-repeat="(nstk,nst) in nstlist",ng-value="nst",name="unset[{{nstk}}]")
 
 			div(class="form-horizontal")
-				each field in fieldset.fields
+				each field in schema.fields
 					if field.template=='subset' || field.template=='list' 
 						+#{field.template}(field)
 					else

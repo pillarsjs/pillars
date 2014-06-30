@@ -10,7 +10,7 @@ var server = formwork().mongodb('primera')
 
 //textualization.load('crud-example','examples/crud.t12n');
 
-var mymodel = new bricks.Fieldset('system',{
+var mymodel = new bricks.Schema('system',{
 	title : 'System administration',
 	details : 'Completa los campos',
 	server : server,
@@ -195,7 +195,7 @@ server.addPillar(new Pillar({id:'login'})
 
 
 
-var usersSchema = new bricks.Fieldset('users',{
+var usersSchema = new bricks.Schema('users',{
 	title : 'Usuarios',
 	details : 'Gestión de cuentas de usuario',
 	server : server,
@@ -242,7 +242,7 @@ server.addPillar(new Pillar({
 );
 
 /*
-var options = new bricks.Fieldset('options',{
+var options = new bricks.Schema('options',{
 	title : 'Opciones de sistema',
 	details : 'Configura tu entorno Pillars',
 	server : server,
@@ -270,35 +270,7 @@ server.addPillar(new Pillar({
 );
 */
 
-function Chain(){
-	var chain = this;
-	var chainlinks = [];
-	var failhandler = false;
-	chain.data = {};
-	chain.add = function(func){
-        var args = Array.slice(arguments,1);
-        chainlinks.push({func:func,args:args});
-		return chain;
-	}
-	chain.onfail = function(_failhandler){
-		failhandler = _failhandler;
-		return chain;
-	}
-	chain.pull = function(){
-		if(chainlinks.length>0){
-			chainlinks[0].func.apply(chain,chainlinks[0].args);
-		}
-	}
-	chain.next = function(){
-		chainlinks.shift();
-		chain.pull();
-	}
-	chain.fail = function(error){
-		if(failhandler){
-			failhandler(error,chain);
-		}
-	}
-}
+
 
 
 /*
