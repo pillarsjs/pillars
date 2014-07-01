@@ -8,40 +8,25 @@ var beams = require('./lib/beams');
 
 var server = formwork().mongodb('primera')
 
-//textualization.load('crud-example','examples/crud.t12n');
+textualization.load('system','examples/crud.t12n');
+textualization.load('system','examples/system.t12n');
 
 var mymodel = new bricks.Schema('system',{
-	title : 'System administration',
-	details : 'Completa los campos',
 	server : server,
 	collection : 'system',
 	//t12n : './lib/crud.t12n'
 	limit : 3,
 	filter : ['_id','field1','field2'], 
-	headers : [
-		{id: '_id',label: 'Identificador'},
-		{id: '_img',label: 'Imagen'},
-		{id: 'field1',label: 'Field1'},
-		{id: 'field2',label: 'Field2'},
-		//{id: 'file',label: 'Filetest'},
-		{id: 'reverse',label: 'Reverse'}
-	]
+	headers : ['_id','field1','field2','reverse']
 })
 	.addField(new bricks.Text('field1',{
-		label : 'Field1',
-		details : 'Rellena este campo...',
 		keys : {
 			see : 'edit_system',
 			edit : 'manager'
 		}
 	}))
-	.addField(new bricks.Checkbox('fieldCheck',{
-		label : 'Field checkbox',
-		details : 'Si o no?'
-	}))
+	.addField(new bricks.Checkbox('fieldCheck'))
 	.addField(new bricks.Checkboxes('fieldCheckboxes',{
-		label : 'Field checkboxes',
-		details : 'Que eliges?',
 		values : {
 			'A':'Opción 1',
 			'B':'Opción 2',
@@ -50,8 +35,6 @@ var mymodel = new bricks.Schema('system',{
 		}
 	}))
 	.addField(new bricks.Radios('fieldRadios',{
-		label : 'Field radios',
-		details : 'Que eliges?',
 		values : {
 			'A':'Opción 1',
 			'B':'Opción 2',
@@ -60,7 +43,6 @@ var mymodel = new bricks.Schema('system',{
 		}
 	}))
 	.addField(new bricks.Select('field2',{
-		label : 'Field2',
 		values : {
 			'A':'Opción 1',
 			'B':'Opción 2',
@@ -68,80 +50,28 @@ var mymodel = new bricks.Schema('system',{
 			'D':'Opción 4'
 		}
 	}))
-	.addField(new bricks.Time('fieldTime',{
-		label : 'Field Time',
-		details : 'Seleccione una fecha'
-	}))
+	.addField(new bricks.Time('fieldTime'))
 	.addField(new bricks.Reference('fieldRef',{
-		label : 'Field Reference',
-		details : 'Seleccione un algo',
 		collection : 'system',
-		headers : [
-			{id: '_id',label: 'Identificador'},
-			{id: '_img',label: 'Imagen'},
-			{id: 'field1',label: 'Field1'},
-			{id: 'field2',label: 'Field2'},
-			//{id: 'file',label: 'Filetest'},
-			{id: 'reverse',label: 'Reverse'}
-		]
+		headers : ['_id','_img','field1','field2','reverse']
 	}))
-	.addField(new bricks.Img('_img',{
-		label : 'Imagen destacada'
-	}))
-	.addField(new bricks.Reverse('reverse',{
-		label : 'Reverse',
-		details : 'Este va invertido en la bdd'
-	}))
-	.addField(new bricks.List('listFiles',{
-		label : 'listado de imagenes',
-		details : 'esto es un listado de imagenes'
-	})
-		.addField(new bricks.Img('file',{
-			label : 'Imagen',
-		}))
-		.addField(new bricks.Text('text',{
-			label : 'Alt',
-			details : 'Describe la imagen'
-		}))
+	.addField(new bricks.Img('_img'))
+	.addField(new bricks.Reverse('reverse'))
+	.addField(new bricks.List('listFiles')
+		.addField(new bricks.Img('file'))
+		.addField(new bricks.Text('text'))
 	)
-	.addField(new bricks.List('list',{
-		label : 'listado',
-		details : 'esto es un listado',
-	})
-		.addField(new bricks.File('file',{
-			label : 'Imagen',
-		}))
-		.addField(new bricks.Text('field2',{
-			label : 'Field2',
-			details : 'Rellena este campo...'
-		}))
-		.addField(new bricks.Reverse('reverse',{
-			label : 'Reverse',
-			details : 'Este va invertido en la bdd'
-		}))
+	.addField(new bricks.List('list')
+		.addField(new bricks.File('file'))
+		.addField(new bricks.Text('field2'))
+		.addField(new bricks.Reverse('reverse'))
 	)
-	.addField(new bricks.Editor('texti18n',{
-		label : 'Text i18n',
-		i18n : true,
-		details : 'Un campo internacional'
-	}))
-	.addField(new bricks.Text('field3',{
-		label : 'Field3',
-		details : 'Rellena este campo...'
-	}))
-	.addField(new bricks.Subset('thesubset',{
-		label : 'Un subset',
-		details : 'Conjunto de campos independiente'
-	})
-		.addField(new bricks.Text('subset1',{
-			label : 'Campo1'
-		}))
-		.addField(new bricks.Text('subset2',{
-			label : 'Campo2'
-		}))
-		.addField(new bricks.Text('subset3',{
-			label : 'Campo3'
-		}))
+	.addField(new bricks.Editor('texti18n',{i18n : true}))
+	.addField(new bricks.Text('field3'))
+	.addField(new bricks.Subset('thesubset')
+		.addField(new bricks.Text('subset1'))
+		.addField(new bricks.Text('subset2'))
+		.addField(new bricks.Text('subset3'))
 	)
 ;
 
@@ -196,37 +126,18 @@ server.addPillar(new Pillar({id:'login'})
 
 
 var usersSchema = new bricks.Schema('users',{
-	title : 'Usuarios',
-	details : 'Gestión de cuentas de usuario',
 	server : server,
 	collection : 'users',
 	//t12n : './lib/crud.t12n'
 	limit : 3,
 	filter : ['_id','user','firstname','lastname'], 
-	headers : [
-		{id: '_id',label: 'Identificador'},
-		{id: 'user',label: 'Usuario'},
-		{id: 'firstname',label: 'Nombre'},
-		{id: 'lastname',label: 'Apellidos'}
-	]
+	headers : ['_id','user','firstname','lastname']
 })
-	.addField(new bricks.Text('user',{
-		label : 'Usuario',
-		details : 'Nombre para su cuenta y acceso a la misma',
-	}))
-	.addField(new bricks.Text('firstname',{
-		label : 'Nombre',
-	}))
-	.addField(new bricks.Text('lastname',{
-		label : 'Apellidos',
-	}))
-	.addField(new bricks.Text('password',{
-		label : 'Clave',
-	}))
-	.addField(new bricks.Text('keys',{
-		label : 'Llaves',
-		details : 'Indicar las llaves separadas por comas sin espacios.'
-	}))
+	.addField(new bricks.Text('user'))
+	.addField(new bricks.Text('firstname'))
+	.addField(new bricks.Text('lastname'))
+	.addField(new bricks.Text('password'))
+	.addField(new bricks.Text('keys'))
 
 server.addPillar(new Pillar({
 	id:'users',

@@ -45,6 +45,11 @@
 	'cache-error':"Template load error ".red+"'%(path)s'".yellow
 },
 'gangway':{
+	'session':{
+		'database-error':"Unable to access the session store",
+		'insert-error':"Unable to create session",
+		'update-error':"Unable to update session data"
+	},
 	'unlinktemp':{
 		'ok':"Temp file %(file)s' deleted".green.inverse.white,
 		'error':"Delete temp file error '%(file)s'".red.inverse.white

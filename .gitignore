@@ -1,4 +1,5 @@
 node_modules
-uploads
-temp
-files
+files/**
+temp/**
+static/**/.*.zz
+static/**/.*.gz

@@ -45,6 +45,11 @@
 	'cache-error':"Error al cargar la plantilla ".red+"'%(path)s'".yellow
 },
 'gangway':{
+	'session':{
+		'database-error':"No es posible acceder al almacén de sesiones",
+		'insert-error':"No ha sido posible crear la sesión",
+		'update-error':"No ha sido posible actualizar los datos de sesión"
+	},
 	'unlinktemp':{
 		'ok':"Archivo temporal %(file)s' borrado".green.inverse.white,
 		'error':"Error al borrar el archivo temporal '%(file)s'".red.inverse.white
@@ -54,3 +59,7 @@
 		'h1':"Error %(code)s %(explain)s, disculpe las molestias"
 	}
 }
+
+
+
+

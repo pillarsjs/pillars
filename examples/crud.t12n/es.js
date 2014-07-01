@@ -1,34 +1,41 @@
-
-general:{
-	welcome:{ // genre, num
-		'genre=="female" && num==1':'Bienvenida',
-		'genre=="female"':'Bienvenidas todas vosotras que sois %(num)s',
-		'num>1':'Bienvenidos',
-		'default':'Bienvenido'
+'crud':{
+	'sending': "Enviando",
+	'receiving': "Recibiendo",
+	'list': {
+		'edit': " Editar",
+		'remove': " Eliminar",
+		'see-more': " Ver más"
 	},
-	goobye:{ // genre, num
-		'genre=="female" && num==1':'Chao chica',
-		'genre=="female"':'Chao %(num)s chicas',
-		'num>1':'chao tios',
-		'default':'chao tio'
+	'navbar':{
+		'remove': " Eliminar",
+		'list': " Listado",
+		'new': " Nuevo",
+		'save': "Guardar",
+		'search': "Buscar"
 	},
-	logout:"Salir y cerrar sesión",
-	error:"Ha ocurrido un error: %(error)s",
-	you_have_new_messages:["Tienes un mensaje nuevo","Tienes %s mensajes nuevos"],
-	actionbutton:function(){ // context, action, num
-		if(context=="post"){
-			if(action=="new"){
-				if(num==1){
-					return "Crear un Post";
-				} else if(num>1){
-					return "Crear %(num)s Posts";
-				}
-			}
+	'bricks':{
+		'reference':{
+			'placeholder':"Buscar y seleccionar elementos",
+			'remove': "Eliminar"
+		},
+		'list':{
+			'show' : " Mostrar %(num)s elementos",
+			'close' : " Replegar",
+			'remove': " Eliminar"
+		},
+		'subset':{
+			'show' : " Mostrar",
+			'close' : " Replegar"
+		},
+		'editor': {
+			'bold': "Negrita",
+			'italic': "Cursiva",
+			'red': "Rojo",
+			'green': "Verde",
+			'blue': "Azul",
+			'link': "Enlace",
+			'insert': "Insertar",
+			'cancel': "Cancelar"
 		}
-		return "Unknow context";
 	}
-},
-"clasical basic":"Formato clasico",
-"clasical %s here %s ...":"%s clasica aqui %s ...",
-"You have 1 message":["Tienes un mensaje","Tienes %s mensajes"],
-"You no have messages":["No tienes mensajes","Tienes un mensaje","Tienes %s mensajes"]
+}
