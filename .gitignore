@@ -1,5 +1,3 @@
 node_modules
-files/**
-temp/**
 static/**/.*.zz
 static/**/.*.gz
