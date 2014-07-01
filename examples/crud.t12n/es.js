@@ -11,7 +11,10 @@
 		'list': " Listado",
 		'new': " Nuevo",
 		'save': "Guardar",
-		'search': "Buscar"
+		'search': "Buscar",
+		'user':function(user){
+			return "Usuario: "+user.firstname+" "+user.lastname;
+		}
 	},
 	'bricks':{
 		'reference':{

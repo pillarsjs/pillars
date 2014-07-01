@@ -69,6 +69,7 @@ mixin navbar
 						span(class="glyphicon glyphicon-plus")
 						= " "+t12n("crud.navbar.new")
 				ul.nav.navbar-nav.navbar-right
+					span.user=t12n("crud.navbar.user",{user:gw.user})
 					button(ng-if="navsave", class="btn btn-danger navbar-btn", type='button', ng-click="removeElement()")
 						span(class="glyphicon glyphicon-remove")
 						= " "+t12n("crud.navbar.remove")

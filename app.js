@@ -21,7 +21,8 @@ var mymodel = new bricks.Schema('system',{
 })
 	.addField(new bricks.Text('field1',{
 		keys : {
-			see : 'edit_system',
+			//see : 'edit_system',
+			see : 'manager',
 			edit : 'manager'
 		}
 	}))
@@ -89,6 +90,10 @@ server.addPillar(new Pillar({
 );
 
 
+
+
+
+
 server.addPillar(new Pillar({id:'staticfiles'})
 	.addBeam(new Beam('css',{path:'/css/*:path',directory:'./static/css'},beams.directory))
 	.addBeam(new Beam('file',{path:'/file/*:path',directory:'./static/file'},beams.directory))
@@ -97,6 +102,14 @@ server.addPillar(new Pillar({id:'staticfiles'})
 	.addBeam(new Beam('data',{path:'/data/*:path',directory:'./static/data'},beams.directory))
 	.addBeam(new Beam('uploads',{path:'/uploads/*:path',directory:'./uploads'},beams.directory))
 );
+
+
+
+
+
+
+
+
 
 server.addPillar(new Pillar({id:'login'})
 	.addBeam(new Beam('login',{path:'/login',method:'(get|post)',session:true},function(){
@@ -122,6 +135,10 @@ server.addPillar(new Pillar({id:'login'})
 		}
 	}))
 );
+
+
+
+
 
 
 
