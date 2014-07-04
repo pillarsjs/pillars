@@ -144,7 +144,7 @@ angular.module('Pillars', ['ngRoute'])
 		$scope.sendForm = function(){
 			$loader.send('put','api/'+$routeParams._id,$form,true);
 		}
-		$scope.removeElement = function(){
+		$rootScope.removeElement = function(){
 			$loader.send('delete','api/'+$routeParams._id,false,false);
 		}
 	})

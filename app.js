@@ -19,13 +19,7 @@ var mymodel = new bricks.Schema('system',{
 	filter : ['_id','field1','field2'], 
 	headers : ['_id','field1','field2','reverse']
 })
-	.addField(new bricks.Text('field1',{
-		keys : {
-			//see : 'edit_system',
-			see : 'manager',
-			edit : 'manager'
-		}
-	}))
+	.addField(new bricks.Text('field1'))
 	.addField(new bricks.Checkbox('fieldCheck'))
 	.addField(new bricks.Checkboxes('fieldCheckboxes',{
 		values : {
@@ -49,6 +43,10 @@ var mymodel = new bricks.Schema('system',{
 			'B':'Opción 2',
 			'C':'Opción 3',
 			'D':'Opción 4'
+		},
+		keys : {
+			see : 'manager',
+			edit : 'manager'
 		}
 	}))
 	.addField(new bricks.Time('fieldTime'))
@@ -74,6 +72,13 @@ var mymodel = new bricks.Schema('system',{
 		.addField(new bricks.Text('subset2'))
 		.addField(new bricks.Text('subset3'))
 	)
+	/*
+	.addField(new bricks.Subset('thetree')
+		.addField(new bricks.Text('tree1'))
+		.addField(new bricks.Text('tree2'))
+		.addField(new bricks.Text('tree3'))
+	)
+	*/
 ;
 
 server.addPillar(new Pillar({

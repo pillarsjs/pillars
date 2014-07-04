@@ -20,94 +20,97 @@ mixin schema(schema)
 						+field(field)
 
 mixin subset(subset)
-	.form-group.form-list
-		div(class="list-header", ng-class="{'has-error':validations['"+subset.NgExp.replace(/^data./,'')+"']}")
-			label(class="control-label")= t12n("schemas."+schema.id+".fields."+subset.path+".label")
-			p(class="help-block")= t12n("schemas."+schema.id+".fields."+subset.path+".details",{bydefault:""})
-			button(class="btn btn-open btn-default", type='button')
-				span(class="glyphicon glyphicon-eye-open")
-				= " "+t12n("crud.bricks.subset.show")
-			button(class="btn btn-open btn-default ng-hide", type='button')
-				span(class="glyphicon glyphicon-eye-close")
-				= " "+t12n("crud.bricks.subset.close")
-		div(class="list-items col-sm-12")
-			each field in subset.fields
-				+field(field)
+	if gw.user.can(subset.need('see',true))
+		.form-group.form-list
+			div(class="list-header", ng-class="{'has-error':validations['"+subset.NgExp.replace(/^data./,'')+"']}")
+				label(class="control-label")= t12n("schemas."+schema.id+".fields."+subset.path+".label")
+				p(class="help-block")= t12n("schemas."+schema.id+".fields."+subset.path+".details",{bydefault:""})
+				button(class="btn btn-open btn-default", type='button')
+					span(class="glyphicon glyphicon-eye-open")
+					= " "+t12n("crud.bricks.subset.show")
+				button(class="btn btn-open btn-default ng-hide", type='button')
+					span(class="glyphicon glyphicon-eye-close")
+					= " "+t12n("crud.bricks.subset.close")
+			div(class="list-items col-sm-12")
+				each field in subset.fields
+					+field(field)
 
 mixin list(list)
-	.form-group.form-list
-		div(class="list-header", ng-class="{'has-error':validations['"+list.NgExp.replace(/^data./,'')+"']}")
-			label(class="control-label")= t12n("schemas."+schema.id+".fields."+list.path+".label")
-			p(class="help-block")= t12n("schemas."+schema.id+".fields."+list.path+".details",{bydefault:""})
-			button(class="btn btn-open btn-default", type='button')
-				span(class="glyphicon glyphicon-eye-open")
-				= " "+t12n("crud.bricks.list.show",{num:"{{"+list.NgScope+".length}}"})
-			button(class="btn btn-open btn-default ng-hide", type='button')
-				span(class="glyphicon glyphicon-eye-close")
-				= " "+t12n("crud.bricks.list.close")
-		div(class="list-items col-sm-12")
-			- var lk = "$lk"+list.depth;
-			- var lf = "$lf"+list.depth;
-			//- var deleteName = list.NgName.replace('data[','delete[');
-			fieldset(ng-repeat="("+lk+", "+lf+") in "+list.NgScope)
-				//ol.breadcrumb
-				//	li
-				//		a(href="#") Home
-				//	li
-				//		a(href="#") Library
-				//	li.active Data
+	if gw.user.can(list.need('see',true))
+		.form-group.form-list
+			div(class="list-header", ng-class="{'has-error':validations['"+list.NgExp.replace(/^data./,'')+"']}")
+				label(class="control-label")= t12n("schemas."+schema.id+".fields."+list.path+".label")
+				p(class="help-block")= t12n("schemas."+schema.id+".fields."+list.path+".details",{bydefault:""})
+				button(class="btn btn-open btn-default", type='button')
+					span(class="glyphicon glyphicon-eye-open")
+					= " "+t12n("crud.bricks.list.show",{num:"{{"+list.NgScope+".length}}"})
+				button(class="btn btn-open btn-default ng-hide", type='button')
+					span(class="glyphicon glyphicon-eye-close")
+					= " "+t12n("crud.bricks.list.close")
+			div(class="list-items col-sm-12")
+				- var lk = "$lk"+list.depth;
+				- var lf = "$lf"+list.depth;
+				//- var deleteName = list.NgName.replace('data[','delete[');
+				fieldset(ng-repeat="("+lk+", "+lf+") in "+list.NgScope)
+					//ol.breadcrumb
+					//	li
+					//		a(href="#") Home
+					//	li
+					//		a(href="#") Library
+					//	li.active Data
 
-				//legend
-				//	#{'h'+(3+list.depth)}.text-primary
-				//		= list.items.label + "{{"+lk+"}}"
-				//		small=' '+list.items.details
-				input(type='text',class="ng-hide",ng-value=list.NgScope+"["+lk+"]._id",name=list.NgName+"[{{"+lk+"}}][_id]")
-				each field in list.fields
-					+field(field)
-				div(class="fieldset-controls")
-					- var unsetid = "'"+list.NgScope.replace(/^data./,'')+".'+"+lf+"._id";
-					button(ng-if="navsave", class="btn btn-remove btn-danger pull-right", type='button', ng-click="deleteListItem("+list.NgScope+","+lk+","+unsetid+")")
-						span(class="glyphicon glyphicon-remove")
-						= " "+t12n("crud.bricks.list.remove")
-					.input-group.list-sort-select
-						span.input-group-addon
-							span.glyphicon.glyphicon-sort
-						select(class="form-control", ng-model=lf+"._order", ng-change="orderListItem("+list.NgScope+","+lk+")",ng-options="ork as ork*1+1 for (ork, ore) in "+list.NgScope+"")
+					//legend
+					//	#{'h'+(3+list.depth)}.text-primary
+					//		= list.items.label + "{{"+lk+"}}"
+					//		small=' '+list.items.details
+					input(type='text',class="ng-hide",ng-value=list.NgScope+"["+lk+"]._id",name=list.NgName+"[{{"+lk+"}}][_id]")
+					each field in list.fields
+						+field(field)
+					div(class="fieldset-controls")
+						- var unsetid = "'"+list.NgScope.replace(/^data./,'')+".'+"+lf+"._id";
+						button(ng-if="navsave", class="btn btn-remove btn-danger pull-right", type='button', ng-click="deleteListItem("+list.NgScope+","+lk+","+unsetid+")")
+							span(class="glyphicon glyphicon-remove")
+							= " "+t12n("crud.bricks.list.remove")
+						.input-group.list-sort-select
+							span.input-group-addon
+								span.glyphicon.glyphicon-sort
+							select(class="form-control", ng-model=lf+"._order", ng-change="orderListItem("+list.NgScope+","+lk+")",ng-options="ork as ork*1+1 for (ork, ore) in "+list.NgScope+"")
 
-		div(class="list-footer")
-			input(class='btn btn-add btn-primary', type='button', value='Add',ng-click="addListItem("+list.parent.NgScope+",'"+list.id+"')")
+			div(class="list-footer")
+				input(class='btn btn-add btn-primary', type='button', value='Add',ng-click="addListItem("+list.parent.NgScope+",'"+list.id+"')")
 		
 
 mixin field(field)
-	- var ngExp = field.NgExp;
-	div(class="form-group", ng-class="{'has-error':(validations['"+ngExp.replace(/^data./,'')+"'] || $form['"+field.NgName+"'].$invalid)}")
-		label(class="control-label col-sm-2",for=field.NgId)
+	if gw.user.can(field.need('see',true))
+		- var ngExp = field.NgExp;
+		div(class="form-group", ng-class="{'has-error':(validations['"+ngExp.replace(/^data./,'')+"'] || $form['"+field.NgName+"'].$invalid)}")
+			label(class="control-label col-sm-2",for=field.NgId)
 
-			div(class="label-text")= t12n("schemas."+schema.id+".fields."+field.path+".label")
-				div(class="popover fade right in")
-					.arrow
-					.popover-title Field Object
-					.popover-content
-						pre="{{"+field.NgScope+"}}\n"+util.format(field)
+				div(class="label-text")= t12n("schemas."+schema.id+".fields."+field.path+".label")
+					div(class="popover fade right in")
+						.arrow
+						.popover-title Field Object
+						.popover-content
+							pre="{{"+field.NgScope+"}}\n"+util.format(field)
+
+				if field.i18n
+					div(class="dropdown lang-selector")
+						button(type="button", class="btn btn-default navbar-btn dropdown-toggle", data-toggle="dropdown") {{languages.active}} 
+							span(class="caret")
+							span(class="sr-only") Toggle Dropdown
+						ul(class="dropdown-menu", role="menu")
+							li(ng-repeat="lang in languages.list", ng-class="{active:languages.active==lang}")
+								a(ng-click="languages.active=lang",href="") {{lang}}
+
+
 
 			if field.i18n
-				div(class="dropdown lang-selector")
-					button(type="button", class="btn btn-default navbar-btn dropdown-toggle", data-toggle="dropdown") {{languages.active}} 
-						span(class="caret")
-						span(class="sr-only") Toggle Dropdown
-					ul(class="dropdown-menu", role="menu")
-						li(ng-repeat="lang in languages.list", ng-class="{active:languages.active==lang}")
-							a(ng-click="languages.active=lang",href="") {{lang}}
-
-
-
-		if field.i18n
-			+field-i18n(field)
-		else
-			div(class="col-sm-10")
-				+field-validation(field.NgExp)
-				+#{field.template}({field:field,id:field.NgId,name:field.NgName,value:field.NgScope})
-				p.help-block= t12n("schemas."+schema.id+".fields."+field.path+".details",{bydefault:""})
+				+field-i18n(field)
+			else
+				div(class="col-sm-10")
+					+field-validation(field.NgExp)
+					+#{field.template}({field:field,id:field.NgId,name:field.NgName,value:field.NgScope})
+					p.help-block= t12n("schemas."+schema.id+".fields."+field.path+".details",{bydefault:""})
 
 mixin field-i18n(field)
 	.pillar-langfields
