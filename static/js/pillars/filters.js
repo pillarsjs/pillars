@@ -1,0 +1,2 @@
+angular.module('Pillars.filters', [])
+;

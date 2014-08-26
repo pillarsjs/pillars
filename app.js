@@ -8,8 +8,8 @@ var beams = require('./lib/beams');
 
 var server = formwork().mongodb('primera')
 
-textualization.load('system','examples/crud.t12n');
-textualization.load('system','examples/system.t12n');
+textualization.load('system','languages/crud');
+textualization.load('system','languages/system');
 
 var mymodel = new bricks.Schema('system',{
 	server : server,
@@ -72,13 +72,6 @@ var mymodel = new bricks.Schema('system',{
 		.addField(new bricks.Text('subset2'))
 		.addField(new bricks.Text('subset3'))
 	)
-	/*
-	.addField(new bricks.Subset('thetree')
-		.addField(new bricks.Text('tree1'))
-		.addField(new bricks.Text('tree2'))
-		.addField(new bricks.Text('tree3'))
-	)
-	*/
 ;
 
 server.addPillar(new Pillar({
@@ -91,58 +84,8 @@ server.addPillar(new Pillar({
 	.addBeam(new Beam('update',{path:'/api/:_id',method:'put',upload:true,session:true,schema:mymodel},beams.apiUpdate))
 	.addBeam(new Beam('insert',{path:'/api',method:'post',session:true,schema:mymodel},beams.apiInsert))
 	.addBeam(new Beam('remove',{path:'/api/:_id',method:'delete',session:true,schema:mymodel},beams.apiRemove))
-	.addBeam(new Beam('files',{path:'/files/*:path',method:'get',session:true,schema:mymodel,directory:'./files/system'},beams.apiFiles))
+	.addBeam(new Beam('files',{path:'/files/*:path',method:'get',session:true,schema:mymodel,directory:'./uploads/system'},beams.apiFiles))
 );
-
-
-
-
-
-
-server.addPillar(new Pillar({id:'staticfiles'})
-	.addBeam(new Beam('css',{path:'/css/*:path',directory:'./static/css'},beams.directory))
-	.addBeam(new Beam('file',{path:'/file/*:path',directory:'./static/file'},beams.directory))
-	.addBeam(new Beam('img',{path:'/img/*:path',directory:'./static/img'},beams.directory))
-	.addBeam(new Beam('js',{path:'/js/*:path',directory:'./static/js'},beams.directory))
-	.addBeam(new Beam('data',{path:'/data/*:path',directory:'./static/data'},beams.directory))
-	.addBeam(new Beam('uploads',{path:'/uploads/*:path',directory:'./uploads'},beams.directory))
-);
-
-
-
-
-
-
-
-
-
-server.addPillar(new Pillar({id:'login'})
-	.addBeam(new Beam('login',{path:'/login',method:'(get|post)',session:true},function(){
-		var gw = this;
-		var redirect = gw.params.redirect || gw.referer || gw.host;
-		console.log(redirect);
-		if(typeof gw.params.user === "string" && typeof gw.params.password === "string"){
-			var login = {
-				user : gw.params.user,
-				password : gw.params.password
-			};
-			var users = gw.server.database.collection('users');
-			users.findOne({user:login.user,password:login.password},function(error, result) {
-				if(!error && result){
-					gw.session.user = result._id.toString();
-					gw.redirect(redirect);
-				} else {
-					gw.render('templates/login.jade',{redirect:redirect,msg:'login.fail'});
-				}
-			});
-		} else {
-			gw.render('templates/login.jade',{redirect:redirect});
-		}
-	}))
-);
-
-
-
 
 
 
@@ -171,7 +114,39 @@ server.addPillar(new Pillar({
 	.addBeam(new Beam('update',{path:'/api/:_id',method:'put',upload:true,session:true,schema:usersSchema},beams.apiUpdate))
 	.addBeam(new Beam('insert',{path:'/api',method:'post',session:true,schema:usersSchema},beams.apiInsert))
 	.addBeam(new Beam('remove',{path:'/api/:_id',method:'delete',session:true,schema:usersSchema},beams.apiRemove))
-	.addBeam(new Beam('files',{path:'/files/*:path',method:'get',session:true,schema:usersSchema,directory:'./files/system'},beams.apiFiles))
+	.addBeam(new Beam('files',{path:'/files/*:path',method:'get',session:true,schema:usersSchema,directory:'./uploads/users'},beams.apiFiles))
+);
+
+
+server.addPillar(new Pillar({id:'login'})
+	.addBeam(new Beam('login',{path:'/login',method:'(get|post)',session:true},function(){
+		var gw = this;
+		var redirect = gw.params.redirect || gw.referer || gw.host;
+		console.log(redirect);
+		if(typeof gw.params.user === "string" && typeof gw.params.password === "string"){
+			var login = {
+				user : gw.params.user,
+				password : gw.params.password
+			};
+			var users = gw.server.database.collection('users');
+			users.findOne({user:login.user,password:login.password},function(error, result) {
+				if(!error && result){
+					gw.session.user = result._id.toString();
+					gw.redirect(redirect);
+				} else {
+					gw.render('templates/login.jade',{redirect:redirect,msg:'login.fail'});
+				}
+			});
+		} else {
+			gw.render('templates/login.jade',{redirect:redirect});
+		}
+	}))
+);
+
+server.addPillar(new Pillar({id:'staticfiles'})
+	.addBeam(new Beam('css',{path:'/css/*:path',directory:'./static/css'},beams.directory))
+	.addBeam(new Beam('img',{path:'/img/*:path',directory:'./static/img'},beams.directory))
+	.addBeam(new Beam('js',{path:'/js/*:path',directory:'./static/js'},beams.directory))
 );
 
 /*

@@ -1,0 +1,32 @@
+<input type="text" name="{{referenceName}}" ng-model="set" class="ng-hide"/>
+<div class="input-group reference-search">
+	<input type="text" ng-model="search" ng-change="load(true)" placeholder="Buscar y seleccionar elementos" class="form-control"/>
+	<div class="input-group-btn">
+		<button type="button" ng-click="dropdown()" class="btn btn-default dropdown-toggle"><span ng-hide="loading" class="caret"></span><span ng-show="loading" class="glyphicon glyphicon-refresh ng-hide"></span></button>
+		<ul ng-show="opened" style="display:block;" scroll-end="more()" scroll-end-margin="50" class="dropdown-menu ng-hide">
+			<li ng-repeat="(lk, l) in data.list" ng-click="addReference(l)" ng-class="{'selected':set.indexOf(l._id)&gt;=0}" class="reference">
+				<div ng-show="l._img" class="reference-img ng-hide"><img ng-src="{{l._img.path}}"/></div>
+				<ul class="reference-items">
+					<li ng-repeat="(vk,v) in l" class="reference-item reference-item-{{vk}}"><strong class="item-label">{{vk}}</strong><span class="item-value">{{v}}</span></li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+</div>
+<ul class="references">
+	<li ng-repeat="(lk, l) in references" class="reference">
+		<div class="reference-data">
+			<div ng-show="l._img" class="reference-img ng-hide"><img ng-src="{{l._img.path}}"/></div>
+			<ul class="reference-items">
+				<li ng-repeat="(vk,v) in l" class="reference-item reference-item-{{vk}}"><strong class="item-label col-sm-2">{{vk}}</strong><span class="item-value col-sm-10">{{v}}</span></li>
+			</ul>
+		</div>
+		<div class="reference-controls">
+			<button type="button" ng-click="addReference(l)" class="btn btn-danger btn-remove pull-right"><span class="glyphicon glyphicon-remove"></span> Eliminar
+			</button>
+			<div class="input-group reference-sort-select"><span class="input-group-addon"><span class="glyphicon glyphicon-sort"></span></span>
+				<select ng-model="sorts[lk]" ng-change="moveReference(lk)" ng-options="ork as ork*1+1 for (ork, ore) in references" class="form-control"></select>
+			</div>
+		</div>
+	</li>
+</ul>
