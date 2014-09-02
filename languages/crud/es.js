@@ -1,20 +1,20 @@
 'crud':{
 	'sending': "Enviando",
 	'receiving': "Recibiendo",
-	'list': {
-		'edit': " Editar",
-		'remove': " Eliminar",
-		'see-more': " Ver más"
-	},
-	'navbar':{
-		'remove': " Eliminar",
-		'list': " Listado",
-		'new': " Nuevo",
+	'loading': "Cargando...",
+	'actions': {
 		'save': "Guardar",
 		'search': "Buscar",
-		'user':function(user){
-			return "Usuario: "+user.firstname+" "+user.lastname;
-		}
+		'sort': "Ordenar",
+		'new': "Nuevo",
+		'remove': "Eliminar",
+		'nextskip': "Cargar siguientes"
+	},
+	'errors':{
+		'apiList': "Ha ocurrido un error al cargar los contenidos"
+	},
+	'user':function(user){
+		return "Usuario: "+user.firstname+" "+user.lastname;
 	},
 	'bricks':{
 		'reference':{
@@ -22,13 +22,13 @@
 			'remove': "Eliminar"
 		},
 		'list':{
-			'show' : " Mostrar %(num)s elementos",
-			'close' : " Replegar",
-			'remove': " Eliminar"
+			'show' : "Mostrar %(num)s elementos",
+			'close' : "Replegar",
+			'remove': "Eliminar"
 		},
 		'subset':{
-			'show' : " Mostrar",
-			'close' : " Replegar"
+			'show' : "Mostrar",
+			'close' : "Replegar"
 		},
 		'editor': {
 			'bold': "Negrita",

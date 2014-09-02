@@ -1,0 +1,265 @@
+
+
+
+
+mixin forminline
+	form
+		.field.danger
+			label Etiqueta
+			.input
+				input(type="text",placeholder="hola")
+				.input-msgs
+					.msg.bg-alert Cuidado!
+					.msg.bg-danger Esto no es correcto!
+		.field
+			label Etiqueta (ao)
+			.input
+				.inputaddons
+					.addon.dropdown-toggle-hover
+						button(type="button")
+							span.fa.fa-bomb
+							|  Un botón
+						ul(class="dropdown menu")
+							li
+								a(href="#") Preferences
+								ul
+									li
+										a(href="#") Option A
+									li
+										a(href="#") Option B
+							li
+								a(href="#") Exit
+					.addon
+						.radio
+							input(type="radio")
+							label Etiqueta
+					.addon
+						label
+							span(class="fa fa-search") &nbsp;
+							| hola
+					.addon
+						.radio.hidden-label
+							input(type="radio")
+							label Etiqueta
+					input(type="text",placeholder="Buscar")
+					.addon
+						input(type="button",value="Desplegar")
+
+		.field
+			label Etiqueta (ao)
+			.input
+				.inputaddons
+					.addon
+						.select
+							select()
+								option(value="0") Cero
+								option(value="1") Uno
+								option(value="2") Dos
+					.addon
+						.radio
+							input(type="radio")
+							label Etiqueta
+					.addon
+						.radio.hidden-label
+							input(type="radio")
+							label Etiqueta
+					input(type="text",placeholder="Buscar")
+					.addon
+						input(type="button",value="Desplegar")
+
+		.field.bg-action
+			label Etiqueta
+			.input
+				.radio
+					input(type="radio")
+					label Etiqueta
+				.radio
+					input(type="radio")
+					label Etiqueta
+				.radio
+					input(type="radio")
+					label Etiqueta
+		.field
+			label Etiqueta
+			.input
+				.checkbox
+					input(type="checkbox")
+					label Etiqueta
+				.checkbox
+					input(type="checkbox")
+					label Etiqueta
+		.field
+			label Etiqueta
+			.input
+				.select
+					select()
+						option(value="0") Cero
+						option(value="1") Uno
+						option(value="2") Dos
+					span.select-focus
+		.field
+			label Etiqueta
+			.input
+				select()
+					option(value="0") Cero
+					option(value="1") Uno
+					option(value="2") Dos
+		.field
+			label Etiqueta
+			.input
+				textarea(placeholder="hola")
+	.form-section
+		input(type="button",class="warning",value="boton")
+		input(type="submit",value="enviar")
+
+mixin formtable
+	form(name="$form")
+		.form-table
+			div(class="field",ng-class="{'bg-danger':$form.cosa.$invalid}")
+				label Date
+				.input
+					input(type="text",ng-model="fecha")
+					date(id='cosa', ng-model='fecha', name='cosa')
+			.field
+				label Etiqueta
+				.input
+					input(type="button",value="Desplegar",class="bg-action")
+					input(type="button",value="Desplegar",class="bg-ok")
+					input(type="button",value="Desplegar",class="bg-soft")
+					input(type="button",value="Desplegar",class="bg-alert")
+					input(type="button",value="Desplegar",class="bg-danger")
+					input(type="button",value="Desplegar",class="bg-info")
+			.field
+				label Etiqueta
+				.input
+					.dropdown-toggle-hover
+						button(type="button")
+							span.fa.fa-bomb
+							|  Un botón
+						ul(class="dropdown panel")
+							li juaz
+							li juaz
+							li juaz
+							li juaz
+			.field.bg-alert
+				label Etiqueta
+				.input
+					.imgbox
+						img(src="/img/user.jpg")
+			.field.action
+				label Etiqueta
+				.input
+					input(type="text",placeholder="hola")
+			.field.bg-info.fullwidth
+				label Etiqueta (il)
+				.input
+					.inputsline
+						.dropdown-toggle-hover
+							button(type="button")
+								span.fa.fa-bomb
+								|  Un botón
+							ul(class="dropdown menu")
+								li
+									a(href="#") Preferences
+									ul
+										li
+											a(href="#") Option A
+										li
+											a(href="#") Option B
+								li
+									a(href="#") Exit
+						
+						.radio
+							input(type="radio")
+							label Etiqueta
+						label hola
+						.radio.hidden-label
+							input(type="radio")
+							label Etiqueta
+						input(type="text",placeholder="Buscar")
+						input(type="button",value="Desplegar")
+
+			.field
+				label Etiqueta (ao)
+				.input
+					.inputaddons
+						.addon
+							.select
+								select()
+									option(value="0") Cero
+									option(value="1") Uno
+									option(value="2") Dos
+						.addon
+							.radio
+								input(type="radio")
+								label Etiqueta
+						.addon
+							.radio.hidden-label
+								input(type="radio")
+								label Etiqueta
+						input(type="text",placeholder="Buscar")
+						.addon
+							input(type="button",value="Desplegar")
+
+			.field.ok
+				label Etiqueta
+				.input
+					.radio
+						input(type="radio")
+						label Etiqueta
+					.radio
+						input(type="radio")
+						label Etiqueta
+					.radio
+						input(type="radio")
+						label Etiqueta
+			.field
+				label Etiqueta
+				.input
+					.checkbox
+						input(type="checkbox")
+						label Etiqueta
+					.checkbox
+						input(type="checkbox")
+						label Etiqueta
+			.field.alert
+				label Etiqueta
+				.input
+					.select
+						select()
+							option(value="0") Cero
+							option(value="1") Uno
+							option(value="2") Dos
+						span.select-focus
+					.input-msgs
+						.msg.bg-alert Cuidado!
+						.msg.bg-danger Esto no es correcto!
+			.field
+				label Etiqueta
+				.input
+					select()
+						option(value="0") Cero
+						option(value="1") Uno
+						option(value="2") Dos
+			.field
+				label Etiqueta
+				.input
+					textarea(placeholder="hola")
+		.form-section
+			input(type="button",class="warning",value="boton")
+			input(type="submit",value="enviar")
+
+	table
+		thead
+			tr
+				th hola
+				th rehola
+
+		tbody
+			tr
+				td adios
+				td readios
+			tr
+				td adios
+				td readios
+

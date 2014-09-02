@@ -1,19 +1,19 @@
 
 function xhrLoader(){
 	var loader = this;
-	loader.xhr = new XMLHttpRequest();
-	loader.xhr.json = false;
-	loader.start = false;
-	loader.sending = false;
-	loader.receiving = false;
-	loader.fail = false;
-	loader.end = false;
+	var xhr = new XMLHttpRequest();
+	loader.response = false;
+	loader.running = false;
+	loader.sending = 0;
+	loader.receiving = 0;
+
 	loader.send = function(method, url, form, files){
-		if(!/^(http|https):\/\//.test(url)){
-			url = document.URL.replace(/#.*$/,'').replace(/\/*$/,'')+"/"+url.replace(/^\.\//,'').replace(/^\/*/,'');
-		} 
-		loader.xhr.open(method, url, true);
-		//loader.xhr.responseType="json";
+		xhr.open(method, url, true);
+		loader.response = false;
+		loader.running = true;
+		loader.sending = 0;
+		loader.receiving = 0;
+		//xhr.responseType="json";
 		if(form){
 			if(files){
 				var formdata = new FormData(form);
@@ -29,63 +29,80 @@ function xhrLoader(){
 						}
 					}
 				}*/
-				loader.xhr.send(formdata);
+				xhr.send(formdata);
 			} else {
-				loader.xhr.setRequestHeader("Content-Type", "application\/x-www-form-urlencoded");
-				loader.xhr.send($(form).serialize());
+				xhr.setRequestHeader("Content-Type", "application\/x-www-form-urlencoded");
+				xhr.send($(form).serialize());
 			}
 		} else {
-			loader.xhr.send();
+			xhr.send();
 		}
 		return loader;
 	};
 
-	loader.fire = function(e){
-		if(typeof loader[e] == 'function'){
-			loader[e].apply(loader[e],Array.prototype.slice.call(arguments).slice(1));
+	loader.progress = function(){};
+	loader.success = function(){};
+	loader.fail = function(){};
+	loader.abort = function(){
+		if(loader.running){
+			loader.running = false;
+			loader.progress();
 		}
-	}
+	};
+	loader.end = function(){
+		loader.success();
+		loader.running = false;
+		loader.progress();
+	};
+	loader.error = function(){
+		if(loader.running){
+			loader.fail();
+			loader.running = false;
+			loader.progress();
+		}
+	};
 
-	loader.data = function (xhr) {
-		loader.fire('data',xhr);
-	}
-
-	loader.xhr.addEventListener("loadstart", function(){
-		loader.fire('start');
+	xhr.addEventListener("progress", function(e){
+		if(e.lengthComputable) {
+			loader.receiving = Math.ceil(e.loaded / e.total * 100);
+			loader.progress();
+		}
 	},false);
-	loader.xhr.addEventListener("progress", function(e){
-		if(e.lengthComputable) {loader.fire('receiving',Math.round(e.loaded / e.total * 100));}
-	},false);
-	loader.xhr.addEventListener("load", function(){
-		loader.fire('receiving',100);
-		if(loader.xhr.getResponseHeader('Content-Type')=='application/json'){
+	xhr.addEventListener("load", function(){
+		loader.receiving = 100;
+		if(xhr.getResponseHeader('Content-Type')=='application/json'){
 			try {
-				loader.xhr.json = JSON.parse(loader.xhr.response);
-				loader.fire('end');
+				loader.response = JSON.parse(xhr.response);
 			} catch(e) {
-				loader.fire('fail','parse:error');
+				loader.error();
+			} finally {
+				loader.end();
 			}
 		} else {
-			loader.fire('fail','content:error');
+			loader.error();
 		}
 	},false);
-	loader.xhr.addEventListener("error", function(){
-		loader.fire('fail','request:error');
+	xhr.addEventListener("error", function(){
+		loader.error();
 	},false);
-	loader.xhr.addEventListener("abort",function(){
-		loader.fire('fail','request:aborted');
+	xhr.addEventListener("abort",function(){
+		loader.abort();
 	},false);
-	loader.xhr.upload.addEventListener("progress", function(e){
-		if(e.lengthComputable) {loader.fire('sending',Math.round(e.loaded / e.total * 100));}
+	xhr.upload.addEventListener("progress", function(e){
+		if(e.lengthComputable) {
+			loader.sending = Math.ceil(e.loaded / e.total * 100);
+			loader.progress();
+		}
 	},false);
-	loader.xhr.upload.addEventListener("load", function(){
-		loader.fire('sending',0);
+	xhr.upload.addEventListener("load", function(){
+		loader.sending = 100;
+		loader.progress();
 	},false);
-	loader.xhr.upload.addEventListener("error", function(){
-		loader.fire('fail','upload:error');
+	xhr.upload.addEventListener("error", function(){
+		loader.error();
 	},false);
-	loader.xhr.upload.addEventListener("abort", function(){
-		loader.fire('fail','upload:aborted');
+	xhr.upload.addEventListener("abort", function(){
+		loader.abort();
 	},false);
 }
 

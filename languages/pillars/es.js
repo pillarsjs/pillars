@@ -3,6 +3,8 @@
 	switch(code){
 		case 400:
 			return 'Solicitud erronea';
+		case 403:
+			return 'No tienes las credenciales necesarias para acceder a este recurso';
 		case 404:
 			return 'La página no existe';
 		case 406:

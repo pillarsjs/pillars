@@ -1,7 +1,7 @@
 <input type="text" name="{{datepickerName}}" ng-model="value" class="ng-hide"/>
 
 <div class="inputsline">
-	<span class="space">Date</span>
+	<label>Date</label>
 	<input type="text" ng-model="calendar.selection.year" ng-change="setDate()" placeholder="Year" class="date-year"/>
 	<div class="select date-month">
 		<select ng-model="calendar.selection.month" ng-change="setDate()">
@@ -14,11 +14,11 @@
 </div>
 
 <div class="inputsline">
-	<span class="space">Time</span>
+	<label>Time</label>
 	<input type="text" ng-model="calendar.selection.hours" ng-change="setDate()" placeholder="H" class="time-hours"/>
-	<span class="space">:</span>
+	<label>:</label>
 	<input type="text" ng-model="calendar.selection.minutes" ng-change="setDate()" placeholder="M" class="time-minutes"/>
-	<span class="space">{{calendar.tz}}</span>
+	<label>{{calendar.tz}}</label>
 </div>
 
 <div class="calendar">

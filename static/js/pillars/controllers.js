@@ -1,55 +1,20 @@
 angular.module('Pillars.controllers', [])
-	.controller('crudListFilter', function($rootScope, $scope, loader, $location, $routeParams) {
-		$rootScope.listFilter = "";
-		$rootScope.listSort = "";
-		$rootScope.listOrder = 1;
-		$scope.applyFilter = function(){
-			$rootScope.listFilter = $scope.listFilter || "";
-			if($location.path()=="/"){
-				loader.send('get','api?_filter='+$rootScope.listFilter+'&_sort='+$rootScope.listSort+'&_order='+$rootScope.listOrder,false,false);
-			} else {
-				$location.path('/');
-			}
-		}
-		$scope.sortBy = function(sort,order){
-			$rootScope.listSort = $scope.listSort = sort;
-			$rootScope.listOrder = $scope.listOrder = order;
-			loader.send('get','api?_filter='+$rootScope.listFilter+'&_sort='+$rootScope.listSort+'&_order='+$rootScope.listOrder,false,false);
-		}
+	.controller('crudListActions', function($scope, apiList) {
+		$scope.apiList = apiList;
 	})
-	.controller('crudList', function($scope, loader, listquery) {
-		$scope.data = {};
-		$scope.isend = false;
-		loader.data = function(xhr){
-			$scope.isend = false;
-			if(xhr.json.data===true){ // remove case
-				//$rootScope.lostmsgs = xhr.json.msgs;
-				loader.send('get','api?_filter='+listquery.filter+'&_sort='+listquery.sort+'&_order='+listquery.order,false,false);
-			} else if(xhr.json.data.skip || xhr.json.data.range) {
-				if(xhr.json.data.limit>xhr.json.data.list.length){$scope.isend = true;}
-				var cache = $scope.data.list;
-				$scope.data = xhr.json.data || [];
-				$scope.data.list = cache.concat(xhr.json.data.list);
-			} else {
-				if(xhr.json.data.limit>xhr.json.data.list.length){$scope.isend = true;}
-				$scope.data = xhr.json.data || [];
-			}
-		};
-
-		loader.send('get','api?_filter='+listquery.filter+'&_sort='+listquery.sort+'&_order='+listquery.order,false,false);
-
-		$scope.more = function(){
-			var skip = parseInt($scope.data.skip || 0);
-			var limit = parseInt($scope.data.limit || 0);
-			var range = $scope.data.range || false;
-			loader.send('get','api?_skip='+(skip+limit)+'&_filter='+listquery.filter+'&_sort='+listquery.sort+'&_order='+listquery.order,false,false);
-		}
-
-		$scope.removeElement = function(id){
-			loader.send('delete','api/'+id,false,false);
-		}
+	.controller('crudList', function($scope, apiList) {
+		$scope.apiList = apiList;
+		apiList.load();
 	})
-	.controller('crudUpdate', function($rootScope, $scope, loader, $location, $routeParams) {
+	.controller('crudUpdate', function($rootScope, $scope, $location, $routeParams, apiEntity) {
+		$scope.apiEntity = apiEntity.reset();
+		apiEntity.id = $routeParams._id;
+		apiEntity.form = crudEntityForm;
+		apiEntity.onData = function(){
+			$scope.data = apiEntity.data;
+		}
+		apiEntity.load();
+		/*
 		$rootScope.languages = null;
 		$rootScope.navsave = true;
 		$rootScope.navremove = true;
@@ -88,6 +53,7 @@ angular.module('Pillars.controllers', [])
 		$rootScope.removeElement = function(){
 			loader.send('delete','api/'+$routeParams._id,false,false);
 		}
+		*/
 	})
 	.controller('crudInsert', function($rootScope, $scope, loader, $location, $routeParams) {
 		$rootScope.languages = null;

@@ -78,13 +78,13 @@ server.addPillar(new Pillar({
 	id:'sample-pillar',
 	path:'/system'
 })
-	.addBeam(new Beam('template',{session:true,schema:mymodel},beams.apiTemplate))
-	.addBeam(new Beam('search',{path:'/api',session:true,schema:mymodel},beams.apiList))
-	.addBeam(new Beam('get',{path:'/api/:_id',session:true,schema:mymodel},beams.apiGet))
-	.addBeam(new Beam('update',{path:'/api/:_id',method:'put',upload:true,session:true,schema:mymodel},beams.apiUpdate))
-	.addBeam(new Beam('insert',{path:'/api',method:'post',session:true,schema:mymodel},beams.apiInsert))
-	.addBeam(new Beam('remove',{path:'/api/:_id',method:'delete',session:true,schema:mymodel},beams.apiRemove))
-	.addBeam(new Beam('files',{path:'/files/*:path',method:'get',session:true,schema:mymodel,directory:'./uploads/system'},beams.apiFiles))
+	.addBeam(new Beam('template',{account:true,schema:mymodel},beams.apiTemplate))
+	.addBeam(new Beam('search',{path:'/api',account:true,schema:mymodel},beams.apiList))
+	.addBeam(new Beam('get',{path:'/api/:_id',account:true,schema:mymodel},beams.apiGet))
+	.addBeam(new Beam('update',{path:'/api/:_id',method:'put',upload:true,account:true,schema:mymodel},beams.apiUpdate))
+	.addBeam(new Beam('insert',{path:'/api',method:'post',account:true,schema:mymodel},beams.apiInsert))
+	.addBeam(new Beam('remove',{path:'/api/:_id',method:'delete',account:true,schema:mymodel},beams.apiRemove))
+	.addBeam(new Beam('files',{path:'/files/*:path',method:'get',account:true,schema:mymodel,directory:'./uploads/system'},beams.apiFiles))
 );
 
 
@@ -96,7 +96,7 @@ var usersSchema = new bricks.Schema('users',{
 	//t12n : './lib/crud.t12n'
 	limit : 3,
 	filter : ['_id','user','firstname','lastname'], 
-	headers : ['_id','user','firstname','lastname']
+	headers : ['_id','user','firstname','lastname','password']
 })
 	.addField(new bricks.Text('user'))
 	.addField(new bricks.Text('firstname'))
@@ -108,20 +108,23 @@ server.addPillar(new Pillar({
 	id:'users',
 	path:'/users'
 })
-	.addBeam(new Beam('template',{session:true,schema:usersSchema},beams.apiTemplate))
-	.addBeam(new Beam('search',{path:'/api',session:true,schema:usersSchema},beams.apiList))
-	.addBeam(new Beam('get',{path:'/api/:_id',session:true,schema:usersSchema},beams.apiGet))
-	.addBeam(new Beam('update',{path:'/api/:_id',method:'put',upload:true,session:true,schema:usersSchema},beams.apiUpdate))
-	.addBeam(new Beam('insert',{path:'/api',method:'post',session:true,schema:usersSchema},beams.apiInsert))
-	.addBeam(new Beam('remove',{path:'/api/:_id',method:'delete',session:true,schema:usersSchema},beams.apiRemove))
-	.addBeam(new Beam('files',{path:'/files/*:path',method:'get',session:true,schema:usersSchema,directory:'./uploads/users'},beams.apiFiles))
+	.addBeam(new Beam('template',{account:true,schema:usersSchema},beams.apiTemplate))
+	.addBeam(new Beam('search',{path:'/api',account:true,schema:usersSchema},beams.apiList))
+	.addBeam(new Beam('get',{path:'/api/:_id',account:true,schema:usersSchema},beams.apiGet))
+	.addBeam(new Beam('update',{path:'/api/:_id',method:'put',upload:true,account:true,schema:usersSchema},beams.apiUpdate))
+	.addBeam(new Beam('insert',{path:'/api',method:'post',account:true,schema:usersSchema},beams.apiInsert))
+	.addBeam(new Beam('remove',{path:'/api/:_id',method:'delete',account:true,schema:usersSchema},beams.apiRemove))
+	.addBeam(new Beam('files',{path:'/files/*:path',method:'get',account:true,schema:usersSchema,directory:'./uploads/users'},beams.apiFiles))
 );
 
 
 server.addPillar(new Pillar({id:'login'})
 	.addBeam(new Beam('login',{path:'/login',method:'(get|post)',session:true},function(){
 		var gw = this;
-		var redirect = gw.params.redirect || gw.referer || gw.host;
+		var redirect = gw.params.redirect;
+		if(typeof gw.params.redirect === 'undefined' && gw.referer){
+			redirect = gw.referer;
+		}
 		console.log(redirect);
 		if(typeof gw.params.user === "string" && typeof gw.params.password === "string"){
 			var login = {
@@ -130,9 +133,12 @@ server.addPillar(new Pillar({id:'login'})
 			};
 			var users = gw.server.database.collection('users');
 			users.findOne({user:login.user,password:login.password},function(error, result) {
+				console.log('login check');
 				if(!error && result){
+					console.log('login ok');
 					gw.session.user = result._id.toString();
-					gw.redirect(redirect);
+					//gw.redirect(redirect);
+					gw.render('templates/login.jade',{redirect:redirect,msg:'login.ok'});
 				} else {
 					gw.render('templates/login.jade',{redirect:redirect,msg:'login.fail'});
 				}

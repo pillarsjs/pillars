@@ -4,7 +4,7 @@
 	<div class="input-group-btn">
 		<button type="button" ng-click="dropdown()" class="btn btn-default dropdown-toggle"><span ng-hide="loading" class="caret"></span><span ng-show="loading" class="glyphicon glyphicon-refresh ng-hide"></span></button>
 		<ul ng-show="opened" style="display:block;" scroll-end="more()" scroll-end-margin="50" class="dropdown-menu ng-hide">
-			<li ng-repeat="(lk, l) in data.list" ng-click="addReference(l)" ng-class="{'selected':set.indexOf(l._id)&gt;=0}" class="reference">
+			<li ng-repeat="(lk, l) in data.list" ng-click="addReference(l)" ng-class="{'selected':set.indexOf(l._id)>=0}" class="reference">
 				<div ng-show="l._img" class="reference-img ng-hide"><img ng-src="{{l._img.path}}"/></div>
 				<ul class="reference-items">
 					<li ng-repeat="(vk,v) in l" class="reference-item reference-item-{{vk}}"><strong class="item-label">{{vk}}</strong><span class="item-value">{{v}}</span></li>

@@ -1,216 +1,93 @@
+include ./templates/examples.jade
 
-mixin _navbar
-	nav(class="navbar navbar-default navbar-fixed-top", role="navigation")
-		.container-fluid
-			.navbar-header
-				button(type="button", class="navbar-toggle", data-toggle="collapse" data-target="#navbar-update")
-					span(class="sr-only") Toggle navigation
-					span(class="icon-bar")
-					span(class="icon-bar")
-					span(class="icon-bar")
-				a(class="navbar-brand", href="") Pillars
-			div(id="navbar-update" class="collapse navbar-collapse")
-				ul.nav.navbar-nav
-					button(ng-if="navsave", form="activeForm", type='submit', class="btn btn-primary navbar-btn")= t12n("crud.navbar.save")
-				form(class="navbar-form navbar-left", role="search", ng-controller="crudListFilter")
-					.form-group
-						.input-group
-							input(type="text", class="form-control", ng-change="applyFilter()",placeholder=t12n("crud.navbar.search"), ng-model="listFilter")
-							.input-group-btn
-								button(type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown")
-									span(class="caret")
-								ul(class="dropdown-menu",role="menu")
-									each header, i in schema.headers
-										li
-											a(href="",ng-click="sortBy('"+header+"',1)")
-												span(class="glyphicon glyphicon-sort-by-attributes") &nbsp;
-												= t12n("schemas."+schema.id+".headers."+header)
-										li
-											a(href="",ng-click="sortBy('"+header+"',-1)")
-												span(class="glyphicon glyphicon-sort-by-attributes-alt") &nbsp;
-												= t12n("schemas."+schema.id+".headers."+header)
-										if i<schema.headers.length-1
-											li(role="presentation" class="divider")
-				ul.nav.navbar-nav
-					li: a(href="#/") 
-						span(class="glyphicon glyphicon-list")
-						= " "+t12n("crud.navbar.list")
-					li: a(href="#/new") 
-						span(class="glyphicon glyphicon-plus")
-						= " "+t12n("crud.navbar.new")
-				ul.nav.navbar-nav.navbar-right
-					span.user=t12n("crud.navbar.user",{user:gw.user})
-					button(ng-if="navsave", class="btn btn-danger navbar-btn", type='button', ng-click="removeElement()")
-						span(class="glyphicon glyphicon-remove")
-						= " "+t12n("crud.navbar.remove")
+- function ngModel(field,lang){return "data."+field.id+(lang?"."+lang:"");}
 
-		div(ng-show="loading",class="ng-show form-progressbar")
-					div(class="progress progress-striped active ng-hide", ng-show="sending>0")
-						.progress-bar.progress-bar-info(role="progressbar", aria-valuenow="45", aria-valuemin="0", aria-valuemax="100", style="width: {{sending}}%")
-							span.sr-only= t12n("crud.sending")+" {{sending}}%"
-					div(class="progress progress-striped active ng-hide", ng-show="receiving>0")
-						.progress-bar.progress-bar-success(role="progressbar", aria-valuenow="45", aria-valuemin="0", aria-valuemax="100", style="width: {{receiving}}%")
-							span.sr-only= t12n("crud.receiving")+" {{receiving}}%"
+mixin subset(field)
+	label= t12n(field.label)
+	p(class="help-block")= t12n(field.details,{bydefault:""})
+	div(dataname=field.id)
+		pre {{dataname}}
+		pre {{data}}
+		pre {{env}}
+		each sfield in field.fields
+			+field(sfield)
 
-mixin _buttonlink(value,link)
-	input(class='btn btn-default', type='button', value=value, onclick="window.location.href='"+link+"'")
+mixin list(field)
+	label= t12n(field.path+".label")
+	p= t12n(field.details,{bydefault:""})
 
-mixin _crud-list(schema)
-	table(class="table table-striped")
-		thead
-			tr
-				each header in schema.headers
-					th(ng-class="{'text-primary':listSort=='"+header+"'}")
-						span(class="ng-hide glyphicon glyphicon-sort-by-attributes", ng-show="listSort=='"+header+"' && listOrder==1") &nbsp;
-						span(class="ng-hide glyphicon glyphicon-sort-by-attributes-alt", ng-show="listSort=='"+header+"' && listOrder==-1") &nbsp;
-						= t12n("schemas."+schema.id+".headers."+header)
-				th
+mixin oldlist()
+	div
+		fieldset(ng-repeat="("+lk+", "+lf+") in "+list.NgScope)
 
-		tbody
-			tr(ng-repeat="record in data.list")
-				each header in schema.headers
-					td="{{record."+header+"}}"
-				td
-					a(href="#/edit/{{record._id}}",class="btn btn-primary", role="button")
-						span(class="glyphicon glyphicon-pencil")
-						= " "+t12n("crud.list.edit")
-					button(class="btn btn-danger navbar-btn", type='button', ng-click="removeElement(record._id)")
-						span(class="glyphicon glyphicon-remove")
-						= " "+t12n("crud.list.remove")
-	button(class="btn btn-info", type='button', ng-click="more()", ng-hide="end")
-		span(class="glyphicon glyphicon-forward")
-		= " "+t12n("crud.list.see-more")
+			//legend
+			//	#{'h'+(3+list.depth)}.text-primary
+			//		= list.items.label + "{{"+lk+"}}"
+			//		small=' '+list.items.details
+			input(type='text',class="ng-hide",ng-value=list.NgScope+"["+lk+"]._id",name=list.NgName+"[{{"+lk+"}}][_id]")
+			each field in list.fields
+				+field(field)
+			div(class="fieldset-controls")
+				- var unsetid = "'"+list.NgScope.replace(/^data./,'')+".'+"+lf+"._id";
+				button(ng-if="navsave", class="btn btn-remove btn-danger pull-right", type='button', ng-click="deleteListItem("+list.NgScope+","+lk+","+unsetid+")")
+					span(class="glyphicon glyphicon-remove")
+					= " "+t12n("crud.bricks.list.remove")
+				.input-group.list-sort-select
+					span.input-group-addon
+						span.glyphicon.glyphicon-sort
+					select(class="form-control", ng-model=lf+"._order", ng-change="orderListItem("+list.NgScope+","+lk+")",ng-options="ork as ork*1+1 for (ork, ore) in "+list.NgScope+"")
 
-mixin _crud-edit(schema)
-	form(id="activeForm", ng-submit="sendForm()", name="$form")
-		fieldset
-			legend
-				h3.text-primary= t12n("schemas."+schema.id+".title")
-					small= " "+t12n("schemas."+schema.id+".details",{bydefault:""})
+		div(class="list-footer")
+			input(class='btn btn-add btn-primary', type='button', value='Add',ng-click="addListItem("+list.parent.NgScope+",'"+list.id+"')")
+	
 
-			div.unseters.ng-hide
-				input(ng-repeat="(nstk,nst) in nstlist",ng-value="nst",name="unset[{{nstk}}]")
+mixin field(field)
+	div.field
+		label
+			span= t12n(field.label)
+			if field.i18n
+				div(class="dropdown-toggle-hover i18n-selector")
+					button(type="button") {{env.lang}} 
+					ul(class="dropdown dropdown-right menu ")
+						li(ng-repeat="lang in env.langlist", ng-class="{active:env.lang==lang}")
+							.menu-item(ng-click="env.lang=lang") {{lang}}
 
-			div(class="form-horizontal")
-				each field in schema.fields
-					if field.template=='subset' || field.template=='list' 
-						+#{field.template}(field)
-					else
-						+field(field)
-
-mixin _subset(subset)
-	if gw.user.can(subset.need('see',true))
-		.form-group.form-list
-			div(class="list-header", ng-class="{'has-error':validations['"+subset.NgExp.replace(/^data./,'')+"']}")
-				label(class="control-label")= t12n("schemas."+schema.id+".fields."+subset.path+".label")
-				p(class="help-block")= t12n("schemas."+schema.id+".fields."+subset.path+".details",{bydefault:""})
-				button(class="btn btn-open btn-default", type='button')
-					span(class="glyphicon glyphicon-eye-open")
-					= " "+t12n("crud.bricks.subset.show")
-				button(class="btn btn-open btn-default ng-hide", type='button')
-					span(class="glyphicon glyphicon-eye-close")
-					= " "+t12n("crud.bricks.subset.close")
-			div(class="list-items col-sm-12")
-				each field in subset.fields
-					+field(field)
-
-mixin _list(list)
-	if gw.user.can(list.need('see',true))
-		.form-group.form-list
-			div(class="list-header", ng-class="{'has-error':validations['"+list.NgExp.replace(/^data./,'')+"']}")
-				label(class="control-label")= t12n("schemas."+schema.id+".fields."+list.path+".label")
-				p(class="help-block")= t12n("schemas."+schema.id+".fields."+list.path+".details",{bydefault:""})
-				button(class="btn btn-open btn-default", type='button')
-					span(class="glyphicon glyphicon-eye-open")
-					= " "+t12n("crud.bricks.list.show",{num:"{{"+list.NgScope+".length}}"})
-				button(class="btn btn-open btn-default ng-hide", type='button')
-					span(class="glyphicon glyphicon-eye-close")
-					= " "+t12n("crud.bricks.list.close")
-			div(class="list-items col-sm-12")
-				- var lk = "$lk"+list.depth;
-				- var lf = "$lf"+list.depth;
-				//- var deleteName = list.NgName.replace('data[','delete[');
-				fieldset(ng-repeat="("+lk+", "+lf+") in "+list.NgScope)
-
-					//legend
-					//	#{'h'+(3+list.depth)}.text-primary
-					//		= list.items.label + "{{"+lk+"}}"
-					//		small=' '+list.items.details
-					input(type='text',class="ng-hide",ng-value=list.NgScope+"["+lk+"]._id",name=list.NgName+"[{{"+lk+"}}][_id]")
-					each field in list.fields
-						+field(field)
-					div(class="fieldset-controls")
-						- var unsetid = "'"+list.NgScope.replace(/^data./,'')+".'+"+lf+"._id";
-						button(ng-if="navsave", class="btn btn-remove btn-danger pull-right", type='button', ng-click="deleteListItem("+list.NgScope+","+lk+","+unsetid+")")
-							span(class="glyphicon glyphicon-remove")
-							= " "+t12n("crud.bricks.list.remove")
-						.input-group.list-sort-select
-							span.input-group-addon
-								span.glyphicon.glyphicon-sort
-							select(class="form-control", ng-model=lf+"._order", ng-change="orderListItem("+list.NgScope+","+lk+")",ng-options="ork as ork*1+1 for (ork, ore) in "+list.NgScope+"")
-
-			div(class="list-footer")
-				input(class='btn btn-add btn-primary', type='button', value='Add',ng-click="addListItem("+list.parent.NgScope+",'"+list.id+"')")
-		
-
-mixin _field(field)
-	if gw.user.can(field.need('see',true))
-		- var ngExp = field.NgExp;
-		div(class="form-group", ng-class="{'has-error':(validations['"+ngExp.replace(/^data./,'')+"'] || $form['"+field.NgName+"'].$invalid)}")
-			label(class="control-label col-sm-2",for=field.NgId)
-
-				div(class="label-text")= t12n("schemas."+schema.id+".fields."+field.path+".label")
-					div(class="popover fade right in")
-						.arrow
-						.popover-title Field Object
-						.popover-content
-							pre="{{"+field.NgScope+"}}\n"+util.format(field)
-
-				if field.i18n
-					div(class="dropdown lang-selector")
-						button(type="button", class="btn btn-default navbar-btn dropdown-toggle", data-toggle="dropdown") {{env.lang.active}} 
-							span(class="caret")
-							span(class="sr-only") Toggle Dropdown
-						ul(class="dropdown-menu", role="menu")
-							li(ng-repeat="lang in env.lang.list", ng-class="{active:env.lang.active==lang}")
-								a(ng-click="env.lang.active=lang",href="") {{lang}}
-
-
-
+		.input
 			if field.i18n
 				+field-i18n(field)
 			else
-				div(class="col-sm-10")
-					+field-validation(field.NgExp)
-					+#{field.template}({field:field,id:field.NgId,name:field.NgName,value:field.NgScope})
-					p.help-block= t12n("schemas."+schema.id+".fields."+field.path+".details",{bydefault:""})
+				+field-validation(field)
+				+#{field.template}(field)
+			p.help= t12n(field.details,{bydefault:""})
+				
+				
 
-mixin _field-i18n(field)
-	.pillar-langfields
-		each lang in gw.textualization.langs
-			- var classes = [];
-			- classes.push('lang-'+lang);
-			div(class="col-sm-10 ng-hide", ng-show="env.lang.active=='"+lang+"'")
-				+field-validation(field.NgExp+"."+lang)
-				+#{field.template}({field:field,id:field.NgId+"_"+lang,name:field.NgName+"["+lang+"]",value:field.NgScope+"."+lang,classes:classes})
-				p.help-block= t12n("schemas."+schema.id+".fields."+field.path+".details",{bydefault:""})
+mixin field-i18n(field)
+	each lang in gw.textualization.langs
+		div(class="lang",ng-hide="env.lang!='"+lang+"'")
+			+field-validation(field,lang)
+			+#{field.template}(field,lang)
+				
+mixin field-validation(field,lang)
+	//.input-msgs
+		//.msg.bg-alert Cuidado!
 
-mixin _field-validation(ngExp)
-	div(class="alert alert-danger ng-hide",ng-show="validations['"+ngExp.replace(/^data./,'')+"']")
-		ul(class="list-unstyled")
-			li(ng-repeat="msg in validations['"+ngExp.replace(/^data./,'')+"']") {{msg}}
+mixin text(field,lang)
+	input(type='text', id=field.id, name=field.id, ng-model=ngModel(field,lang))
+	pre {{data}}
 
-mixin _text(config)
-	input(type='text', class=config.classes, class=['form-control','field-text'], id=config.id, name=config.name, ng-model=config.value)
+mixin file(field,lang)
+	div {{data.#{field.id}}}
+	input(type='file', id=field.id, name=field.id)
 
-mixin _file(config)
-	input(type='file', class=config.classes, class=['form-control','field-file'], id=config.id, name=config.name)
+mixin fileimg(field,lang)
+	imagepicker(id=field.id, name=field.id, ng-model=ngModel(field,lang))
 
-mixin _fileimg(config)
-	imagepicker(class=config.classes, id=config.id, name=config.name, ng-model=config.value)
+mixin textarea(field,lang)
+	textarea(id=field.id, name=field.id, ng-model=ngModel(field,lang))
 
-mixin _textarea(config)
-	textarea(class=config.classes, class=['form-control','field-textarea'], id=config.id, name=config.name, ng-model=config.value)
+mixin editor(field,lang)
+	textarea(id=field.id, name=field.id, ng-model=ngModel(field,lang))
 
 mixin _editor(config)
 	div(id=config.id+"_toolbar", style="display: none;")
@@ -228,62 +105,188 @@ mixin _editor(config)
 
 	textarea(class=config.classes, class=['form-control','field-editor'], id=config.id, name=config.name, ng-model=config.value, html-editor="true")
 
-mixin _select(config)
-	select(class=config.classes, class=['form-control','field-select'], id=config.id, name=config.name, ng-model=config.value)
-		each option,i in config.field.values
+mixin select(field,lang)
+	select(id=field.id, name=field.id, ng-model=ngModel(field,lang))
+		each option,i in field.values
 			option(value=i)=option
 
-mixin _checkbox(config)
-	.checkbox
+mixin checkbox(field,lang)
+	.checkbox.hidden-label
+		input(type='checkbox', id=field.id, name=field.id, ng-model=ngModel(field,lang), ng-true-value='true', ng-false-value='false')
 		label
-			input(type='checkbox', class=config.classes, class=['field-checkbox'], id=config.id, name=config.name, ng-model=config.value, ng-true-value='true', ng-false-value='false')
 
-mixin _checkboxes(config)
-	each option,i in config.field.values
+mixin checkboxes(field,lang)
+	each option,i in field.values
 		.checkbox
-			label
-				input(type='checkbox', class=config.classes, class=['field-checkbox'], id=config.id, name=config.name+"["+i+"]", ng-model=config.value+"."+i, ng-true-value='true', ng-false-value='false')
-				=option
+			input(type='checkbox',  id=field.id, name=field.id+"["+i+"]", ng-model=ngModel(field,lang)+"."+i, ng-true-value='true', ng-false-value='false')
+			label=option
 
-mixin _radios(config)
-	each option,i in config.field.values
+mixin radios(field,lang)
+	each option,i in field.values
 		.radio
-			label
-				input(type='radio', class=config.classes, class=['field-radio'], id=config.id, name=config.name, ng-model=config.value, value=i)
-				=option
+			input(type='radio', id=field.id, name=field.id, ng-model=ngModel(field,lang), value=i)
+			label=option
 
-mixin _time(config)
-	datepicker(class=config.classes, id=config.id, ng-model=config.value, name=config.name)
+mixin time(field,lang)
+	datepicker(id=field.id, ng-model=ngModel(field,lang), name=field.id)
 
-mixin _reference(config)
-	reference(class=config.classes, id=config.id, ng-model=config.value, name=config.name)
-
-
-mixin _notifier
-	ul(class="notifier list-unstyled ng-hide", ng-show="msgs")
-		li(ng-repeat="msg in msgs", class="alert alert-{{msg.lvl}}")
-			strong {{msg.msg}}
-			|  {{msg.details}}
+mixin reference(field,lang)
+	reference(id=field.id, ng-model=ngModel(field,lang), name=field.id)
 
 
-mixin forminline
-	form
-		.form-field.danger
-			label Etiqueta
-			.input
-				input(type="text",placeholder="hola")
-				.input-msgs
-					.msg.bg-alert Cuidado!
-					.msg.bg-danger Esto no es correcto!
-		.form-field
-			label Etiqueta
+
+
+
+mixin crudListActions
+	form(class="form-inline", ng-controller="crudListActions")
+		.field
 			.input
 				.inputaddons
-					.addon.dropdown-toggle-hover
-						button(type="button")
-							span.fa.fa-bomb
-							|  Un botón
-						ul(class="dropdown menu")
+					.addon
+						label
+							span(class="fa fa-search") &nbsp;
+							= t12n("crud.actions.search")
+					input(type="text",ng-change="apiList.load()",placeholder="...", ng-model="apiList.filter")
+		.field
+			.input.dropdown-toggle-hover
+				button(type="button")
+					span(class="fa fa-th-list") &nbsp;
+					= t12n("crud.actions.sort")
+				ul(class="dropdown dropdown-right menu")
+					each header, i in schema.headers
+						li
+							.menu-item(ng-click="apiList.sort='"+header+"';apiList.order=1;apiList.load();",ng-class="{'active':apiList.sort=='"+header+"' && apiList.order=='1'}")
+								span(class="fa fa-sort-amount-asc") &nbsp;
+								= t12n("schemas."+schema.id+".headers."+header)
+						li
+							.menu-item(ng-click="apiList.sort='"+header+"';apiList.order=-1;apiList.load();",ng-class="{'active':apiList.sort=='"+header+"' && apiList.order=='1'}")
+								span(class="fa fa-sort-amount-desc") &nbsp;
+								= t12n("schemas."+schema.id+".headers."+header)
+						if i<schema.headers.length-1
+							li(role="presentation" class="divider")
+		.field
+			.input
+				button(type="button")
+					span(class="fa fa-plus") &nbsp;
+					= t12n("crud.actions.new")
+
+mixin crudList(schema)
+	#view-top
+		#view-header
+			ol#breadcrumb
+				li
+					a(href="#")= t12n("crud.home")
+				li
+					a(href="#")= t12n("crud.admin")
+			#view-title= t12n("schemas."+schema.id+".h1")
+
+			#actions
+				+crudListActions
+
+
+	#view-bottom
+		#view-body
+			+formtable
+			.crudLister
+				table(class="table")
+					thead
+						tr
+							each header in schema.headers
+								th(ng-class="{'active':apiList.sort=='"+header+"'}")
+									span(class="ng-hide fa fa-sort-amount-asc", ng-show="apiList.sort=='"+header+"' && apiList.order==1") &nbsp;
+									span(class="ng-hide fa fa-sort-amount-desc", ng-show="apiList.sort=='"+header+"' && apiList.order==-1") &nbsp;
+									= t12n("schemas."+schema.id+".headers."+header)
+							th.corner &nbsp;
+
+					tbody
+						tr(ng-repeat="record in apiList.list")
+							each header in schema.headers
+								td="{{record."+header+"}}"
+							td
+								a(href="#/edit/{{record._id}}",class="button bg-action", role="button")
+									span(class="fa fa-pencil")
+									= " "+t12n("crud.list.edit")
+								button(class="bg-danger", type='button', ng-click="removeRecord(record._id)")
+									span(class="fa fa-times")
+									= " "+t12n("crud.list.remove")
+					tfoot
+						tr
+							td(colspan=schema.headers.length+1)
+								div(class="loader")
+									div(class="msg msg-icon bg-danger",ng-hide="!apiList.error")= t12n("crud.errors.apiList")
+
+									button(class="bg-action loadnext", type='button', ng-click="apiList.loadnext();", ng-hide="apiList.end || apiList.loader.running")
+										span(class="fa fa-forward")
+										= " "+t12n("crud.actions.nextskip")
+									
+									div(class="msg loading bg-info",ng-hide="!apiList.loader.running")
+										.fa.fa-spinner.fa-spin
+										= t12n("crud.loading")
+
+									div(class="progress sending",ng-hide="apiList.loader.sending==0 || !apiList.loader.running")
+										span(style="width:{{apiList.loader.sending}}%;")
+											span
+												span(class="fa fa-upload")
+												= t12n("crud.sending")+" {{apiList.loader.sending}}%"
+									div(class="progress receiving",ng-hide="apiList.loader.receiving==0 || !apiList.loader.running")
+										span(style="width:{{apiList.loader.receiving}}%;")
+											span
+												span(class="fa fa-download")
+												= t12n("crud.receiving")+" {{apiList.loader.receiving}}%"
+
+mixin crudEntity(schema)
+	#view-top
+		#view-header
+			ol#breadcrumb
+				li
+					a(href="#")= t12n("crud.home")
+				li
+					a(href="#")= t12n("crud.admin")
+			#view-title= t12n("schemas."+schema.id+".h1")
+
+			#actions
+				+crudListActions
+
+
+	#view-bottom
+		#view-body
+			form(id="crudEntityForm", ng-submit="sendForm()", name="crudEntityForm")
+				fieldset
+					legend
+						h3.text-primary= t12n("schemas."+schema.id+".title")
+							small= " "+t12n("schemas."+schema.id+".details",{bydefault:""})
+
+					div.unseters.ng-hide
+						input(ng-repeat="(nstk,nst) in nstlist",ng-value="nst",name="unset[{{nstk}}]")
+
+					.form-table
+						each field in schema.fields
+							if gw.user.can(field.need('see',true))
+								if field.template=='subset' || field.template=='list' 
+									+#{field.template}(field)
+								else
+									+field(field)
+
+doctype html
+html(lang=gw.language,ng-app="PillarsCRUD")
+	head
+		title= t12n("schemas."+schema.id+".title")
+		meta(charset="utf-8")
+		meta(http-equiv='X-UA-Compatible', content='IE=edge')
+		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
+		link(rel='stylesheet', type='text/css', href='/css/normalize.css')
+		link(rel='stylesheet', type='text/css', href='/css/pillars.css')
+
+	body
+		#space
+			#top
+				header#header
+					a(id="brand",href="#") Pillars
+					div(id="user",class="dropdown-toggle-hover")
+						img(id="user-img",src="/img/user.jpg")
+						div(id="user-info")
+							div(id="user-name") Javier Gallego Martín {{env.langlist}}
+						ul(id="user-options",class="dropdown dropdown-right menu")
 							li
 								a(href="#") Preferences
 								ul
@@ -293,326 +296,43 @@ mixin forminline
 										a(href="#") Option B
 							li
 								a(href="#") Exit
-					.addon
-						.radio
-							input(type="radio")
-							label Etiqueta
-					.addon
-						.space hola
-					.addon
-						.radio.hidden-label
-							input(type="radio")
-							label Etiqueta
-					input(type="text",placeholder="Buscar")
-					.addon
-						input(type="button",value="Desplegar")
-
-		.form-field
-			label Etiqueta
-			.input
-				.inputaddons
-					.addon
-						.select
-							select()
-								option(value="0") Cero
-								option(value="1") Uno
-								option(value="2") Dos
-					.addon
-						.radio
-							input(type="radio")
-							label Etiqueta
-					.addon
-						.radio.hidden-label
-							input(type="radio")
-							label Etiqueta
-					input(type="text",placeholder="Buscar")
-					.addon
-						input(type="button",value="Desplegar")
-
-		.form-field.bg-action
-			label Etiqueta
-			.input
-				.radio
-					input(type="radio")
-					label Etiqueta
-				.radio
-					input(type="radio")
-					label Etiqueta
-				.radio
-					input(type="radio")
-					label Etiqueta
-		.form-field
-			label Etiqueta
-			.input
-				.checkbox
-					input(type="checkbox")
-					label Etiqueta
-				.checkbox
-					input(type="checkbox")
-					label Etiqueta
-		.form-field
-			label Etiqueta
-			.input
-				.select
-					select()
-						option(value="0") Cero
-						option(value="1") Uno
-						option(value="2") Dos
-					span.select-focus
-		.form-field
-			label Etiqueta
-			.input
-				select()
-					option(value="0") Cero
-					option(value="1") Uno
-					option(value="2") Dos
-		.form-field
-			label Etiqueta
-			.input
-				textarea(placeholder="hola")
-	.form-section
-		input(type="button",class="warning",value="boton")
-		input(type="submit",value="enviar")
-
-mixin crud-list(schema)
-	#view-header
-		ol#breadcrumb
-			li
-				a(href="#")= t12n("crud.home")
-			li.current= t12n("schemas."+schema.id+".h1")
-
-		ol#msgs
-			li(ng-repeat="msg in msgs", class="msg msg-{{msg.lvl}}")
-				strong {{msg.msg}}
-				|  {{msg.details}}
-		#actions
-			a(class="btn",href="#") Save
-			a(class="btn",href="#") Delete
-			a(class="btn",href="#") Search
-
-	#view-body
-		+forminline
-		form(name="$form")
-			.form-table
-				div(class="form-field",ng-class="{'bg-danger':$form.cosa.$invalid}")
-					label Date
-					.input
-						input(type="text",ng-model="fecha")
-						date(id='cosa', ng-model='fecha', name='cosa')
-				.form-field
-					label Etiqueta
-					.input
-						input(type="button",value="Desplegar",class="bg-action")
-						input(type="button",value="Desplegar",class="bg-ok")
-						input(type="button",value="Desplegar",class="bg-soft")
-						input(type="button",value="Desplegar",class="bg-alert")
-						input(type="button",value="Desplegar",class="bg-danger")
-						input(type="button",value="Desplegar",class="bg-info")
-				.form-field
-					label Etiqueta
-					.input
-						.dropdown-toggle-hover
-							button(type="button")
-								span.fa.fa-bomb
-								|  Un botón
-							ul(class="dropdown panel")
-								li juaz
-								li juaz
-								li juaz
-								li juaz
-				.form-field.bg-alert
-					label Etiqueta
-					.input
-						.imgbox
-							img(src="/img/user.jpg")
-				.form-field.action
-					label Etiqueta
-					.input
-						input(type="text",placeholder="hola")
-				.form-field.bg-info.fullwidth
-					label Etiqueta
-					.input
-						.inputsline
-							.dropdown-toggle-hover
-								button(type="button")
-									span.fa.fa-bomb
-									|  Un botón
-								ul(class="dropdown menu")
-									li
-										a(href="#") Preferences
-										ul
-											li
-												a(href="#") Option A
-											li
-												a(href="#") Option B
-									li
-										a(href="#") Exit
-							
-							.radio
-								input(type="radio")
-								label Etiqueta
-							.space hola
-							.radio.hidden-label
-								input(type="radio")
-								label Etiqueta
-							input(type="text",placeholder="Buscar")
-							input(type="button",value="Desplegar")
-
-				.form-field
-					label Etiqueta
-					.input
-						.inputaddons.fullwidth
-							.addon
-								.select
-									select()
-										option(value="0") Cero
-										option(value="1") Uno
-										option(value="2") Dos
-							.addon
-								.radio
-									input(type="radio")
-									label Etiqueta
-							.addon
-								.radio.hidden-label
-									input(type="radio")
-									label Etiqueta
-							input(type="text",placeholder="Buscar")
-							.addon
-								input(type="button",value="Desplegar")
-
-				.form-field.ok
-					label Etiqueta
-					.input
-						.radio
-							input(type="radio")
-							label Etiqueta
-						.radio
-							input(type="radio")
-							label Etiqueta
-						.radio
-							input(type="radio")
-							label Etiqueta
-				.form-field
-					label Etiqueta
-					.input
-						.checkbox
-							input(type="checkbox")
-							label Etiqueta
-						.checkbox
-							input(type="checkbox")
-							label Etiqueta
-				.form-field.alert
-					label Etiqueta
-					.input
-						.select
-							select()
-								option(value="0") Cero
-								option(value="1") Uno
-								option(value="2") Dos
-							span.select-focus
-						.input-msgs
-							.msg.bg-alert Cuidado!
-							.msg.bg-danger Esto no es correcto!
-				.form-field
-					label Etiqueta
-					.input
-						select()
-							option(value="0") Cero
-							option(value="1") Uno
-							option(value="2") Dos
-				.form-field
-					label Etiqueta
-					.input
-						textarea(placeholder="hola")
-			.form-section
-				input(type="button",class="warning",value="boton")
-				input(type="submit",value="enviar")
-
-
-
-		table
-			thead
-				tr
-					th hola
-					th rehola
-
-			tbody
-				tr
-					td adios
-					td readios
-				tr
-					td adios
-					td readios
-
-		table(class="table")
-			thead
-				tr
-					each header in schema.headers
-						th(ng-class="{'active':sortby=='"+header+"'}")
-							span(class="ng-hide fa fa-sort-amount-asc", ng-show="listSort=='"+header+"' && listOrder==1") &nbsp;
-							span(class="ng-hide fa fa-sort-amount-desc", ng-show="listSort=='"+header+"' && listOrder==-1") &nbsp;
-							= t12n("schemas."+schema.id+".headers."+header)
-					th.corner &nbsp;
-
-			tbody
-				tr(ng-repeat="record in data.list")
-					each header in schema.headers
-						td="{{record."+header+"}}"
-					td
-						a(href="#/edit/{{record._id}}",class="btn btn-main", role="button")
-							span(class="fa fa-pencil")
-							= " "+t12n("crud.list.edit")
-						button(class="btn btn-danger", type='button', ng-click="removeRecord(record._id)")
-							span(class="fa fa-times")
-							= " "+t12n("crud.list.remove")
-		button(class="btn btn-info", type='button', ng-click="more()", ng-hide="end")
-			span(class="fa fa-forward")
-			= " "+t12n("crud.list.see-more")
-
-doctype html
-html(lang=gw.language,ng-app="PillarsCRUD")
-	head
-		title= t12n("schemas."+schema.id+".title")
-		meta(charset="utf-8")
-		meta(http-equiv='X-UA-Compatible', content='IE=edge')
-		meta(name="viewport", content="width=device-width, initial-scale=1")
-		link(rel='stylesheet', type='text/css', href='/css/normalize.css')
-		link(rel='stylesheet', type='text/css', href='/css/pillars.css')
-
-	body
-		#space
-			header#header
-				a(id="brand",href="#") Pillars
-				div(id="user",class="dropdown-toggle-hover")
-					img(id="user-img",src="/img/user.jpg")
-					div(id="user-info")
-						div(id="user-name") Javier Gallego Martín {{env.lang.list}}
-					ul(id="user-options",class="dropdown dropdown-right menu")
-						li
-							a(href="#") Preferences
+			#bottom
+				#left
+					#navigation
+						h2.nav-title t12n("backend.navigation-title")
+						nav
 							ul
 								li
-									a(href="#") Option A
+									a(href="#") System
 								li
-									a(href="#") Option B
-						li
-							a(href="#") Exit
+									a(href="#") Users
+								li
+									a(href="#") System
+								li
+									a(href="#") Users
+								li
+									a(href="#") System
+								li
+									a(href="#") Users
+								li
+									a(href="#") System
+								li
+									a(href="#") Users
+								li
+									a(href="#") System
+								li
+									a(href="#") Users
+								li
+									a(href="#") System
+								li
+									a(href="#") Users
+				#right
+					div(id="view",ng-view)
 
-			#navigation
-				h2.nav-title t12n("backend.navigation-title")
-				nav
-					ul
-						li
-							a(href="#") System
-						li
-							a(href="#") Users
-
-			div(id="view",ng-view)
-
-		script(type="text/ng-template", id="crud-list.html")
-			+crud-list(schema)
-		script(type="text/ng-template", id="crud-edit.html")
-			//+crud-edit(schema)
+		script(type="text/ng-template", id="crudList.html")
+			+crudList(schema)
+		script(type="text/ng-template", id="crudEntity.html")
+			+crudEntity(schema)
 
 		link(rel='stylesheet', type='text/css', href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400italic,600,600italic,700,700italic')
 		link(rel="stylesheet", type='text/css', href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css")
@@ -627,19 +347,42 @@ html(lang=gw.language,ng-app="PillarsCRUD")
 		script(src='/js/wysihtml5-0.4.0pre.js')
 
 		script(src='/js/pillars/classes.js')
-		script(src='/js/pillars/app.js')
 		script(src='/js/pillars/services.js')
 		script(src='/js/pillars/controllers.js')
 		script(src='/js/pillars/filters.js')
 		script(src='/js/pillars/directives.js')
 		script(type='text/javascript').
-			angular.module('Pillars.environment', [])
-				.service('env', function(){
-					this.version = '0.1';
-					this.lang = {
-						active : '#{gw.language}',
-						list : ['#{gw.textualization.langs.join("','")}']
-					};
+			angular.module('PillarsCRUD', [
+				'ngRoute',
+				'Pillars.filters',
+				'Pillars.services',
+				'Pillars.directives',
+				'Pillars.controllers'
+			])
+				.config(['$routeProvider', function($routeProvider) {
+					$routeProvider
+						.when('/', {
+							controller:'crudList',
+							templateUrl:'crudList.html'
+						})
+						.when('/edit/:_id', {
+							controller:'crudUpdate',
+							templateUrl:'crudEntity.html'
+						})
+						.when('/new', {
+							controller:'crudInsert',
+							templateUrl:'crudEntity.html'
+						})
+						.otherwise({
+							redirectTo:'/'
+						});
+				}])
+				.run(function ($rootScope) {
+					$rootScope.env = {
+						apiurl : 'http://#{gw.host}#{gw.pillar.path}/api',
+						lang : '#{gw.language}',
+						langlist : ['#{gw.textualization.langs.join("','")}']
+					}
 				})
 			;
 

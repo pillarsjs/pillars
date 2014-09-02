@@ -4,14 +4,26 @@ angular.module('Pillars.directives', [])
 			elm.text(version);
 		};
 	}])
-	.directive('date', function($locale) {
+	.directive('dataname', function() {
+		return {
+			scope : true,
+			link : function (scope, element, attrs, controller, transcludeFn){
+				scope.dataname = attrs.dataname;
+				scope.data = {};
+				scope.$parent.$watch('data.'+scope.dataname, function(newData, oldData) {
+					scope.data = scope.$parent.data[scope.dataname];
+				});
+			}
+		}
+	})
+	.directive('datepicker', function($locale) {
 		return {
 			require: 'ngModel',
 			restrict: 'E',
 			scope: {
 				value: '=ngModel'
 			},
-			templateUrl: '/js/pillars/partials/date.html',
+			templateUrl: '/js/pillars/partials/datepicker.html',
 			link: function(scope, element, attr, ngModel) {
 				scope.datepickerName = attr['name'];
 				scope.localeDateTime = $locale.DATETIME_FORMATS;
@@ -52,7 +64,7 @@ angular.module('Pillars.directives', [])
 			scope: {
 				value: '=ngModel'
 			},
-			templateUrl: 'bricks.referencepicker.html',
+			templateUrl: '/js/pillars/partials/reference.html',
 			link: function(scope, element, attr, ngModel) {
 				scope.search = "";
 				scope.referenceName = attr['name'];
@@ -196,6 +208,24 @@ angular.module('Pillars.directives', [])
 			});
 		};
 	})
+	.directive('focusOn', function() {
+		return function(scope, elem, attr) {
+			scope.$on('focusOn', function(e, name) {
+				if(name === attr.focusOn) {
+					elem[0].focus();
+					console.log('focused');
+				}
+			});
+		};
+	})
+	.factory('focus', function ($rootScope, $timeout) {
+		return function(name) {
+			$timeout(function (){
+				console.log('dofocus');
+				$rootScope.$broadcast('focusOn', name);
+			});
+		}
+	})
 	.directive('imagepicker', function($locale) {
 		return {
 			require: 'ngModel',
@@ -203,7 +233,7 @@ angular.module('Pillars.directives', [])
 			scope: {
 				value: '=ngModel'
 			},
-			templateUrl: 'bricks.imagepicker.html',
+			templateUrl: '/js/pillars/partials/imagepicker.html',
 			link: function(scope, element, attr, ngModel) {
 				scope.imagepickerName = attr['name'];
 				//scope.readedFiles = [];
