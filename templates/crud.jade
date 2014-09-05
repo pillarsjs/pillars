@@ -1,50 +1,12 @@
 include ./templates/examples.jade
 
-- function ngModel(field,lang){return "data."+field.id+(lang?"."+lang:"");}
-
-mixin subset(field)
-	label= t12n(field.label)
-	p(class="help-block")= t12n(field.details,{bydefault:""})
-	div(dataname=field.id)
-		pre {{dataname}}
-		pre {{data}}
-		pre {{env}}
-		each sfield in field.fields
-			+field(sfield)
-
-mixin list(field)
-	label= t12n(field.path+".label")
-	p= t12n(field.details,{bydefault:""})
-
-mixin oldlist()
-	div
-		fieldset(ng-repeat="("+lk+", "+lf+") in "+list.NgScope)
-
-			//legend
-			//	#{'h'+(3+list.depth)}.text-primary
-			//		= list.items.label + "{{"+lk+"}}"
-			//		small=' '+list.items.details
-			input(type='text',class="ng-hide",ng-value=list.NgScope+"["+lk+"]._id",name=list.NgName+"[{{"+lk+"}}][_id]")
-			each field in list.fields
-				+field(field)
-			div(class="fieldset-controls")
-				- var unsetid = "'"+list.NgScope.replace(/^data./,'')+".'+"+lf+"._id";
-				button(ng-if="navsave", class="btn btn-remove btn-danger pull-right", type='button', ng-click="deleteListItem("+list.NgScope+","+lk+","+unsetid+")")
-					span(class="glyphicon glyphicon-remove")
-					= " "+t12n("crud.bricks.list.remove")
-				.input-group.list-sort-select
-					span.input-group-addon
-						span.glyphicon.glyphicon-sort
-					select(class="form-control", ng-model=lf+"._order", ng-change="orderListItem("+list.NgScope+","+lk+")",ng-options="ork as ork*1+1 for (ork, ore) in "+list.NgScope+"")
-
-		div(class="list-footer")
-			input(class='btn btn-add btn-primary', type='button', value='Add',ng-click="addListItem("+list.parent.NgScope+",'"+list.id+"')")
-	
-
 mixin field(field)
-	div.field
+	- var fullwidth = (field.template=='subset' || field.template=='list')?" fullwidth":"";
+	div(class="field"+fullwidth, datapath=field.id, ng-class="{danger:crudEntityForm[datapathName].$invalid,ok:crudEntityForm[datapathName].$valid && crudEntityForm[datapathName].$dirty }")
 		label
 			span= t12n(field.label)
+			//div {{datapath}}
+			//div {{datapathValue}}
 			if field.i18n
 				div(class="dropdown-toggle-hover i18n-selector")
 					button(type="button") {{env.lang}} 
@@ -53,44 +15,50 @@ mixin field(field)
 							.menu-item(ng-click="env.lang=lang") {{lang}}
 
 		.input
+			p.help= t12n(field.details,{_default:""})
 			if field.i18n
-				+field-i18n(field)
+				each lang in gw.textualization.langs
+					div(class="lang",ng-hide="env.lang!='"+lang+"'", datapath=lang)
+						+field-validation(field)
+						+#{field.template}(field)
 			else
 				+field-validation(field)
 				+#{field.template}(field)
-			p.help= t12n(field.details,{bydefault:""})
 				
-				
-
-mixin field-i18n(field)
-	each lang in gw.textualization.langs
-		div(class="lang",ng-hide="env.lang!='"+lang+"'")
-			+field-validation(field,lang)
-			+#{field.template}(field,lang)
-				
-mixin field-validation(field,lang)
+mixin field-validation(field)
+	//pre {{crudEntityForm[datapathName]}}
 	//.input-msgs
 		//.msg.bg-alert Cuidado!
 
-mixin text(field,lang)
-	input(type='text', id=field.id, name=field.id, ng-model=ngModel(field,lang))
-	pre {{data}}
+mixin subset(field)
+	div(class="subset")
+		fieldset
+			each sfield in field.fields
+				+field(sfield)
 
-mixin file(field,lang)
-	div {{data.#{field.id}}}
-	input(type='file', id=field.id, name=field.id)
+mixin list(field)
+	div(class="fieldsetlist")
+		fieldset(ng-repeat="(datapathKey,datapathRepeater) in datapathValue", datapath='{{$index}}')
+			input(type="text", class="ng-hide", datapath="_id", datapath-id, datapath-name, ng-model="datapathValue")
+			input(type="text", class="ng-hide", datapath="_order", datapath-id, datapath-name, ng-model="datapathValue")
+			each sfield in field.fields
+				+field(sfield)
 
-mixin fileimg(field,lang)
-	imagepicker(id=field.id, name=field.id, ng-model=ngModel(field,lang))
+mixin text(field)
+	input(type='text', datapath-id, datapath-name, ng-model="datapathValue")
 
-mixin textarea(field,lang)
-	textarea(id=field.id, name=field.id, ng-model=ngModel(field,lang))
+mixin file(field)
+	div {{data}}
+	input(type='file', datapath-id, datapath-name)
 
-mixin editor(field,lang)
-	textarea(id=field.id, name=field.id, ng-model=ngModel(field,lang))
+mixin fileimg(field)
+	imagepicker(datapath-id, datapath-name, ng-model="datapathValue")
 
-mixin _editor(config)
-	div(id=config.id+"_toolbar", style="display: none;")
+mixin textarea(field)
+	textarea(datapath-id, datapath-name, ng-model="datapathValue")
+
+mixin editor(field)
+	div(id="{{datapathId}}_toolbar",class="editor_toolbar", style="display: none;")
 		a(data-wysihtml5-command="bold")= t12n("crud.bricks.editor.bold")
 		a(data-wysihtml5-command="italic")= t12n("crud.bricks.editor.italic")
 		a(data-wysihtml5-command="foreColor", data-wysihtml5-command-value="red")= t12n("crud.bricks.editor.red")
@@ -102,36 +70,36 @@ mixin _editor(config)
 				input(data-wysihtml5-dialog-field="href", value="http://", class="text")
 			a(data-wysihtml5-dialog-action="save")= t12n("crud.bricks.editor.insert")
 			a(data-wysihtml5-dialog-action="cancel")= t12n("crud.bricks.editor.cancel")
+	textarea(datapath-id, datapath-name, ng-model="datapathValue", html-editor="true")
 
-	textarea(class=config.classes, class=['form-control','field-editor'], id=config.id, name=config.name, ng-model=config.value, html-editor="true")
-
-mixin select(field,lang)
-	select(id=field.id, name=field.id, ng-model=ngModel(field,lang))
+mixin select(field)
+	select(datapath-id, datapath-name, ng-model="datapathValue")
 		each option,i in field.values
 			option(value=i)=option
 
-mixin checkbox(field,lang)
+mixin checkbox(field)
 	.checkbox.hidden-label
-		input(type='checkbox', id=field.id, name=field.id, ng-model=ngModel(field,lang), ng-true-value='true', ng-false-value='false')
+		input(type='checkbox', datapath-id, datapath-name, ng-model="datapathValue", ng-true-value='true', ng-false-value='false')
 		label
 
-mixin checkboxes(field,lang)
+mixin checkboxes(field)
 	each option,i in field.values
-		.checkbox
-			input(type='checkbox',  id=field.id, name=field.id+"["+i+"]", ng-model=ngModel(field,lang)+"."+i, ng-true-value='true', ng-false-value='false')
+		.checkbox(datapath=i)
+			input(type='checkbox', datapath-id, datapath-name, ng-model="datapathValue", ng-true-value='true', ng-false-value='false')
 			label=option
 
-mixin radios(field,lang)
+mixin radios(field)
 	each option,i in field.values
 		.radio
-			input(type='radio', id=field.id, name=field.id, ng-model=ngModel(field,lang), value=i)
+			input(type='radio', datapath-id, datapath-name, ng-model="datapathValue", value=i)
 			label=option
 
-mixin time(field,lang)
-	datepicker(id=field.id, ng-model=ngModel(field,lang), name=field.id)
+mixin time(field)
+	input(type="text", datapath-id, datapath-name, ng-model="datapathValue", class="ng-hide")
+	datepicker(linkid="{{datapathId}}",ng-model="datapathValue")
 
-mixin reference(field,lang)
-	reference(id=field.id, ng-model=ngModel(field,lang), name=field.id)
+mixin reference(field)
+	reference(datapath-id, datapath-name, ng-model="datapathValue")
 
 
 
@@ -171,101 +139,70 @@ mixin crudListActions
 					= t12n("crud.actions.new")
 
 mixin crudList(schema)
-	#view-top
-		#view-header
-			ol#breadcrumb
-				li
-					a(href="#")= t12n("crud.home")
-				li
-					a(href="#")= t12n("crud.admin")
-			#view-title= t12n("schemas."+schema.id+".h1")
+	//+formtable
+	.crudLister
+		table(class="table")
+			thead
+				tr
+					each header in schema.headers
+						th(ng-class="{'active':apiList.sort=='"+header+"'}")
+							span(class="ng-hide fa fa-sort-amount-asc", ng-show="apiList.sort=='"+header+"' && apiList.order==1") &nbsp;
+							span(class="ng-hide fa fa-sort-amount-desc", ng-show="apiList.sort=='"+header+"' && apiList.order==-1") &nbsp;
+							= t12n("schemas."+schema.id+".headers."+header)
+					th.corner &nbsp;
 
-			#actions
-				+crudListActions
+			tbody
+				tr(ng-repeat="record in apiList.list")
+					each header in schema.headers
+						td="{{record."+header+"}}"
+					td
+						a(href="#/edit/{{record._id}}",class="button bg-action", role="button")
+							span(class="fa fa-pencil")
+							= " "+t12n("crud.list.edit")
+						button(class="bg-danger", type='button', ng-click="removeRecord(record._id)")
+							span(class="fa fa-times")
+							= " "+t12n("crud.list.remove")
+			tfoot
+				tr
+					td(colspan=schema.headers.length+1)
+						div(class="loader")
+							div(class="msg msg-icon bg-danger",ng-hide="!apiList.error")= t12n("crud.errors.apiList")
 
+							button(class="bg-action loadnext", type='button', ng-click="apiList.loadnext();", ng-hide="apiList.end || apiList.loader.running")
+								span(class="fa fa-forward")
+								= " "+t12n("crud.actions.nextskip")
+							
+							div(class="msg loading bg-info",ng-hide="!apiList.loader.running")
+								.fa.fa-spinner.fa-spin
+								= t12n("crud.loading")
 
-	#view-bottom
-		#view-body
-			+formtable
-			.crudLister
-				table(class="table")
-					thead
-						tr
-							each header in schema.headers
-								th(ng-class="{'active':apiList.sort=='"+header+"'}")
-									span(class="ng-hide fa fa-sort-amount-asc", ng-show="apiList.sort=='"+header+"' && apiList.order==1") &nbsp;
-									span(class="ng-hide fa fa-sort-amount-desc", ng-show="apiList.sort=='"+header+"' && apiList.order==-1") &nbsp;
-									= t12n("schemas."+schema.id+".headers."+header)
-							th.corner &nbsp;
-
-					tbody
-						tr(ng-repeat="record in apiList.list")
-							each header in schema.headers
-								td="{{record."+header+"}}"
-							td
-								a(href="#/edit/{{record._id}}",class="button bg-action", role="button")
-									span(class="fa fa-pencil")
-									= " "+t12n("crud.list.edit")
-								button(class="bg-danger", type='button', ng-click="removeRecord(record._id)")
-									span(class="fa fa-times")
-									= " "+t12n("crud.list.remove")
-					tfoot
-						tr
-							td(colspan=schema.headers.length+1)
-								div(class="loader")
-									div(class="msg msg-icon bg-danger",ng-hide="!apiList.error")= t12n("crud.errors.apiList")
-
-									button(class="bg-action loadnext", type='button', ng-click="apiList.loadnext();", ng-hide="apiList.end || apiList.loader.running")
-										span(class="fa fa-forward")
-										= " "+t12n("crud.actions.nextskip")
-									
-									div(class="msg loading bg-info",ng-hide="!apiList.loader.running")
-										.fa.fa-spinner.fa-spin
-										= t12n("crud.loading")
-
-									div(class="progress sending",ng-hide="apiList.loader.sending==0 || !apiList.loader.running")
-										span(style="width:{{apiList.loader.sending}}%;")
-											span
-												span(class="fa fa-upload")
-												= t12n("crud.sending")+" {{apiList.loader.sending}}%"
-									div(class="progress receiving",ng-hide="apiList.loader.receiving==0 || !apiList.loader.running")
-										span(style="width:{{apiList.loader.receiving}}%;")
-											span
-												span(class="fa fa-download")
-												= t12n("crud.receiving")+" {{apiList.loader.receiving}}%"
+							div(class="progress sending",ng-hide="apiList.loader.sending==0 || !apiList.loader.running")
+								span(style="width:{{apiList.loader.sending}}%;")
+									span
+										span(class="fa fa-upload")
+										= t12n("crud.sending")+" {{apiList.loader.sending}}%"
+							div(class="progress receiving",ng-hide="apiList.loader.receiving==0 || !apiList.loader.running")
+								span(style="width:{{apiList.loader.receiving}}%;")
+									span
+										span(class="fa fa-download")
+										= t12n("crud.receiving")+" {{apiList.loader.receiving}}%"
 
 mixin crudEntity(schema)
-	#view-top
-		#view-header
-			ol#breadcrumb
-				li
-					a(href="#")= t12n("crud.home")
-				li
-					a(href="#")= t12n("crud.admin")
-			#view-title= t12n("schemas."+schema.id+".h1")
+	//{{crudEntityFormInputs()}}
+	//{{crudEntityForm.$pristine}}
+	form(id="crudEntityForm", ng-submit="sendForm()", name="crudEntityForm")
+		fieldset
+			legend
+				h3.text-primary= t12n("schemas."+schema.id+".title")
+					small= " "+t12n("schemas."+schema.id+".details",{_default:""})
 
-			#actions
-				+crudListActions
+			div.unseters.ng-hide
+				input(ng-repeat="(nstk,nst) in nstlist",ng-value="nst",name="unset[{{nstk}}]")
 
-
-	#view-bottom
-		#view-body
-			form(id="crudEntityForm", ng-submit="sendForm()", name="crudEntityForm")
-				fieldset
-					legend
-						h3.text-primary= t12n("schemas."+schema.id+".title")
-							small= " "+t12n("schemas."+schema.id+".details",{bydefault:""})
-
-					div.unseters.ng-hide
-						input(ng-repeat="(nstk,nst) in nstlist",ng-value="nst",name="unset[{{nstk}}]")
-
-					.form-table
-						each field in schema.fields
-							if gw.user.can(field.need('see',true))
-								if field.template=='subset' || field.template=='list' 
-									+#{field.template}(field)
-								else
-									+field(field)
+			.form-table
+				each field in schema.fields
+					if gw.user.can(field.need('see',true))
+						+field(field)
 
 doctype html
 html(lang=gw.language,ng-app="PillarsCRUD")
@@ -285,7 +222,7 @@ html(lang=gw.language,ng-app="PillarsCRUD")
 					div(id="user",class="dropdown-toggle-hover")
 						img(id="user-img",src="/img/user.jpg")
 						div(id="user-info")
-							div(id="user-name") Javier Gallego Martín {{env.langlist}}
+							div(id="user-name") Javier Gallego Martín {{env.lang}}
 						ul(id="user-options",class="dropdown dropdown-right menu")
 							li
 								a(href="#") Preferences
@@ -327,7 +264,22 @@ html(lang=gw.language,ng-app="PillarsCRUD")
 								li
 									a(href="#") Users
 				#right
-					div(id="view",ng-view)
+					#view
+						#view-top
+							#view-header
+								ol#breadcrumb
+									li
+										a(href="#")= t12n("crud.home")
+									li
+										a(href="#")= t12n("crud.admin")
+								#view-title= t12n("schemas."+schema.id+".h1")
+
+								#actions
+									+crudListActions
+
+
+						#view-bottom
+							div(id="view-body",ng-view)
 
 		script(type="text/ng-template", id="crudList.html")
 			+crudList(schema)
@@ -336,11 +288,11 @@ html(lang=gw.language,ng-app="PillarsCRUD")
 
 		link(rel='stylesheet', type='text/css', href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400italic,600,600italic,700,700italic')
 		link(rel="stylesheet", type='text/css', href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css")
+		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
 		script(src='https://code.angularjs.org/snapshot/angular.min.js')
 		script(src='https://code.angularjs.org/snapshot/i18n/angular-locale_'+gw.language+'.js')
 		script(src='https://code.angularjs.org/snapshot/angular-route.min.js')
 		//script(src='https://code.angularjs.org/snapshot/angular-animate.min.js')
-		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
 		//script(src='//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js')
 		script(src='/js/kinetic-v5.1.0.min.js')
 		script(src='/js/wysihtml5-advanced.js')

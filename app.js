@@ -8,7 +8,7 @@ var beams = require('./lib/beams');
 
 var server = formwork().mongodb('primera')
 
-textualization.load('system','languages/crud');
+textualization.load('crud','languages/crud');
 textualization.load('system','languages/system');
 
 var mymodel = new bricks.Schema('system',{

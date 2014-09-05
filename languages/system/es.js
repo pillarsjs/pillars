@@ -1,7 +1,7 @@
 'schemas.system':{
 	title: "System",
 	details: "Administracion CRUD de ejemplo",
-	h1: "Administrando System",
+	h1: "Administrando el schema system",
 	headers: {
 		'_id': "Identificador",
 		'field1': "Campo 1",
@@ -10,7 +10,7 @@
 	},
 	fields: {
 		'field1': {label: "Campo 1",details: "Detalles del campo 1"},
-		'fieldCheck': {},
+		'fieldCheck': {label: "Campo 2",details: "Detalles del campo 1"},
 		'fieldCheckboxes': {},
 		'fieldRadios': {},
 		'field2': {},

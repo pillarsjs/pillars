@@ -107,16 +107,16 @@ function xhrLoader(){
 }
 
 function dateCalendar(weekini){
-	var selection = {};
+	var calendar = this;
 	var weekini = weekini || 0;
 	var weekformat = [0,1,2,3,4,5,6].slice(weekini).concat([0,1,2,3,4,5,6].slice(0,weekini));
-	Object.defineProperty(this,"weekformat",{
+	Object.defineProperty(calendar,"weekformat",{
 		enumerable : true,
 		get : function(){return weekformat;}
 	});
 
 	var days = false;
-	Object.defineProperty(this,"days",{
+	Object.defineProperty(calendar,"days",{
 		enumerable : true,
 		get : function(){return days;}
 	});
@@ -128,34 +128,98 @@ function dateCalendar(weekini){
 	position.setSeconds(0);
 	position.setMilliseconds(0);
 	
-	Object.defineProperty(this,"year",{
+	Object.defineProperty(calendar,"year",{
 		enumerable : true,
 		get : function(){return position.getFullYear();},
 		set : function(set){
 			position.setFullYear(set);
-			this.refresh();
+			calendar.refresh();
 		}
 	});
-	Object.defineProperty(this,"month",{
+	Object.defineProperty(calendar,"month",{
 		enumerable : true,
 		get : function(){return ''+position.getMonth()+'';},
 		set : function(set){
 			position.setMonth(set);
-			this.refresh();
+			calendar.refresh();
 		}
 	});
 	
-	Object.defineProperty(this,"selection",{
+	var selection = {};
+	var year = "";
+	var month = "";
+	var day = "";
+	var hours = "";
+	var minutes = "";
+	var seconds = "";
+	var milliseconds = "";
+	selection.empty = true;
+	selection.valid = true;
+	selection.touched = false;
+	selection.value = "";
+	Object.defineProperty(calendar,"selection",{
 		enumerable : true,
-		get : function(){return selection;},
+		get : function(){return selection;}
+	});
+	Object.defineProperty(selection,"year",{
+		enumerable : true,
+		get : function(){return year;},
 		set : function(set){
-			selection.year = set.year;
-			selection.month = set.month;
-			selection.date = set.date;
+			year = set;
+			calendar.checkSelection();
+		}
+	});
+	Object.defineProperty(selection,"month",{
+		enumerable : true,
+		get : function(){return month;},
+		set : function(set){
+			month = set;
+			calendar.checkSelection();
+		}
+	});
+	Object.defineProperty(selection,"day",{
+		enumerable : true,
+		get : function(){return day;},
+		set : function(set){
+			day = set;
+			calendar.checkSelection();
+		}
+	});
+	Object.defineProperty(selection,"hours",{
+		enumerable : true,
+		get : function(){return hours;},
+		set : function(set){
+			hours = set;
+			calendar.checkSelection();
+		}
+	});
+	Object.defineProperty(selection,"minutes",{
+		enumerable : true,
+		get : function(){return minutes;},
+		set : function(set){
+			minutes = set;
+			calendar.checkSelection();
+		}
+	});
+	Object.defineProperty(selection,"seconds",{
+		enumerable : true,
+		get : function(){return seconds;},
+		set : function(set){
+			seconds = set;
+			calendar.checkSelection();
+		}
+	});
+	Object.defineProperty(selection,"milliseconds",{
+		enumerable : true,
+		get : function(){return milliseconds;},
+		set : function(set){
+			milliseconds = set;
+			calendar.checkSelection();
 		}
 	});
 
-	Object.defineProperty(this,"tz",{
+
+	Object.defineProperty(calendar,"tz",{
 		enumerable : true,
 		get : function(){
 			var gmt = position.getTimezoneOffset()/-60;
@@ -163,93 +227,144 @@ function dateCalendar(weekini){
 		}
 	});
 
-	this.checkSelection = function(){
-		var dparse = new Date(selection.year,selection.month,selection.date,selection.hours || 0,selection.minutes || 0,0,0);
-		if(dparse && selection.year==dparse.getFullYear() && selection.month==dparse.getMonth() && selection.date==dparse.getDate()){
-			position.setFullYear(dparse.getFullYear());
-			position.setMonth(dparse.getMonth());
-			this.refresh();
-			return true;
-		} else if(selection.year=='' && selection.month=='' && selection.date=='' && selection.hours=='' && selection.minutes==''){
-			return true;
+	calendar.setSelectionValue = function(set){
+		if(set){
+			selection.empty = false;
+			selection.valid = true;
+			selection.value = set.toString();
+			if(parseInt(set).toString()==set.toString()){
+				set = new Date(parseInt(set));
+				year=set.getFullYear();
+				month=set.getMonth();
+				day=set.getDate();
+				hours=set.getHours();
+				minutes=set.getMinutes();
+				seconds=set.getSeconds();
+				milliseconds=set.getMilliseconds();
+				position.setFullYear(year);
+				position.setMonth(month);
+				calendar.refresh();
+			} else {
+				calendar.resetSelection();
+				selection.valid = false;
+			}
 		} else {
-			return false;
+			calendar.clearSelection();
 		}
 	}
 
-	this.getSelectionTime = function(){
-		if(selection.year=='' && selection.month=='' && selection.date=='' && selection.hours=='' && selection.minutes==''){return "";}
-		return (new Date(selection.year, selection.month, selection.date, selection.hours || 0, selection.minutes || 0, selection.seconds || 0, selection.milliseconds || 0)).getTime();
+	calendar.setSelectionDay = function(d){
+		year=d.year;
+		month=d.month;
+		day=d.day;
+		calendar.checkSelection();
 	}
 
-	this.setSelectionTime = function(value){
-		var value = new Date(parseInt(value));
-
-		selection.year=value.getFullYear();
-		selection.month=value.getMonth();
-		selection.date=value.getDate();
-		selection.hours=value.getHours();
-		selection.minutes=value.getMinutes();
-		selection.seconds=value.getMinutes();
-		selection.milliseconds=value.getMinutes();
-
-		position.setFullYear(value.getFullYear());
-		position.setMonth(value.getMonth());
-		
-		this.refresh();
+	calendar.resetSelection = function(){
+		year="";
+		month="";
+		day="";
+		hours="";
+		minutes="";
+		seconds="";
+		milliseconds="";
 	}
 
-	this.nextMonth = function(){
-		this.month++;
-	}
-	this.prevMonth = function(){
-		this.month--;
-	}
-
-	this.nextYear = function(){
-		this.year++;
-	}
-	this.prevYear = function(){
-		this.year--;
+	calendar.clearSelection = function(){
+		calendar.resetSelection();
+		selection.empty = true;
+		selection.valid = true;
+		selection.value = "";
 	}
 
-	this.firstDay = function(){
-		return (new Date(this.year,this.month,1,0,0,0,0)).getDay();
-	}
-	this.lastDate = function(){
-		return (new Date(this.year,this.month+1,0,0,0,0,0)).getDate();
+	calendar.checkSelection = function(){
+		selection.touched = true;
+		calendar.selectionPosition();
+		if(!year && !month && !day && !hours && !minutes){
+			selection.empty = true;
+			selection.valid = true;
+			selection.value = "";
+		} else {
+			var dparse = new Date(year,month,day,hours || 0,minutes || 0, seconds || 0, milliseconds || 0);
+			if(
+				dparse && 
+				year==dparse.getFullYear() && 
+				month==dparse.getMonth() && 
+				day==dparse.getDate() && 
+				hours==dparse.getHours() && 
+				minutes==dparse.getMinutes() && 
+				seconds==dparse.getSeconds() && 
+				milliseconds==dparse.getMilliseconds()
+			){
+				selection.empty = false;
+				selection.valid = true;
+				selection.value = dparse.getTime().toString();
+			} else {
+				selection.empty = false;
+				selection.valid = false;
+			}
+		}
 	}
 
-	this.isToday = function(d){
+	calendar.selectionPosition = function(){
+		if(year != position.getFullYear() || month != position.getMonth()){
+			position.setFullYear(year || position.getFullYear());
+			position.setMonth(month || position.getMonth());
+			calendar.refresh();
+		}
+	}
+
+	calendar.nextMonth = function(){
+		calendar.month++;
+	}
+	calendar.prevMonth = function(){
+		calendar.month--;
+	}
+
+	calendar.nextYear = function(){
+		calendar.year++;
+	}
+	calendar.prevYear = function(){
+		calendar.year--;
+	}
+
+	calendar.firstDay = function(){
+		return (new Date(calendar.year,calendar.month,1,0,0,0,0)).getDay();
+	}
+	calendar.lastDate = function(){
+		return (new Date(calendar.year,calendar.month+1,0,0,0,0,0)).getDate();
+	}
+
+	calendar.isToday = function(d){
 		var today = new Date();
-		return (d.year==today.getFullYear() && d.month==today.getMonth() && d.date==today.getDate());
+		return (d.year==today.getFullYear() && d.month==today.getMonth() && d.day==today.getDate());
 	}
 
-	this.isSelection = function(d){
-		return (d.year==selection.year && d.month==selection.month && d.date==selection.date);
+	calendar.isSelection = function(d){
+		return (d.year==year && d.month==month && d.day==day);
 	}
 
-	this.refresh = function(){
+	calendar.refresh = function(){
 		days = [[]];
 		var w = 0;
 		var d;
-		if(this.firstDay()!=weekini){
-			for(var di=weekformat.indexOf(this.firstDay());di>0;di--){
-				d = new Date(this.year,this.month,1-di,0,0,0,0);
+		if(calendar.firstDay()!=weekini){
+			for(var di=weekformat.indexOf(calendar.firstDay());di>0;di--){
+				d = new Date(calendar.year,calendar.month,1-di,0,0,0,0);
 				days[w].push({
 					year: d.getFullYear(),
 					month: d.getMonth(),
-					date: d.getDate()
+					day: d.getDate()
 				});
 			}
 		}
-		d = new Date(this.year,this.month,1,0,0,0,0)
-		while(d.getMonth()==this.month){
+		d = new Date(calendar.year,calendar.month,1,0,0,0,0);
+		while(d.getMonth()==calendar.month){
 			if(d.getDay()==weekini && d.getDate()!=1){w++;days[w]=[];}
 			days[w].push({
 				year: d.getFullYear(),
 				month: d.getMonth(),
-				date: d.getDate()
+				day: d.getDate()
 			});
 			d.setDate(d.getDate()+1);
 		}
@@ -257,10 +372,10 @@ function dateCalendar(weekini){
 			days[w].push({
 				year: d.getFullYear(),
 				month: d.getMonth(),
-				date: d.getDate()
+				day: d.getDate()
 			});
 			d.setDate(d.getDate()+1);
 		}
 	}
-	this.refresh();
+	calendar.refresh();
 }

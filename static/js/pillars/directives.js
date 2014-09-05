@@ -1,59 +1,84 @@
 angular.module('Pillars.directives', [])
-	.directive('appVersion', ['version', function(version) {
-		return function(scope, elm, attrs) {
-			elm.text(version);
-		};
-	}])
-	.directive('dataname', function() {
+	.directive('datapath', function() {
 		return {
 			scope : true,
-			link : function (scope, element, attrs, controller, transcludeFn){
-				scope.dataname = attrs.dataname;
-				scope.data = {};
-				scope.$parent.$watch('data.'+scope.dataname, function(newData, oldData) {
-					scope.data = scope.$parent.data[scope.dataname];
-				});
+			compile : function(){
+				return {
+					pre: function (scope, element, atts){
+						scope.datapath = (scope.datapath || []).concat([atts.datapath]);
+						scope.datapathId = 'entity_'+scope.datapath.join('_');
+						scope.datapathName = 'entity['+scope.datapath.join('][')+']';
+						Object.defineProperty(scope,"datapathValue",{
+							enumerable : true,
+							get : function(){
+								return scope.$eval("data['"+scope.datapath.join("']['")+"']");
+							},
+							set : function(set){
+								if(angular.isDefined(set)){
+									scope.$eval("data['"+scope.datapath.join("']['")+"']=__set",{__set:set});
+								}
+							}
+						});
+					}
+				}
 			}
 		}
 	})
+	.directive("datapathId",function(){
+		return {
+			restrict:"A",
+			link:function(scope,element,attrs){
+				var id = scope.datapathId;
+				element.removeAttr('datapathId');
+				element.attr('id', id);
+			}
+		};
+	})
+	.directive("datapathName",function(){
+		return {
+			restrict:"A",
+			require: ['ngModel', '^form'],
+			link:function(scope,element,attrs,ctrls){
+				ctrls[0].$name = scope.datapathName;
+				ctrls[1].$addControl(ctrls[0]);
+			}
+		};
+	})
 	.directive('datepicker', function($locale) {
 		return {
-			require: 'ngModel',
 			restrict: 'E',
-			scope: {
-				value: '=ngModel'
-			},
 			templateUrl: '/js/pillars/partials/datepicker.html',
-			link: function(scope, element, attr, ngModel) {
-				scope.datepickerName = attr['name'];
-				scope.localeDateTime = $locale.DATETIME_FORMATS;
-				scope.calendar = new dateCalendar(1);
+			require: 'ngModel',
+			replace: true,
+			link: function(scope, element, atts, ctrl) {
 				
-				scope.$watch('value', function() {
-					if(typeof scope.value != "undefined" && scope.value!=""){
-						scope.calendar.setSelectionTime(scope.value);
+				var localeDateTime = $locale.DATETIME_FORMATS;
+				scope.months = localeDateTime.MONTH.map(function(element,index,array){return {key:index,name:element};});
+				scope.weekdays = localeDateTime.SHORTDAY.map(function(element,index,array){return {key:index,name:element};});
+
+				var linkCtrl = atts.linkid?angular.element('#'+atts.linkid).controller('ngModel'):false;
+				var calendar = new dateCalendar(1);
+				scope.calendar = calendar;
+
+				scope.$watchCollection('calendar.selection', function() {
+					ctrl.$setValidity('date',calendar.selection.valid);
+					if(linkCtrl){
+						if(calendar.selection.touched){
+							linkCtrl.$dirty = true;
+							linkCtrl.$pristine = false;
+							linkCtrl.$setTouched();
+						}
+						linkCtrl.$setValidity('date',calendar.selection.valid);
 					}
+					ctrl.$setViewValue(calendar.selection.value);
 				});
 
-				scope.selectDate = function(d) {
-					scope.calendar.selection = d;
-					scope.setDate();
-				}
-				scope.setDate = function(){
-					var validation = scope.calendar.checkSelection();
-					ngModel.$setValidity('calendarDate',validation);
-					if(validation){
-						scope.value = scope.calendar.getSelectionTime();
-					} else {
-						scope.value = "";
-					}
-				}
-				scope.clearDate = function(){
-					scope.calendar.selection = {year:'',month:'',date:''};
-					scope.calendar.selection.hours = '';
-					scope.calendar.selection.minutes = '';
-					scope.setDate();
-				}
+				ctrl.$render = function() {
+					calendar.setSelectionValue(ctrl.$viewValue);
+				};
+
+				scope.selectDate = calendar.setSelectionDay;
+				scope.clearDate = calendar.clearSelection;
 			}
 		};
 	})
@@ -201,8 +226,8 @@ angular.module('Pillars.directives', [])
 		return function(scope, element, attr) {
 			var raw = element[0];
 			var id = attr.id;
-			var editor = new wysihtml5.Editor(id, {
-				toolbar: id+"_toolbar",
+			var editor = new wysihtml5.Editor(raw, {
+				toolbar: $(raw).prev('.editor_toolbar').get(0) || false,
 				parserRules:  wysihtml5ParserRules,
 				stylesheets: "/css/wysihtml5.css"
 			});

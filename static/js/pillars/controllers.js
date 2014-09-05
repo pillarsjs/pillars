@@ -10,10 +10,15 @@ angular.module('Pillars.controllers', [])
 		$scope.apiEntity = apiEntity.reset();
 		apiEntity.id = $routeParams._id;
 		apiEntity.form = crudEntityForm;
+		$scope.datapath = [];
+		$scope.data = {};
 		apiEntity.onData = function(){
 			$scope.data = apiEntity.data;
 		}
 		apiEntity.load();
+		$scope.crudEntityFormInputs = function(){
+			return Object.keys($scope.crudEntityForm);
+		}
 		/*
 		$rootScope.languages = null;
 		$rootScope.navsave = true;
