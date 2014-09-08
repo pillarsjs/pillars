@@ -28,19 +28,27 @@ angular.module('Pillars.directives', [])
 		return {
 			restrict:"A",
 			link:function(scope,element,attrs){
-				var id = scope.datapathId;
 				element.removeAttr('datapathId');
-				element.attr('id', id);
+				element.attr('id', scope.datapathId);
 			}
 		};
 	})
 	.directive("datapathName",function(){
 		return {
 			restrict:"A",
-			require: ['ngModel', '^form'],
+			require: ['?ngModel','?form', '^form'],
 			link:function(scope,element,attrs,ctrls){
-				ctrls[0].$name = scope.datapathName;
-				ctrls[1].$addControl(ctrls[0]);
+				if(ctrls[0]){
+					scope.form = ctrls[2];
+					ctrls[0].$name = scope.datapathName;
+					ctrls[2].$addControl(ctrls[0]);
+				} else if(ctrls[1]){
+					scope.form = ctrls[1];
+					ctrls[2] = element.parent().controller('form');
+					ctrls[2].$removeControl(ctrls[1]);
+					ctrls[1].$name = scope.datapathName;
+					ctrls[2].$addControl(ctrls[1]);
+				}
 			}
 		};
 	})
@@ -57,7 +65,7 @@ angular.module('Pillars.directives', [])
 				scope.weekdays = localeDateTime.SHORTDAY.map(function(element,index,array){return {key:index,name:element};});
 
 				var linkCtrl = atts.linkid?angular.element('#'+atts.linkid).controller('ngModel'):false;
-				var calendar = new dateCalendar(1);
+				var calendar = new Calendar(1);
 				scope.calendar = calendar;
 
 				scope.$watchCollection('calendar.selection', function() {
@@ -82,20 +90,27 @@ angular.module('Pillars.directives', [])
 			}
 		};
 	})
-	.directive('reference', function($locale,$document) {
+	.directive('reference', function($rootScope,$timeout,$document) {
 		return {
-			require: 'ngModel',
 			restrict: 'E',
-			scope: {
-				value: '=ngModel'
-			},
 			templateUrl: '/js/pillars/partials/reference.html',
-			link: function(scope, element, attr, ngModel) {
-				scope.search = "";
-				scope.referenceName = attr['name'];
+			require: 'ngModel',
+			replace: false,
+			link: function(scope, element, atts, ctrl) {
+				var apiList = new ApiList($rootScope.env.apiurl);
+				apiList.loader.progress = function(){
+					$timeout(function() {
+					}, 0);
+				};
 				scope.references = [];
-				scope.set = [];
+				scope.apiList = apiList;
+				apiList.load();
 
+				ctrl.$render = function() {
+					scope.references = ctrl.$viewValue;
+				};
+
+				/*
 				scope.$watch('value', function() {
 					if(typeof scope.value != "undefined" && scope.value!=""){
 						scope.references = scope.value;
@@ -204,6 +219,7 @@ angular.module('Pillars.directives', [])
 					scope.opened = false;
 					scope.$digest();
 				})
+				*/
 
 			}
 		};

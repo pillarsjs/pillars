@@ -4,9 +4,7 @@ mixin field(field)
 	- var fullwidth = (field.template=='subset' || field.template=='list')?" fullwidth":"";
 	div(class="field"+fullwidth, datapath=field.id, ng-class="{danger:crudEntityForm[datapathName].$invalid,ok:crudEntityForm[datapathName].$valid && crudEntityForm[datapathName].$dirty }")
 		label
-			span= t12n(field.label)
-			//div {{datapath}}
-			//div {{datapathValue}}
+			span= t12n("schemas."+field.schema.id+".fields."+field.path+".label")
 			if field.i18n
 				div(class="dropdown-toggle-hover i18n-selector")
 					button(type="button") {{env.lang}} 
@@ -15,7 +13,7 @@ mixin field(field)
 							.menu-item(ng-click="env.lang=lang") {{lang}}
 
 		.input
-			p.help= t12n(field.details,{_default:""})
+			p.help= t12n("schemas."+field.schema.id+".fields."+field.path+".details",{_default:""})
 			if field.i18n
 				each lang in gw.textualization.langs
 					div(class="lang",ng-hide="env.lang!='"+lang+"'", datapath=lang)
@@ -26,7 +24,8 @@ mixin field(field)
 				+#{field.template}(field)
 				
 mixin field-validation(field)
-	//pre {{crudEntityForm[datapathName]}}
+	//div {{crudEntityForm[datapathName]}}
+	//div {{datapathValue}}
 	//.input-msgs
 		//.msg.bg-alert Cuidado!
 
@@ -73,9 +72,11 @@ mixin editor(field)
 	textarea(datapath-id, datapath-name, ng-model="datapathValue", html-editor="true")
 
 mixin select(field)
-	select(datapath-id, datapath-name, ng-model="datapathValue")
-		each option,i in field.values
-			option(value=i)=option
+	.select
+		select(datapath-id, datapath-name, ng-model="datapathValue")
+			each option in field.values
+				option(value=option)=t12n("schemas."+field.schema.id+".fields."+field.path+".values."+option)
+		span.select-focus
 
 mixin checkbox(field)
 	.checkbox.hidden-label
@@ -83,23 +84,26 @@ mixin checkbox(field)
 		label
 
 mixin checkboxes(field)
-	each option,i in field.values
-		.checkbox(datapath=i)
-			input(type='checkbox', datapath-id, datapath-name, ng-model="datapathValue", ng-true-value='true', ng-false-value='false')
-			label=option
+	div(class="checkboxes", ng-form, datapath-name)
+		each option in field.values
+			.checkbox(datapath=option, ng-class="{danger:form[datapathName].$invalid,ok:form[datapathName].$valid && form[datapathName].$dirty }")
+				input(type='checkbox', datapath-id, datapath-name, ng-model="datapathValue", ng-true-value='true', ng-false-value='false')
+				label=t12n("schemas."+field.schema.id+".fields."+field.path+".values."+option)
 
 mixin radios(field)
-	each option,i in field.values
-		.radio
-			input(type='radio', datapath-id, datapath-name, ng-model="datapathValue", value=i)
-			label=option
+	div(class="radios", ng-form, datapath-name)
+		each option in field.values
+			.radio
+				input(type='radio', ng-model="datapathValue", value=option)
+				label=t12n("schemas."+field.schema.id+".fields."+field.path+".values."+option)
 
 mixin time(field)
 	input(type="text", datapath-id, datapath-name, ng-model="datapathValue", class="ng-hide")
 	datepicker(linkid="{{datapathId}}",ng-model="datapathValue")
 
 mixin reference(field)
-	reference(datapath-id, datapath-name, ng-model="datapathValue")
+	input(type="text", datapath-id, datapath-name, ng-model="datapathValue", class="ng-hide")
+	reference(linkid="{{datapathId}}",ng-model="datapathValue")
 
 
 
@@ -112,26 +116,21 @@ mixin crudListActions
 				.inputaddons
 					.addon
 						label
-							span(class="fa fa-search") &nbsp;
-							= t12n("crud.actions.search")
-					input(type="text",ng-change="apiList.load()",placeholder="...", ng-model="apiList.filter")
-		.field
-			.input.dropdown-toggle-hover
-				button(type="button")
-					span(class="fa fa-th-list") &nbsp;
-					= t12n("crud.actions.sort")
-				ul(class="dropdown dropdown-right menu")
-					each header, i in schema.headers
-						li
-							.menu-item(ng-click="apiList.sort='"+header+"';apiList.order=1;apiList.load();",ng-class="{'active':apiList.sort=='"+header+"' && apiList.order=='1'}")
-								span(class="fa fa-sort-amount-asc") &nbsp;
-								= t12n("schemas."+schema.id+".headers."+header)
-						li
-							.menu-item(ng-click="apiList.sort='"+header+"';apiList.order=-1;apiList.load();",ng-class="{'active':apiList.sort=='"+header+"' && apiList.order=='1'}")
-								span(class="fa fa-sort-amount-desc") &nbsp;
-								= t12n("schemas."+schema.id+".headers."+header)
-						if i<schema.headers.length-1
-							li(role="presentation" class="divider")
+							span(class="fa fa-search") 
+					input(type="text",ng-change="showList()", ng-model="crudListLoader.filter", placeholder=t12n("crud.actions.search"))
+					.addon.dropdown-toggle-hover
+						button(type="button")
+							span(class="fa fa-gear")
+						ul(class="dropdown dropdown-right menu")
+							each header, i in schema.headers
+								li
+									.menu-item(ng-click="crudListLoader.sort='"+header+"';crudListLoader.order=1;showList();",ng-class="{'active':crudListLoader.sort=='"+header+"' && crudListLoader.order=='1'}")
+										span(class="fa fa-sort-amount-asc") &nbsp;
+										= t12n("schemas."+schema.id+".headers."+header)
+								li
+									.menu-item(ng-click="crudListLoader.sort='"+header+"';crudListLoader.order=-1;showList();",ng-class="{'active':crudListLoader.sort=='"+header+"' && crudListLoader.order=='1'}")
+										span(class="fa fa-sort-amount-desc") &nbsp;
+										= t12n("schemas."+schema.id+".headers."+header)
 		.field
 			.input
 				button(type="button")
@@ -145,14 +144,14 @@ mixin crudList(schema)
 			thead
 				tr
 					each header in schema.headers
-						th(ng-class="{'active':apiList.sort=='"+header+"'}")
-							span(class="ng-hide fa fa-sort-amount-asc", ng-show="apiList.sort=='"+header+"' && apiList.order==1") &nbsp;
-							span(class="ng-hide fa fa-sort-amount-desc", ng-show="apiList.sort=='"+header+"' && apiList.order==-1") &nbsp;
+						th(ng-class="{'active':crudListLoader.sort=='"+header+"'}")
+							span(class="ng-hide fa fa-sort-amount-asc", ng-show="crudListLoader.sort=='"+header+"' && crudListLoader.order==1") &nbsp;
+							span(class="ng-hide fa fa-sort-amount-desc", ng-show="crudListLoader.sort=='"+header+"' && crudListLoader.order==-1") &nbsp;
 							= t12n("schemas."+schema.id+".headers."+header)
 					th.corner &nbsp;
 
 			tbody
-				tr(ng-repeat="record in apiList.list")
+				tr(ng-repeat="record in crudListLoader.list")
 					each header in schema.headers
 						td="{{record."+header+"}}"
 					td
@@ -166,30 +165,29 @@ mixin crudList(schema)
 				tr
 					td(colspan=schema.headers.length+1)
 						div(class="loader")
-							div(class="msg msg-icon bg-danger",ng-hide="!apiList.error")= t12n("crud.errors.apiList")
+							div(class="msg msg-icon bg-danger",ng-hide="!crudListLoader.error")= t12n("crud.errors.crudListLoader")
 
-							button(class="bg-action loadnext", type='button', ng-click="apiList.loadnext();", ng-hide="apiList.end || apiList.loader.running")
+							button(class="bg-action loadnext", type='button', ng-click="crudListLoader.next();", ng-hide="crudListLoader.end || crudListLoader.loader.running")
 								span(class="fa fa-forward")
 								= " "+t12n("crud.actions.nextskip")
 							
-							div(class="msg loading bg-info",ng-hide="!apiList.loader.running")
+							div(class="msg loading bg-info",ng-hide="!crudListLoader.loader.running")
 								.fa.fa-spinner.fa-spin
 								= t12n("crud.loading")
 
-							div(class="progress sending",ng-hide="apiList.loader.sending==0 || !apiList.loader.running")
-								span(style="width:{{apiList.loader.sending}}%;")
+							div(class="progress sending",ng-hide="crudListLoader.loader.sending==0 || !crudListLoader.loader.running")
+								span(style="width:{{crudListLoader.loader.sending}}%;")
 									span
 										span(class="fa fa-upload")
-										= t12n("crud.sending")+" {{apiList.loader.sending}}%"
-							div(class="progress receiving",ng-hide="apiList.loader.receiving==0 || !apiList.loader.running")
-								span(style="width:{{apiList.loader.receiving}}%;")
+										= t12n("crud.sending")+" {{crudListLoader.loader.sending}}%"
+							div(class="progress receiving",ng-hide="crudListLoader.loader.receiving==0 || !crudListLoader.loader.running")
+								span(style="width:{{crudListLoader.loader.receiving}}%;")
 									span
 										span(class="fa fa-download")
-										= t12n("crud.receiving")+" {{apiList.loader.receiving}}%"
+										= t12n("crud.receiving")+" {{crudListLoader.loader.receiving}}%"
 
 mixin crudEntity(schema)
 	//{{crudEntityFormInputs()}}
-	//{{crudEntityForm.$pristine}}
 	form(id="crudEntityForm", ng-submit="sendForm()", name="crudEntityForm")
 		fieldset
 			legend

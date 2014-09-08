@@ -26,8 +26,8 @@
 	'socket-closed': "%(poolid)s".magenta+" Socket cerrado".red+" %(timer)sm".grey,
 	'socket-open': "%(poolid)s".magenta+" Socket abierto".green,
 	'database':{
-		'connection-ok':"Base de datos ".green+"'%(dbname)s'".yellow+" connectada en ".green+"%(url)s:%(port)s".yellow,
-		'connection-error':"Error en la base de datos ".red+"'%(dbname)s'".yellow+" en ".red+"%(url)s:%(port)s".yellow
+		'connection-ok':"Base de datos ".green+"'%(name)s'".yellow+" connectada en ".green+"%(url)s:%(port)s".yellow,
+		'connection-error':"Error en la base de datos ".red+"'%(name)s'".yellow+" en ".red+"%(url)s:%(port)s".yellow
 	}
 },
 'textualization':{
@@ -38,9 +38,9 @@
 			return "No existen lenguajes habilitados para textualización".cyan;
 		}
 	},
-	'load-ok':"Hoja de textualización cargada ".cyan+"(%(count)s nodos)".yellow+" para el dominio: ".cyan+"%(domain)s".yellow+", ruta: ".cyan+"'%(path)s'".yellow+", lenguaje: ".cyan+"%(lang)s".yellow,
-	'load-error':"Error al carga la hoja de textualización para el dominio: ".red+"%(domain)s".yellow+" , ruta: ".red+"'%(path)s'".yellow+", lenguaje: ".red+"%(lang)s".yellow,
-	'heap-rewrite':"Nodo de textualización sobrescrito ".red+"'%(element)s'".yellow+" en el dominio: ".red+"%(domain)s".yellow+", languaje: ".red+"%(lang)s".yellow
+	'load-ok':"Hoja de textualización cargada ".cyan+"(%(count)s nodos)".yellow+": ".cyan+"'%(path)s'".yellow+", lenguaje: ".cyan+"%(lang)s".yellow,
+	'load-error':"Error al carga la hoja de textualización: ".red+"'%(path)s'".yellow+", lenguaje: ".red+"%(lang)s".yellow,
+	'heap-rewrite':"Nodo de textualización sobrescrito ".red+"'%(element)s'".yellow+": ".red+"'%(path)s'".yellow+", languaje: ".red+"%(lang)s".yellow
 },
 'templates':{
 	'cache-ok':"Plantilla ".cyan+"'%(path)s'".yellow+" cargada".cyan,

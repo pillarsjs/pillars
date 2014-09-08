@@ -1,5 +1,5 @@
 
-function xhrLoader(){
+function XhrLoader(){
 	var loader = this;
 	var xhr = new XMLHttpRequest();
 	loader.response = false;
@@ -106,7 +106,107 @@ function xhrLoader(){
 	},false);
 }
 
-function dateCalendar(weekini){
+function ApiList(url){
+	var apiList = this;
+	apiList.url = url || '';
+	var loader = new XhrLoader();
+	apiList.loader = loader;
+	loader.success = function(){
+		var response = loader.response;
+		if(response && !response.error){
+			apiList.end = response.data.limit>response.data.list.length;
+			if(response.data.skip || response.data.range) {
+				apiList.list = apiList.list.concat(response.data.list || []);
+			} else {
+				apiList.list = response.data.list || [];
+			}
+			apiList.skip = response.data.skip;
+			apiList.limit = response.data.limit;
+			apiList.range = response.data.range;
+		} else {
+			apiList.error = true;
+		}
+	};
+	loader.fail = function(){
+		apiList.error = true;
+	};
+	apiList.reset = function(){
+		apiList.filter = "";
+		apiList.sort = false;
+		apiList.order = false;
+		apiList.skip = false;
+		apiList.limit = false;
+		apiList.range = false;
+		apiList.list = false;
+		apiList.end = false;
+		apiList.error = false;
+		return apiList;
+	};
+	apiList.query = function(url){
+		var url = url || apiList.url;
+		var params = [];
+		if(apiList.filter){params.push("_"+"filter="+apiList.filter);}
+		if(apiList.sort){params.push("_"+"sort="+apiList.sort);}
+		if(apiList.order){params.push("_"+"order="+apiList.order);}
+		if(apiList.skip){params.push("_"+"skip="+apiList.skip);}
+		if(apiList.limit){params.push("_"+"limit="+apiList.limit);}
+		if(apiList.range){params.push("_"+"range="+apiList.range);}
+		if(params.length>0){url += "?"+params.join('&');}
+		return url;
+	};
+	apiList.load = function(){
+		apiList.skip = 0;
+		apiList.error = false;
+		apiList.loader.send('get',apiList.query(),false,false);
+		return apiList;
+	};
+	apiList.next = function(){
+		apiList.skip = parseInt(apiList.skip)+parseInt(apiList.limit);
+		apiList.error = false;
+		apiList.loader.send('get',apiList.query(),false,false);
+		return apiList;
+	};
+	apiList.reset();
+}
+
+function ApiEntity(url){
+	var apiEntity = this;
+	apiEntity.url = url || '';
+	var loader = new XhrLoader();
+	apiEntity.loader = loader;
+	loader.success = function(){
+		var response = loader.response;
+		if(response && !response.error){
+			apiEntity.data = response.data;
+			apiEntity.onData();
+		} else {
+			apiEntity.error = true;
+		}
+	};
+	loader.fail = function(){
+		apiEntity.error = true;
+	}
+	apiEntity.reset = function(){
+		apiEntity.id = false;
+		apiEntity.form = false;
+		apiEntity.data = false;
+		apiEntity.onData();
+		apiEntity.error = false;
+		return apiEntity;
+	}
+	apiEntity.load = function(){
+		loader.send('get',url+"/"+apiEntity.id,false,false);
+		return apiEntity;
+	}
+	apiEntity.onData = function(){}
+	apiEntity.update = function(){
+		loader.send('put',url+"/"+apiEntity.id,apiEntity.form,false);
+		return apiEntity;
+	}
+	apiEntity.reset();
+}
+
+function Calendar(weekini){
 	var calendar = this;
 	var weekini = weekini || 0;
 	var weekformat = [0,1,2,3,4,5,6].slice(weekini).concat([0,1,2,3,4,5,6].slice(0,weekini));

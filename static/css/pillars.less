@@ -413,6 +413,7 @@ label,.label {
 }
 
 form {
+	color: @color-default;
 	margin: 0 auto;
 	border-color: @inputs-border-color;
 	max-width: 750px;
@@ -516,15 +517,24 @@ form {
 	}
 }
 
+.checkboxes {
+	border-color: @inputs-border-color;
+	color: @color-default;
+}
+
 .inputaddons {
 	display: table !important;
 	border-collapse: separate;
 	width: 1px;
 	white-space: nowrap;
 	margin: 0 @inputs-margin @inputs-margin 0;
+	position: relative;
 	&>*{
 		margin: 0 !important;
 		border-radius: 0 !important;
+		&.dropdown-toggle-full {
+			position: static !important;
+		}
 		&:first-child {
 			border-radius: @inputs-border-radius 0 0 @inputs-border-radius !important;
 		}
@@ -572,12 +582,16 @@ form {
 	border-collapse: separate;
 	white-space: nowrap;
 	margin: 0 @inputs-margin @inputs-margin 0;
+	position: relative;
 	&>*{
 		display: inline-block !important;
 		border-radius: 0 !important;
 		margin: 0 !important;
 		vertical-align: top;
 		float: left;
+		&.dropdown-toggle-full {
+			position: static !important;
+		}
 		&:first-child {
 			border-radius: @inputs-border-radius 0 0 @inputs-border-radius !important;
 		}
@@ -802,7 +816,7 @@ table {
 	}
 }
 
-.inputcalendar {
+.datepicker {
 	.inputsline {
 
 	}
@@ -967,6 +981,14 @@ table {
 		left: 0;
 		right: 0;
 	}
+	&.dropdown-right {
+		left: auto;
+		right: 0;
+		ul {
+			right: 100%;
+			left: auto;
+		}
+	}
 }
 
 .dropdown.menu, .dropdown.menu ul {
@@ -1125,6 +1147,7 @@ body {
 			width: 2em;
 			-webkit-transition:all linear 0.2s;
 			transition:all linear 0.2s;
+			vertical-align: top;
 			/*
 			&:before {
 				content: "";
@@ -1137,13 +1160,18 @@ body {
 			}
 			*/
 			#navigation {
-				bottom: 0;
 				display: block;
-				left: 0;
-				position: absolute;
-				right: 0;
-				top: 0;
-				overflow: scroll;
+				min-height: 100%;
+				width: 100%;
+				overflow: hidden;
+				/* scrollview
+					position: absolute;
+					top: 0;
+					right: 0;
+					bottom: 0;
+					left: 0;
+					overflow: scroll;
+				*/
 			}
 			&:hover {
 				width: @navigation-width;
@@ -1151,6 +1179,7 @@ body {
 		}
 		#right {
 			display: table-cell;
+			vertical-align: top;
 			#view {
 				display: table;
 				table-layout: fixed;

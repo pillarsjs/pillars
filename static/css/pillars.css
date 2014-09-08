@@ -540,6 +540,7 @@ label > .i18n-selector > button,
   padding: 0.5em 0;
 }
 form {
+  color: #333333;
   margin: 0 auto;
   border-color: #bbbbbb;
   max-width: 750px;
@@ -820,16 +821,24 @@ form.form-inline .field .checkbox,
 form .form-inline .field .checkbox {
   display: inline-block;
 }
+.checkboxes {
+  border-color: #bbbbbb;
+  color: #333333;
+}
 .inputaddons {
   display: table !important;
   border-collapse: separate;
   width: 1px;
   white-space: nowrap;
   margin: 0 0.5em 0.5em 0;
+  position: relative;
 }
 .inputaddons > * {
   margin: 0 !important;
   border-radius: 0 !important;
+}
+.inputaddons > *.dropdown-toggle-full {
+  position: static !important;
 }
 .inputaddons > *:first-child {
   border-radius: 4px 0 0 4px !important;
@@ -880,6 +889,7 @@ form .form-inline .field .checkbox {
   border-collapse: separate;
   white-space: nowrap;
   margin: 0 0.5em 0.5em 0;
+  position: relative;
 }
 .inputsline > * {
   display: inline-block !important;
@@ -887,6 +897,9 @@ form .form-inline .field .checkbox {
   margin: 0 !important;
   vertical-align: top;
   float: left;
+}
+.inputsline > *.dropdown-toggle-full {
+  position: static !important;
 }
 .inputsline > *:first-child {
   border-radius: 4px 0 0 4px !important;
@@ -1131,23 +1144,23 @@ table.separate td,
 table.separate th {
   border-style: solid !important;
 }
-.inputcalendar .date-year {
+.datepicker .date-year {
   width: 4.2em;
 }
-.inputcalendar .date-month {
+.datepicker .date-month {
   width: 8em;
 }
-.inputcalendar .date-date {
+.datepicker .date-date {
   width: 3.2em;
 }
-.inputcalendar .time-hours {
+.datepicker .time-hours {
   width: 3.2em;
 }
-.inputcalendar .time-dots {
+.datepicker .time-dots {
   padding-left: 0.3em;
   padding-right: 0.3em;
 }
-.inputcalendar .time-minutes {
+.datepicker .time-minutes {
   width: 3.2em;
 }
 .calendar {
@@ -1270,6 +1283,14 @@ table.separate th {
   position: absolute;
   left: 0;
   right: 0;
+}
+.dropdown.panel.dropdown-right {
+  left: auto;
+  right: 0;
+}
+.dropdown.panel.dropdown-right ul {
+  right: 100%;
+  left: auto;
 }
 .dropdown.menu,
 .dropdown.menu ul {
@@ -1432,6 +1453,7 @@ body {
   width: 2em;
   -webkit-transition: all linear 0.2s;
   transition: all linear 0.2s;
+  vertical-align: top;
   /*
 			&:before {
 				content: "";
@@ -1446,19 +1468,26 @@ body {
 
 }
 #space #bottom #left #navigation {
-  bottom: 0;
   display: block;
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-  overflow: scroll;
+  min-height: 100%;
+  width: 100%;
+  overflow: hidden;
+  /* scrollview
+					position: absolute;
+					top: 0;
+					right: 0;
+					bottom: 0;
+					left: 0;
+					overflow: scroll;
+				*/
+
 }
 #space #bottom #left:hover {
   width: 250px;
 }
 #space #bottom #right {
   display: table-cell;
+  vertical-align: top;
 }
 #space #bottom #right #view {
   display: table;

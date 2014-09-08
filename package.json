@@ -1,7 +1,7 @@
 {
   "name": "pillars",
   "description": "Pillars nodejs web engine",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": {
     "name": "Bifuer",
     "email": "bifuer@gmail.com"
@@ -10,9 +10,9 @@
     "type": "git",
     "url": "git://github.com/bifuer/pillars"
   },
-  "main": "./pillars.js",
+  "main": "./app.js",
   "scripts": {
-    "start": "node pillars.js"
+    "start": "node app.js"
   },
   "dependencies": {
     "jade": "*",
@@ -20,7 +20,6 @@
     "formidable": "*",
     "cookie": "*",
     "mime": "*",
-    "memwatch":"*",
     "colors":"*",
     "sprintf-js":"*",
     "jshint":"*",

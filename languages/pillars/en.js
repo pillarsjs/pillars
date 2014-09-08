@@ -26,8 +26,8 @@
 	'socket-closed': "%(poolid)s".magenta+" Socket closed".red+" %(timer)sm".grey,
 	'socket-open': "%(poolid)s".magenta+" Socket open".green,
 	'database':{
-		'connection-ok':"Database ".green+"'%(dbname)s'".yellow+" connected on ".green+"%(url)s:%(port)s".yellow,
-		'connection-error':"Error on database ".red+"'%(dbname)s'".yellow+" on ".red+"%(url)s:%(port)s".yellow
+		'connection-ok':"Database ".green+"'%(name)s'".yellow+" connected on ".green+"%(url)s:%(port)s".yellow,
+		'connection-error':"Error on database ".red+"'%(name)s'".yellow+" on ".red+"%(url)s:%(port)s".yellow
 	}
 },
 'textualization':{
@@ -38,9 +38,9 @@
 			return "No exist textualization languages".cyan;
 		}
 	},
-	'load-ok':"Textualization sheet loaded ".cyan+"(%(count)s nodos)".yellow+" for domain: ".cyan+"%(domain)s".yellow+", path: ".cyan+"'%(path)s'".yellow+", lenguage: ".cyan+"%(lang)s".yellow,
-	'load-error':"Textualization sheet load error for domain: ".red+"%(domain)s".yellow+" , path: ".red+"'%(path)s'".yellow+", lenguage: ".red+"%(lang)s".yellow,
-	'heap-rewrite':"Textualization node overwrite ".red+"'%(element)s'".yellow+" for domain: ".red+"%(domain)s".yellow+", language: ".red+"%(lang)s".yellow
+	'load-ok':"Textualization sheet loaded ".cyan+"(%(count)s nodes)".yellow+": ".cyan+"'%(path)s'".yellow+", lenguage: ".cyan+"%(lang)s".yellow,
+	'load-error':"Textualization sheet load error: ".red+"'%(path)s'".yellow+", lenguage: ".red+"%(lang)s".yellow,
+	'heap-rewrite':"Textualization node overwrite ".red+"'%(element)s'".yellow+": ".red+"'%(path)s'".yellow+", language: ".red+"%(lang)s".yellow
 },
 'templates':{
 	'cache-ok':"Template ".cyan+"'%(path)s'".yellow+" loaded".cyan,

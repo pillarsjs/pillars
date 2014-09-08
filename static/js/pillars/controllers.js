@@ -1,21 +1,31 @@
 angular.module('Pillars.controllers', [])
-	.controller('crudListActions', function($scope, apiList) {
-		$scope.apiList = apiList;
+	.controller('crudListActions', function($scope, $location, crudListLoader) {
+		$scope.crudListLoader = crudListLoader;
+		$scope.showList = function(){
+			if($location.path()!="/"){
+				$location.path('/');
+			} else {
+				crudListLoader.load();
+			}
+		}
 	})
-	.controller('crudList', function($scope, apiList) {
-		$scope.apiList = apiList;
-		apiList.load();
+	.controller('crudList', function($scope, crudListLoader) {
+		$scope.crudListLoader = crudListLoader;
+		crudListLoader.load();
 	})
-	.controller('crudUpdate', function($rootScope, $scope, $location, $routeParams, apiEntity) {
-		$scope.apiEntity = apiEntity.reset();
-		apiEntity.id = $routeParams._id;
-		apiEntity.form = crudEntityForm;
+	.controller('crudUpdate', function($scope, $location, $routeParams, crudEntityLoader) {
+		$scope.crudEntityLoader = crudEntityLoader.reset();
+		crudEntityLoader.id = $routeParams._id;
+		crudEntityLoader.form = crudEntityForm;
 		$scope.datapath = [];
 		$scope.data = {};
-		apiEntity.onData = function(){
-			$scope.data = apiEntity.data;
+		crudEntityLoader.onData = function(){
+			$scope.data = crudEntityLoader.data;
 		}
-		apiEntity.load();
+		crudEntityLoader.load();
+
+
+		
 		$scope.crudEntityFormInputs = function(){
 			return Object.keys($scope.crudEntityForm);
 		}
