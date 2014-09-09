@@ -53,11 +53,15 @@
 		'update-error':"Unable to update session data"
 	},
 	'unlinktemp':{
-		'ok':"Temp file %(file)s' deleted".green.inverse.white,
-		'error':"Delete temp file error '%(file)s'".red.inverse.white
+		'ok':"Temp file %(file)s' deleted".green,
+		'error':"Delete temp file error '%(file)s'".red
 	},
 	'close':"%(poolid)s %(id)s".magenta+" %(method)s:".cyan+" %(path)s".white+" [%(code)s]".cyan+"  %(size)sbytes %(timer)sms".grey,
 	'error':{
 		'h1':"Error %(code)s %(explain)s"
 	}
+},
+'config':{
+	'unknow': "Unknow enviroment var".red+" %(prop)s =".cyan+" %(value)s".yellow,
+	'ok': "Enviroment var setted".green+" %(prop)s =".cyan+" %(value)s".yellow
 }

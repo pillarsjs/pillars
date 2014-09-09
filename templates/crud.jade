@@ -1,4 +1,4 @@
-include ./templates/examples.jade
+include ./examples.jade
 
 mixin field(field)
 	- var fullwidth = (field.template=='subset' || field.template=='list')?" fullwidth":"";
@@ -209,8 +209,8 @@ html(lang=gw.language,ng-app="PillarsCRUD")
 		meta(charset="utf-8")
 		meta(http-equiv='X-UA-Compatible', content='IE=edge')
 		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
-		link(rel='stylesheet', type='text/css', href='/css/normalize.css')
-		link(rel='stylesheet', type='text/css', href='/css/pillars.css')
+		link(rel='stylesheet', type='text/css', href='/pillars/css/normalize.css')
+		link(rel='stylesheet', type='text/css', href='/pillars/css/pillars.css')
 
 	body
 		#space
@@ -218,7 +218,7 @@ html(lang=gw.language,ng-app="PillarsCRUD")
 				header#header
 					a(id="brand",href="#") Pillars
 					div(id="user",class="dropdown-toggle-hover")
-						img(id="user-img",src="/img/user.jpg")
+						img(id="user-img",src="/pillars/img/user.jpg")
 						div(id="user-info")
 							div(id="user-name") Javier Gallego Martín {{env.lang}}
 						ul(id="user-options",class="dropdown dropdown-right menu")
@@ -292,15 +292,15 @@ html(lang=gw.language,ng-app="PillarsCRUD")
 		script(src='https://code.angularjs.org/snapshot/angular-route.min.js')
 		//script(src='https://code.angularjs.org/snapshot/angular-animate.min.js')
 		//script(src='//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js')
-		script(src='/js/kinetic-v5.1.0.min.js')
-		script(src='/js/wysihtml5-advanced.js')
-		script(src='/js/wysihtml5-0.4.0pre.js')
+		script(src='/pillars/js/kinetic-v5.1.0.min.js')
+		script(src='/pillars/js/wysihtml5-advanced.js')
+		script(src='/pillars/js/wysihtml5-0.4.0pre.js')
 
-		script(src='/js/pillars/classes.js')
-		script(src='/js/pillars/services.js')
-		script(src='/js/pillars/controllers.js')
-		script(src='/js/pillars/filters.js')
-		script(src='/js/pillars/directives.js')
+		script(src='/pillars/ng/classes.js')
+		script(src='/pillars/ng/services.js')
+		script(src='/pillars/ng/controllers.js')
+		script(src='/pillars/ng/filters.js')
+		script(src='/pillars/ng/directives.js')
 		script(type='text/javascript').
 			angular.module('PillarsCRUD', [
 				'ngRoute',

@@ -60,6 +60,10 @@
 	'error':{
 		'h1':"Error %(code)s %(explain)s, disculpe las molestias"
 	}
+},
+'config':{
+	'unknow': "Variable de entorno desconocida".red+" %(prop)s =".cyan+" %(value)s".yellow,
+	'ok': "Variable de entorno modificada".green+" %(prop)s =".cyan+" %(value)s".yellow
 }
 
 

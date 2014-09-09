@@ -1,211 +1,81 @@
 
-var Pillar = require('./lib/Pillar');
-var Beam = require('./lib/Beam');
-var Gangway = require('./lib/Gangway');
+var paths = require('path');
+var pillarsPackage = require('./package');
+global.PILLARS = {
+	package : pillarsPackage,
+	version : pillarsPackage.version,
+	path : function(path){
+		var path = path || '';
+		return paths.resolve(__dirname,path);
+	},
+	uploadsDirectory : paths.resolve('./uploads'),
+	tempDirectory : paths.resolve('./temp'),
+	maxUploadSize : 10*1024*1024,
+	maxGzipSize : 5*1024*1024
+};
 
 var textualization = require('./lib/textualization');
 var t12n = textualization.t12n;
+textualization.load(PILLARS.path('languages/pillars'));
+
+var Pillar = require('./lib/Pillar');
+var Beam = require('./lib/Beam');
+var Gangway = require('./lib/Gangway');
+var App = require('./lib/App');
+
 var modelator = require('./lib/modelator');
 var renderer = require('./lib/renderer');
 var precasts = require('./lib/precasts');
 
-var http = require('http');
-var MongoClient = require('mongodb').MongoClient;
+renderer
+	.preload(PILLARS.path('templates/static.jade'))
+	.preload(PILLARS.path('templates/crud.jade'))
+	.preload(PILLARS.path('templates/login.jade'))
+	.preload(PILLARS.path('templates/error.jade'))
+;
 
+module.exports = new Pillars();
+function Pillars(){
+	var pillars = this;
 
-module.exports.Pillar = Pillar;
-module.exports.Beam = Beam;
-module.exports.Gangway = Gangway;
+	pillars.App = App;
+	pillars.Pillar = Pillar;
+	pillars.Beam = Beam;
+	pillars.Gangway = Gangway;
 
-module.exports.textualization = textualization;
-module.exports.modelator = modelator;
-module.exports.renderer = renderer;
-module.exports.precasts = precasts;
+	pillars.textualization = textualization;
+	pillars.t12n = t12n;
+	pillars.modelator = modelator;
+	pillars.renderer = renderer;
+	pillars.precasts = precasts;
 
-module.exports.App = App;
-function App(){
-	var app = this;
+	pillars.global = function(){
+		global.App = App;
+		global.Pillar = Pillar;
+		global.Beam = Beam;
+		global.Gangway = Gangway;
 
-	Object.defineProperty(app,"languages",{
-		enumerable : true,
-		get : function(){return textualization.languages;},
-		set : function(set){
-			textualization.languages = set;
-		}
-	});
+		global.textualization = textualization;
+		global.t12n = t12n;
+		global.modelator = modelator;
+		global.renderer = renderer;
+		global.precasts = precasts;
 
-	var database = false;
-	Object.defineProperty(app,"database",{
-		enumerable : true,
-		get : function(){return database;},
-		set : function(set){
-			var name = false;
-			if(typeof set === "string"){
-				name = set;
-			} else if(set.name) {
-				name = set.name;
-			}
-			if(name){
-				var url = set.url || 'localhost';
-				var port = set.port || 27017;
-				if(database){
-					// shutdown;
-				}
-				MongoClient.connect(
-					"mongodb://"+url+":"+port+"/"+name,{
-						db:{native_parser:false},
-						server: {
-							socketOptions: {connectTimeoutMS: 500,auto_reconnect: true}
-						},
-						replSet: {},
-						mongos: {}
-					},function(error, db) {
-						if(error) {
-							console.log(t12n('server.database.connection-error',{name:name,url:url,port:port}),error);
-						} else {
-							database = db;
-							console.log(t12n('server.database.connection-ok',{name:name,url:url,port:port}));
-						}
-					}
-				);
-			}
-		}
-	});
-
-	var server = false;
-	Object.defineProperty(app,"server",{
-		enumerable : true,
-		get : function(){return server;}
-	});
-
-	app.start = function(port,hostname){
-		var port = port || 3000;
-		var hostname = hostname || undefined;
-		server = http.createServer();
-		server.pool = {};
-		server.gangways = {};
-		server.port = port;
-		server.hostname = hostname || '*';
-		server.timeout = 20*1000;
-
-		process.on('SIGINT', function() {
-			server.close(function() {process.exit(0);});
-		});
-
-		server
-		.on('error',function(error){
-			console.log(t12n('server.error',{hostname:server.hostname,port:server.port}),error);
-		})
-		.on('listening',function(){
-			server.timer=Date.now();console.log(t12n('server.listening',{hostname:server.hostname,port:server.port}));
-		})
-		.on('close',function(){
-			console.log(t12n('server.closed',{
-				hostname:server.hostname,
-				port:server.port,
-				timer:parseInt((Date.now()-server.timer)/1000/60*100)/100
-			}));
-		})
-		.on('connection',function(socket){
-			socket.poolid = Date.now().toString(36)+Math.round(Math.random()*10).toString(36);
-			server.pool[socket.poolid] = socket;
-			socket.timer = Date.now();
-			socket.on('close',function(had_error){
-				console.log(t12n('server.socket-closed',{
-					had_error:had_error,
-					poolid:socket.poolid,
-					timer:parseInt((Date.now()-socket.timer)/1000/60*100)/100
-				}));
-				delete server.pool[socket.poolid];
-			});
-			console.log(t12n('server.socket-open',{poolid:socket.poolid}));
-		})
-		.on('request',function(req,res){
-			router(new Gangway(app,req,res));
-		})
-		.listen(port, hostname);
-	};
-
-	app.stop = function(){
-		server.close(function() {server = false;});
+		return pillars;
 	}
 
-	var pillars = {};
-	Object.defineProperty(app,"pillars",{
-		enumerable : true,
-		get : function(){return pillars;}
-	});
-
-	app.add = function(pillar){
-		pillars[pillar.id] = pillar;
-		return app;
-	}
-
-	app.remove = function(pillarid){
-		if(pillars[pillarid]){delete pillars[pillarid]}
-		return app;
-	}
-
-}
-
-
-
-
-function router(gw){
-	if(!gw.encoding){
-		gw.encoding = "identity";
-		gw.error(406);
-	}	else if(!gw.language && gw.textualization.langs.length>0){
-		gw.error(404);
-	} else {
-		if(!checkRoutes(gw)){gw.error(404);}
-	}
-	function checkRoutes(){
-		for(var pillarid in gw.app.pillars){
-			var pillar = gw.app.pillars[pillarid];
-			var regexp = pillar.regexp;
-			if(regexp.test(gw.route)){
-				var regexps = pillar.regexps;
-				for(var beamid in regexps){
-					if(regexps[beamid].test(gw.route)){
-						gw.pillar = pillar;
-						gw.beam = pillar.beams[beamid];
-						if((gw.beam.session || gw.beam.account) && !gw.session){
-							gw.getSession(function(error){
-								if(error){
-									gw.error(500,error);
-								} else {
-									beamPrepare();
-								}
-							});
-						} else {
-							beamPrepare();
-						}
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-		function beamPrepare(){
-			if(gw.beam.account && !gw.user) {
-					gw.error(403);
-			} else if(gw.content.length>gw.beam.maxlength){
-				gw.error(413);
-			} else if(!gw.contentReady) {
-				gw.readContents(beamLauncher,gw.beam.upload);
+	pillars.configure = function(config){
+		var values = ['uploadsDirectory','tempDirectory','maxUploadSize','maxGzipSize'];
+		var config = config || {};
+		for(var i in config){
+			if(values.indexOf(i)>=0){
+				PILLARS[i] = config[i];
+				console.log(t12n('config.ok',{prop:i,value:config[i]}));
 			} else {
-				beamLauncher();
+				console.log(t12n('config.unknow',{prop:i,value:config[i]}));
 			}
 		}
-		function beamLauncher(){
-			gw.beam.pathparams(gw);
-			gw.beam.launch(gw);
-		}
+		return pillars;
 	}
+
 }
-
-
-
-
-
