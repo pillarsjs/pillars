@@ -1,7 +1,7 @@
 {
   "name": "pillars",
   "description": "Pillars nodejs web engine",
-  "version": "0.0.5",
+  "version": "0.0.10",
   "author": {
     "name": "Bifuer",
     "email": "bifuer@gmail.com"

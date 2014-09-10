@@ -5,7 +5,8 @@ pillars.configure({
 	uploadsDirectory : '../uploads',
 	tempDirectory : '../temp',
 	maxUploadSize : 10*1024*1024,
-	maxGzipSize : 5*1024*1024
+	maxGzipSize : 5*1024*1024,
+	htmlErrors : true
 });
 /*
 var textualization = pillars.textualization;
@@ -21,6 +22,39 @@ var app = new App();
 app.languages = ['es','en'];
 app.database = 'primera';
 app.start();
+
+var miBeam = new Beam({path:':param1/:param2'},function(gw){
+	gw.send({
+		id : 1,
+		gwParams : gw.params,
+		beamParams : gw.beam.params,
+		beamPath : gw.beam.path.toString(),
+	});
+});
+
+var miBeam2 = new Beam({path:'*:path'},function(gw){
+	gw.send({
+		id : 2,
+		gwParams : gw.params,
+		beamParams : gw.beam.params,
+		beamPath : gw.beam.path.toString(),
+	});
+});
+
+var app2 = new App()
+	.start(3001)
+	.add(new Pillar()
+		.add(new Beam(function(gw){
+			gw.send(app2.routes);
+		}))
+		.add(miBeam)
+		.add(miBeam2)
+	)
+	.start(3002)
+;
+
+//miBeam.path = '/*:path';
+miBeam.priority = 1001;
 
 var systemModel = new modelator.Schema('system',{
 	app : app,

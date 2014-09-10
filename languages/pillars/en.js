@@ -64,4 +64,27 @@
 'config':{
 	'unknow': "Unknow enviroment var".red+" %(prop)s =".cyan+" %(value)s".yellow,
 	'ok': "Enviroment var setted".green+" %(prop)s =".cyan+" %(value)s".yellow
+},
+'login':{
+	'title':"Login",
+	'h1':"Enter your user name and password",
+	'ok':"Login ok, you are logged",
+	'fail':"User name or/and password incorrect, try again",
+	'user':{
+		'label':"User",
+		'placeholder':"User name"
+	},
+	'password':{
+		'label':"Password",
+		'placeholder':"Your super secure password"
+	},
+	'redirect':{
+		'label':"Redirect",
+		'placeholder':"URL for success automatic redirection, yes seriusly"
+	},
+	'submit':"Send",
+},
+'static':{
+	'title': "Directory listing %(path)s",
+	'h1': "%(path)s"
 }

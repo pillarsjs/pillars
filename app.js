@@ -11,7 +11,8 @@ global.PILLARS = {
 	uploadsDirectory : paths.resolve('./uploads'),
 	tempDirectory : paths.resolve('./temp'),
 	maxUploadSize : 10*1024*1024,
-	maxGzipSize : 5*1024*1024
+	maxGzipSize : 5*1024*1024,
+	htmlErrors : true
 };
 
 var textualization = require('./lib/textualization');
@@ -65,7 +66,7 @@ function Pillars(){
 	}
 
 	pillars.configure = function(config){
-		var values = ['uploadsDirectory','tempDirectory','maxUploadSize','maxGzipSize'];
+		var values = ['uploadsDirectory','tempDirectory','maxUploadSize','maxGzipSize','htmlErrors'];
 		var config = config || {};
 		for(var i in config){
 			if(values.indexOf(i)>=0){

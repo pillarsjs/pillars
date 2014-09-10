@@ -64,6 +64,29 @@
 'config':{
 	'unknow': "Variable de entorno desconocida".red+" %(prop)s =".cyan+" %(value)s".yellow,
 	'ok': "Variable de entorno modificada".green+" %(prop)s =".cyan+" %(value)s".yellow
+},
+'login':{
+	'title':"Acceder",
+	'h1':"Introduce tu nombre de usuario y contraseña",
+	'ok':"Todo correcto, estas dentro",
+	'fail':"Usuario y/o contraseña erroneos, prueba de nuevo",
+	'user':{
+		'label':"Usuario",
+		'placeholder':"Nombre de usuario"
+	},
+	'password':{
+		'label':"Contraseña",
+		'placeholder':"Tu tremendisimamente segura contraseña"
+	},
+	'redirect':{
+		'label':"Redirección",
+		'placeholder':"URL para redirigir en caso de exito, si en serio"
+	},
+	'submit':"Enviar",
+},
+'static':{
+	'title': "Listando directorio %(path)s",
+	'h1': "%(path)s"
 }
 
 

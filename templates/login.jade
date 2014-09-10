@@ -1,26 +1,38 @@
 doctype html
 html(lang=gw.language)
 	head
-		title="login"
+		title= t12n("login.title")
 		meta(charset="utf-8")
 		meta(http-equiv='X-UA-Compatible', content='IE=edge')
-		meta(name="viewport", content="width=device-width, initial-scale=1")
+		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
 		link(rel='stylesheet', href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css')
-		link(rel='stylesheet', href='/css/pillars.css')
-		//link(rel='stylesheet', href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css')
 
 	body
-		#space.container
+		.container
 			header#header
-				h1="login"
+				h1= t12n("login.h1")
 			#page
 				if msg
-					div(class="msg")=msg
+					if msg == 'login.ok'
+						div(class="alert alert-success")=t12n(msg)
+					else
+						div(class="alert alert-danger")=t12n(msg)
 
-				form()
-					input(type="text",value=redirect,name="redirect")
-					input(type="text",name="user")
-					input(type="text",name="password")
-					input(type="submit",value="Send")
-				
+				form(method='post')
+					.form-group
+						label(for="user")= t12n("login.user.label")
+						input(type="text", class="form-control", id="user" name="user", placeholder=t12n("login.user.placeholder"))
+					.form-group
+						label(for="password")= t12n("login.password.label")
+						input(type="password", class="form-control", id="password" name="password", placeholder=t12n("login.password.placeholder"))
+					.form-group
+						label(for="redirect")= t12n("login.redirect.label")
+						input(type="text", class="form-control", id="redirect" name="redirect", value=redirect, placeholder=t12n("login.redirect.placeholder"))
+
+					button(type="submit", class="btn btn-default")= t12n("login.submit")
 			footer#footer
+
+
+
+
+

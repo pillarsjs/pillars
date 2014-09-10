@@ -5,25 +5,22 @@ html(lang=gw.language)
 		meta(charset="utf-8")
 		meta(http-equiv='X-UA-Compatible', content='IE=edge')
 		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
-		link(rel='stylesheet', type='text/css', href='/pillars/css/normalize.css')
-		link(rel='stylesheet', type='text/css', href='/pillars/css/pillars.css')
+		link(rel='stylesheet', href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css')
 
 	body
-		#space.container
+		.container
 			header#header
-				h1=h1
+				h1=t12n("static.h1",{path:path})
 			#page
-				if data.length==0
+				if files.length==0
 					p empty directory
 				if path!=path.replace(/[^\\\/]*$/,'')
 					a(href=path.replace(/[^\\\/]*$/,'')) ../
 				hr
-				each file, key in data
-					if !/^\./i.test(file)
+				each file, key in files
+					if /^\./i.test(file)
+						a(href=path+'/'+file,class="help-block")=file
+					else
 						a(href=path+'/'+file)=file
-						hr
-				if trace
-					.trace
-						hr
-						pre=trace
+					hr
 			footer#footer
