@@ -40,6 +40,7 @@
 * JSON translation docs.
 * You can translate by printf,cases or functions based in context params.
 * Output messages (console and html) of entire system are translate in English and Spanish.
+
 ***
 
 ### build-in modules (precasts)
