@@ -24,6 +24,7 @@ mixin field(field)
 				+#{field.template}(field)
 				
 mixin field-validation(field)
+	//pre=util.format({keys:field.keys,coedition:field.coedition})
 	//div {{crudEntityForm[datapathName]}}
 	//div {{datapathValue}}
 	//.input-msgs
@@ -199,8 +200,7 @@ mixin crudEntity(schema)
 
 			.form-table
 				each field in schema.fields
-					if gw.user.can(field.need('see',true))
-						+field(field)
+					+field(field)
 
 doctype html
 html(lang=gw.language,ng-app="PillarsCRUD")
@@ -329,7 +329,7 @@ html(lang=gw.language,ng-app="PillarsCRUD")
 				}])
 				.run(function ($rootScope) {
 					$rootScope.env = {
-						apiurl : 'http://#{gw.host}#{gw.pillar.path}/api',
+						apiurl : 'http://#{gw.host}#{gw.pillar.config.path}/api',
 						lang : '#{gw.language}',
 						langlist : ['#{gw.textualization.langs.join("','")}']
 					}

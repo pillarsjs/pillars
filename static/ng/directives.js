@@ -55,7 +55,7 @@ angular.module('Pillars.directives', [])
 	.directive('datepicker', function($locale) {
 		return {
 			restrict: 'E',
-			templateUrl: '/js/pillars/partials/datepicker.html',
+			templateUrl: '/pillars/ng/templates/datepicker.html',
 			require: 'ngModel',
 			replace: true,
 			link: function(scope, element, atts, ctrl) {
@@ -93,9 +93,9 @@ angular.module('Pillars.directives', [])
 	.directive('reference', function($rootScope,$timeout,$document) {
 		return {
 			restrict: 'E',
-			templateUrl: '/js/pillars/partials/reference.html',
+			templateUrl: '/pillars/ng/templates/reference.html',
 			require: 'ngModel',
-			replace: false,
+			replace: true,
 			link: function(scope, element, atts, ctrl) {
 				var apiList = new ApiList($rootScope.env.apiurl);
 				apiList.loader.progress = function(){
@@ -274,7 +274,7 @@ angular.module('Pillars.directives', [])
 			scope: {
 				value: '=ngModel'
 			},
-			templateUrl: '/js/pillars/partials/imagepicker.html',
+			templateUrl: '/pillars/ng/templates/imagepicker.html',
 			link: function(scope, element, attr, ngModel) {
 				scope.imagepickerName = attr['name'];
 				//scope.readedFiles = [];

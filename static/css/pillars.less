@@ -1423,165 +1423,143 @@ body {
 	}
 }
 
-reference {
-	.reference-search {
-		.form-control {
-		}
-		.input-group-btn {
-			position: static;
-			.dropdown-toggle {
-				.caret {}
+
+	
+
+
+
+.reference {
+	.dropdown.references {
+		width: 100%;
+		max-height: 250px;
+		overflow: scroll;
+		padding: 0;
+		padding: 5px;
+		float: none;
+		background-clip: none;
+		z-index: 3000;
+		-webkit-overflow-scrolling: touch;
+		&>li {
+			padding: 10px 130px 10px 25px;
+			border-bottom: 1px solid #CCCCCC;
+			clear: both;
+			position: relative;
+			max-width: 100%;
+			overflow: hidden;
+			&.selected {
+				&:before {
+					background-color: #5BC0DE;
+					bottom: 5px;
+					content: "";
+					display: block;
+					height: auto;
+					left: 5px;
+					position: absolute;
+					top: 5px;
+					width: 10px;
+				}
 			}
-			.dropdown-menu {
-				width: 100%;
-				max-height: 250px;
-				overflow: scroll;
-				padding: 0;
-				padding: 5px;
-				float: none;
-				background-clip: none;
-				z-index: 3000;
-				-webkit-overflow-scrolling: touch;
-				li.reference {
-					padding: 10px 130px 10px 25px;
-					border-bottom: 1px solid #CCCCCC;
-					clear: both;
-					position: relative;
+			._img {
+				display: block;
+				position: absolute;
+				right: 10px;
+				top: 10px;
+				bottom: 10px;
+				height: auto;
+				overflow: hidden;
+				width: 140px;
+				img {
+					display: block;
+					position: absolute;
+					right: 0;
+					top: 0;
+					background-color: #FFFFFF;
+					border: 1px solid #CCCCCC;
+					max-height: 100%;
 					max-width: 100%;
-					overflow: hidden;
-					&.selected {
-						&:before {
-							background-color: #5BC0DE;
-							bottom: 5px;
-							content: "";
-							display: block;
-							height: auto;
-							left: 5px;
-							position: absolute;
-							top: 5px;
-							width: 10px;
-						}
+					width: auto;
+					border-radius: 4px 4px 4px 4px;
+				}
+			}
+			&>.props {
+				padding: 0;
+				&>li {
+					display: block;
+					&>strong {
+						display: inline-block;
 					}
-					.reference-img {
-						display: block;
-						position: absolute;
-						right: 10px;
-						top: 10px;
-						bottom: 10px;
-						height: auto;
-						overflow: hidden;
-						width: 140px;
-						img {
-							display: block;
-							position: absolute;
-							right: 0;
-							top: 0;
-							background-color: #FFFFFF;
-							border: 1px solid #CCCCCC;
-							max-height: 100%;
-							max-width: 100%;
-							width: auto;
-							border-radius: 4px 4px 4px 4px;
-						}
+					&>span {
+						display: inline-block;
 					}
-					.reference-items {
-						padding: 0;
-						.reference-item {
-							display: block;
-							.item-label {
-								display: inline-block;
-							}
-							.item-value {
-								display: inline-block;
-							}
-						}
-						&.reference-item-_img, &.reference-item-_id {
-							display: none;
-						}
+					&.prop-_img, &.prop-_id {
+						display: none;
 					}
 				}
 			}
 		}
 	}
-	.references {
+	.selection {
 		list-style-type: none;
 		padding: 0;
 		margin: 0;
-		li.reference  {
+		&>li  {
 			background-color: #F9F9F9;
 			border: 1px solid #CCCCCC;
 			border-radius: 4px;
 			box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
 			margin: 10px 0 0 0;
-			.reference-data {
-				padding: 15px 140px 0 0;
-				position: relative;
-				.reference-img {
+			padding: 15px 140px 0 0;
+			position: relative;
+			._img {
+				display: block;
+				position: absolute;
+				right: 10px;
+				top: 10px;
+				bottom: 10px;
+				height: auto;
+				overflow: hidden;
+				width: 140px;
+				img {
 					display: block;
 					position: absolute;
-					right: 10px;
-					top: 10px;
-					bottom: 10px;
-					height: auto;
-					overflow: hidden;
-					width: 140px;
-					img {
-						display: block;
-						position: absolute;
-						right: 0;
-						top: 0;
-						background-color: #FFFFFF;
-						border: 1px solid #CCCCCC;
-						max-height: 100%;
-						max-width: 100%;
-						width: auto;
-						border-radius: 4px 4px 4px 4px;
-					}
-				}
-				.reference-items {
-					padding: 0;
-					.reference-item {
-						border-bottom: 1px solid #F5F5F5;
-						display: block;
-						margin: 0 0 5px;
-						padding: 0 0 5px;
-						overflow: auto;
-						&:last-child {
-							border-bottom-style: none;
-						}
-						.item-label {
-							display: block;
-						}
-						.item-value {
-							display: block;
-						}
-						&.reference-item-_img, &.reference-item-_id {
-							display: none;
-						}
-					}
+					right: 0;
+					top: 0;
+					background-color: #FFFFFF;
+					border: 1px solid #CCCCCC;
+					max-height: 100%;
+					max-width: 100%;
+					width: auto;
+					border-radius: 4px 4px 4px 4px;
 				}
 			}
-			.reference-controls {
-				padding: 0 10px;
-				height: 0;
-				overflow: hidden;
-				-webkit-transition:all linear 0.2s;
-				transition:all linear 0.2s;
-				.btn-remove {
-					border-radius: 4px 4px 0 0;
-				}
-				.reference-sort-select {
-					max-width: 120px;
-					&>* {
-						border-bottom-right-radius:0;
-						border-bottom-left-radius:0;
+			&.props {
+				padding: 0;
+				&>li {
+					border-bottom: 1px solid #F5F5F5;
+					display: block;
+					margin: 0 0 5px;
+					padding: 0 0 5px;
+					overflow: auto;
+					&:last-child {
 						border-bottom-style: none;
 					}
+					&>strong {
+						display: block;
+					}
+					&>span {
+						display: block;
+					}
+					&.prop-_img, &.prop-_id {
+						display: none;
+					}
 				}
 			}
-			&:hover {
-				.reference-controls {
-					height: 34px;
+			.controls {
+				.remove {
+					border-radius: 4px 4px 0 0;
+				}
+				.sort {
+					max-width: 120px;
 				}
 			}
 		}

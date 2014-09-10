@@ -1724,10 +1724,7 @@ body {
   margin: 0;
   border-style: none;
 }
-reference .reference-search .input-group-btn {
-  position: static;
-}
-reference .reference-search .input-group-btn .dropdown-menu {
+.reference .dropdown.references {
   width: 100%;
   max-height: 250px;
   overflow: scroll;
@@ -1738,7 +1735,7 @@ reference .reference-search .input-group-btn .dropdown-menu {
   z-index: 3000;
   -webkit-overflow-scrolling: touch;
 }
-reference .reference-search .input-group-btn .dropdown-menu li.reference {
+.reference .dropdown.references > li {
   padding: 10px 130px 10px 25px;
   border-bottom: 1px solid #CCCCCC;
   clear: both;
@@ -1746,7 +1743,7 @@ reference .reference-search .input-group-btn .dropdown-menu li.reference {
   max-width: 100%;
   overflow: hidden;
 }
-reference .reference-search .input-group-btn .dropdown-menu li.reference.selected:before {
+.reference .dropdown.references > li.selected:before {
   background-color: #5BC0DE;
   bottom: 5px;
   content: "";
@@ -1757,7 +1754,7 @@ reference .reference-search .input-group-btn .dropdown-menu li.reference.selecte
   top: 5px;
   width: 10px;
 }
-reference .reference-search .input-group-btn .dropdown-menu li.reference .reference-img {
+.reference .dropdown.references > li ._img {
   display: block;
   position: absolute;
   right: 10px;
@@ -1767,7 +1764,7 @@ reference .reference-search .input-group-btn .dropdown-menu li.reference .refere
   overflow: hidden;
   width: 140px;
 }
-reference .reference-search .input-group-btn .dropdown-menu li.reference .reference-img img {
+.reference .dropdown.references > li ._img img {
   display: block;
   position: absolute;
   right: 0;
@@ -1779,39 +1776,37 @@ reference .reference-search .input-group-btn .dropdown-menu li.reference .refere
   width: auto;
   border-radius: 4px 4px 4px 4px;
 }
-reference .reference-search .input-group-btn .dropdown-menu li.reference .reference-items {
+.reference .dropdown.references > li > .props {
   padding: 0;
 }
-reference .reference-search .input-group-btn .dropdown-menu li.reference .reference-items .reference-item {
+.reference .dropdown.references > li > .props > li {
   display: block;
 }
-reference .reference-search .input-group-btn .dropdown-menu li.reference .reference-items .reference-item .item-label {
+.reference .dropdown.references > li > .props > li > strong {
   display: inline-block;
 }
-reference .reference-search .input-group-btn .dropdown-menu li.reference .reference-items .reference-item .item-value {
+.reference .dropdown.references > li > .props > li > span {
   display: inline-block;
 }
-reference .reference-search .input-group-btn .dropdown-menu li.reference .reference-items.reference-item-_img,
-reference .reference-search .input-group-btn .dropdown-menu li.reference .reference-items.reference-item-_id {
+.reference .dropdown.references > li > .props > li.prop-_img,
+.reference .dropdown.references > li > .props > li.prop-_id {
   display: none;
 }
-reference .references {
+.reference .selection {
   list-style-type: none;
   padding: 0;
   margin: 0;
 }
-reference .references li.reference {
+.reference .selection > li {
   background-color: #F9F9F9;
   border: 1px solid #CCCCCC;
   border-radius: 4px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
   margin: 10px 0 0 0;
-}
-reference .references li.reference .reference-data {
   padding: 15px 140px 0 0;
   position: relative;
 }
-reference .references li.reference .reference-data .reference-img {
+.reference .selection > li ._img {
   display: block;
   position: absolute;
   right: 10px;
@@ -1821,7 +1816,7 @@ reference .references li.reference .reference-data .reference-img {
   overflow: hidden;
   width: 140px;
 }
-reference .references li.reference .reference-data .reference-img img {
+.reference .selection > li ._img img {
   display: block;
   position: absolute;
   right: 0;
@@ -1833,49 +1828,34 @@ reference .references li.reference .reference-data .reference-img img {
   width: auto;
   border-radius: 4px 4px 4px 4px;
 }
-reference .references li.reference .reference-data .reference-items {
+.reference .selection > li.props {
   padding: 0;
 }
-reference .references li.reference .reference-data .reference-items .reference-item {
+.reference .selection > li.props > li {
   border-bottom: 1px solid #F5F5F5;
   display: block;
   margin: 0 0 5px;
   padding: 0 0 5px;
   overflow: auto;
 }
-reference .references li.reference .reference-data .reference-items .reference-item:last-child {
+.reference .selection > li.props > li:last-child {
   border-bottom-style: none;
 }
-reference .references li.reference .reference-data .reference-items .reference-item .item-label {
+.reference .selection > li.props > li > strong {
   display: block;
 }
-reference .references li.reference .reference-data .reference-items .reference-item .item-value {
+.reference .selection > li.props > li > span {
   display: block;
 }
-reference .references li.reference .reference-data .reference-items .reference-item.reference-item-_img,
-reference .references li.reference .reference-data .reference-items .reference-item.reference-item-_id {
+.reference .selection > li.props > li.prop-_img,
+.reference .selection > li.props > li.prop-_id {
   display: none;
 }
-reference .references li.reference .reference-controls {
-  padding: 0 10px;
-  height: 0;
-  overflow: hidden;
-  -webkit-transition: all linear 0.2s;
-  transition: all linear 0.2s;
-}
-reference .references li.reference .reference-controls .btn-remove {
+.reference .selection > li .controls .remove {
   border-radius: 4px 4px 0 0;
 }
-reference .references li.reference .reference-controls .reference-sort-select {
+.reference .selection > li .controls .sort {
   max-width: 120px;
-}
-reference .references li.reference .reference-controls .reference-sort-select > * {
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-  border-bottom-style: none;
-}
-reference .references li.reference:hover .reference-controls {
-  height: 34px;
 }
 @media (max-width: 800px) {
   .form-table .field {
