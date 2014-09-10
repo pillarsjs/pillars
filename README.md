@@ -1,6 +1,7 @@
-# [![Pillars - nodejs web engine ](http://pillarsjs.com/logo.png)](http://pillarsjs.com/)
+# [![Pillars - make it easy ](http://pillarsjs.com/logo.png)](http://pillarsjs.com/)
 
 > _Pillars is still an Alpha version. In a few days the documentation and the first stable version will be available._
+
 > __Very soon you'll see Node web development in a different way.__
 
 ## Scope
@@ -12,6 +13,7 @@
 * __No more req+res. Now Gangway is the way.__
 * Complete parsed HTTP request (ua,auth,ranges,etag,location,languages,content,cookies...).
 * Full error handling.
+
 ***
 
 ### Modular router (pillars+beams)
@@ -21,6 +23,7 @@
 * Dynamic enviroment, you can programmatically add, remove, move, reasign, copy routes (beams & pillars) in a running app.
 * Named routes for better organization.
 * Multi app, you can run multiple servers and share routes and handlers etc.
+
 ***
 
 ### Mongodb integration (modelator)
@@ -28,6 +31,7 @@
 * Schema definitions and automatic REST-API generation.
 * Automagically angular client app generation for schemas.
 * Built-in user credential control based on keys & key rings.
+
 ***
 
 ### i18n (textualization)
@@ -42,6 +46,7 @@
 * One-line static server routes.
 * One-line REST-API routes for schemas.
 * Credential controlled static server based on modelator schemas.
+
 ***
 
 ### And...
