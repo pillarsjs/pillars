@@ -529,21 +529,21 @@ label > .i18n-selector > button,
   font-style: italic;
   display: block;
 }
-.input > .fieldsetlist,
+.input > .subsetlist,
 .input > .subset {
-  margin: 0 -0.5em 0;
+  margin: 0 -1em 0;
 }
-.input > .fieldsetlist > fieldset,
+.input > .subsetlist > fieldset,
 .input > .subset > fieldset {
   border-style: solid;
   margin: 0.5em -1px 0.5em;
-  padding: 0.5em 0;
+  padding: 0.5em 0.5em;
 }
 form {
   color: #333333;
   margin: 0 auto;
   border-color: #bbbbbb;
-  max-width: 750px;
+  max-width: 60em;
 }
 form *,
 form *:after,
@@ -982,6 +982,7 @@ form .form-inline .field .checkbox {
   border-radius: 4px;
   z-index: 1;
   display: block;
+  margin: 0 0.5em 0.5em 0;
 }
 .select:before {
   border-radius: inherit;
@@ -1086,7 +1087,6 @@ table {
 table td,
 table th {
   padding: 0.4em 1em 0.5em 1em;
-  font-size: 14px;
   border: 1px solid #d4d4d4;
   border-style: none none solid;
 }
@@ -1203,7 +1203,7 @@ table.separate th {
   display: inline-block;
   margin: 0 0 10px;
   max-width: 100%;
-  min-height: 34px;
+  min-height: 3em;
   overflow: hidden;
   padding: 4px;
   position: relative;
@@ -1214,7 +1214,7 @@ table.separate th {
   background-color: #FFFFFF;
   border: 1px solid #FFFFFF;
   display: block;
-  max-height: 100px;
+  max-height: 12em;
   max-width: 100%;
   width: auto;
 }
@@ -1251,10 +1251,11 @@ table.separate th {
   vertical-align: middle;
 }
 .dropdown-toggle-hover:hover .dropdown,
-.dropdown-toggle.dropdown-toggle-open .dropdown {
+.dropdown-toggle.open .dropdown {
   display: block;
 }
 .dropdown.panel {
+  color: #333333;
   font-size: 1em;
   display: none;
   position: absolute;
@@ -1265,7 +1266,7 @@ table.separate th {
   height: auto;
   min-width: 100%;
   padding: 0.5em;
-  margin: 2px 0 0 0;
+  margin: 2px 0 0 0 !important;
   background-color: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.2);
   list-style-type: none;
@@ -1284,6 +1285,51 @@ table.separate th {
   left: 0;
   right: 0;
 }
+.dropdown.panel > li {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px !important;
+  margin: 3px;
+  max-width: 100%;
+  overflow: hidden;
+  padding: 0.2em 0.5em;
+  position: relative;
+  cursor: pointer;
+}
+.dropdown.panel > li:hover {
+  box-shadow: 0 0 3px 0px rgba(0, 0, 0, 0.2), -1px -1px 1px rgba(0, 0, 0, 0.1) inset;
+}
+.dropdown.panel > li:focus {
+  border-color: #00d6ef !important;
+  box-shadow: 0 0 1px 4px rgba(0, 214, 239, 0.3), -1px -1px 1px rgba(0, 0, 0, 0.1) inset;
+  z-index: 1000;
+}
+.dropdown.panel > li.selected {
+  color: #ffffff !important;
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.2) !important;
+  background-color: #00d6ef !important;
+  border-color: #00a8bc !important;
+}
+.dropdown.panel > li.selected.field > label:before,
+.dropdown.panel > li.selected.msg-icon:before {
+  display: inline-block;
+  font-family: 'FontAwesome';
+  font-size: inherit;
+  font-size-adjust: none;
+  font-stretch: normal;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: normal;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "";
+  margin-right: 0.4em;
+}
+.dropdown.panel > li.selected.field > label:before,
+.dropdown.panel > li.selected.msg-icon:before {
+  content: "\f192";
+}
 .dropdown.panel.dropdown-right {
   left: auto;
   right: 0;
@@ -1294,13 +1340,14 @@ table.separate th {
 }
 .dropdown.menu,
 .dropdown.menu ul {
+  color: #333333;
   font-size: 1em;
   display: none;
   position: absolute;
   top: 100%;
   left: 0.5em;
   padding: 0;
-  margin: 2px 0 0 0;
+  margin: 2px 0 0 0 !important;
   background-color: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.2);
   list-style-type: none;
@@ -1553,9 +1600,9 @@ body {
   background-image: linear-gradient(135deg, transparent 3em, rgba(0, 0, 0, 0.2) 0px);
   display: inline-block;
   float: right;
-  padding: 3px 1em 0 4em;
+  padding: 0.25em 1em 0 4em;
   position: relative;
-  height: 42px;
+  min-height: 3.5em;
 }
 #header #user #user-img {
   border: 2px solid #ff6e9a;
@@ -1725,58 +1772,38 @@ body {
   border-style: none;
 }
 .reference .dropdown.references {
-  width: 100%;
   max-height: 250px;
   overflow: scroll;
-  padding: 0;
-  padding: 5px;
-  float: none;
   background-clip: none;
-  z-index: 3000;
   -webkit-overflow-scrolling: touch;
 }
 .reference .dropdown.references > li {
-  padding: 10px 130px 10px 25px;
-  border-bottom: 1px solid #CCCCCC;
-  clear: both;
-  position: relative;
-  max-width: 100%;
-  overflow: hidden;
-}
-.reference .dropdown.references > li.selected:before {
-  background-color: #5BC0DE;
-  bottom: 5px;
-  content: "";
-  display: block;
-  height: auto;
-  left: 5px;
-  position: absolute;
-  top: 5px;
-  width: 10px;
+  padding-right: 20%;
 }
 .reference .dropdown.references > li ._img {
   display: block;
   position: absolute;
-  right: 10px;
-  top: 10px;
-  bottom: 10px;
+  right: 0.2em;
+  top: 0.2em;
+  bottom: 0.2em;
   height: auto;
   overflow: hidden;
-  width: 140px;
+  width: 20%;
 }
 .reference .dropdown.references > li ._img img {
   display: block;
   position: absolute;
   right: 0;
   top: 0;
-  background-color: #FFFFFF;
-  border: 1px solid #CCCCCC;
   max-height: 100%;
   max-width: 100%;
   width: auto;
-  border-radius: 4px 4px 4px 4px;
+  border-radius: 4px;
+  overflow: hidden;
+  text-indent: -100000px;
 }
 .reference .dropdown.references > li > .props {
+  list-style-type: none;
   padding: 0;
 }
 .reference .dropdown.references > li > .props > li {
@@ -1784,78 +1811,85 @@ body {
 }
 .reference .dropdown.references > li > .props > li > strong {
   display: inline-block;
+  padding: 0.2em 0.5em;
+  width: 8em;
 }
 .reference .dropdown.references > li > .props > li > span {
   display: inline-block;
+  vertical-align: top;
+  padding: 0.3em 0.5em;
 }
 .reference .dropdown.references > li > .props > li.prop-_img,
 .reference .dropdown.references > li > .props > li.prop-_id {
   display: none;
 }
 .reference .selection {
-  list-style-type: none;
+  color: #333333;
+  border-color: #d4d4d4;
   padding: 0;
   margin: 0;
+  list-style-type: none;
 }
 .reference .selection > li {
-  background-color: #F9F9F9;
-  border: 1px solid #CCCCCC;
-  border-radius: 4px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
-  margin: 10px 0 0 0;
-  padding: 15px 140px 0 0;
+  margin: 3px;
+  padding: 0.5em 20% 0.5em 1em;
   position: relative;
+  border-width: 1px;
+  border-style: solid;
+  border-color: inherit;
+  box-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1) inset;
+  border-radius: 4px;
 }
 .reference .selection > li ._img {
   display: block;
   position: absolute;
-  right: 10px;
-  top: 10px;
-  bottom: 10px;
+  right: 0.2em;
+  top: 0.2em;
+  bottom: 0.2em;
   height: auto;
   overflow: hidden;
-  width: 140px;
+  width: 20%;
 }
 .reference .selection > li ._img img {
   display: block;
   position: absolute;
   right: 0;
   top: 0;
-  background-color: #FFFFFF;
-  border: 1px solid #CCCCCC;
   max-height: 100%;
   max-width: 100%;
   width: auto;
-  border-radius: 4px 4px 4px 4px;
+  border-radius: 4px;
+  overflow: hidden;
+  text-indent: -100000px;
 }
-.reference .selection > li.props {
+.reference .selection > li > .props {
+  list-style-type: none;
   padding: 0;
 }
-.reference .selection > li.props > li {
-  border-bottom: 1px solid #F5F5F5;
-  display: block;
-  margin: 0 0 5px;
-  padding: 0 0 5px;
-  overflow: auto;
-}
-.reference .selection > li.props > li:last-child {
-  border-bottom-style: none;
-}
-.reference .selection > li.props > li > strong {
+.reference .selection > li > .props > li {
   display: block;
 }
-.reference .selection > li.props > li > span {
-  display: block;
+.reference .selection > li > .props > li > strong {
+  display: inline-block;
+  padding: 0.2em 0.5em;
+  width: 8em;
 }
-.reference .selection > li.props > li.prop-_img,
-.reference .selection > li.props > li.prop-_id {
+.reference .selection > li > .props > li > span {
+  display: inline-block;
+  vertical-align: top;
+  padding: 0.3em 0.5em;
+}
+.reference .selection > li > .props > li.prop-_img,
+.reference .selection > li > .props > li.prop-_id {
   display: none;
 }
-.reference .selection > li .controls .remove {
-  border-radius: 4px 4px 0 0;
+.controls {
+  display: block;
+  margin-top: 0.5em;
+  padding: 0.5em 0.5em 0;
 }
-.reference .selection > li .controls .sort {
-  max-width: 120px;
+.controls > * {
+  display: inline-block;
 }
 @media (max-width: 800px) {
   .form-table .field {

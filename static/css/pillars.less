@@ -402,12 +402,12 @@ label,.label {
 		font-style: italic;
 		display: block;
 	}
-	&>.fieldsetlist,&>.subset {
-		margin: 0 -@inputs-margin 0;
+	&>.subsetlist,&>.subset {
+		margin: 0 -(@inputs-margin + 0.5em) 0;
 		&>fieldset {
 			border-style: solid;
 			margin: @inputs-margin -1px @inputs-margin;
-			padding: @inputs-margin 0;
+			padding: @inputs-margin 0.5em;
 		}
 	}
 }
@@ -416,7 +416,7 @@ form {
 	color: @color-default;
 	margin: 0 auto;
 	border-color: @inputs-border-color;
-	max-width: 750px;
+	max-width: 60em;
 	*,*:after, *:before {
 		border-color: inherit;
 	}
@@ -670,6 +670,7 @@ form {
 	border-radius: @inputs-border-radius;
 	z-index: 1;
 	display: block;
+	margin: 0 @inputs-margin @inputs-margin 0;
 	&:before {
 		border-radius: inherit;
 		background-color: #ffffff;
@@ -757,7 +758,6 @@ table {
 	border-radius: 6px;
 	td, th {
 		padding: @inputs-padding-top @inputs-padding-right @inputs-padding-bottom @inputs-padding-left;
-		font-size: 14px;
 		border: 1px solid lighten(@inputs-border-color,10%);
 		border-style: none none solid;
 	}
@@ -903,7 +903,7 @@ table {
 	display: inline-block;
 	margin: 0 0 10px;
 	max-width: 100%;
-	min-height: 34px;
+	min-height: 3em;
 	overflow: hidden;
 	padding: 4px;
 	position: relative;
@@ -913,7 +913,7 @@ table {
 		background-color: #FFFFFF;
 		border: 1px solid #FFFFFF;
 		display: block;
-		max-height: 100px;
+		max-height: 12em;
 		max-width: 100%;
 		width: auto;
 	}
@@ -940,7 +940,7 @@ table {
 	}
 }
 
-.dropdown-toggle-hover:hover, .dropdown-toggle.dropdown-toggle-open {
+.dropdown-toggle-hover:hover, .dropdown-toggle.open {
 	.dropdown {
 		display: block;
 		//visibility: visible;
@@ -953,6 +953,7 @@ table {
 }
 
 .dropdown.panel {
+	color: @color-default;
 	font-size: 1em;
 	display: none;
 	position: absolute;
@@ -963,7 +964,7 @@ table {
 	height: auto;
 	min-width: 100%;
 	padding: @inputs-margin;
-	margin: 2px 0 0 0;
+	margin: 2px 0 0 0 !important;
 	background-color: #ffffff;
 	border: 1px solid rgba(0,0,0,0.2);
 	list-style-type: none;
@@ -981,6 +982,25 @@ table {
 		left: 0;
 		right: 0;
 	}
+	&>li {
+		border: 1px solid rgba(0,0,0,0.2);
+		border-radius: @inputs-border-radius !important;
+		margin: 3px;
+		max-width: 100%;
+		overflow: hidden;
+		padding: 0.2em 0.5em;
+		position: relative;
+		cursor: pointer;
+		&:hover {
+			.inputs-box-outset-hover;
+		}
+		&:focus {
+			.inputs-box-outset-focus;
+		}
+		&.selected {
+			.bg-action;
+		}
+	}
 	&.dropdown-right {
 		left: auto;
 		right: 0;
@@ -992,13 +1012,14 @@ table {
 }
 
 .dropdown.menu, .dropdown.menu ul {
+	color: @color-default;
 	font-size: 1em;
 	display: none;
 	position: absolute;
 	top: 100%;
 	left: 0.5em;
 	padding: 0;
-	margin: 2px 0 0 0;
+	margin: 2px 0 0 0 !important;
 	background-color: #ffffff;
 	border: 1px solid rgba(0,0,0,0.2);
 	list-style-type: none;
@@ -1247,9 +1268,9 @@ body {
 		background-image: linear-gradient(135deg, transparent 3em, rgba(0, 0, 0, 0.2) 0px);
 		display: inline-block;
 		float: right;
-		padding: 3px 1em 0 4em;
+		padding: 0.25em 1em 0 4em;
 		position: relative;
-		height: 42px;
+		min-height: 3.5em;
 		#user-img {
 			border: 2px solid lighten(@color-primary,30%);
 			border-radius: 50%;
@@ -1430,66 +1451,50 @@ body {
 
 .reference {
 	.dropdown.references {
-		width: 100%;
 		max-height: 250px;
 		overflow: scroll;
-		padding: 0;
-		padding: 5px;
-		float: none;
 		background-clip: none;
-		z-index: 3000;
 		-webkit-overflow-scrolling: touch;
 		&>li {
-			padding: 10px 130px 10px 25px;
-			border-bottom: 1px solid #CCCCCC;
-			clear: both;
-			position: relative;
-			max-width: 100%;
-			overflow: hidden;
+			padding-right: 20%;
 			&.selected {
-				&:before {
-					background-color: #5BC0DE;
-					bottom: 5px;
-					content: "";
-					display: block;
-					height: auto;
-					left: 5px;
-					position: absolute;
-					top: 5px;
-					width: 10px;
-				}
 			}
 			._img {
 				display: block;
 				position: absolute;
-				right: 10px;
-				top: 10px;
-				bottom: 10px;
+				right: 0.2em;
+				top: 0.2em;
+				bottom: 0.2em;
 				height: auto;
 				overflow: hidden;
-				width: 140px;
+				width: 20%;
 				img {
 					display: block;
 					position: absolute;
 					right: 0;
 					top: 0;
-					background-color: #FFFFFF;
-					border: 1px solid #CCCCCC;
 					max-height: 100%;
 					max-width: 100%;
 					width: auto;
-					border-radius: 4px 4px 4px 4px;
+					border-radius: @inputs-border-radius;
+					overflow: hidden;
+					text-indent: -100000px;
 				}
 			}
 			&>.props {
+				list-style-type: none;
 				padding: 0;
 				&>li {
 					display: block;
 					&>strong {
 						display: inline-block;
+						padding: 0.2em 0.5em;
+						width: 8em;
 					}
 					&>span {
 						display: inline-block;
+						vertical-align: top;
+						padding: 0.3em 0.5em;
 					}
 					&.prop-_img, &.prop-_id {
 						display: none;
@@ -1499,70 +1504,70 @@ body {
 		}
 	}
 	.selection {
-		list-style-type: none;
+		color: @color-default;
+		border-color: lighten(@inputs-border-color,10%);
 		padding: 0;
 		margin: 0;
+		list-style-type: none;
 		&>li  {
-			background-color: #F9F9F9;
-			border: 1px solid #CCCCCC;
-			border-radius: 4px;
-			box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
-			margin: 10px 0 0 0;
-			padding: 15px 140px 0 0;
+			margin: 3px;
+			padding: 0.5em 20% 0.5em 1em;
 			position: relative;
+			.inputs-border;
+			.inputs-box-outset;
+			border-radius: @inputs-border-radius;
 			._img {
 				display: block;
 				position: absolute;
-				right: 10px;
-				top: 10px;
-				bottom: 10px;
+				right: 0.2em;
+				top: 0.2em;
+				bottom: 0.2em;
 				height: auto;
 				overflow: hidden;
-				width: 140px;
+				width: 20%;
 				img {
 					display: block;
 					position: absolute;
 					right: 0;
 					top: 0;
-					background-color: #FFFFFF;
-					border: 1px solid #CCCCCC;
 					max-height: 100%;
 					max-width: 100%;
 					width: auto;
-					border-radius: 4px 4px 4px 4px;
+					border-radius: @inputs-border-radius;
+					overflow: hidden;
+					text-indent: -100000px;
 				}
 			}
-			&.props {
+			&>.props {
+				list-style-type: none;
 				padding: 0;
 				&>li {
-					border-bottom: 1px solid #F5F5F5;
 					display: block;
-					margin: 0 0 5px;
-					padding: 0 0 5px;
-					overflow: auto;
-					&:last-child {
-						border-bottom-style: none;
-					}
 					&>strong {
-						display: block;
+						display: inline-block;
+						padding: 0.2em 0.5em;
+						width: 8em;
 					}
 					&>span {
-						display: block;
+						display: inline-block;
+						vertical-align: top;
+						padding: 0.3em 0.5em;
 					}
 					&.prop-_img, &.prop-_id {
 						display: none;
 					}
 				}
 			}
-			.controls {
-				.remove {
-					border-radius: 4px 4px 0 0;
-				}
-				.sort {
-					max-width: 120px;
-				}
-			}
 		}
+	}
+}
+
+.controls {
+	display: block;
+	margin-top: 0.5em;
+	padding: 0.5em 0.5em 0;
+	&>* {
+		display: inline-block;
 	}
 }
 

@@ -25,7 +25,7 @@ app.start();
 
 var miBeam = new Beam({path:':param1/:param2'},function(gw){
 	gw.send({
-		id : 1,
+		id : 'dos paramteros',
 		gwParams : gw.params,
 		beamParams : gw.beam.params,
 		beamPath : gw.beam.path.toString(),
@@ -34,7 +34,7 @@ var miBeam = new Beam({path:':param1/:param2'},function(gw){
 
 var miBeam2 = new Beam({path:'*:path'},function(gw){
 	gw.send({
-		id : 2,
+		id : 'cualquier ruta',
 		gwParams : gw.params,
 		beamParams : gw.beam.params,
 		beamPath : gw.beam.path.toString(),
@@ -59,9 +59,9 @@ miBeam.priority = 1001;
 var systemModel = new modelator.Schema('system',{
 	app : app,
 	collection : 'system',
-	limit : 3,
+	limit : 5,
 	filter : ['_id','field1','field2'], 
-	headers : ['_id','field1','field2','reverse']
+	headers : ['_id','_img','field1','field2','reverse']
 })
 	.addField('Text','field1')
 	.addField('Checkbox','fieldCheck')
@@ -119,7 +119,7 @@ app.add(systemPillar);
 var usersSchema = new modelator.Schema('users',{
 	app : app,
 	collection : 'users',
-	limit : 3,
+	limit : 5,
 	filter : ['_id','user','firstname','lastname'], 
 	headers : ['_id','user','firstname','lastname','password']
 })

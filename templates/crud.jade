@@ -1,7 +1,7 @@
 include ./examples.jade
 
 mixin field(field)
-	- var fullwidth = (field.template=='subset' || field.template=='list')?" fullwidth":"";
+	- var fullwidth = (field.template=='subset' || field.template=='subsetlist')?" fullwidth":"";
 	div(class="field"+fullwidth, datapath=field.id, ng-class="{danger:crudEntityForm[datapathName].$invalid,ok:crudEntityForm[datapathName].$valid && crudEntityForm[datapathName].$dirty }")
 		label
 			span= t12n("schemas."+field.schema.id+".fields."+field.path+".label")
@@ -31,24 +31,32 @@ mixin field-validation(field)
 		//.msg.bg-alert Cuidado!
 
 mixin subset(field)
-	div(class="subset")
+	div(class="subset",subset)
 		fieldset
 			each sfield in field.fields
 				+field(sfield)
 
-mixin list(field)
-	div(class="fieldsetlist")
+mixin subsetlist(field)
+	div(class="subsetlist",subsetlist)
+		button(ng-click="insertSubset()") Insertar
 		fieldset(ng-repeat="(datapathKey,datapathRepeater) in datapathValue", datapath='{{$index}}')
 			input(type="text", class="ng-hide", datapath="_id", datapath-id, datapath-name, ng-model="datapathValue")
 			input(type="text", class="ng-hide", datapath="_order", datapath-id, datapath-name, ng-model="datapathValue")
 			each sfield in field.fields
 				+field(sfield)
 
+			.controls
+				button(type="button", ng-click="removeSubset($index)", class="remove")
+					span(class="fa fa-times")
+					| Eliminar
+				.select.sort
+					select(datapath="_order", datapath-id, datapath-name, ng-model="datapathValue", ng-change="moveSubset($index)",ng-options="ore._order as ore._order*1+1 for (ork, ore) in $parent.$parent.datapathValue")
+					span.select-focus
+
 mixin text(field)
 	input(type='text', datapath-id, datapath-name, ng-model="datapathValue")
 
 mixin file(field)
-	div {{data}}
 	input(type='file', datapath-id, datapath-name)
 
 mixin fileimg(field)
@@ -99,11 +107,11 @@ mixin radios(field)
 				label=t12n("schemas."+field.schema.id+".fields."+field.path+".values."+option)
 
 mixin time(field)
-	input(type="text", datapath-id, datapath-name, ng-model="datapathValue", class="ng-hide")
+	input(type="text", datapath-id, datapath-name, ng-model="datapathValue", class="-ng-hide")
 	datepicker(linkid="{{datapathId}}",ng-model="datapathValue")
 
 mixin reference(field)
-	input(type="text", datapath-id, datapath-name, ng-model="datapathValue", class="ng-hide")
+	input(type="text", datapath-id, datapath-name, ng-model="datapathValue", class="-ng-hide")
 	reference(linkid="{{datapathId}}",ng-model="datapathValue")
 
 
@@ -189,7 +197,26 @@ mixin crudList(schema)
 
 mixin crudEntity(schema)
 	//{{crudEntityFormInputs()}}
-	form(id="crudEntityForm", ng-submit="sendForm()", name="crudEntityForm")
+
+	div(class="loader")
+		div(class="msg msg-icon bg-danger",ng-hide="!crudEntityLoader.error")= t12n("crud.errors.crudEntityLoader")
+		
+		div(class="msg loading bg-info",ng-hide="!crudEntityLoader.loader.running")
+			.fa.fa-spinner.fa-spin
+			= t12n("crud.loading")
+
+		div(class="progress sending",ng-hide="crudEntityLoader.loader.sending==0 || !crudEntityLoader.loader.running")
+			span(style="width:{{crudEntityLoader.loader.sending}}%;")
+				span
+					span(class="fa fa-upload")
+					= t12n("crud.sending")+" {{crudEntityLoader.loader.sending}}%"
+		div(class="progress receiving",ng-hide="crudEntityLoader.loader.receiving==0 || !crudEntityLoader.loader.running")
+			span(style="width:{{crudEntityLoader.loader.receiving}}%;")
+				span
+					span(class="fa fa-download")
+					= t12n("crud.receiving")+" {{crudEntityLoader.loader.receiving}}%"
+
+	form(id="crudEntityForm", ng-submit="sendForm()", name="crudEntityForm", ng-hide="crudEntityLoader.loader.running")
 		fieldset
 			legend
 				h3.text-primary= t12n("schemas."+schema.id+".title")

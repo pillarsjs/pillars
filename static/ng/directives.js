@@ -28,7 +28,7 @@ angular.module('Pillars.directives', [])
 		return {
 			restrict:"A",
 			link:function(scope,element,attrs){
-				element.removeAttr('datapathId');
+				element.removeAttr('datapath-id');
 				element.attr('id', scope.datapathId);
 			}
 		};
@@ -39,6 +39,8 @@ angular.module('Pillars.directives', [])
 			require: ['?ngModel','?form', '^form'],
 			link:function(scope,element,attrs,ctrls){
 				if(ctrls[0]){
+					element.removeAttr('datapath-name');
+					element.attr('name', scope.datapathName);
 					scope.form = ctrls[2];
 					ctrls[0].$name = scope.datapathName;
 					ctrls[2].$addControl(ctrls[0]);
@@ -52,6 +54,57 @@ angular.module('Pillars.directives', [])
 			}
 		};
 	})
+	.directive('subsetlist', function() {
+		return {
+			scope : true,
+			link: function (scope, element, atts){
+				var currentSubset = 0;
+				Object.defineProperty(scope,"currentSubset",{
+					enumerable : true,
+					get : function(){return currentSubset;}
+				});
+
+				scope.gotoSubset = function(i){
+					if(i>0 && i<(scope.datapathValue.length || 0)){
+						currentSubset = k;
+					}
+				}
+				scope.prevSubset = function(){
+					if(currentSubset==0){
+						currentSubset=scope.datapathValue.length || 0;
+					} else {
+						currentSubset--;
+					}
+				}
+				scope.nextSubset = function(){
+					if(currentSubset==(scope.datapathValue.length-1 || 0)){
+						currentSubset=0;
+					} else {
+						currentSubset++;
+					}
+				}
+
+				scope.insertSubset = function(){
+					scope.datapathValue.push({_order:scope.datapathValue.length});
+				}
+				scope.removeSubset = function(i){
+					scope.datapathValue.splice(i,1);
+				}
+				scope.moveSubset = function(i){
+					var dataset = scope.datapathValue;
+					var hashKeys = dataset.map(function(e,i){return e.$$hashKey;});
+					var subset = dataset[i];
+					
+					dataset.splice(i,1);
+					dataset.splice(subset._order,0,subset);
+					dataset.forEach(function(e,i){
+						e.$$hashKey = hashKeys[i];
+						e._order = i;
+					});
+				}
+			}
+		}
+	})
 	.directive('datepicker', function($locale) {
 		return {
 			restrict: 'E',
@@ -59,13 +112,13 @@ angular.module('Pillars.directives', [])
 			require: 'ngModel',
 			replace: true,
 			link: function(scope, element, atts, ctrl) {
-				
+				var weekini = 1;
+				var linkCtrl = atts.linkid?angular.element('#'+atts.linkid).controller('ngModel'):false;
 				var localeDateTime = $locale.DATETIME_FORMATS;
 				scope.months = localeDateTime.MONTH.map(function(element,index,array){return {key:index,name:element};});
 				scope.weekdays = localeDateTime.SHORTDAY.map(function(element,index,array){return {key:index,name:element};});
 
-				var linkCtrl = atts.linkid?angular.element('#'+atts.linkid).controller('ngModel'):false;
-				var calendar = new Calendar(1);
+				var calendar = new Calendar(weekini);
 				scope.calendar = calendar;
 
 				scope.$watchCollection('calendar.selection', function() {
@@ -97,129 +150,154 @@ angular.module('Pillars.directives', [])
 			require: 'ngModel',
 			replace: true,
 			link: function(scope, element, atts, ctrl) {
-				var apiList = new ApiList($rootScope.env.apiurl);
-				apiList.loader.progress = function(){
-					$timeout(function() {
-					}, 0);
-				};
-				scope.references = [];
-				scope.apiList = apiList;
-				apiList.load();
+				var linkCtrl = atts.linkid?angular.element('#'+atts.linkid).controller('ngModel'):false;
+				var touched = false;
+				scope.loaded = false;
+				scope.opened = false;
 
-				ctrl.$render = function() {
-					scope.references = ctrl.$viewValue;
-				};
-
-				/*
-				scope.$watch('value', function() {
-					if(typeof scope.value != "undefined" && scope.value!=""){
-						scope.references = scope.value;
-						scope.setOrders();
-						scope.set = scope.references.map(function(element,index,array){
-							return element._id;
-						}).join(',');
-					}
+				var limit = 0;
+				Object.defineProperty(scope,"limit",{
+					enumerable : true,
+					get : function(){return limit;}
 				});
 
-				var loader = new xhrLoader();
+				var apiList = new ApiList($rootScope.env.apiurl);
+				apiList.loader.progress = function(){
+					scope.opened = true;
+					$timeout(function(){}, 0);
+				};
+				scope.apiList = apiList;
 
-				loader.start = function(){
-					scope.loading=true;
-					scope.sending=0;
-					scope.receiving=0;
-				};
-				loader.sending = function(percent){
-					scope.sending=percent;
-					scope.$digest();
-				};
-				loader.receiving = function(percent){
-					scope.receiving=percent;
-					scope.$digest();
-				};
-				loader.fail = function(error){
-					//console.log("Request error");
-				};
-				loader.end = function(){
-					//console.log("Request complete",loader.xhr.status,loader.xhr.statusText);
-					scope.msgs = loader.xhr.json.msgs || [];
-					scope.loading=false;
+				var ids = [];
+				Object.defineProperty(scope,"ids",{
+					enumerable : true,
+					get : function(){return ids;}
+				});
+				var selection = [];
+				Object.defineProperty(scope,"selection",{
+					enumerable : true,
+					get : function(){return selection;}
+				});
 
-					if(loader.xhr.json.data.skip || loader.xhr.json.data.range) {
-						if(loader.xhr.json.data.limit>loader.xhr.json.data.list.length){scope.end = true;}
-						var cache = scope.data.list;
-						scope.data = loader.xhr.json.data || [];
-						scope.data.list = cache.concat(loader.xhr.json.data.list);
-					} else {
-						if(loader.xhr.json.data.limit>loader.xhr.json.data.list.length){scope.end = true;}
-						scope.data = loader.xhr.json.data || [];
+				scope.sortValues = [];
+				function refreshIds(){
+					ids = selection.map(function(e,i){
+						return e._id;
+					});
+					scope.sortValues = Object.keys(ids);
+					ctrl.$setViewValue(ids.join(','));
+					if(linkCtrl){
+						if(touched){
+							linkCtrl.$dirty = true;
+							linkCtrl.$pristine = false;
+							linkCtrl.$setTouched();
+						}
+						linkCtrl.$setValidity('reference',true);
 					}
+				}
 
-					scope.$digest();
+				ctrl.$render = function() {
+					selection = ctrl.$viewValue;
+					if(selection){refreshIds();}
 				};
 
-				scope.load = function(reload){
-					if(!scope.data || reload){loader.send('get','api?_filter='+scope.search,false,false);}
+				scope.asignReference = function(reference){
+					touched = true;
+					if(limit==1){
+						ids=reference;
+						selection = [reference];
+					} else {
+						var index = ids.indexOf(reference._id);
+						if(index>=0){
+							ids.splice(index,1);
+							selection.splice(index,1);
+						} else {
+							ids.push(reference._id);
+							selection.push(reference);
+						}
+					}
+					refreshIds();
+				}
+
+				scope.moveReference = function(k){
+					touched = true;
+					var reference = selection[k];
+					var newIndex = scope.sortValues[k];
+					selection.splice(k,1);
+					selection.splice(newIndex,0,reference);
+					refreshIds();
+				}
+
+				scope.dropdownToggle = function(){
+					if(!scope.opened){
+						scope.dropdownOpen();
+					} else {
+						scope.dropdownClose();
+					}
+				}
+
+				scope.dropdownOpen = function(){
+					if(!scope.loaded){
+						scope.loaded = true;
+						apiList.load();
+					}
 					scope.opened = true;
 				}
 
-				scope.dropdown = function(){
-					if(!scope.opened){
-						scope.load();
+				scope.dropdownClose = function(){
+					scope.opened = false;
+				}
+
+				scope.escape = function(){
+					var currentFocus = element.find('.search:focus');
+					if(currentFocus.length==0){
+						element.find('.search').focus();
 					} else {
-						scope.opened = false;
+						scope.dropdownClose();
 					}
 				}
 
-				scope.more = function(){
-					var skip = parseInt(scope.data.skip || 0);
-					var limit = parseInt(scope.data.limit || 0);
-					var range = scope.data.range || false;
-					loader.send('get','api?_filter='+scope.search+'&_skip='+(skip+limit),false,false);
-				}
-
-				scope.addReference = function(reference){
-					var set = scope.references.map(function(element,index,array){
-						return element._id;
-					});
-					var index = set.indexOf(reference._id);
-					if(index>=0){
-						set.splice(index,1);
-						scope.references.splice(index,1);
-					} else {
-						set.push(reference._id);
-						scope.references.push(reference);
+				var list = element.find('ul.references');
+				var tabControl = element.find('ul.references, .search');
+				tabControl.on('keydown', function(event) {
+					var currentFocus = list.find('>li:focus');
+					if(event.keyCode==38 || event.keyCode==40){
+						scope.$apply(function() {
+							scope.dropdownOpen();
+						});
+						var newFocus;
+						if(event.keyCode=="38"){
+							if(currentFocus.length==0){
+								newFocus = list.find('>li:last');
+							} else {
+								newFocus = currentFocus.prev();
+								if(newFocus.length==0){
+									newFocus = list.find('>li:last');
+								}
+							}
+						} else {
+							if(currentFocus.length==0){
+								newFocus = list.find('>li:first');
+							} else {
+								newFocus = currentFocus.next();
+								if(newFocus.length==0){
+									newFocus = list.find('>li:first');
+								}
+							}
+						}
+						newFocus.focus();
 					}
-					scope.setOrders();
-					scope.set = set.join(',');
-				}
-
-				scope.setOrders = function(){
-					scope.sorts = scope.references.map(function(element,index,array){
-						return ''+index+'';
-					});
-				}
-
-				scope.moveReference = function(i){
-					var tomove = scope.references[i];
-					var order = scope.sorts[i];
-					scope.references.splice(i,1);
-					scope.references.splice(order,0,tomove);
-					scope.setOrders();
-					var set = scope.references.map(function(element,index,array){
-						return element._id;
-					});
-					scope.set = set.join(',');
-				}
-
-				element.bind('click', function(e) {
-					e.stopPropagation();
 				});
 
-				$document.bind('click', function() {
-					scope.opened = false;
-					scope.$digest();
+				element.on('click', function(event) {
+					event.stopPropagation();
+				});
+
+				$document.on('click', function() {
+					scope.$apply(function() {
+						scope.opened = false;
+					});
 				})
-				*/
 
 			}
 		};
@@ -230,12 +308,46 @@ angular.module('Pillars.directives', [])
 			var margin = attr.scrollEndMargin || 0;
 			margin = parseInt(margin);
 			var lastHeight = 0;
-			element.bind('scroll', function(e) {
+			element.on('scroll', function(event) {
 				if (lastHeight!=raw.scrollHeight && raw.scrollTop + raw.offsetHeight + margin >= raw.scrollHeight) {
 					lastHeight = raw.scrollHeight;
 					scope.$apply(attr.scrollEnd);
 				}
 			});
+		};
+	})
+	.directive('tabSelection', function($parse) {
+		return {
+			restrict: 'A',
+			compile: function(element, atts) {
+				var fn = $parse(atts.tabSelection);
+				return function eventHandler(scope, element) {
+					element.on('keydown', function(event) {
+						if(event.keyCode==32 || event.keyCode==13){
+							scope.$apply(function() {
+								fn(scope, {$event:event});
+							});
+						}
+					});
+				};
+			}
+		};
+	})
+	.directive('keyEscape', function($parse) {
+		return {
+			restrict: 'A',
+			compile: function(element, atts) {
+				var fn = $parse(atts.keyEscape);
+				return function eventHandler(scope, element) {
+					element.on('keydown', function(event) {
+						if(event.keyCode==27){
+							scope.$apply(function() {
+								fn(scope, {$event:event});
+							});
+						}
+					});
+				};
+			}
 		};
 	})
 	.directive('htmlEditor', function() {
