@@ -25,6 +25,7 @@ mixin field(field)
 				
 mixin field-validation(field)
 	//pre=util.format({keys:field.keys,coedition:field.coedition})
+	//em {{datapath}}
 	//div {{crudEntityForm[datapathName]}}
 	//div {{datapathValue}}
 	//.input-msgs
@@ -95,7 +96,7 @@ mixin checkbox(field)
 mixin checkboxes(field)
 	div(class="checkboxes", ng-form, datapath-name)
 		each option in field.values
-			.checkbox(datapath=option, ng-class="{danger:form[datapathName].$invalid,ok:form[datapathName].$valid && form[datapathName].$dirty }")
+			.checkbox(datapath=option, ng-class="{danger:lastform[datapathName].$invalid,ok:lastform[datapathName].$valid && lastform[datapathName].$dirty }")
 				input(type='checkbox', datapath-id, datapath-name, ng-model="datapathValue", ng-true-value='true', ng-false-value='false')
 				label=t12n("schemas."+field.schema.id+".fields."+field.path+".values."+option)
 
@@ -221,6 +222,8 @@ mixin crudEntity(schema)
 			legend
 				h3.text-primary= t12n("schemas."+schema.id+".title")
 					small= " "+t12n("schemas."+schema.id+".details",{_default:""})
+
+			button(ng-click="crudEntityLoader.update()")
 
 			div.unseters.ng-hide
 				input(ng-repeat="(nstk,nst) in nstlist",ng-value="nst",name="unset[{{nstk}}]")

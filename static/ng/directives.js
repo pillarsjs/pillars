@@ -5,6 +5,7 @@ angular.module('Pillars.directives', [])
 			compile : function(){
 				return {
 					pre: function (scope, element, atts){
+						scope.form = scope.form || element.controller('form');
 						scope.datapath = (scope.datapath || []).concat([atts.datapath]);
 						scope.datapathId = 'entity_'+scope.datapath.join('_');
 						scope.datapathName = 'entity['+scope.datapath.join('][')+']';
@@ -39,13 +40,14 @@ angular.module('Pillars.directives', [])
 			require: ['?ngModel','?form', '^form'],
 			link:function(scope,element,attrs,ctrls){
 				if(ctrls[0]){
+					ctrls[0].ctrlId = Date.now().toString(36)+Math.round(Math.random()*10).toString(36),
 					element.removeAttr('datapath-name');
 					element.attr('name', scope.datapathName);
 					scope.form = ctrls[2];
 					ctrls[0].$name = scope.datapathName;
 					ctrls[2].$addControl(ctrls[0]);
 				} else if(ctrls[1]){
-					scope.form = ctrls[1];
+					scope.lastform = ctrls[1];
 					ctrls[2] = element.parent().controller('form');
 					ctrls[2].$removeControl(ctrls[1]);
 					ctrls[1].$name = scope.datapathName;
@@ -91,15 +93,38 @@ angular.module('Pillars.directives', [])
 					scope.datapathValue.splice(i,1);
 				}
 				scope.moveSubset = function(i){
+					var datapathName = scope.datapathName;
 					var dataset = scope.datapathValue;
 					var hashKeys = dataset.map(function(e,i){return e.$$hashKey;});
 					var subset = dataset[i];
 					
+					var copyParams = ['$untouched','$touched','$pristine','$dirty','$valid','$invalid','$error'];
+					var pattern = new RegExp('^'+datapathName.replace('[','\\[').replace(']','\\]')+'\\[','i');
+					var ctrls = {};
+					for(var c in scope.form){
+						if(pattern.test(c)){
+							ctrls[c]={};
+							for(var p in copyParams){
+								ctrls[c][copyParams[p]]=scope.form[c][copyParams[p]];
+							}
+						}
+					}
+
 					dataset.splice(i,1);
 					dataset.splice(subset._order,0,subset);
-					dataset.forEach(function(e,i){
-						e.$$hashKey = hashKeys[i];
-						e._order = i;
+					dataset.forEach(function(e,ei){
+						var originalOrder = hashKeys.indexOf(e.$$hashKey);
+						e.$$hashKey = hashKeys[ei];
+						e._order = ei;
+						var subpattern = new RegExp('^'+datapathName.replace('[','\\[').replace(']','\\]')+'\\['+originalOrder+'\\]','i');
+						for(var c in ctrls){
+							if(subpattern.test(c)){
+								var c2 = c.replace(subpattern,datapathName+'['+ei+']');
+								for(var p in copyParams){
+									scope.form[c2][copyParams[p]]=ctrls[c][copyParams[p]];
+								}
+							}
+						}
 					});
 				}
 			}

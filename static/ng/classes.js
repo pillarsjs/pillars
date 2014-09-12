@@ -7,12 +7,13 @@ function XhrLoader(){
 	loader.sending = 0;
 	loader.receiving = 0;
 
-	loader.send = function(method, url, form, files){
+	loader.send = function(method, url, form){
 		xhr.open(method, url, true);
 		loader.response = false;
 		loader.running = true;
 		loader.sending = 0;
 		loader.receiving = 0;
+		files = false;
 		//xhr.responseType="json";
 		if(form){
 			if(files){
@@ -32,7 +33,8 @@ function XhrLoader(){
 				xhr.send(formdata);
 			} else {
 				xhr.setRequestHeader("Content-Type", "application\/x-www-form-urlencoded");
-				xhr.send($(form).serialize());
+				//xhr.send($(form).serialize());
+				console.log($(form).serializeArray());
 			}
 		} else {
 			xhr.send();
@@ -157,13 +159,13 @@ function ApiList(url){
 	apiList.load = function(){
 		apiList.skip = 0;
 		apiList.error = false;
-		apiList.loader.send('get',apiList.query(),false,false);
+		apiList.loader.send('get',apiList.query());
 		return apiList;
 	};
 	apiList.next = function(){
 		apiList.skip = parseInt(apiList.skip)+parseInt(apiList.limit);
 		apiList.error = false;
-		apiList.loader.send('get',apiList.query(),false,false);
+		apiList.loader.send('get',apiList.query());
 		return apiList;
 	};
 	apiList.reset();
@@ -195,12 +197,12 @@ function ApiEntity(url){
 		return apiEntity;
 	}
 	apiEntity.load = function(){
-		loader.send('get',url+"/"+apiEntity.id,false,false);
+		loader.send('get',url+"/"+apiEntity.id);
 		return apiEntity;
 	}
 	apiEntity.onData = function(){}
 	apiEntity.update = function(){
-		loader.send('put',url+"/"+apiEntity.id,apiEntity.form,false);
+		loader.send('put',url+"/"+apiEntity.id,apiEntity.form);
 		return apiEntity;
 	}
 	apiEntity.reset();
