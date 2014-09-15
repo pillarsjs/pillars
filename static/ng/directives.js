@@ -5,10 +5,13 @@ angular.module('Pillars.directives', [])
 			compile : function(){
 				return {
 					pre: function (scope, element, atts){
-						scope.form = scope.form || element.controller('form');
+						scope.form = scope.form || element.closest('form').controller('form');
+						scope.lastform = scope.lastform || scope.form;
+
 						scope.datapath = (scope.datapath || []).concat([atts.datapath]);
-						scope.datapathId = 'entity_'+scope.datapath.join('_');
-						scope.datapathName = 'entity['+scope.datapath.join('][')+']';
+						scope.datapathId = 'set_'+scope.datapath.join('_');
+						scope.datapathName = 'set['+scope.datapath.join('][')+']';
+						scope.status = scope.lastform[scope.datapathName];
 						Object.defineProperty(scope,"datapathValue",{
 							enumerable : true,
 							get : function(){
@@ -25,6 +28,43 @@ angular.module('Pillars.directives', [])
 			}
 		}
 	})
+	.directive("ngForm",function(){
+		return {
+			restrict:"A",
+			require: 'form',
+			compile : function(){
+				return {
+					pre:function(scope,element,attrs,ctrl){
+						scope.lastform = ctrl;
+						scope.status = scope.lastform;
+					},
+					post:function(scope,element,attrs,ctrl){
+						scope.form.$removeControl(scope.lastform);
+						scope.lastform.$name = scope.datapathName;
+					}
+				};
+			}
+		};
+	})
+	.directive("fieldForm",function(){
+		return {
+			restrict:"A",
+			require: 'form',
+			compile : function(){
+				return {
+					pre:function(scope,element,attrs,ctrl){
+						scope.fieldForm = ctrl;
+					},
+					post:function(scope,element,attrs,ctrl){
+						ctrl.getScope = function(){
+							return scope;
+						}
+						scope.form.$addControl(ctrl);
+					}
+				};
+			}
+		};
+	})
 	.directive("datapathId",function(){
 		return {
 			restrict:"A",
@@ -37,96 +77,127 @@ angular.module('Pillars.directives', [])
 	.directive("datapathName",function(){
 		return {
 			restrict:"A",
-			require: ['?ngModel','?form', '^form'],
-			link:function(scope,element,attrs,ctrls){
-				if(ctrls[0]){
-					ctrls[0].ctrlId = Date.now().toString(36)+Math.round(Math.random()*10).toString(36),
-					element.removeAttr('datapath-name');
-					element.attr('name', scope.datapathName);
-					scope.form = ctrls[2];
-					ctrls[0].$name = scope.datapathName;
-					ctrls[2].$addControl(ctrls[0]);
-				} else if(ctrls[1]){
-					scope.lastform = ctrls[1];
-					ctrls[2] = element.parent().controller('form');
-					ctrls[2].$removeControl(ctrls[1]);
-					ctrls[1].$name = scope.datapathName;
-					ctrls[2].$addControl(ctrls[1]);
+			require: 'ngModel',
+			link:function(scope,element,attrs,ctrl){
+				element.removeAttr('datapath-name');
+				element.attr('name', scope.datapathName);
+				ctrl.$name = scope.datapathName;
+				scope.status = ctrl;
+				if(scope.fieldForm){
+					scope.fieldForm.$addControl(ctrl);
+				} else {
+					ctrl.getScope = function(){
+						return scope;
+					}
+					scope.form.$addControl(ctrl);
+					if(scope.lastform!=scope.form){
+						scope.lastform.$addControl(ctrl);
+					}
 				}
 			}
 		};
 	})
+	.directive('idfield',function(){
+		return {
+			compile : function(){
+				return {
+					pre:function(scope,element,attrs,ctrl){
+						console.log('id include');
+						scope.$parent.haveId = (scope.$parent.haveId || []).slice().concat([scope.datapathName]);
+					}
+				};
+			}
+		}
+	})
 	.directive('subsetlist', function() {
 		return {
 			scope : true,
-			link: function (scope, element, atts){
-				var currentSubset = 0;
-				Object.defineProperty(scope,"currentSubset",{
-					enumerable : true,
-					get : function(){return currentSubset;}
-				});
+			compile : function(){
+				return {
+					pre:function(scope,element,attrs,ctrl){
+					},
+					post:function (scope, element, atts){
+						var currentSubset = 0;
+						Object.defineProperty(scope,"currentSubset",{
+							enumerable : true,
+							get : function(){return currentSubset;}
+						});
 
-				scope.gotoSubset = function(i){
-					if(i>0 && i<(scope.datapathValue.length || 0)){
-						currentSubset = k;
-					}
-				}
-				scope.prevSubset = function(){
-					if(currentSubset==0){
-						currentSubset=scope.datapathValue.length || 0;
-					} else {
-						currentSubset--;
-					}
-				}
-				scope.nextSubset = function(){
-					if(currentSubset==(scope.datapathValue.length-1 || 0)){
-						currentSubset=0;
-					} else {
-						currentSubset++;
-					}
-				}
-
-				scope.insertSubset = function(){
-					scope.datapathValue.push({_order:scope.datapathValue.length});
-				}
-				scope.removeSubset = function(i){
-					scope.datapathValue.splice(i,1);
-				}
-				scope.moveSubset = function(i){
-					var datapathName = scope.datapathName;
-					var dataset = scope.datapathValue;
-					var hashKeys = dataset.map(function(e,i){return e.$$hashKey;});
-					var subset = dataset[i];
-					
-					var copyParams = ['$untouched','$touched','$pristine','$dirty','$valid','$invalid','$error'];
-					var pattern = new RegExp('^'+datapathName.replace('[','\\[').replace(']','\\]')+'\\[','i');
-					var ctrls = {};
-					for(var c in scope.form){
-						if(pattern.test(c)){
-							ctrls[c]={};
-							for(var p in copyParams){
-								ctrls[c][copyParams[p]]=scope.form[c][copyParams[p]];
+						scope.gotoSubset = function(i){
+							if(i>0 && i<(scope.datapathValue.length || 0)){
+								currentSubset = k;
 							}
 						}
-					}
+						scope.prevSubset = function(){
+							if(currentSubset==0){
+								currentSubset=scope.datapathValue.length || 0;
+							} else {
+								currentSubset--;
+							}
+						}
+						scope.nextSubset = function(){
+							if(currentSubset==(scope.datapathValue.length-1 || 0)){
+								currentSubset=0;
+							} else {
+								currentSubset++;
+							}
+						}
 
-					dataset.splice(i,1);
-					dataset.splice(subset._order,0,subset);
-					dataset.forEach(function(e,ei){
-						var originalOrder = hashKeys.indexOf(e.$$hashKey);
-						e.$$hashKey = hashKeys[ei];
-						e._order = ei;
-						var subpattern = new RegExp('^'+datapathName.replace('[','\\[').replace(']','\\]')+'\\['+originalOrder+'\\]','i');
-						for(var c in ctrls){
-							if(subpattern.test(c)){
-								var c2 = c.replace(subpattern,datapathName+'['+ei+']');
-								for(var p in copyParams){
-									scope.form[c2][copyParams[p]]=ctrls[c][copyParams[p]];
+						scope.insertSubset = function(){
+							scope.datapathValue = scope.datapathValue || [];
+							scope.datapathValue.push({_order:scope.datapathValue.length});
+						}
+						scope.removeSubset = function(i){
+							scope.datapathValue.splice(i,1);
+						}
+						scope.moveSubset = function(i){
+							var datapathName = scope.datapathName;
+							var dataset = scope.datapathValue;
+							var hashKeys = dataset.map(function(e,i){return e.$$hashKey;});
+							var subset = dataset[i];
+							
+							var copyParams = ['$untouched','$touched','$pristine','$dirty','$valid','$invalid','$error'];
+							var pattern = new RegExp('^'+datapathName.replace('[','\\[').replace(']','\\]')+'\\[','i');
+							var ctrls = {};
+							for(var c in scope.form){
+								if(pattern.test(c)){
+									ctrls[c]={};
+									for(var p in copyParams){
+										ctrls[c][copyParams[p]]=scope.form[c][copyParams[p]];
+									}
 								}
 							}
+
+							dataset.splice(i,1);
+							dataset.splice(subset._order,0,subset);
+							dataset.forEach(function(e,ei){
+								var originalOrder = hashKeys.indexOf(e.$$hashKey);
+								e.$$hashKey = hashKeys[ei];
+								if(e._order != ei){
+									e._order = ei;
+									var orderCtrl = ctrls[datapathName+'['+originalOrder+'][_order]'];
+									if(orderCtrl){
+										orderCtrl.$untouched = false;
+										orderCtrl.$touched = true;
+										orderCtrl.$pristine = false;
+										orderCtrl.$dirty = true;
+										scope.form[datapathName+'['+originalOrder+'][_order]'].getScope().lastform.$setDirty();
+									}
+								}
+								
+								var subpattern = new RegExp('^'+datapathName.replace('[','\\[').replace(']','\\]')+'\\['+originalOrder+'\\]','i');
+								for(var c in ctrls){
+									if(subpattern.test(c)){
+										var c2 = c.replace(subpattern,datapathName+'['+ei+']');
+										for(var p in copyParams){
+											scope.form[c2][copyParams[p]]=ctrls[c][copyParams[p]];
+										}
+									}
+								}
+							});
 						}
-					});
-				}
+					}
+				};
 			}
 		}
 	})
@@ -138,7 +209,14 @@ angular.module('Pillars.directives', [])
 			replace: true,
 			link: function(scope, element, atts, ctrl) {
 				var weekini = 1;
-				var linkCtrl = atts.linkid?angular.element('#'+atts.linkid).controller('ngModel'):false;
+				var linkElement = atts.linkid?angular.element('#'+atts.linkid):false;
+				var linkCtrl = linkElement?linkElement.controller('ngModel'):false;
+				var dayInput = element.find('.date-day');
+				if(linkCtrl){
+					linkElement.on('focus',function(){
+						dayInput.focus();
+					});
+				}
 				var localeDateTime = $locale.DATETIME_FORMATS;
 				scope.months = localeDateTime.MONTH.map(function(element,index,array){return {key:index,name:element};});
 				scope.weekdays = localeDateTime.SHORTDAY.map(function(element,index,array){return {key:index,name:element};});
@@ -147,16 +225,16 @@ angular.module('Pillars.directives', [])
 				scope.calendar = calendar;
 
 				scope.$watchCollection('calendar.selection', function() {
-					ctrl.$setValidity('date',calendar.selection.valid);
-					if(linkCtrl){
-						if(calendar.selection.touched){
+					if(calendar.selection.touched){
+						ctrl.$setViewValue(calendar.selection.value);
+						ctrl.$setValidity('date',calendar.selection.valid);
+						if(linkCtrl){
 							linkCtrl.$dirty = true;
 							linkCtrl.$pristine = false;
 							linkCtrl.$setTouched();
+							linkCtrl.$setValidity('date',calendar.selection.valid);
 						}
-						linkCtrl.$setValidity('date',calendar.selection.valid);
 					}
-					ctrl.$setViewValue(calendar.selection.value);
 				});
 
 				ctrl.$render = function() {
@@ -175,7 +253,14 @@ angular.module('Pillars.directives', [])
 			require: 'ngModel',
 			replace: true,
 			link: function(scope, element, atts, ctrl) {
-				var linkCtrl = atts.linkid?angular.element('#'+atts.linkid).controller('ngModel'):false;
+				var linkElement = atts.linkid?angular.element('#'+atts.linkid):false;
+				var linkCtrl = linkElement?linkElement.controller('ngModel'):false;
+				var searchInput = element.find('.search');
+				if(linkCtrl){
+					linkElement.on('focus',function(){
+						searchInput.focus();
+					});
+				}
 				var touched = false;
 				scope.loaded = false;
 				scope.opened = false;
@@ -210,14 +295,14 @@ angular.module('Pillars.directives', [])
 						return e._id;
 					});
 					scope.sortValues = Object.keys(ids);
-					ctrl.$setViewValue(ids.join(','));
-					if(linkCtrl){
-						if(touched){
+					if(touched){
+						ctrl.$setViewValue(ids.join(','));
+						if(linkCtrl){
 							linkCtrl.$dirty = true;
 							linkCtrl.$pristine = false;
 							linkCtrl.$setTouched();
+							linkCtrl.$setValidity('reference',true);
 						}
-						linkCtrl.$setValidity('reference',true);
 					}
 				}
 
@@ -276,7 +361,7 @@ angular.module('Pillars.directives', [])
 				scope.escape = function(){
 					var currentFocus = element.find('.search:focus');
 					if(currentFocus.length==0){
-						element.find('.search').focus();
+						searchInput.focus();
 					} else {
 						scope.dropdownClose();
 					}

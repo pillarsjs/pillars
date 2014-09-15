@@ -7,7 +7,7 @@ function XhrLoader(){
 	loader.sending = 0;
 	loader.receiving = 0;
 
-	loader.send = function(method, url, form){
+	loader.send = function(method, url, data){
 		xhr.open(method, url, true);
 		loader.response = false;
 		loader.running = true;
@@ -15,26 +15,13 @@ function XhrLoader(){
 		loader.receiving = 0;
 		files = false;
 		//xhr.responseType="json";
-		if(form){
+		if(data){
+			xhr.send(data);
 			if(files){
-				var formdata = new FormData(form);
-				/*
-				var fieldscount = form.length;
-				for(var i = 0; i<fieldscount; i++){
-					if(form[i].name && !form[i].disabled && (!form[i].className || form[i].className.indexOf('ng-pristine')<0)){
-						console.log(form[i].name);
-						if(form[i].type=="file"){
-							console.log(form[i]);
-						} else {
-							formdata.append(form[i].name,form[i].value);
-						}
-					}
-				}*/
-				xhr.send(formdata);
 			} else {
-				xhr.setRequestHeader("Content-Type", "application\/x-www-form-urlencoded");
+				//xhr.setRequestHeader("Content-Type", "application\/x-www-form-urlencoded");
 				//xhr.send($(form).serialize());
-				console.log($(form).serializeArray());
+				//console.log($(form).serializeArray());
 			}
 		} else {
 			xhr.send();
@@ -201,8 +188,8 @@ function ApiEntity(url){
 		return apiEntity;
 	}
 	apiEntity.onData = function(){}
-	apiEntity.update = function(){
-		loader.send('put',url+"/"+apiEntity.id,apiEntity.form);
+	apiEntity.update = function(data){
+		loader.send('put',url+"/"+apiEntity.id,data);
 		return apiEntity;
 	}
 	apiEntity.reset();

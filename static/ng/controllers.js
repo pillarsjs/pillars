@@ -26,8 +26,68 @@ angular.module('Pillars.controllers', [])
 
 
 		
-		$scope.crudEntityFormInputs = function(){
-			return Object.keys($scope.crudEntityForm);
+		$scope.crudEntityUpdate = function(){
+			var formDom = crudEntityForm;
+			var formCtrl = $scope.crudEntityForm;
+			var inputRegexp = /^set\[/i;
+			console.log(formCtrl);
+
+			if(formCtrl.$dirty){
+				if(formCtrl.$valid){
+					console.log("Formulario con cambios y correcto, se procede al envio");
+					var sendPack = {};
+					for(var i in formCtrl){
+						if(inputRegexp.test(i) && formCtrl[i].$dirty){
+							var fieldScope = formCtrl[i].getScope();
+							sendPack[i] = fieldScope.datapathValue;
+							if(fieldScope.haveId){
+								for(var d in fieldScope.haveId){
+									sendPack[fieldScope.haveId[d]]=formCtrl[fieldScope.haveId[d]].getScope().datapathValue;
+								}
+							}
+						}
+					}
+					console.log("paquete a enviar:",sendPack);
+					formCtrl.$setPristine();
+
+					var formdata = new FormData();
+					for(var i in sendPack){
+						formdata.append(i,sendPack[i]);
+					}
+					crudEntityLoader.update(formdata);
+
+				/*
+				var fieldscount = form.length;
+				for(var i = 0; i<fieldscount; i++){
+					if(form[i].name && !form[i].disabled && (!form[i].className || form[i].className.indexOf('ng-pristine')<0)){
+						console.log(form[i].name);
+						if(form[i].type=="file"){
+							console.log(form[i]);
+						} else {
+							formdata.append(form[i].name,form[i].value);
+						}
+					}
+				}*/
+
+
+				} else {
+					console.log("Uno o más campos tienen errores",formCtrl.$error);
+					var firstErrorInput = false;
+					errors:for(var e in formCtrl.$error){
+						inputs:for(var einput in formCtrl.$error[e]){
+							var name = formCtrl.$error[e][einput].$name;
+							if(name){
+								firstErrorInput = $("[name='"+name+"']",formDom);
+								firstErrorInput.focus();
+								break errors;
+							}
+						}
+					}
+				}
+			} else {
+				console.log("No se ha modificado ningun campo");
+				// Formulario intacto
+			}
 		}
 		/*
 		$rootScope.languages = null;

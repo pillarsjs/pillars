@@ -2,7 +2,7 @@ include ./examples.jade
 
 mixin field(field)
 	- var fullwidth = (field.template=='subset' || field.template=='subsetlist')?" fullwidth":"";
-	div(class="field"+fullwidth, datapath=field.id, ng-class="{danger:crudEntityForm[datapathName].$invalid,ok:crudEntityForm[datapathName].$valid && crudEntityForm[datapathName].$dirty }")
+	div(class="field"+fullwidth, datapath=field.id, ng-class="{danger:status.$invalid,ok:status.$valid && status.$dirty }")
 		label
 			span= t12n("schemas."+field.schema.id+".fields."+field.path+".label")
 			if field.i18n
@@ -24,9 +24,10 @@ mixin field(field)
 				+#{field.template}(field)
 				
 mixin field-validation(field)
+	//div {{status}}
 	//pre=util.format({keys:field.keys,coedition:field.coedition})
 	//em {{datapath}}
-	//div {{crudEntityForm[datapathName]}}
+	//div {{lastform[datapathName]}}
 	//div {{datapathValue}}
 	//.input-msgs
 		//.msg.bg-alert Cuidado!
@@ -40,8 +41,8 @@ mixin subset(field)
 mixin subsetlist(field)
 	div(class="subsetlist",subsetlist)
 		button(ng-click="insertSubset()") Insertar
-		fieldset(ng-repeat="(datapathKey,datapathRepeater) in datapathValue", datapath='{{$index}}')
-			input(type="text", class="ng-hide", datapath="_id", datapath-id, datapath-name, ng-model="datapathValue")
+		fieldset(ng-repeat="(datapathKey,datapathRepeater) in datapathValue", datapath='{{datapathKey}}',ng-form, ng-class="{danger:status.$invalid,ok:status.$valid && status.$dirty }")
+			input(type="text", class="ng-hide", datapath="_id", datapath-id, datapath-name, idfield, ng-model="datapathValue")
 			input(type="text", class="ng-hide", datapath="_order", datapath-id, datapath-name, ng-model="datapathValue")
 			each sfield in field.fields
 				+field(sfield)
@@ -51,7 +52,7 @@ mixin subsetlist(field)
 					span(class="fa fa-times")
 					| Eliminar
 				.select.sort
-					select(datapath="_order", datapath-id, datapath-name, ng-model="datapathValue", ng-change="moveSubset($index)",ng-options="ore._order as ore._order*1+1 for (ork, ore) in $parent.$parent.datapathValue")
+					select(datapath="_order", datapath-id, datapath-name, ng-model="datapathValue", ng-change="moveSubset($index)",ng-options="ore._order as ore._order*1+1 for (ork, ore) in $parent.$parent.datapathValue",ng-class="{danger:status.$invalid,ok:status.$valid && status.$dirty }")
 					span.select-focus
 
 mixin text(field)
@@ -67,6 +68,7 @@ mixin textarea(field)
 	textarea(datapath-id, datapath-name, ng-model="datapathValue")
 
 mixin editor(field)
+	div {{datapath}}
 	div(id="{{datapathId}}_toolbar",class="editor_toolbar", style="display: none;")
 		a(data-wysihtml5-command="bold")= t12n("crud.bricks.editor.bold")
 		a(data-wysihtml5-command="italic")= t12n("crud.bricks.editor.italic")
@@ -94,14 +96,14 @@ mixin checkbox(field)
 		label
 
 mixin checkboxes(field)
-	div(class="checkboxes", ng-form, datapath-name)
+	div(class="checkboxes", ng-form)
 		each option in field.values
-			.checkbox(datapath=option, ng-class="{danger:lastform[datapathName].$invalid,ok:lastform[datapathName].$valid && lastform[datapathName].$dirty }")
+			.checkbox(datapath=option, ng-class="{danger:status.$invalid,ok:status.$valid && status.$dirty }")
 				input(type='checkbox', datapath-id, datapath-name, ng-model="datapathValue", ng-true-value='true', ng-false-value='false')
 				label=t12n("schemas."+field.schema.id+".fields."+field.path+".values."+option)
 
 mixin radios(field)
-	div(class="radios", ng-form, datapath-name)
+	div(class="radios", ng-form, field-form)
 		each option in field.values
 			.radio
 				input(type='radio', ng-model="datapathValue", value=option)
@@ -223,7 +225,9 @@ mixin crudEntity(schema)
 				h3.text-primary= t12n("schemas."+schema.id+".title")
 					small= " "+t12n("schemas."+schema.id+".details",{_default:""})
 
-			button(ng-click="crudEntityLoader.update()")
+			button(ng-click="crudEntityUpdate()") Enviar
+
+			div {{crudEntityForm.$dirty}}
 
 			div.unseters.ng-hide
 				input(ng-repeat="(nstk,nst) in nstlist",ng-value="nst",name="unset[{{nstk}}]")
