@@ -1,7 +1,7 @@
 {
   "name": "pillars",
   "description": "Pillars-JS a modular and scalable framework for web development in NodeJS.",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "author": {
     "name": "Bifuer",
     "email": "bifuer@gmail.com"
@@ -18,7 +18,6 @@
     "jade": "*",
     "mongodb": "*",
     "formidable": "*",
-    "cookie": "*",
     "mime": "*",
     "colors":"*",
     "sprintf-js":"*",

@@ -13,7 +13,8 @@ global.PILLARS = {
 	maxGzipSize : 5*1024*1024,
 	htmlErrors : true,
 	requestIds : false,
-	templatesCache : true
+	templatesCache : true,
+	timeout: 10*1000
 };
 
 var textualization = require('./lib/textualization');
@@ -119,7 +120,7 @@ function Pillars(){
 	}
 
 	pillars.configure = function(config){
-		var values = ['uploadsDirectory','tempDirectory','maxUploadSize','maxGzipSize','htmlErrors','templatesCache','errorsTemplate','staticTemplate'];
+		var values = ['uploadsDirectory','tempDirectory','maxUploadSize','maxGzipSize','htmlErrors','templatesCache','errorsTemplate','staticTemplate','timeout'];
 		var config = config || {};
 		for(var i in config){
 			if(values.indexOf(i)>=0){
