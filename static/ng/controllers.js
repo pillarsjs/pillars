@@ -49,6 +49,9 @@ angular.module('Pillars.controllers', [])
 					}
 					console.log("paquete a enviar:",sendPack);
 					formCtrl.$setPristine();
+					for(var sc in formCtrl.hiddenCtrls){
+						formCtrl.hiddenCtrls[sc].$setPristine();
+					}
 
 					var formdata = new FormData();
 					for(var i in sendPack){

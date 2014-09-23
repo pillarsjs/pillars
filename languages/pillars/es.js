@@ -43,8 +43,9 @@
 	'heap-rewrite':"Nodo de textualización sobrescrito ".red+"'%(element)s'".yellow+": ".red+"'%(path)s'".yellow+", languaje: ".red+"%(lang)s".yellow
 },
 'templates':{
-	'cache-ok':"Plantilla ".cyan+"'%(path)s'".yellow+" cargada".cyan,
-	'cache-error':"Error al cargar la plantilla ".red+"'%(path)s'".yellow
+	'ok':"Plantilla ".cyan+"'%(path)s'".yellow+" cargada".cyan,
+	'error':"Error al cargar la plantilla ".red+"'%(path)s'".yellow,
+	'msg':"No existe el template '%(path)s'."
 },
 'gangway':{
 	'session':{
@@ -56,7 +57,7 @@
 		'ok':"Archivo temporal %(file)s' borrado".green.inverse.white,
 		'error':"Error al borrar el archivo temporal '%(file)s'".red.inverse.white
 	},
-	'close':"%(poolid)s %(id)s".magenta+" %(method)s:".cyan+" %(path)s".white+" [%(code)s]".cyan+"  %(size)sbytes %(timer)sms".grey,
+	'close':(PILLARS.requestIds?"%(poolid)s %(id)s ".magenta:'')+"%(method)s:".cyan+" %(path)s".white+" [%(code)s]".cyan+"  %(size)sbytes %(timer)sms".grey,
 	'error':{
 		'h1':"Error %(code)s %(explain)s, disculpe las molestias"
 	}
@@ -87,6 +88,18 @@
 'static':{
 	'title': "Listando directorio %(path)s",
 	'h1': "%(path)s"
+},
+'env':{
+	'uploadsDirectory':{
+		'alert':'Directorio de subida de archivos sin definir'.yellow.reverse,
+		'error':'No existe el directorio para subida de archivos: '.red+'%(path)s'.magenta,
+		'ok':'Directorio de subida de archivos correcto en: '.green+'%(path)s'.yellow
+	},
+	'tempDirectory':{
+		'alert':'Directorio temporal sin definir'.yellow.reverse,
+		'error':'No existe el directorio temporal: '.red+'%(path)s'.magenta,
+		'ok':'Directorio temporal correcto en '.green+'%(path)s'.yellow
+	}
 }
 
 

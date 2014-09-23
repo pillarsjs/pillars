@@ -1,7 +1,7 @@
 {
   "name": "pillars",
-  "description": "Pillars nodejs web engine",
-  "version": "0.0.11",
+  "description": "Pillars-JS a modular and scalable framework for web development in NodeJS.",
+  "version": "0.0.12",
   "author": {
     "name": "Bifuer",
     "email": "bifuer@gmail.com"
@@ -10,9 +10,9 @@
     "type": "git",
     "url": "git://github.com/bifuer/pillars"
   },
-  "main": "./app.js",
+  "main": "./pillars.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node pillars.js"
   },
   "dependencies": {
     "jade": "*",

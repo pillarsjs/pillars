@@ -1,60 +1,68 @@
-
-var pillars = require('../app.js').global();
-
-pillars.configure({
-	uploadsDirectory : '../uploads',
-	tempDirectory : '../temp',
-	maxUploadSize : 10*1024*1024,
-	maxGzipSize : 5*1024*1024,
-	htmlErrors : true
+var util = require('util'); // Incluimos la libreria 'util' de NodeJS.
+var pillars = require('../pillars.js').global().configure({
+	uploadsDirectory : './uploads',
+	tempDirectory : './temp'
 });
-/*
-var textualization = pillars.textualization;
-var App = pillars.App;
-var Pillar = pillars.Pillar;
-var Beam = pillars.Beam;
-var precasts = pillars.precasts;
-var modelator = pillars.modelator;
-var renderer = pillars.renderer;
-*/
 
 var app = new App();
 app.languages = ['es','en'];
 app.database = 'primera';
 app.start();
-
-var miBeam = new Beam({path:':param1/:param2'},function(gw){
-	gw.send({
-		id : 'dos paramteros',
-		gwParams : gw.params,
-		beamParams : gw.beam.params,
-		beamPath : gw.beam.path.toString(),
-	});
-});
-
-var miBeam2 = new Beam({path:'*:path'},function(gw){
-	gw.send({
-		id : 'cualquier ruta',
-		gwParams : gw.params,
-		beamParams : gw.beam.params,
-		beamPath : gw.beam.path.toString(),
-	});
-});
-
-var app2 = new App()
-	.start(3001)
-	.add(new Pillar()
-		.add(new Beam(function(gw){
-			gw.send(app2.routes);
+app
+	.add(new Pillar({
+		id: 'tools',
+		path: '/'
+	})
+		.add(new Beam({
+			id: 'status',
+			path: '/status'
+		},function(gw){
+			// Mostramos la información de estado actual de nuestra app.
+			gw.send("<pre>"+util.inspect(app.routes,{depth:4})+"</pre>"); // util inspect da formato a un objeto JS para poder mostrarlo como String.
 		}))
-		.add(miBeam)
-		.add(miBeam2)
+		.add(new Beam({
+			id: 'console.log',
+			path: '/console/log/:varName' // Podremos capturar cualquier ruta con el formato "/console/log/xxx" y recibir como parametro 'xxx'.
+		},function(gw){
+			console.log(global[gw.params.varName]);
+			gw.send('<strong>Ok</strong>');
+		}))
+		.add(new Beam({
+			id: 'removeTools',
+			path: '/tools-off'
+		},function(gw){
+			// Vamos a desmontar el pillar 'tools', para poder volver a trabajar con el lo guardamos en global.
+			global.toolsCopy = app.get('tools');
+			// Pasamos a retirarlo de la App.
+			app.remove('tools');
+			console.log('Se ha desmontado el Pillar "Tools"');
+			gw.send('<strong>Tools desmontado.</strong>');
+		}))
 	)
-	.start(3002)
-;
+	.add(new Pillar({
+		id: 'examples',
+		path: '/'
+	})
+		.add(new Beam({
+			id: 'file',
+			path: '/source'
+		},function(gw){
+			// Envimaos el archivo app.js de la aplicación al cliente.
+			gw.file('../app.js','Mi primera aplicación Pillars.js');
+		}))
+		.add(new Beam({
+			id: 'redirection',
+			path: '/redirect'
+		},function(gw){
+			gw.redirect('http://www.google.es');
+		}))
+	)
 
-//miBeam.path = '/*:path';
-miBeam.priority = 1001;
+
+
+
+
+/*
 
 var systemModel = new modelator.Schema('system',{
 	app : app,
@@ -103,37 +111,11 @@ var systemModel = new modelator.Schema('system',{
 	)
 ;
 
-
 var systemPillar = new Pillar({
 	id:'sample-pillar',
 	path:'/system'
 });
 precasts.crudBeams(systemPillar,systemModel);
-app.add(systemPillar);
-
-
-
-
-
-
-var usersSchema = new modelator.Schema('users',{
-	app : app,
-	collection : 'users',
-	limit : 5,
-	filter : ['_id','user','firstname','lastname'], 
-	headers : ['_id','user','firstname','lastname','password']
-})
-	.addField('Text','user')
-	.addField('Text','firstname')
-	.addField('Text','lastname')
-	.addField('Text','password')
-	.addField('Text','keys')
-
-var systemPillar = new Pillar({
-	id:'users',
-	path:'/users'
-});
-precasts.crudBeams(systemPillar,usersSchema);
 app.add(systemPillar);
 
 
@@ -210,4 +192,6 @@ textualization.load('schemas.system',{
 		}
 	}
 });
+
+*/
 

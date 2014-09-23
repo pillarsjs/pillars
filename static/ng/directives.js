@@ -41,6 +41,8 @@ angular.module('Pillars.directives', [])
 					post:function(scope,element,attrs,ctrl){
 						scope.form.$removeControl(scope.lastform);
 						scope.lastform.$name = scope.datapathName;
+						scope.form.hiddenCtrls = (scope.form.hiddenCtrls || {});
+						scope.form.hiddenCtrls[scope.datapathName]=scope.lastform;
 					}
 				};
 			}

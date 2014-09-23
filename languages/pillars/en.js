@@ -43,8 +43,9 @@
 	'heap-rewrite':"Textualization node overwrite ".red+"'%(element)s'".yellow+": ".red+"'%(path)s'".yellow+", language: ".red+"%(lang)s".yellow
 },
 'templates':{
-	'cache-ok':"Template ".cyan+"'%(path)s'".yellow+" loaded".cyan,
-	'cache-error':"Template load error ".red+"'%(path)s'".yellow
+	'ok':"Template ".cyan+"'%(path)s'".yellow+" loaded".cyan,
+	'error':"Template load error ".red+"'%(path)s'".yellow,
+	'msg':"Template '%(path)s' no exist."
 },
 'gangway':{
 	'session':{
@@ -56,7 +57,7 @@
 		'ok':"Temp file %(file)s' deleted".green,
 		'error':"Delete temp file error '%(file)s'".red
 	},
-	'close':"%(poolid)s %(id)s".magenta+" %(method)s:".cyan+" %(path)s".white+" [%(code)s]".cyan+"  %(size)sbytes %(timer)sms".grey,
+	'close':(PILLARS.requestIds?"%(poolid)s %(id)s ".magenta:'')+"%(method)s:".cyan+" %(path)s".white+" [%(code)s]".cyan+"  %(size)sbytes %(timer)sms".grey,
 	'error':{
 		'h1':"Error %(code)s %(explain)s"
 	}
@@ -87,4 +88,16 @@
 'static':{
 	'title': "Directory listing %(path)s",
 	'h1': "%(path)s"
+},
+'env':{
+	'uploadsDirectory':{
+		'alert':'Uploads directory undefined'.yellow.reverse,
+		'error':'Uploads directory no exist,'.red+' path: %(path)s'.magenta,
+		'ok':'Uploads directory set on'.green+' path: %(path)s'.yellow
+	},
+	'tempDirectory':{
+		'alert':'Temp directory undefined'.yellow.reverse,
+		'error':'Temp directory no exist,'.red+' path: %(path)s'.magenta,
+		'ok':'Temp directory set on'.green+' path: %(path)s'.yellow
+	}
 }
