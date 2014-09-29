@@ -23,7 +23,7 @@
 	'error':"Server error ".red+"%(hostname)s:%(port)s".yellow,
 	'listening':"Server listening on ".green+"%(hostname)s:%(port)s".yellow,
 	'closed':"Server closed ".red+"%(hostname)s:%(port)s".yellow+" %(timer)sm".grey,
-	'socket-closed': "%(poolid)s".magenta+" Socket closed".red+" %(timer)sm".grey,
+	'socket-closed': function(){return "%(poolid)s".magenta+" Socket closed".red+(had_error?' (transmission error)'.yellow:'')+" %(timer)sm".grey;},
 	'socket-open': "%(poolid)s".magenta+" Socket open".green,
 	'database':{
 		'connection-ok':"Database ".green+"'%(name)s'".yellow+" connected on ".green+"%(url)s:%(port)s".yellow,

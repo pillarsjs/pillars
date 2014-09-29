@@ -1,4 +1,5 @@
 
+var httpProxy = require('http-proxy');
 var paths = require('path');
 var fs = require('fs');
 var pillarsPackage = require('./package');
@@ -9,6 +10,7 @@ global.PILLARS = {
 		var path = path || '';
 		return paths.resolve(__dirname,path);
 	},
+	proxy : httpProxy.createProxyServer({}),
 	maxUploadSize : 10*1024*1024,
 	maxGzipSize : 5*1024*1024,
 	htmlErrors : true,
@@ -120,7 +122,7 @@ function Pillars(){
 	}
 
 	pillars.configure = function(config){
-		var values = ['uploadsDirectory','tempDirectory','maxUploadSize','maxGzipSize','htmlErrors','templatesCache','errorsTemplate','staticTemplate','timeout'];
+		var values = ['uploadsDirectory','tempDirectory','maxUploadSize','maxGzipSize','htmlErrors','templatesCache','errorsTemplate','staticTemplate','timeout','requestIds'];
 		var config = config || {};
 		for(var i in config){
 			if(values.indexOf(i)>=0){

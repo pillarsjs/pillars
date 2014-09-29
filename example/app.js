@@ -1,7 +1,8 @@
 var util = require('util'); // Incluimos la libreria 'util' de NodeJS.
 var pillars = require('../pillars.js').global().configure({
 	uploadsDirectory : './uploads',
-	tempDirectory : './temp'
+	tempDirectory : './temp',
+	requestIds : true
 });
 
 var app = new App();
@@ -69,6 +70,10 @@ app
 				gw.authenticate('Es necesario usuario y clave para ver este contenido');
 			}
 		}))
+		.add(new Beam({id: 'proxy',path: '/proxy/*:path',upload:'ignore'},function(gw){
+			// Transparent proxy redirection.
+			gw.proxy({port:3001,path:(gw.params.path || '')});
+		}))		
 		.add(new Beam({id: 'maintenance',path: '/cerrado'},function(gw){
 			// Esto servira de página "En mantenimiento".
 			gw.send("closed for maintenance");
@@ -120,11 +125,123 @@ app
 			gw.send("<pre>"+util.inspect(global[gw.params.varName],{depth:4})+"</pre>");
 		}))
 	)
+;
+
+app
+	.add(new Pillar({id: 'static',path: '/static'})
+		.add(new Beam({id: 'main',path: '*:path',directory:'./static',directoryListing:true},precasts.directory))
+	)
+;
 
 
+var app2 = new App().start(3001)
+	.add(new Pillar({id: 'root',path: '/'})
+		.add(new Beam({id: 'all',path: '/*:path'},function(gw){
+			console.log({params:gw.params,cookie:gw.cookie});
+			gw.send('hola');
+		}))
+	)
+;
 
 
+/* The Pillars Hello world */
 /*
+Routing on two steps:
+You can organize your controllers (Beam) on logic groups (Pillar).
+Pillar describe the first common part of the path, priority and maybe the hostname {path:'/examples',host:'sub.hostname.ext',priority:10},
+Beam describe the rest of the path, the method and prority {method:'get|post',path:'/case1',priority:42} and set the handler/midleware.
+The App router check the Pillar list, and only check Beams if necesary.
+The router is dinamic, you can add, remove, change priority, id or path, method... any change is aplied by the router in running App.
+Gangway is abstraction of request+response, it's have all you need, width easy names and methods.
+*
+var pillars = require('pillars').global();
+
+var app = new App().start()
+	.add(new Pillar({id:'examples1', path:'/examples1'})
+		.add(new Beam({id:'sendFile', path:'/source'},function(gw){
+			gw.file('./app.js','source.js'); // support cache, http streaming, compression, forced download, file name...
+		}))
+		.add(new Beam({id:'sendJSON', path:'/json'},function(gw){
+			// gw is a request+response abstraction with all you need and dream in one object.
+			gw.send(
+				session : gw.session,
+				params:  gw.params,
+				ip: gw.ip, 
+				routes: app.routes
+			);
+		}))
+		.add(new Beam({id:'params', path:'/params/:param1', method:'get|post'},function(gw){
+			gw.send({
+				query: gw.query, // only query params.
+				path: gw.pathParams, // only path params, in this case 'param1'.
+				content: gw.content.params, // only content params, forms POST, multipart...
+				files: gw.files, // only files received.
+				all: gw.params // all params mixed, preference: path>content>query
+			});
+		}))
+		.add(new Beam({id: 'sendHTML',path: '/html'},function(gw){
+			gw.send('<h1>Hello world!</h1>');
+		}))
+		.add(new Beam({id: 'sendHTMLtemplate',path: '/template'},function(gw){
+			gw.render('./template.ext',{title:'Hello world'}); // Multi engine based on extensions, and cache control.
+		}))
+		.add(new Beam({id: 'cacheControl',path: '/cache'},function(gw){
+			var oldDate = new Date(0); // This content modification time, very old content.
+			if(!gw.cachek(oldDate)){ // If client haven't this content cached...
+				gw.send('Vey old content!');
+			}
+			// .cacheck(Date) send 304 if content is cached and return true, if not return false. In both cases set the last modification date for the response.
+		}))
+		.add(new Beam({id: 'static',path: '/static/*:path',directory:'./',directoryListing:true},precasts.directory))
+	)
+	.add(new Pillar({id: 'examples2',path: '/examples2'})
+		.add(app.get('examples1').get('sendFile')) // Use the same Beam.
+		.add(new Beam({id: 'removeExamples',path: '/remove'},function(gw){
+			global.examples1 = app.get('examples1'); // Dirty save before remove Pillar.
+			app.remove('examples1');
+		}))
+		.add(new Beam({id: 'mountExamples',path: '/mount'},function(gw){
+			// remount Examples1 if removed.
+			if(global.examples1){app.add(global.examples1);}
+		}))
+		.add(new Beam({id: 'changePriority',path: '/priority'},function(gw){
+			var oldRoutes = app.routes;
+			app.get('examples2').priority = 10; // this change the sort in routes.
+			var newRoutes = app.routes;
+			console.log({oldRoutes:oldRoutes,newRoutes:newRoutes});
+		}))
+		.add(new Beam({id: 'middleWare',path: '/check/:name/:password'},
+			function(gw,next){
+				if(gw.params.name=='Walter'){
+					next();
+				} else {
+					gw.send('Incorrect name!');
+				}
+			},
+			function(gw){
+				if(gw.params.password=='White'){
+					gw.send('Ok, ok... follow me.');
+				} else {
+					gw.send('Say my name!');
+				}
+			}
+		))
+	)
+;
+
+/* */
+
+
+
+
+
+
+
+
+
+
+/* Modelator example (on progress) */
+
 
 var systemModel = new modelator.Schema('system',{
 	app : app,
@@ -181,6 +298,8 @@ precasts.crudBeams(systemPillar,systemModel);
 app.add(systemPillar);
 
 
+
+// Translations/Textualizations for system schema (es,en).
 
 textualization.load('schemas.system',{
 	en:{
@@ -254,6 +373,4 @@ textualization.load('schemas.system',{
 		}
 	}
 });
-
-*/
 

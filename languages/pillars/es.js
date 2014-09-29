@@ -23,7 +23,7 @@
 	'error':"Error en el servidor ".red+"%(hostname)s:%(port)s".yellow,
 	'listening':"Servidor escuchando en ".green+"%(hostname)s:%(port)s".yellow,
 	'closed':"Servidor detenido ".red+"%(hostname)s:%(port)s".yellow+" %(timer)sm".grey,
-	'socket-closed': "%(poolid)s".magenta+" Socket cerrado".red+" %(timer)sm".grey,
+	'socket-closed': function(){return "%(poolid)s".magenta+" Socket cerrado".red+(had_error?' (error en la transmisión)'.yellow:'')+" %(timer)sm".grey;},
 	'socket-open': "%(poolid)s".magenta+" Socket abierto".green,
 	'database':{
 		'connection-ok':"Base de datos ".green+"'%(name)s'".yellow+" connectada en ".green+"%(url)s:%(port)s".yellow,
