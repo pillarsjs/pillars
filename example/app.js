@@ -136,7 +136,7 @@ app
 
 var app2 = new App().start(3001)
 	.add(new Pillar({id: 'root',path: '/'})
-		.add(new Beam({id: 'all',path: '/*:path'},function(gw){
+		.add(new Beam({id: 'all',path: '/*:path',origin:'*'},function(gw){
 			console.log({params:gw.params,cookie:gw.cookie});
 			gw.send('hola');
 		}))
@@ -149,7 +149,7 @@ var app2 = new App().start(3001)
 Routing on two steps:
 You can organize your controllers (Beam) on logic groups (Pillar).
 Pillar describe the first common part of the path, priority and maybe the hostname {path:'/examples',host:'sub.hostname.ext',priority:10},
-Beam describe the rest of the path, the method and prority {method:'get|post',path:'/case1',priority:42} and set the handler/midleware.
+Beam describe the rest of the path, the method and prority {method:['get','post'],path:'/case1',priority:42} and set the handler/midleware.
 The App router check the Pillar list, and only check Beams if necesary.
 The router is dinamic, you can add, remove, change priority, id or path, method... any change is aplied by the router in running App.
 Gangway is abstraction of request+response, it's have all you need, width easy names and methods.
@@ -170,7 +170,7 @@ var app = new App().start()
 				routes: app.routes
 			);
 		}))
-		.add(new Beam({id:'params', path:'/params/:param1', method:'get|post'},function(gw){
+		.add(new Beam({id:'params', path:'/params/:param1', method:['get','post']},function(gw){
 			gw.send({
 				query: gw.query, // only query params.
 				path: gw.pathParams, // only path params, in this case 'param1'.

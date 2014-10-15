@@ -146,13 +146,13 @@ function ApiList(url){
 	apiList.load = function(){
 		apiList.skip = 0;
 		apiList.error = false;
-		apiList.loader.send('get',apiList.query());
+		apiList.loader.send('GET',apiList.query());
 		return apiList;
 	};
 	apiList.next = function(){
 		apiList.skip = parseInt(apiList.skip)+parseInt(apiList.limit);
 		apiList.error = false;
-		apiList.loader.send('get',apiList.query());
+		apiList.loader.send('GET',apiList.query());
 		return apiList;
 	};
 	apiList.reset();
@@ -184,12 +184,12 @@ function ApiEntity(url){
 		return apiEntity;
 	}
 	apiEntity.load = function(){
-		loader.send('get',url+"/"+apiEntity.id);
+		loader.send('GET',url+"/"+apiEntity.id);
 		return apiEntity;
 	}
 	apiEntity.onData = function(){}
 	apiEntity.update = function(data){
-		loader.send('put',url+"/"+apiEntity.id,data);
+		loader.send('PUT',url+"/"+apiEntity.id,data);
 		return apiEntity;
 	}
 	apiEntity.reset();

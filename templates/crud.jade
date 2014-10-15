@@ -363,7 +363,7 @@ html(lang=gw.language,ng-app="PillarsCRUD")
 				}])
 				.run(function ($rootScope) {
 					$rootScope.env = {
-						apiurl : 'http://#{gw.host}#{gw.pillar.config.path}/api',
+						apiurl : 'http://#{gw.host}:#{gw.port}#{gw.pillar.config.path}/api',
 						lang : '#{gw.language}',
 						langlist : ['#{gw.textualization.langs.join("','")}']
 					}
