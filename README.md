@@ -6,7 +6,7 @@
 
 ## Getting started
 
- - **[es]**: [Comenzando con PillarsJS](https://github.com/bifuer/pillars/wiki/Comenzando-con-PillarsJS).
+ - **[es]**: [Comenzando con PillarsJS](https://github.com/bifuer/pillars/wiki/Comenzando-con-Pillars.js).
  - **[en]**: ~~PillarsJS Getting started~~ (TODO)
 
 ## Scope
