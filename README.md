@@ -1,6 +1,6 @@
 # [![Pillars - make it easy ](http://pillarsjs.com/logo.png)](http://pillarsjs.com/)
 
-> *Pillars is still an Alpha version. In a few days the documentation and the first stable version will be available.*
+> *Pillars.js is still an Alpha version. In a few days the documentation and the first stable version will be available.*
 
 > **Very soon you'll see Node web development in a different way.**
 
