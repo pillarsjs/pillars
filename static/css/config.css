@@ -1,0 +1,58 @@
+.faclass {
+  display: inline-block;
+  font-family: 'FontAwesome';
+  font-size: inherit;
+  font-size-adjust: none;
+  font-stretch: normal;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: normal;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.inputs-border {
+  border-width: 1px;
+  border-style: solid;
+  border-color: inherit;
+}
+.inputs-basics {
+  display: inline-block;
+  vertical-align: top;
+  padding: 0 1em 0 1em;
+  height: 2.2em;
+  background-color: #ffffff;
+  border-radius: 4px;
+  outline: none;
+  white-space: nowrap;
+  color: #333333;
+  text-shadow: none;
+  position: relative;
+  margin: 0 0.5em 0.5em 0;
+  border-width: 1px;
+  border-style: solid;
+  border-color: inherit;
+}
+.inputs-box-inset {
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1) inset;
+}
+.inputs-box-inset-hover {
+  box-shadow: 0 0 3px 0px rgba(0, 0, 0, 0.2), 1px 1px 1px rgba(0, 0, 0, 0.1) inset;
+}
+.inputs-box-inset-focus {
+  border-color: #00d6ef !important;
+  box-shadow: 0 0 1px 4px rgba(0, 214, 239, 0.3), 1px 1px 1px rgba(0, 0, 0, 0.1) inset;
+  z-index: 1000;
+}
+.inputs-box-outset {
+  box-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1) inset;
+}
+.inputs-box-outset-hover {
+  box-shadow: 0 0 3px 0px rgba(0, 0, 0, 0.2), -1px -1px 1px rgba(0, 0, 0, 0.1) inset;
+}
+.inputs-box-outset-focus {
+  border-color: #00d6ef !important;
+  box-shadow: 0 0 1px 4px rgba(0, 214, 239, 0.3), -1px -1px 1px rgba(0, 0, 0, 0.1) inset;
+  z-index: 1000;
+}

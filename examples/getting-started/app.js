@@ -1,8 +1,9 @@
 var util = require('util'); // Incluimos la libreria 'util' de NodeJS.
-var pillars = require('../pillars.js').global().configure({
+var pillars = require('../../pillars.js').global().configure({
 	uploadsDirectory : './uploads',
 	tempDirectory : './temp',
-	requestIds : true
+	requestIds : false,
+	templatesCache : false
 });
 
 var app = new App();

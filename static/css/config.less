@@ -1,0 +1,103 @@
+
+@color-primary: #D40041;
+@color-secondary: #FFCC00;
+@color-secondary: #ded9c9;
+@color-secondary: #c4bfaf;
+
+@color-default: #333333;
+@color-action: #00d6ef;
+@color-info: #97bdc0;
+@color-ok: #57C967;
+@color-alert: #f5ba30;
+@color-danger: #d03846;
+@color-soft: #d4d4d4;
+
+.faclass {
+	display:inline-block;
+	font-family: 'FontAwesome';
+	font-size:inherit;
+	font-size-adjust: none;
+	font-stretch: normal;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: normal;
+	line-height: normal;
+	text-rendering: auto;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+@inputs-margin: 0.5em;
+@inputs-padding-top: 0.4em;
+@inputs-padding-right: 1em;
+@inputs-padding-bottom: 0.5em;
+@inputs-padding-left: 1em;
+@inputs-line-height: 1.3em;
+@inputs-paddings: 0 @inputs-padding-right 0 @inputs-padding-left;
+@inputs-height: @inputs-line-height + @inputs-padding-top + @inputs-padding-bottom;
+
+@inputs-border-width: 1px;
+@inputs-border-color: darken(@color-soft,10%);
+@inputs-border-radius: 4px;
+
+@inputs-bg: #FFFFFF;
+@inputs-box-inset: 1px 1px 1px rgba(0,0,0,0.1) inset;
+@inputs-box-outset: -1px -1px 1px rgba(0,0,0,0.1) inset;
+@inputs-box-hover: 0 0 3px 0px rgba(0,0,0,0.2);
+@inputs-box-focus: 0 0 1px 4px rgba(red(@color-action), green(@color-action), blue(@color-action),0.3);
+
+.inputs-border {
+	border-width: @inputs-border-width;
+	border-style: solid;
+	border-color: inherit;
+}
+.inputs-basics {
+	display: inline-block;
+	vertical-align: top;
+	padding: @inputs-paddings;
+	height: @inputs-height;
+	background-color: @inputs-bg;
+	border-radius: @inputs-border-radius;
+	outline: none;
+	white-space: nowrap;
+	color: @color-default;
+	text-shadow: none;
+	position: relative;
+	margin: 0 @inputs-margin @inputs-margin 0;
+	.inputs-border;
+}
+.inputs-box-inset {
+	box-shadow: @inputs-box-inset;
+}
+.inputs-box-inset-hover {
+	box-shadow: @inputs-box-hover, @inputs-box-inset;
+}
+.inputs-box-inset-focus {
+	border-color: @color-action !important;
+	box-shadow: @inputs-box-focus, @inputs-box-inset;
+	z-index: 1000;
+}
+.inputs-box-outset {
+	box-shadow: @inputs-box-outset;
+}
+.inputs-box-outset-hover {
+	box-shadow: @inputs-box-hover, @inputs-box-outset;
+}
+.inputs-box-outset-focus {
+	border-color: @color-action !important;
+	box-shadow: @inputs-box-focus, @inputs-box-outset;
+	z-index: 1000;
+}
+
+@dropdowns-padding-top: 0.2em;
+@dropdowns-padding-right: 1em;
+@dropdowns-padding-bottom: 0.2em;
+@dropdowns-padding-left: 1em;
+
+@dropdowns-line-height: 1em;
+@dropdowns-paddings: 0 @dropdowns-padding-right 0 @dropdowns-padding-left;
+@dropdowns-height: @dropdowns-line-height + @dropdowns-padding-top + @dropdowns-padding-bottom;
+
+
+
+
