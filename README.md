@@ -1,12 +1,12 @@
 # [![Pillars - make it easy ](http://pillarsjs.com/logo.png)](http://pillarsjs.com/)
 
-> *Pillars is still an Alpha version. In a few days the documentation and the first stable version will be available.*
+> *Pillars.js is still an Alpha version. In a few days the documentation and the first stable version will be available.*
 
 > **Very soon you'll see Node web development in a different way.**
 
 ## Getting started
 
- - **[es]**: [Comenzando con PillarsJS](https://github.com/bifuer/pillars/wiki/Comenzando-con-PillarsJS).
+ - **[es]**: [Comenzando con PillarsJS](https://github.com/bifuer/pillars/wiki/Comenzando-con-Pillars.js).
  - **[en]**: ~~PillarsJS Getting started~~ (TODO)
 
 ## Scope
