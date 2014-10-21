@@ -1,0 +1,384 @@
+include ../.layout.jade
+
+doctype html
+html(lang=gw.language)
+	+reference-layout("Pillars.js Reference - Librería pillars - 'make it easy!'")
+
+		#title
+			h1 Librería pillars
+				em  Pillars.js Reference
+			a.source(href="https://github.com/bifuer/pillars/blob/master/pillars.js") Source
+
+		//- Summary
+		section.summary
+			h2#summary Sumario
+			:markdown
+				Para utilizar el framework Pillars.js debemos realizar el requiere al comienzo de nuestra aplicación.
+				
+				Podemos usar los métodos `.global()` para hacer que las clases más utilizadas estén accesibles de forma global, y el método `.configure()` para configurar el entorno de trabajo Pillars.js y el funcionamiento del servidor.
+				
+							
+
+		//- Syntax
+		section.syntax
+			h2#syntax Sintaxis
+			code.codeblock.
+				var pillars = require('pillars.js').global().configure({
+					maxUploadSize: 10 * 10 * 1024,
+					uploadsDirectory : './uploads',
+				});
+
+			section.parameters
+				h3 Parámetros
+				:markdown
+					Opcionalmente podemos configurar aspectos del entorno de la aplicación y del servidor.
+
+				dl
+					dt errorsTemplate
+					dd
+						:markdown
+							**String** que especifica el Template para renderizar las páginas de error. **Por defecto**: ['templates/error.jade'](https://github.com/bifuer/pillars/blob/master/templates/error.jade).
+
+					dt htmlErrors
+					dd
+						:markdown
+							**Boolean**
+
+							**Default**: true;
+
+							True para que muestre información adicional del error en la página de error. False para que sólo muestre el código del error.
+
+					dt maxUploadSize
+					dd
+						:markdown
+							**Integer**
+
+							**Default**: 10\*1024\*1024 (10MB)
+
+							Tamaño máximo de archivo permitido en el servidor. .
+
+					dt maxGzipSize
+					dd
+						:markdown
+							**Integer**. Tamaño máximo de un archivo para que sea comprimido por el servidor. Default: 5\*1024\*1024 (5MB).
+
+					dt requestIds
+					dd
+						:markdown
+							Base de datos MongoDB que usará la aplicación para mantenimiento de sesiones y usuarios.
+
+
+					dt staticTemplate
+					dd
+						:markdown
+							**String**. Template de static. Default: ['templates/static.jade'](https://github.com/bifuer/pillars/blob/master/templates/static.jade).
+
+					dt tempDirectory
+					dd
+						:markdown
+							**String**. Idiomas en los que trabajará la aplicación.
+
+					dt templatesCache
+					dd
+						:markdown
+							**Boolean**. True para que cachee los templates, false para que no los cachee. Default: true.
+
+					dt timeout
+					dd
+						:markdown
+							**Integer**. Tiempo de espera máximo de cualquier solicitud HTTP en milisegundos. Default: 10\*1000;
+
+					dt uploadsDirectory
+					dd
+						:markdown
+							**String**. Idiomas en los que trabajará la aplicación.
+
+
+		//- Description
+		section.description
+			h2#description Descripción
+			:markdown
+				
+
+		//- Properties --------------------------------------------------------
+		section.properties
+			h2#properties Propiedades
+
+			.msg.msg-icon.info app es una instancia de la Clase App.
+			//- Property
+			section.property
+				h3#property-database: code 
+					| App.prototype.database
+
+				//- Property description
+				section.description
+					h4 Descripción
+					:markdown
+						La propiedad `database` es una propiedad dinámica, por lo tanto cuando la seteamos...
+
+				//- Property syntax
+				section.syntax
+					h4 Sintaxis
+					code.codeblock.
+						app.database=dbName;
+						// OR
+						app.database={
+							name: dbName,
+							url: dbUrl,
+							port: dbPort
+						};
+
+					section.parameters
+						h5 Parámetros
+						dl
+							dt dbName
+							dd
+								:markdown
+									String. Nombre de la base de datos MongDB. 
+
+							dt dbUrl
+							dd
+								:markdown
+									String. URL del servidor de la base de datos.
+
+							dt dbPort
+							dd
+								:markdown
+									Entero. Puerto de la base de datos MongDB. 
+
+
+			//- Property
+			section.property
+				h3#property-languages: code 
+					| App.prototype.languages
+
+				//- Property description
+				section.description
+					h4 Descripción
+					:markdown
+						La propiedad `languages` es una propiedad dinámica. Para setearla lo debemos hacer igualándola a un array con los idiomas de la aplicación.
+
+					h4 Sintaxis
+						code.codeblock.
+							app.languages=['es','en','de'];
+
+						.msg.msg-icon.danger Hay que setear la propiedad. No usar el método push para añadir nuevos idiomas.
+
+			//- Property
+			section.property
+				h3#property-pillars: code 
+					| App.prototype.pillars
+
+				//- Property description
+				section.description
+					h4 Descripción
+					:markdown
+						La propiedad `pillars` es de sólo lectura. Devuelve un array con todos los Pillar añadidos a App ordenados por orden de prioridad.
+
+			//- Property
+			section.property
+				h3#property-routes: code
+					| App.prototype.routes
+
+				//- Property description
+				section.description
+					h4 Descripción
+					:markdown
+						La propiedad `routes` es de sólo lectura. Devuelve un objeto con todas las rutas actuales; con todos los Pillar y Beam que se han añadido a App.
+
+
+			//- Property
+			section.property
+				h3#property-running: code
+					| App.prototype.running
+
+				//- Property description
+				section.description
+					h4 Descripción
+					:markdown
+						La propiedad `routes` es de sólo lectura. Devuelve `true` si el servidor está corriendo y `false` en caso contrario.
+
+
+			//- Property
+			section.property
+				h3#property-server: code
+					| App.prototype.server
+
+				//- Property description
+				section.description
+					h4 Descripción
+					:markdown
+						La propiedad `server` es de sólo lectura. Devuelve el objeto [http.Server](http://nodejs.org/api/http.html#http_class_http_server) que utiliza la App.
+
+	
+			
+		//- Methods ---------------------------------------------------------------------
+		section.methods
+			h2#methods Métodos
+
+			//- Method
+			section.method
+				h3#method-add: code
+					| App.prototype.add()
+
+				//- Method description
+				section.description
+					h4 Descripción
+					:markdown
+						El método `add` añade un Pillar a la aplicación.
+
+				//- Method syntax
+				section.syntax
+					h4 Sintaxis
+					code.codeblock.
+						app.add(pillar);
+
+					section.parameters
+						h5 Parámetros
+						dl
+							dt pillar
+							dd
+								:markdown
+									Instancia de la Clase Pillar. 
+
+			//- Method
+			section.method
+				h3#method-get: code
+					| App.prototype.get()
+
+				//- Method description
+				section.description
+					h4 Descripción
+					:markdown
+						El método `get` captura un Pillar activo através el id del Pillar.
+
+				//- Method syntax
+				section.syntax
+					h4 Sintaxis
+					code.codeblock.
+						app.get('idPillar');
+
+					section.parameters
+						h5 Parámetros
+						dl
+							dt idPillar
+							dd
+								:markdown
+									Identificador con el que se creó el Pillar.  
+
+
+			//- Method
+			section.method
+				h3#method-remove: code
+					| App.prototype.remove()
+
+				//- Method description
+				section.description
+					h4 Descripción
+					:markdown
+						El método `remove` elimina un Pillar activo dado id del Pillar.
+
+				//- Method syntax
+				section.syntax
+					h4 Sintaxis
+					code.codeblock.
+						app.remove('idPillar');
+
+					section.parameters
+							h5 Parámetros
+							dl
+								dt idPillar
+								dd
+									:markdown
+										Identificador con el que se creó el Pillar.   
+
+			//- Method
+			section.method
+				h3#method-start: code
+					| App.prototype.start()
+
+				//- Method description
+				section.description
+					h4 Descripción
+					:markdown
+						El método `start` arranca el servicio HTTP y la aplicación.
+
+				//- Method syntax
+				section.syntax
+					h4 Sintaxis
+					code.codeblock.
+						app.start([3000,'www.domain.com']);
+
+					section.parameters
+						h5 Parámetros
+						dl
+							dt port
+							dd
+								:markdown
+									Puerto en el que servirá la aplicación. Por defecto 3000. 
+
+							dt host
+							dd
+								:markdown
+									Host al que responderá la aplicación. Por defecto todos.
+
+			//- Method
+			section.method
+				h3#method-stop: code
+					| App.prototype.stop()
+
+				//- Method description
+				section.description
+					h4 Descripción
+					:markdown
+						El método `stop` detiene la aplicación y el servicio HTTP.
+
+				//- Method syntax
+				section.syntax
+					h4 Sintaxis
+					code.codeblock.
+						app.stop();
+
+		
+		//- Events ---------------------------------------------------------------------
+		section.events
+			h2#events Eventos
+
+			//- Method
+			section.event
+				h3#event-languages: code
+					| languages
+
+				//- Method description
+				section.description
+					h4 Descripción
+					:markdown
+						La clase App emite el evento 'languages' cuando se setea la propiedad languages.
+
+				//- Method syntax
+				section.syntax
+					h4 Sintaxis
+					code.codeblock.
+						app.on('languages');
+
+					
+
+
+
+
+		//- Examples ------------------------------------------------------------------------------
+		section.examples
+			h2#examples Ejemplos
+
+			//- Example
+			section.example
+				h3#example-1 Ejemplo 1
+				:markdown
+					Class `App` _Example 1_ lorem ipsum __synopsis__ hola [link to Google!](http://google.com)
+
+				code.codeblock.
+					var app = new App([{database:'',languages:['en'],port:3000,host:'*'}]);
+				
+				:markdown
+					Class App Example 1 Review
+
