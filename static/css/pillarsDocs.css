@@ -26,7 +26,7 @@
   border-radius: 4px;
   outline: none;
   white-space: nowrap;
-  color: #333333;
+  color: inherit;
   text-shadow: none;
   position: relative;
   margin: 0 0.5em 0.5em 0;
@@ -56,36 +56,242 @@
   box-shadow: 0 0 1px 4px rgba(0, 214, 239, 0.3), -1px -1px 1px rgba(0, 0, 0, 0.1) inset;
   z-index: 1000;
 }
+.a {
+  color: #00d6ef;
+}
+.a:before {
+  display: inline-block;
+  font-family: 'FontAwesome';
+  font-size: inherit;
+  font-size-adjust: none;
+  font-stretch: normal;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: normal;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\f0c1";
+  font-size: 1em;
+  margin-right: 0.2em;
+}
+.code {
+  background-color: #eeeeee;
+  border: 1px solid #d4d4d4;
+  border-radius: 4px;
+  color: #004d56;
+  display: inline-block;
+  margin: -0.2em 0.1em;
+  padding: 0.2em 0.4em;
+}
+.em {
+  color: #e7a50b;
+}
+.strong {
+  color: #a10031;
+}
+.del {
+  color: #999999;
+}
+body {
+  background-color: #f3f3f3;
+}
 #space {
-  max-width: 750px;
+  max-width: 1200px;
   margin: 0 auto;
+  background-color: #ffffff;
+}
+#header {
+  background-color: #d40041;
+}
+#header:after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 0;
+  clear: both;
+}
+#header #logo {
+  float: left;
+  clear: both;
+  width: 212px;
+  height: 40px;
+  display: inline-block;
+  text-indent: -100000px;
+  overflow: hidden;
+  margin: 0.5em;
+  background-image: url('../img/pillars-logo-topbar.png');
+}
+#header #mainmenu {
+  background-image: linear-gradient(45deg, transparent 2em, #ffffff 0px);
+  padding-left: 3em;
+  float: right;
+  font-weight: 700;
+  color: #d40041;
+  text-transform: uppercase;
+}
+#header #mainmenu > .select {
+  display: none;
+}
+#header #mainmenu ul li {
+  display: inline-block;
+}
+#header #social {
+  float: right;
+  color: #ffffff;
+  font-size: 2em;
+}
+#header #social ul {
+  padding: 0 0.5em;
+}
+#header #social ul li {
+  display: inline-block;
+  margin: 0;
+}
+#header #social ul li a {
+  width: 1em;
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+#header #social ul li a:before {
+  display: inline-block;
+  font-family: 'FontAwesome';
+  font-size: inherit;
+  font-size-adjust: none;
+  font-stretch: normal;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: normal;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin-right: 100000px;
+}
+#header #social ul li a.github:before {
+  content: '\f092';
+}
+#header #social ul li a.twitter:before {
+  content: '\f081';
+}
+#header #social ul li a.gplus:before {
+  content: '\f0d4';
+}
+#footer {
+  background-color: #333333;
+  min-height: 15em;
+  padding: 2em 1em;
+  color: #ffffff;
+}
+#footer .logo {
+  float: left;
+  clear: both;
+  width: 212px;
+  height: 40px;
+  display: inline-block;
+  text-indent: -100000px;
+  overflow: hidden;
+  margin: 0.5em;
+  background-image: url('../img/pillars-logo-topbar.png');
+}
+#footer .legal {
+  margin: 0.5em;
+  float: left;
+}
+#main {
+  float: none;
+  clear: both;
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+  padding: 2em 0 0;
+}
+#sidebar {
+  width: 18em;
+  display: table-cell;
+  vertical-align: top;
+  padding: 0;
+}
+#sidebar nav {
+  font-size: 1.2em;
+  background-color: #d40041;
+  color: #ffffff;
+  margin-bottom: 2em;
+}
+#sidebar nav h2 {
+  background-image: linear-gradient(45deg, transparent 2em, #333333 0px);
+  display: block;
+  padding: 0.2em 0.5em 0.2em 3em;
+  margin-bottom: 0;
+}
+#sidebar nav ul {
+  padding: 0.5em;
+}
+#sidebar nav > ul > li {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+}
+a.source:before {
+  display: inline-block;
+  font-family: 'FontAwesome';
+  font-size: inherit;
+  font-size-adjust: none;
+  font-stretch: normal;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: normal;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\f092" !important;
+  font-size: 1.5em !important;
 }
 #contents {
-  /*
-	h1 {
-		padding: 0.1em 0.5em;
-		background-color: @color-primary;
-		color: #ffffff;
-		em {
-			font-size: 0.5em;
-		}
-	}
-	h2 {
-		border-bottom: 2px solid @color-default;
-		margin-bottom: 1em;
-	}
-
-	section section {
-		margin: 2em;
-	}
-	*/
-
+  padding: 0 1em 3em;
+}
+#contents a {
+  color: #00d6ef;
+}
+#contents a:before {
+  display: inline-block;
+  font-family: 'FontAwesome';
+  font-size: inherit;
+  font-size-adjust: none;
+  font-stretch: normal;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: normal;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\f0c1";
+  font-size: 1em;
+  margin-right: 0.2em;
+}
+#contents #title {
+  margin: 0 0 1em;
+}
+#contents #title h1 {
+  display: inline-block;
+  margin: 0;
+}
+#contents #title .source {
+  background-color: #f3f3f3;
+  border-radius: 4px;
+  display: inline-block;
+  font-size: 1.2em;
+  margin: 0 1em;
+  padding: 0.2em 0.5em;
+  vertical-align: inherit;
 }
 #contents h1 {
   color: #d40041;
 }
 #contents h2 {
-  border-bottom: 1px solid #d4d4d4;
+  border-bottom: 1px solid #d40041;
 }
 #contents h1 em {
   font-size: 0.5em;
@@ -93,9 +299,70 @@
 #contents > section {
   margin-bottom: 4em;
 }
-#contents section section {
-  margin: 2em;
-}
-#contents .parameters {
+#contents > section section {
   margin: 1em;
+}
+#contents > section section section {
+  margin: 0.5em;
+}
+#sidebar + #contents {
+  padding-left: 2em;
+  display: table-cell;
+  vertical-align: top;
+}
+@media (max-width: 800px) {
+  #header #mainmenu {
+    background-image: none;
+    float: none;
+    clear: both;
+    padding: 0.5em 1em;
+  }
+  #header #mainmenu > .select {
+    display: block;
+  }
+  #header #mainmenu > .select select {
+    margin: 0;
+  }
+  #header #mainmenu > ul {
+    display: none;
+  }
+  #header #social {
+    display: block;
+    clear: both;
+    background-color: transparent;
+    color: #d40041;
+    padding: 0 0 0 1.2em;
+    background-image: linear-gradient(135deg, transparent 1em, #ffffff 0px);
+  }
+  #header #social > ul {
+    margin-bottom: -0.9em;
+  }
+  #sidebar {
+    display: none;
+  }
+  #sidebar nav > ul {
+    display: none;
+  }
+  #sidebar + #contents {
+    padding-left: 1em;
+    display: block;
+  }
+  #contents #title em {
+    display: none;
+  }
+  #contents #title .source {
+    margin: 0;
+  }
+  #contents > section {
+    margin-bottom: 3em;
+  }
+  #contents > section section {
+    margin: 0.5em;
+  }
+  #contents > section section section {
+    margin: 0.2em;
+  }
+  #contents dl {
+    margin: 0.1em 0.2em;
+  }
 }

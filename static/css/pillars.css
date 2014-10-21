@@ -26,7 +26,7 @@
   border-radius: 4px;
   outline: none;
   white-space: nowrap;
-  color: #333333;
+  color: inherit;
   text-shadow: none;
   position: relative;
   margin: 0 0.5em 0.5em 0;
@@ -56,6 +56,44 @@
   box-shadow: 0 0 1px 4px rgba(0, 214, 239, 0.3), -1px -1px 1px rgba(0, 0, 0, 0.1) inset;
   z-index: 1000;
 }
+.a {
+  color: #00d6ef;
+}
+.a:before {
+  display: inline-block;
+  font-family: 'FontAwesome';
+  font-size: inherit;
+  font-size-adjust: none;
+  font-stretch: normal;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: normal;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\f0c1";
+  font-size: 1em;
+  margin-right: 0.2em;
+}
+.code {
+  background-color: #eeeeee;
+  border: 1px solid #d4d4d4;
+  border-radius: 4px;
+  color: #004d56;
+  display: inline-block;
+  margin: -0.2em 0.1em;
+  padding: 0.2em 0.4em;
+}
+.em {
+  color: #e7a50b;
+}
+.strong {
+  color: #a10031;
+}
+.del {
+  color: #999999;
+}
 *,
 *:before,
 *:after {
@@ -69,6 +107,11 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+  border-bottom: 1px dotted transparent;
+  background-color: transparent;
+}
+a:hover {
+  text-decoration: underline;
 }
 h1,
 h2,
@@ -104,10 +147,37 @@ h5 {
 h6 {
   font-size: 1em;
 }
+nav h2,
+nav h3,
+nav h4,
+nav h5,
+nav h6 {
+  display: none;
+  font-size: 1em;
+}
+nav ul {
+  margin: 0;
+  padding: 0;
+  display: block;
+  list-style-type: none;
+}
+nav ul ul {
+  margin-left: 1em;
+}
+nav ul li {
+  display: block;
+}
+nav ul li a {
+  padding: 0.4em 1em 0.5em 1em;
+  display: block;
+}
 p {
   margin: 0 0 0.5em;
 }
-p > a:before {
+p a {
+  color: #00d6ef;
+}
+p a:before {
   display: inline-block;
   font-family: 'FontAwesome';
   font-size: inherit;
@@ -121,14 +191,8 @@ p > a:before {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   content: "\f0c1";
-  font-size: 0.8em;
+  font-size: 1em;
   margin-right: 0.2em;
-}
-p a {
-  color: #00d6ef;
-}
-p a:hover {
-  text-decoration: underline;
 }
 p code {
   background-color: #eeeeee;
@@ -158,7 +222,7 @@ blockquote {
   position: relative;
 }
 dl {
-  margin: 1em 1.5em;
+  margin: 0.2em 0.5em;
   padding: 0;
 }
 dl dt {
@@ -174,11 +238,23 @@ dl dd {
   margin: 0 0 1em;
   padding: 1em;
 }
-code.hlr {
-  padding: 1.2em;
+pre {
+  margin: 1em;
+}
+pre code {
+  margin: 0 !important;
+}
+.codeblock,
+pre > code {
+  margin: 0 0 0.5em;
+  padding: 1.2em !important;
+  color: #ffffff;
   border: 1px solid #000000;
   box-shadow: 0 0 15px 5px #000000 inset;
-  margin: 1em;
+  width: 100%;
+  background-color: #333333;
+  display: block;
+  white-space: nowrap !important;
 }
 .action.field > label:before,
 .bg-action.field > label:before,
@@ -450,7 +526,7 @@ button,
   border-radius: 4px;
   outline: none;
   white-space: nowrap;
-  color: #333333;
+  color: inherit;
   text-shadow: none;
   position: relative;
   margin: 0 0.5em 0.5em 0;

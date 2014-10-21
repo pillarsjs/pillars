@@ -1,12 +1,13 @@
 @import "config.less";
 
 * {
-  &,&:before, &:after {
-  	box-sizing: border-box;
-  }
+	&,&:before, &:after {
+		box-sizing: border-box;
+	}
 }
 
 html {
+	
 }
 
 body {
@@ -19,6 +20,11 @@ body {
 a {
 	color: inherit;
 	text-decoration: none;
+	border-bottom: 1px dotted transparent;
+	background-color: transparent;
+	&:hover {
+		text-decoration: underline;
+	}
 }
 h1,h2,h3,h4,h5,h6 {
 	margin:0 0 0.3em;
@@ -33,39 +39,45 @@ h4 {font-size: 1.3em;}
 h5 {font-size: 1.2em;}
 h6 {font-size: 1em;}
 
+nav {
+	h2,h3,h4,h5,h6 {
+		display: none;
+		font-size: 1em;
+	}
+	ul {
+		margin: 0;
+		padding: 0;
+		display: block;
+		list-style-type: none;
+		ul {
+			margin-left: 1em;
+		}
+		li {
+			display: block;
+			a {
+				padding: @inputs-padding-top @inputs-padding-right @inputs-padding-bottom @inputs-padding-left;
+				display: block;
+			}
+		}
+	}
+}
+
 p {
 	margin: 0 0 0.5em;
-	&>a{
-		&:before {
-			.faclass;
-			content: "\f0c1";
-			font-size: 0.8em;
-			margin-right: 0.2em;
-		}
-	}
 	a {
-		color: @color-action;
-		&:hover {
-			text-decoration: underline;
-		}
+		.a;
 	}
 	code {
-		background-color: lighten(@color-soft,10%);
-		border: 1px solid @color-soft;
-		border-radius: 4px;
-		color: darken(@color-action,30%);
-		display: inline-block;
-		margin: -0.2em 0.1em;
-		padding: 0.2em 0.4em;
+		.code;
 	}
 	em {
-		color: darken(@color-alert,10%);
+		.em;
 	}
 	strong {
-		color: darken(@color-primary,10%);
+		.strong;
 	}
 	del {
-		color: lighten(@color-default,40%);
+		.del;
 	}
 	ul {
 		li {
@@ -92,7 +104,7 @@ blockquote {
 }
 
 dl {
-	margin: 1em 1.5em;
+	margin: 0.2em 0.5em;
 	padding: 0;
 	dt {
 		display: inline-block;
@@ -108,12 +120,22 @@ dl {
 		padding: 1em;
 	}
 }
-
-code.hlr {
-	padding: 1.2em;
+pre {
+	margin: 1em;
+	code {
+		margin: 0 !important;
+	}
+}
+.codeblock, pre>code {
+	margin: 0 0 0.5em;
+	padding: 1.2em !important;
+	color: #ffffff;
 	border: 1px solid #000000;
 	box-shadow: 0 0 15px 5px #000000 inset;
-	margin: 1em;
+	width: 100%;
+	background-color: @color-default;
+	display: block;
+	white-space: nowrap !important;
 }
 
 .action, .bg-action,  .info, .bg-info, .ok, .bg-ok, .alert, .bg-alert, .danger, .bg-danger, .soft, .bg-soft {

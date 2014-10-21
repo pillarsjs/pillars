@@ -5,18 +5,48 @@ html {
 }
 
 body {
-
+	background-color: #f3f3f3;
 }
 
 #space {
-	max-width: 750px;
+	max-width: 1200px;
 	margin: 0 auto;
+	background-color: #ffffff;
 }
 
 #header {
+	background-color: @color-primary;
+	&:after {
+		content: '';
+		display: block;
+		width: 100%;
+		height: 0;
+		clear: both;
+	}
+	#logo {
+		float: left;
+		clear: both;
+		width: 212px;
+		height: 40px;
+		display: inline-block;
+		text-indent: -100000px;
+		overflow: hidden;
+		margin: 0.5em;
+		background-image: url('../img/pillars-logo-topbar.png');
+	}
 	#mainmenu {
+		background-image: linear-gradient(45deg, transparent 2em, #ffffff 0px);
+		padding-left: 3em;
+		float: right;
+		font-weight: 700;
+		color: @color-primary;
+		text-transform: uppercase;
+		&>.select {
+			display: none;
+		}
 		ul {
 			li {
+				display: inline-block;
 				a {
 
 				}
@@ -24,58 +54,138 @@ body {
 		}
 	}
 	#social {
+		float: right;
+		color: #ffffff;
+		font-size: 2em;
 		ul {
+			padding: 0 0.5em;
 			li {
+				display: inline-block;
+				margin: 0;
 				a {
-
+					width: 1em;
+					padding: 0;
+					overflow: hidden;
+					white-space: nowrap;
+					&:before {
+						.faclass;
+						margin-right: 100000px;
+					}
+					&.github:before {
+						content: '\f092';
+					}
+					&.twitter:before {
+						content: '\f081';
+					}
+					&.gplus:before {
+						content: '\f0d4';
+					}
 				}
 			}
 		}
 	}
 }
 #footer {
+	background-color: @color-default;
+	min-height: 15em;
+	padding: 2em 1em;
+	color: #ffffff;
+
+	.logo {
+		float: left;
+		clear: both;
+		width: 212px;
+		height: 40px;
+		display: inline-block;
+		text-indent: -100000px;
+		overflow: hidden;
+		margin: 0.5em;
+		background-image: url('../img/pillars-logo-topbar.png');
+	}
+	.legal {
+		margin: 0.5em;
+		float: left;
+	}
+	.phrase {}
+	.copyright {}
+	.license {}
 
 }
 #main {
-
+	float: none;
+	clear: both;
+	display: table;
+	table-layout: fixed;
+	width: 100%;
+	padding: 2em 0 0;
 }
 #sidebar {
+	width: 18em;
+	display: table-cell;
+	vertical-align: top;
+	padding: 0;
 	nav {
+		font-size: 1.2em;
+		background-color: @color-primary;
+		color: #ffffff;
+		margin-bottom: 2em;
+		h2 {
+			background-image: linear-gradient(45deg, transparent 2em, @color-default 0px);
+			display: block;
+			padding: 0.2em 0.5em 0.2em 3em;
+			margin-bottom: 0;
+		}
 		ul {
+			padding: 0.5em;
 			li {
 				a {
 
 				}
 			}
 		}
-	}
-}
-#contents {
-	/*
-	h1 {
-		padding: 0.1em 0.5em;
-		background-color: @color-primary;
-		color: #ffffff;
-		em {
-			font-size: 0.5em;
+		&>ul>li {
+			border-bottom: 1px solid rgba(255,255,255,0.4);
 		}
 	}
-	h2 {
-		border-bottom: 2px solid @color-default;
-		margin-bottom: 1em;
+}
+
+a.source {
+	&:before {
+		.faclass;
+		content : "\f092" !important;
+		font-size: 1.5em !important;
+	}
+}
+
+#contents {
+	padding: 0 1em 3em;
+	a {
+		.a;
 	}
 
-	section section {
-		margin: 2em;
+	#title {
+		margin: 0 0 1em;
+		h1 {
+			display: inline-block;
+			margin: 0;
+		}
+		.source {
+			background-color: #f3f3f3;
+			border-radius: 4px;
+			display: inline-block;
+			font-size: 1.2em;
+			margin: 0 1em;
+			padding: 0.2em 0.5em;
+			vertical-align: inherit;
+		}
 	}
-	*/
 
 	h1 {
 		color: @color-primary;
 	}
 
 	h2 {
-		border-bottom: 1px solid @color-soft;
+		border-bottom: 1px solid @color-primary;
 	}
 
 	h1 {
@@ -86,13 +196,87 @@ body {
 
 	&>section {
 		margin-bottom: 4em;
+		section {
+			margin: 1em;
+			section {
+				margin: 0.5em;
+			}
+		} 
+	}
+}
+
+#sidebar+#contents {
+	padding-left: 2em;
+	display: table-cell;
+	vertical-align: top;
+}
+
+@media (max-width: 800px) {
+
+	#header {
+		#mainmenu {
+			background-image: none;
+			float: none;
+			clear: both;
+			padding: 0.5em 1em;
+			&>.select {
+				display: block;
+				select {
+					margin: 0;
+				}
+			}
+			&>ul {
+				display: none;
+			}
+		}
+		#social {
+			display: block;
+			clear: both;
+			background-color: transparent;
+			color: @color-primary;
+			padding: 0 0 0 1.2em;
+			background-image: linear-gradient(135deg, transparent 1em, #ffffff 0px);
+			&>ul {
+				margin-bottom: -0.9em;
+			}
+		}
 	}
 
-	section section {
-		margin: 2em;
+	#sidebar {
+		display: none;
+		nav {
+			&>ul {
+				display: none;
+			}
+		}
+	}
+	#sidebar+#contents {
+		padding-left: 1em;
+		display: block;
 	}
 
-	.parameters {
-		margin: 1em;
+	#contents {
+		#title {
+			em {
+				display: none;
+			}
+			.source {
+				margin: 0;
+			}
+		}
+
+		&>section {
+			margin-bottom: 3em;
+			section {
+				margin: 0.5em;
+				section {
+					margin: 0.2em;
+				}
+			} 
+		}
+
+		dl {
+			margin: 0.1em 0.2em;
+		}
 	}
 }

@@ -2,25 +2,29 @@ include ../.layout.jade
 
 doctype html
 html(lang=gw.language)
-	+reference-layout("Pillars.js Reference - Class App - 'make it easy'")
-		h1 Class App
-			em  Pillars.js Reference
+	+reference-layout("Pillars.js Reference - Class App - 'make it easy!'")
+
+		#title
+			h1 Class App
+				em  Pillars.js Reference
+			a.source(href="#") Source
 
 		//- Summary
 		section.summary
-			h2 Summary
+			h2#summary Summary
 			:markdown
 				The summary
 				> this is a blockquote
 
 		//- Syntax
 		section.syntax
-			h2 Syntax
-			code.hlr.
+			h2#syntax Syntax
+			code.codeblock.
 				var app = new App([{database:'',languages:['en'],port:3000,host:'*'}]);
 
-			.parameters
+			section.parameters
 				h3 Parameters
+				.msg.msg-icon.bg-alert Alerta!
 				:markdown
 					Class App can get ~~optionally~~ object with App config with these properties:
 
@@ -47,50 +51,69 @@ html(lang=gw.language)
 
 		//- Description
 		section.description
-			h2 Description
+			h2#description Description
 			:markdown
 				Class App description
 
 		//- Properties
 		section.properties
-			h2 Properties
+			h2#properties Properties
 
 			//- Property
 			section.property
-				h3: code App.prototype.port
-				:markdown
-					The `port` property get or set...
+				h3#property-port: code
+					small App.prototype
+					| .port
+
+				//- Property description
+				section.description
+					:markdown
+						The `port` property get or set...
 
 			//- Property
 			section.property
-				h3: code App.prototype.hostname
-				:markdown
-					The `port` property get or set...
+				h3#property-hostname: code
+					small App.prototype
+					| .hostname
+
+				//- Property description
+				section.description
+					:markdown
+						The `port` property get or set...
 
 			//- Property
 			section.property
-				h3: code App.prototype.database
-				:markdown
-					The `port` property get or set...
+				h3#property-database: code 
+					small App.prototype
+					| .database
+
+				//- Property description
+				section.description
+					:markdown
+						The `port` property get or set...
 
 		//- Methods
 		section.methods
-			h2 Methods
+			h2#methods Methods
 
 			//- Method
 			section.method
-				h3: code App.prototype.add()
-				.description
+				h3#method-add: code
+					small App.prototype
+					| .add()
+
+				//- Method description
+				section.description
 					:markdown
 						The `add` method add a new Pillar to the routes...
 
 				//- Method syntax
-				.syntax
+				section.syntax
 					h4 Syntax
-					code.hlr.
+					code.codeblock.
 						myApp.add(pillar);
 
-					.parameters
+					section.parameters
 						h5 Parameters
 						dl
 							dt pillar
@@ -105,15 +128,15 @@ html(lang=gw.language)
 
 		//- Examples
 		section.examples
-			h2 Examples
+			h2#examples Examples
 
 			//- Example
 			section.example
-				h3 Example 1
+				h3#example-1 Example 1
 				:markdown
 					Class `App` _Example 1_ lorem ipsum __synopsis__ hola [link to Google!](http://google.com)
 
-				code.hlr.
+				code.codeblock.
 					var app = new App([{database:'',languages:['en'],port:3000,host:'*'}]);
 				
 				:markdown

@@ -60,7 +60,8 @@
 	border-radius: @inputs-border-radius;
 	outline: none;
 	white-space: nowrap;
-	color: @color-default;
+	//color: @color-default;
+	color: inherit;
 	text-shadow: none;
 	position: relative;
 	margin: 0 @inputs-margin @inputs-margin 0;
@@ -97,6 +98,36 @@
 @dropdowns-line-height: 1em;
 @dropdowns-paddings: 0 @dropdowns-padding-right 0 @dropdowns-padding-left;
 @dropdowns-height: @dropdowns-line-height + @dropdowns-padding-top + @dropdowns-padding-bottom;
+
+
+
+.a {
+	color: @color-action;
+	&:before {
+		.faclass;
+		content: "\f0c1";
+		font-size: 1em;
+		margin-right: 0.2em;
+	}
+}
+.code {
+	background-color: lighten(@color-soft,10%);
+	border: 1px solid @color-soft;
+	border-radius: 4px;
+	color: darken(@color-action,30%);
+	display: inline-block;
+	margin: -0.2em 0.1em;
+	padding: 0.2em 0.4em;
+}
+.em {
+	color: darken(@color-alert,10%);
+}
+.strong {
+	color: darken(@color-primary,10%);
+}
+.del {
+	color: lighten(@color-default,40%);
+}
 
 
 
