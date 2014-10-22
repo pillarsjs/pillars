@@ -32,20 +32,24 @@ html(lang=gw.language)
 					dt database
 					dd
 						:markdown
-							Base de datos MongoDB que usará la aplicación para mantenimiento de sesiones y usuarios.
+							**Objeto** o **String** para definir la base de datos MongoDB que utilizará la aplicación para mantenimiento de sesiones y usuarios. **Por defecto** no se define ninguna base de datos.
+
+							Ver la propiedad [database](#property-database)
 
 					dt languages
 					dd
 						:markdown
-							Idiomas en los que trabajará la aplicación.
+							**Array** para definir los idiomas en los que trabajará la aplicación. **Por defecto** el idioma predeterminado es 'en'.
+
+							Ver la propiedad [languages](#property-languages)
 
 		//- Description
 		section.description
 			h2#description Descripción
 			:markdown
 				La **Clase App** permite definir parámetros como los idiomas con los que trabajará la aplicación y la base de datos a la que se conectará. 
-
 				La base de datos es necesaria cuando la aplicación tiene control de sesiones. El [control de sesiones](www.google.es) se realiza através de la Clase Beam.
+
 
 		//- Properties --------------------------------------------------------
 		section.properties
@@ -60,7 +64,14 @@ html(lang=gw.language)
 				section.description
 					h4 Descripción
 					:markdown
-						La propiedad `database` es una propiedad dinámica, por lo tanto cuando la seteamos...
+						Esta propiedad especifica la **base de datos** a la que se conecta la aplicación.
+
+						La propiedad `database` es una propiedad dinámica, por lo tanto cuando se realiza un seteo se ejecutan una serie de acciones adicionales. 
+
+						En caso de que la conexión se realice correctamente emitirá el evento `database`.
+
+						Como se puede ver a continuación se puede realizar el seteo de dos formas; seteando el nombre de la base de datos en formato string, o seteando un objeto con los datos nombre de la base de datos, url de la base de datos y puerto.
+
 
 				//- Property syntax
 				section.syntax
@@ -81,17 +92,17 @@ html(lang=gw.language)
 							dt dbName
 							dd
 								:markdown
-									String. Nombre de la base de datos MongDB. 
+									**String**. Nombre de la base de datos MongDB. 
 
 							dt dbUrl
 							dd
 								:markdown
-									String.  URL del servidor de la base de datos.
+									**String**.  URL del servidor de la base de datos. **Por defecto**: 'localhost'.
 
 							dt dbPort
 							dd
 								:markdown
-									Entero. Puerto de la base de datos MongDB. 
+									**Entero**. Puerto de la base de datos MongDB. **Por defecto**: XXXXX
 
 
 			//- Property
@@ -103,13 +114,14 @@ html(lang=gw.language)
 				section.description
 					h4 Descripción
 					:markdown
-						La propiedad `languages` es una propiedad dinámica. Para setearla lo debemos hacer igualándola a un array con los idiomas de la aplicación.
+						Especifica los idiomas en los que trabajará mi aplicación.
+						La propiedad `.languages` es una propiedad dinámica. Para setearla lo debemos hacer igualándola a un array con los idiomas de la aplicación.
 
 					h4 Sintaxis
-						code.codeblock.
-							app.languages=['es','en','de'];
+					code.codeblock.
+						app.languages=['es','en','de'];
 
-						.msg.msg-icon.danger Hay que setear la propiedad. No usar el método push para añadir nuevos idiomas.
+					.msg.msg-icon.danger Hay que setear la propiedad. No usar el método push para añadir nuevos idiomas.
 
 			//- Property
 			section.property
@@ -120,7 +132,7 @@ html(lang=gw.language)
 				section.description
 					h4 Descripción
 					:markdown
-						La propiedad `pillars` es de sólo lectura. Devuelve un array con todos los Pillar añadidos a App ordenados por orden de prioridad.
+						La propiedad `.pillars` es de sólo lectura. Devuelve un array con todos los Pillar añadidos a App ordenados por orden de prioridad.
 
 			//- Property
 			section.property
@@ -131,7 +143,7 @@ html(lang=gw.language)
 				section.description
 					h4 Descripción
 					:markdown
-						La propiedad `routes` es de sólo lectura. Devuelve un objeto con todas las rutas actuales; con todos los Pillar y Beam que se han añadido a App.
+						La propiedad `.routes` es de sólo lectura. Devuelve un objeto con todas las rutas actuales; con todos los Pillar y Beam que se han añadido a App.
 
 
 			//- Property
@@ -143,7 +155,7 @@ html(lang=gw.language)
 				section.description
 					h4 Descripción
 					:markdown
-						La propiedad `routes` es de sólo lectura. Devuelve `true` si el servidor está corriendo y `false` en caso contrario.
+						La propiedad `.running` es de sólo lectura. Devuelve `true` si el servidor está corriendo y `false` en caso contrario.
 
 
 			//- Property
@@ -155,7 +167,7 @@ html(lang=gw.language)
 				section.description
 					h4 Descripción
 					:markdown
-						La propiedad `server` es de sólo lectura. Devuelve el objeto [http.Server](http://nodejs.org/api/http.html#http_class_http_server) que utiliza la App.
+						La propiedad `.server` es de sólo lectura. Devuelve el objeto [http.Server](http://nodejs.org/api/http.html#http_class_http_server) que utiliza la App.
 
 	
 			
@@ -172,7 +184,7 @@ html(lang=gw.language)
 				section.description
 					h4 Descripción
 					:markdown
-						El método `add` añade un Pillar a la aplicación.
+						El método `.add()` añade un Pillar a la aplicación.
 
 				//- Method syntax
 				section.syntax
@@ -197,7 +209,7 @@ html(lang=gw.language)
 				section.description
 					h4 Descripción
 					:markdown
-						El método `get` captura un Pillar activo a través el id del Pillar.
+						El método `.get()` captura un Pillar activo a través el id del Pillar.
 
 				//- Method syntax
 				section.syntax
@@ -223,7 +235,7 @@ html(lang=gw.language)
 				section.description
 					h4 Descripción
 					:markdown
-						El método `remove` elimina un Pillar activo dado id del Pillar.
+						El método `.remove()` elimina un Pillar activo dado id del Pillar.
 
 				//- Method syntax
 				section.syntax
@@ -248,7 +260,7 @@ html(lang=gw.language)
 				section.description
 					h4 Descripción
 					:markdown
-						El método `start` arranca el servicio HTTP y la aplicación.
+						El método `.start()` arranca el servicio HTTP y la aplicación.
 
 				//- Method syntax
 				section.syntax
@@ -278,7 +290,7 @@ html(lang=gw.language)
 				section.description
 					h4 Descripción
 					:markdown
-						El método `stop` detiene la aplicación y el servicio HTTP.
+						El método `.stop()` detiene la aplicación y el servicio HTTP.
 
 				//- Method syntax
 				section.syntax
@@ -308,9 +320,25 @@ html(lang=gw.language)
 					code.codeblock.
 						app.on('languages');
 
-					
+			
+			//- Method
+			section.event
+				h3#event-database: code
+					| database
 
+				//- Method description
+				section.description
+					h4 Descripción
+					:markdown
+						La clase App emite el evento 'database' cuando la conexión a la base datos a través del seteo de la propiedad `database` se ha realizado correctamente.
 
+				//- Method syntax
+				section.syntax
+					h4 Sintaxis
+					code.codeblock.
+						app.on('database',function(){
+							app.database.getCollection('sessions');
+						});
 
 
 		//- Examples ------------------------------------------------------------------------------

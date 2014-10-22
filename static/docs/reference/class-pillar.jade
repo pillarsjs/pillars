@@ -2,48 +2,62 @@ include ../.layout.jade
 
 doctype html
 html(lang=gw.language)
-	+reference-layout("Pillars.js Reference - Class App - 'make it easy!'")
+	+reference-layout("Pillars.js Reference - Clase Pillar - 'make it easy!'")
 
 		#title
-			h1 Class App
+			h1 Clase Pillar
 				em  Pillars.js Reference
-			a.source(href="https://github.com/bifuer/pillars/blob/master/lib/App.js") Source
+			a.source(href="https://github.com/bifuer/pillars/blob/master/lib/Pillar.js") Source
 
 		//- Summary
 		section.summary
 			h2#summary Sumario
 			:markdown
-				La Clase App extiende de la [clase EventEmitter](http://nodejs.org/api/events.html).
-				
-				En esta clase se definen parámetros de configuración para la aplicación; idiomas y base de datos. También será el punto de anclaje para el resto de elementos de la aplicación.				
+				La Clase Pillar permite ordenar los diferentes grupos de funcionalidades de nuestra aplicación, dando la opción de conectar o desconectar todo un grupo de funcionalidades con tan solo un `app.add(pillar)` o `app.remove(pillar)` respectivamente.
+
+				Imagen.
+
+				La Clase Pillar extiende de la [clase EventEmitter](http://nodejs.org/api/events.html).
+
+
 
 		//- Syntax
 		section.syntax
 			h2#syntax Sintaxis
 			code.codeblock.
-				var myApp = new App([{database:'',languages:['en']}]);
+				var myPillar = new Pillar();
 
 			section.parameters
 				h3 Parámetros
 				:markdown
-					Opcionalmente podemos declarar el idioma o idiomas de la aplicación y la base de datos con la que trabajará.
+					Opcionalmente podemos instanciar la clase pasándo como parámetro un objeto con las siguientes propiedades:
 
 				dl
-					dt database
+					dt id
 					dd
 						:markdown
-							Base de datos MongoDB que usará la aplicación para mantenimiento de sesiones y usuarios.
+							**String** para especificar el identificador de la instancia del Pillar. **Por defecto**: se autogenera un id.
 
-					dt languages
+					dt path
 					dd
 						:markdown
-							Idiomas en los que trabajará la aplicación.
+							**String** para especificar a qué ruta responderá la instancia del Pillar. **Por defecto**: '/'
+
+					dt priority
+					dd
+						:markdown
+							**Integer** para especificar la prioridad de la instancia del Pillar. **Por defecto**: 1000.
+
+					dt host
+					dd
+						:markdown
+							**String** para especificar el nombre de host al que responderá el pillar. **Por defecto**: 1000.
 
 		//- Description
 		section.description
 			h2#description Descripción
 			:markdown
-				
+				La Clase Pillar es una parte del llamado **router en dos pasos**
 
 		//- Properties --------------------------------------------------------
 		section.properties
@@ -52,110 +66,37 @@ html(lang=gw.language)
 
 			//- Property
 			section.property
-				h3#property-database: code 
-					| App.prototype.database
+				h3#property-beams: code 
+					| App.prototype.beams
 
 				//- Property description
 				section.description
 					h4 Descripción
 					:markdown
-						La propiedad `database` es una propiedad dinámica, por lo tanto cuando la seteamos...
+						La propiedad `.beams` devuelve un Array con todas las instancias de la [Clase Beam]() que tiene añadida la instancia de la Pillar.
 
 				//- Property syntax
 				section.syntax
 					h4 Sintaxis
 					code.codeblock.
-						app.database=dbName;
-						// OR
-						app.database={
-							name: dbName,
-							url: dbUrl,
-							port: dbPort
-						};
+						pillar.beams;
 
-					section.parameters
-						h5 Parámetros
-						dl
-							dt dbName
-							dd
-								:markdown
-									String. Nombre de la base de datos MongDB. 
-
-							dt dbUrl
-							dd
-								:markdown
-									String. URL del servidor de la base de datos.
-
-							dt dbPort
-							dd
-								:markdown
-									Entero. Puerto de la base de datos MongDB. 
-
-
+					
 			//- Property
 			section.property
-				h3#property-languages: code 
-					| App.prototype.languages
+				h3#property-path: code 
+					| App.prototype.path
 
 				//- Property description
 				section.description
 					h4 Descripción
 					:markdown
-						La propiedad `languages` es una propiedad dinámica. Para setearla lo debemos hacer igualándola a un array con los idiomas de la aplicación.
+						La propiedad `.path` es una propiedad dinámica. Para setearla lo debemos hacer igualándola a un array con los idiomas de la aplicación.
 
 					h4 Sintaxis
-						code.codeblock.
-							app.languages=['es','en','de'];
+					code.codeblock.
+						pillar.path
 
-						.msg.msg-icon.danger Hay que setear la propiedad. No usar el método push para añadir nuevos idiomas.
-
-			//- Property
-			section.property
-				h3#property-pillars: code 
-					| App.prototype.pillars
-
-				//- Property description
-				section.description
-					h4 Descripción
-					:markdown
-						La propiedad `pillars` es de sólo lectura. Devuelve un array con todos los Pillar añadidos a App ordenados por orden de prioridad.
-
-			//- Property
-			section.property
-				h3#property-routes: code
-					| App.prototype.routes
-
-				//- Property description
-				section.description
-					h4 Descripción
-					:markdown
-						La propiedad `routes` es de sólo lectura. Devuelve un objeto con todas las rutas actuales; con todos los Pillar y Beam que se han añadido a App.
-
-
-			//- Property
-			section.property
-				h3#property-running: code
-					| App.prototype.running
-
-				//- Property description
-				section.description
-					h4 Descripción
-					:markdown
-						La propiedad `routes` es de sólo lectura. Devuelve `true` si el servidor está corriendo y `false` en caso contrario.
-
-
-			//- Property
-			section.property
-				h3#property-server: code
-					| App.prototype.server
-
-				//- Property description
-				section.description
-					h4 Descripción
-					:markdown
-						La propiedad `server` es de sólo lectura. Devuelve el objeto [http.Server](http://nodejs.org/api/http.html#http_class_http_server) que utiliza la App.
-
-	
 			
 		//- Methods ---------------------------------------------------------------------
 		section.methods
@@ -170,23 +111,21 @@ html(lang=gw.language)
 				section.description
 					h4 Descripción
 					:markdown
-						El método `add` añade un Pillar a la aplicación.
+						El método `.add()` añade una instancia de la Clase Beam a la instancia de la Clase Pillar.
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
 					code.codeblock.
-						app.add(pillar);
-
-					.msg.msg-icon.info app es una instancia de la Clase App.
+						app.add(beam);
 
 					section.parameters
 						h5 Parámetros
 						dl
-							dt pillar
+							dt beam
 							dd
 								:markdown
-									Instancia de la Clase Pillar. 
+									Instancia de la Clase Beam. 
 
 			//- Method
 			section.method
@@ -197,21 +136,21 @@ html(lang=gw.language)
 				section.description
 					h4 Descripción
 					:markdown
-						El método `get` captura un Pillar activo através el id del Pillar.
+						El método `.get()` devuelve la instancia de la Clase Beam pasada por párámetro. 
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
 					code.codeblock.
-						app.get('idPillar');
+						app.get('idBeam');
 
 					section.parameters
 						h5 Parámetros
 						dl
-							dt idPillar
+							dt idBeam
 							dd
 								:markdown
-									Identificador con el que se creó el Pillar.  
+									Identificador con el que se instació un objeto concreto de la Clase Beam.  
 
 
 			//- Method
@@ -223,68 +162,21 @@ html(lang=gw.language)
 				section.description
 					h4 Descripción
 					:markdown
-						El método `remove` elimina un Pillar activo dado id del Pillar.
+						El método `.remove()` desconecta la instancia de la Clase Beam pasada por parámetro.
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
 					code.codeblock.
-						app.remove('idPillar');
+						app.remove('idBeam');
 
 					section.parameters
 							h5 Parámetros
 							dl
-								dt idPillar
+								dt idBeam
 								dd
 									:markdown
-										Identificador con el que se creó el Pillar.   
-
-			//- Method
-			section.method
-				h3#method-start: code
-					| App.prototype.start()
-
-				//- Method description
-				section.description
-					h4 Descripción
-					:markdown
-						El método `start` arranca el servicio HTTP y la aplicación.
-
-				//- Method syntax
-				section.syntax
-					h4 Sintaxis
-					code.codeblock.
-						app.start([3000,'www.domain.com']);
-
-					section.parameters
-						h5 Parámetros
-						dl
-							dt port
-							dd
-								:markdown
-									Puerto en el que servirá la aplicación. Por defecto 3000. 
-
-							dt host
-							dd
-								:markdown
-									Host al que responderá la aplicación. Por defecto todos.
-
-			//- Method
-			section.method
-				h3#method-stop: code
-					| App.prototype.stop()
-
-				//- Method description
-				section.description
-					h4 Descripción
-					:markdown
-						El método `stop` detiene la aplicación y el servicio HTTP.
-
-				//- Method syntax
-				section.syntax
-					h4 Sintaxis
-					code.codeblock.
-						app.stop();
+										Identificador con el que se creó el objeto concreto de la Clase Beam.   
 
 		
 		//- Events ---------------------------------------------------------------------
