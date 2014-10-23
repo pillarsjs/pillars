@@ -33,6 +33,11 @@ html(lang=gw.language)
 					Opcionalmente podemos instanciar la clase pasándo como parámetro un objeto con las siguientes propiedades:
 
 				dl
+					dt host
+					dd
+						:markdown
+							**String** para especificar el nombre de host al que responderá el pillar. **Por defecto**: 1000.
+
 					dt id
 					dd
 						:markdown
@@ -48,10 +53,7 @@ html(lang=gw.language)
 						:markdown
 							**Integer** para especificar la prioridad de la instancia del Pillar. **Por defecto**: 1000.
 
-					dt host
-					dd
-						:markdown
-							**String** para especificar el nombre de host al que responderá el pillar. **Por defecto**: 1000.
+					
 
 		//- Description
 		section.description
@@ -67,7 +69,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-beams: code 
-					| App.prototype.beams
+					| Pillar.prototype.beams
 
 				//- Property description
 				section.description
@@ -85,19 +87,67 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-path: code 
-					| App.prototype.path
+					| Pillar.prototype.host
 
 				//- Property description
 				section.description
 					h4 Descripción
 					:markdown
-						La propiedad `.path` es una propiedad dinámica. Para setearla lo debemos hacer igualándola a un array con los idiomas de la aplicación.
+						**String** para especificar el nombre de host a la que responderá la instancia de la Clase Pillar. **Por defecto**: '*', a todos.
+
+					h4 Sintaxis
+					code.codeblock.
+						pillar.host
+
+			//- Property
+			section.property
+				h3#property-path: code 
+					| Pillar.prototype.id
+
+				//- Property description
+				section.description
+					h4 Descripción
+					:markdown
+						**Integer** para especificar el identificador de la instancia de la Clase Pillar. **Por defecto**: un string aleatorio, por ejemplo: 'i1m8pztz7'.
+
+					h4 Sintaxis
+					code.codeblock.
+						pillar.id
+
+
+			//- Property
+			section.property
+				h3#property-path: code 
+					| Pillar.prototype.path
+
+				//- Property description
+				section.description
+					h4 Descripción
+					:markdown
+						**String** para especificar la ruta a la que responderá la instancia de la Clase Pillar. **Por defecto**: '/'.
 
 					h4 Sintaxis
 					code.codeblock.
 						pillar.path
 
-			
+			//- Property
+			section.property
+				h3#property-path: code 
+					| Pillar.prototype.priority
+
+				//- Property description
+				section.description
+					h4 Descripción
+					:markdown
+						**Integer** para especificar la prioridad de ejecución de la instancia de la Clase Pillar. **Por defecto**: 1000.
+
+					h4 Sintaxis
+					code.codeblock.
+						pillar.priority
+
+
+
+
 		//- Methods ---------------------------------------------------------------------
 		section.methods
 			h2#methods Métodos
@@ -105,7 +155,7 @@ html(lang=gw.language)
 			//- Method
 			section.method
 				h3#method-add: code
-					| App.prototype.add()
+					| Pillar.prototype.add()
 
 				//- Method description
 				section.description
@@ -117,7 +167,7 @@ html(lang=gw.language)
 				section.syntax
 					h4 Sintaxis
 					code.codeblock.
-						app.add(beam);
+						pillar.add(beam);
 
 					section.parameters
 						h5 Parámetros
@@ -125,12 +175,12 @@ html(lang=gw.language)
 							dt beam
 							dd
 								:markdown
-									Instancia de la Clase Beam. 
+									**Objeto beam** Instancia de la Clase Beam. 
 
 			//- Method
 			section.method
 				h3#method-get: code
-					| App.prototype.get()
+					| Pillar.prototype.get()
 
 				//- Method description
 				section.description
@@ -142,7 +192,7 @@ html(lang=gw.language)
 				section.syntax
 					h4 Sintaxis
 					code.codeblock.
-						app.get('idBeam');
+						pillar.get('idBeam');
 
 					section.parameters
 						h5 Parámetros
@@ -150,13 +200,13 @@ html(lang=gw.language)
 							dt idBeam
 							dd
 								:markdown
-									Identificador con el que se instació un objeto concreto de la Clase Beam.  
+									**String**. Identificador con el que se instació un objeto concreto de la Clase Beam.  
 
 
 			//- Method
 			section.method
 				h3#method-remove: code
-					| App.prototype.remove()
+					| Pillar.prototype.remove()
 
 				//- Method description
 				section.description
@@ -168,7 +218,7 @@ html(lang=gw.language)
 				section.syntax
 					h4 Sintaxis
 					code.codeblock.
-						app.remove('idBeam');
+						pillar.remove('idBeam');
 
 					section.parameters
 							h5 Parámetros
@@ -176,7 +226,7 @@ html(lang=gw.language)
 								dt idBeam
 								dd
 									:markdown
-										Identificador con el que se creó el objeto concreto de la Clase Beam.   
+										**String** Identificador con el que se creó el objeto concreto de la Clase Beam.   
 
 		
 		//- Events ---------------------------------------------------------------------
@@ -185,23 +235,38 @@ html(lang=gw.language)
 
 			//- Method
 			section.event
-				h3#event-languages: code
-					| languages
+				h3#event-id: code
+					| idUpdate
 
 				//- Method description
 				section.description
 					h4 Descripción
 					:markdown
-						La clase App emite el evento 'languages' cuando se setea la propiedad languages.
+						La Clase Pillar emite el evento 'idUpdate' cuando se realiza una actualización del id a una instancia del Pillar.
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
 					code.codeblock.
-						app.on('languages');
+						pillar.on('idUpdate');
 
 					
+			//- Method
+			section.event
+				h3#event-id: code
+					| priorityUpdate
 
+				//- Method description
+				section.description
+					h4 Descripción
+					:markdown
+						La Clase Pillar emite el evento 'priorityUpdate' cuando se realiza una actualización de la prioridad a una instancia del Pillar.
+
+				//- Method syntax
+				section.syntax
+					h4 Sintaxis
+					code.codeblock.
+						pillar.on('priorityUpdate');
 
 
 
