@@ -2,6 +2,7 @@
 function XhrLoader(){
 	var loader = this;
 	var xhr = new XMLHttpRequest();
+	xhr.withCredentials = true;
 	loader.response = false;
 	loader.running = false;
 	loader.sending = 0;

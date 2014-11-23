@@ -5,7 +5,7 @@ html {
 }
 
 body {
-	background-color: #f3f3f3;
+	background-color: #F3F3F3;
 }
 
 #space {
@@ -111,6 +111,36 @@ body {
 	.license {}
 
 }
+#breadcrumbs {
+	display: block;
+	float: left;
+	padding: 0.2em 5em 0.2em 0.5em;
+	background-image: linear-gradient(-45deg, transparent 1.5em, #F3F3F3 0px);
+	font-style: italic;
+	color: #AAAAAA;
+	ul {
+		&:before {
+			.faclass;
+			content: '\f14e';
+		}
+		li {
+			display: inline-block;
+			a {
+				padding: 0;
+				display: block;
+			}
+			&:not(:last-child) a:after {
+				.faclass;
+				content: '\f105';
+				font-weight: 700;
+				margin-left: 0.2em;
+			}
+			&:last-child a {
+				font-weight: 700;
+			}
+		}
+	}
+}
 #main {
 	float: none;
 	clear: both;
@@ -126,17 +156,18 @@ body {
 	padding: 0;
 	nav {
 		font-size: 1.2em;
-		background-color: @color-primary;
-		color: #ffffff;
+		background-color: transparent;
+		color: #AAAAAA;
 		margin-bottom: 2em;
 		h2 {
-			background-image: linear-gradient(45deg, transparent 2em, @color-default 0px);
+			background-image: linear-gradient(-45deg, transparent 1.25em, @color-default 0px);
 			display: block;
-			padding: 0.2em 0.5em 0.2em 3em;
+			padding: 0.2em 3em 0.2em 0.5em;
 			margin-bottom: 0;
+			color: #FFFFFF;
 		}
 		ul {
-			padding: 0.5em;
+			padding: 0;
 			li {
 				a {
 
@@ -144,7 +175,7 @@ body {
 			}
 		}
 		&>ul>li {
-			border-bottom: 1px solid rgba(255,255,255,0.4);
+			border-bottom: 1px solid rgba(0,0,0,0.1);
 		}
 	}
 }
@@ -214,6 +245,7 @@ a.source {
 @media (max-width: 800px) {
 
 	#header {
+		border-bottom: 1.5em solid #ffffff;
 		#mainmenu {
 			background-image: none;
 			float: none;
@@ -240,6 +272,12 @@ a.source {
 				margin-bottom: -0.9em;
 			}
 		}
+	}
+
+	#breadcrumbs {
+		background-color: transparent;
+		background-image: none;
+		float: none;
 	}
 
 	#sidebar {

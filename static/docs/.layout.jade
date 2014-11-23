@@ -37,6 +37,13 @@ mixin base(title)
 						li: a.twitter(href="#") Twitter
 						li: a.gplus(href="#") Google+
 
+			if path
+				nav#breadcrumbs
+					ul
+						each d in path
+							li: a(href=d.url)=d.label
+
+
 			#main
 				block
 
@@ -53,22 +60,16 @@ mixin base(title)
 		link(rel='stylesheet', type='text/css', href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400italic,600,600italic,700,700italic')
 		link(rel="stylesheet", type='text/css', href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css")
 		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
-		script(src="/pillars/docs/js/highlight/highlight.pack.js")
-		script.
-			$(document).ready(function() {
-				$('.codeblock').each(function(i, block) {
-					hljs.highlightBlock(block);
-				});
-			});
 
 
-mixin layout(title)
-	+base(title)
+
+mixin layout(title,path)
+	+base(title,path)
 		#contents
 			block
 
-mixin reference-layout(title)
-	+base(title)
+mixin reference-layout(title,path)
+	+base(title,path)
 		#sidebar
 
 			nav

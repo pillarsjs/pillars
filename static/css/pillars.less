@@ -120,13 +120,9 @@ dl {
 		padding: 1em;
 	}
 }
-pre {
-	margin: 1em;
-	code {
-		margin: 0 !important;
-	}
-}
-.codeblock, pre>code {
+
+pre>code {
+  overflow-x: auto;
 	margin: 0 0 0.5em;
 	padding: 1.2em !important;
 	color: #ffffff;
@@ -135,7 +131,7 @@ pre {
 	width: 100%;
 	background-color: @color-default;
 	display: block;
-	white-space: nowrap !important;
+	white-space: pre !important;
 }
 
 .action, .bg-action,  .info, .bg-info, .ok, .bg-ok, .alert, .bg-alert, .danger, .bg-danger, .soft, .bg-soft {
@@ -305,6 +301,7 @@ select {
 	padding: 0;
 	option {
 		padding: @inputs-padding-top @inputs-padding-right @inputs-padding-bottom @inputs-padding-left;
+		background-color: @inputs-bg;
 	}
 }
 .radio, .checkbox {

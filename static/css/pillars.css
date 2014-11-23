@@ -238,14 +238,8 @@ dl dd {
   margin: 0 0 1em;
   padding: 1em;
 }
-pre {
-  margin: 1em;
-}
-pre code {
-  margin: 0 !important;
-}
-.codeblock,
 pre > code {
+  overflow-x: auto;
   margin: 0 0 0.5em;
   padding: 1.2em !important;
   color: #ffffff;
@@ -254,7 +248,7 @@ pre > code {
   width: 100%;
   background-color: #333333;
   display: block;
-  white-space: nowrap !important;
+  white-space: pre !important;
 }
 .action.field > label:before,
 .bg-action.field > label:before,
@@ -568,6 +562,7 @@ select {
 }
 select option {
   padding: 0.4em 1em 0.5em 1em;
+  background-color: #ffffff;
 }
 .radio,
 .checkbox {

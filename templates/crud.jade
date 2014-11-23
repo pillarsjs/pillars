@@ -4,7 +4,7 @@ mixin field(field)
 	- var fullwidth = (field.template=='subset' || field.template=='subsetlist')?" fullwidth":"";
 	div(class="field"+fullwidth, datapath=field.id, ng-class="{danger:status.$invalid,ok:status.$valid && status.$dirty }")
 		label
-			span= t12n("schemas."+field.schema.id+".fields."+field.path+".label")
+			span= i18n("schemas."+field.schema.id+".fields."+field.path+".label")
 			if field.i18n
 				div(class="dropdown-toggle-hover i18n-selector")
 					button(type="button") {{env.lang}} 
@@ -13,7 +13,7 @@ mixin field(field)
 							.menu-item(ng-click="env.lang=lang") {{lang}}
 
 		.input
-			p.help= t12n("schemas."+field.schema.id+".fields."+field.path+".details",{_default:""})
+			p.help= i18n("schemas."+field.schema.id+".fields."+field.path+".details",{_default:""})
 			if field.i18n
 				each lang in gw.textualization.langs
 					div(class="lang",ng-hide="env.lang!='"+lang+"'", datapath=lang)
@@ -70,24 +70,24 @@ mixin textarea(field)
 mixin editor(field)
 	div {{datapath}}
 	div(id="{{datapathId}}_toolbar",class="editor_toolbar", style="display: none;")
-		a(data-wysihtml5-command="bold")= t12n("crud.bricks.editor.bold")
-		a(data-wysihtml5-command="italic")= t12n("crud.bricks.editor.italic")
-		a(data-wysihtml5-command="foreColor", data-wysihtml5-command-value="red")= t12n("crud.bricks.editor.red")
-		a(data-wysihtml5-command="foreColor", data-wysihtml5-command-value="green")= t12n("crud.bricks.editor.green")
-		a(data-wysihtml5-command="foreColor", data-wysihtml5-command-value="blue")= t12n("crud.bricks.editor.blue")
-		a(data-wysihtml5-command="createLink")= t12n("crud.bricks.editor.link")
+		a(data-wysihtml5-command="bold")= i18n("crud.bricks.editor.bold")
+		a(data-wysihtml5-command="italic")= i18n("crud.bricks.editor.italic")
+		a(data-wysihtml5-command="foreColor", data-wysihtml5-command-value="red")= i18n("crud.bricks.editor.red")
+		a(data-wysihtml5-command="foreColor", data-wysihtml5-command-value="green")= i18n("crud.bricks.editor.green")
+		a(data-wysihtml5-command="foreColor", data-wysihtml5-command-value="blue")= i18n("crud.bricks.editor.blue")
+		a(data-wysihtml5-command="createLink")= i18n("crud.bricks.editor.link")
 		div(data-wysihtml5-dialog="createLink", style="display: none;")
-			label= t12n("crud.bricks.editor.link")+":"
+			label= i18n("crud.bricks.editor.link")+":"
 				input(data-wysihtml5-dialog-field="href", value="http://", class="text")
-			a(data-wysihtml5-dialog-action="save")= t12n("crud.bricks.editor.insert")
-			a(data-wysihtml5-dialog-action="cancel")= t12n("crud.bricks.editor.cancel")
+			a(data-wysihtml5-dialog-action="save")= i18n("crud.bricks.editor.insert")
+			a(data-wysihtml5-dialog-action="cancel")= i18n("crud.bricks.editor.cancel")
 	textarea(datapath-id, datapath-name, ng-model="datapathValue", html-editor="true")
 
 mixin select(field)
 	.select
 		select(datapath-id, datapath-name, ng-model="datapathValue")
 			each option in field.values
-				option(value=option)=t12n("schemas."+field.schema.id+".fields."+field.path+".values."+option)
+				option(value=option)=i18n("schemas."+field.schema.id+".fields."+field.path+".values."+option)
 		span.select-focus
 
 mixin checkbox(field)
@@ -100,14 +100,14 @@ mixin checkboxes(field)
 		each option in field.values
 			.checkbox(datapath=option, ng-class="{danger:status.$invalid,ok:status.$valid && status.$dirty }")
 				input(type='checkbox', datapath-id, datapath-name, ng-model="datapathValue", ng-true-value='true', ng-false-value='false')
-				label=t12n("schemas."+field.schema.id+".fields."+field.path+".values."+option)
+				label=i18n("schemas."+field.schema.id+".fields."+field.path+".values."+option)
 
 mixin radios(field)
 	div(class="radios", ng-form, field-form)
 		each option in field.values
 			.radio
 				input(type='radio', ng-model="datapathValue", value=option)
-				label=t12n("schemas."+field.schema.id+".fields."+field.path+".values."+option)
+				label=i18n("schemas."+field.schema.id+".fields."+field.path+".values."+option)
 
 mixin time(field)
 	input(type="text", datapath-id, datapath-name, ng-model="datapathValue", class="-ng-hide")
@@ -129,7 +129,7 @@ mixin crudListActions
 					.addon
 						label
 							span(class="fa fa-search") 
-					input(type="text",ng-change="showList()", ng-model="crudListLoader.filter", placeholder=t12n("crud.actions.search"))
+					input(type="text",ng-change="showList()", ng-model="crudListLoader.filter", placeholder=i18n("crud.actions.search"))
 					.addon.dropdown-toggle-hover
 						button(type="button")
 							span(class="fa fa-gear")
@@ -138,16 +138,16 @@ mixin crudListActions
 								li
 									.menu-item(ng-click="crudListLoader.sort='"+header+"';crudListLoader.order=1;showList();",ng-class="{'active':crudListLoader.sort=='"+header+"' && crudListLoader.order=='1'}")
 										span(class="fa fa-sort-amount-asc") &nbsp;
-										= t12n("schemas."+schema.id+".headers."+header)
+										= i18n("schemas."+schema.id+".headers."+header)
 								li
 									.menu-item(ng-click="crudListLoader.sort='"+header+"';crudListLoader.order=-1;showList();",ng-class="{'active':crudListLoader.sort=='"+header+"' && crudListLoader.order=='1'}")
 										span(class="fa fa-sort-amount-desc") &nbsp;
-										= t12n("schemas."+schema.id+".headers."+header)
+										= i18n("schemas."+schema.id+".headers."+header)
 		.field
 			.input
 				button(type="button")
 					span(class="fa fa-plus") &nbsp;
-					= t12n("crud.actions.new")
+					= i18n("crud.actions.new")
 
 mixin crudList(schema)
 	//+formtable
@@ -159,7 +159,7 @@ mixin crudList(schema)
 						th(ng-class="{'active':crudListLoader.sort=='"+header+"'}")
 							span(class="ng-hide fa fa-sort-amount-asc", ng-show="crudListLoader.sort=='"+header+"' && crudListLoader.order==1") &nbsp;
 							span(class="ng-hide fa fa-sort-amount-desc", ng-show="crudListLoader.sort=='"+header+"' && crudListLoader.order==-1") &nbsp;
-							= t12n("schemas."+schema.id+".headers."+header)
+							= i18n("schemas."+schema.id+".headers."+header)
 					th.corner &nbsp;
 
 			tbody
@@ -169,61 +169,61 @@ mixin crudList(schema)
 					td
 						a(href="#/edit/{{record._id}}",class="button bg-action", role="button")
 							span(class="fa fa-pencil")
-							= " "+t12n("crud.list.edit")
+							= " "+i18n("crud.list.edit")
 						button(class="bg-danger", type='button', ng-click="removeRecord(record._id)")
 							span(class="fa fa-times")
-							= " "+t12n("crud.list.remove")
+							= " "+i18n("crud.list.remove")
 			tfoot
 				tr
 					td(colspan=schema.headers.length+1)
 						div(class="loader")
-							div(class="msg msg-icon bg-danger",ng-hide="!crudListLoader.error")= t12n("crud.errors.crudListLoader")
+							div(class="msg msg-icon bg-danger",ng-hide="!crudListLoader.error")= i18n("crud.errors.crudListLoader")
 
 							button(class="bg-action loadnext", type='button', ng-click="crudListLoader.next();", ng-hide="crudListLoader.end || crudListLoader.loader.running")
 								span(class="fa fa-forward")
-								= " "+t12n("crud.actions.nextskip")
+								= " "+i18n("crud.actions.nextskip")
 							
 							div(class="msg loading bg-info",ng-hide="!crudListLoader.loader.running")
 								.fa.fa-spinner.fa-spin
-								= t12n("crud.loading")
+								= i18n("crud.loading")
 
 							div(class="progress sending",ng-hide="crudListLoader.loader.sending==0 || !crudListLoader.loader.running")
 								span(style="width:{{crudListLoader.loader.sending}}%;")
 									span
 										span(class="fa fa-upload")
-										= t12n("crud.sending")+" {{crudListLoader.loader.sending}}%"
+										= i18n("crud.sending")+" {{crudListLoader.loader.sending}}%"
 							div(class="progress receiving",ng-hide="crudListLoader.loader.receiving==0 || !crudListLoader.loader.running")
 								span(style="width:{{crudListLoader.loader.receiving}}%;")
 									span
 										span(class="fa fa-download")
-										= t12n("crud.receiving")+" {{crudListLoader.loader.receiving}}%"
+										= i18n("crud.receiving")+" {{crudListLoader.loader.receiving}}%"
 
 mixin crudEntity(schema)
 	//{{crudEntityFormInputs()}}
 
 	div(class="loader")
-		div(class="msg msg-icon bg-danger",ng-hide="!crudEntityLoader.error")= t12n("crud.errors.crudEntityLoader")
+		div(class="msg msg-icon bg-danger",ng-hide="!crudEntityLoader.error")= i18n("crud.errors.crudEntityLoader")
 		
 		div(class="msg loading bg-info",ng-hide="!crudEntityLoader.loader.running")
 			.fa.fa-spinner.fa-spin
-			= t12n("crud.loading")
+			= i18n("crud.loading")
 
 		div(class="progress sending",ng-hide="crudEntityLoader.loader.sending==0 || !crudEntityLoader.loader.running")
 			span(style="width:{{crudEntityLoader.loader.sending}}%;")
 				span
 					span(class="fa fa-upload")
-					= t12n("crud.sending")+" {{crudEntityLoader.loader.sending}}%"
+					= i18n("crud.sending")+" {{crudEntityLoader.loader.sending}}%"
 		div(class="progress receiving",ng-hide="crudEntityLoader.loader.receiving==0 || !crudEntityLoader.loader.running")
 			span(style="width:{{crudEntityLoader.loader.receiving}}%;")
 				span
 					span(class="fa fa-download")
-					= t12n("crud.receiving")+" {{crudEntityLoader.loader.receiving}}%"
+					= i18n("crud.receiving")+" {{crudEntityLoader.loader.receiving}}%"
 
 	form(id="crudEntityForm", ng-submit="sendForm()", name="crudEntityForm", ng-hide="crudEntityLoader.loader.running")
 		fieldset
 			legend
-				h3.text-primary= t12n("schemas."+schema.id+".title")
-					small= " "+t12n("schemas."+schema.id+".details",{_default:""})
+				h3.text-primary= i18n("schemas."+schema.id+".title")
+					small= " "+i18n("schemas."+schema.id+".details",{_default:""})
 
 			button(ng-click="crudEntityUpdate()") Enviar
 
@@ -239,7 +239,7 @@ mixin crudEntity(schema)
 doctype html
 html(lang=gw.language,ng-app="PillarsCRUD")
 	head
-		title= t12n("schemas."+schema.id+".title")
+		title= i18n("schemas."+schema.id+".title")
 		meta(charset="utf-8")
 		meta(http-equiv='X-UA-Compatible', content='IE=edge')
 		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
@@ -255,7 +255,7 @@ html(lang=gw.language,ng-app="PillarsCRUD")
 					div(id="user",class="dropdown-toggle-hover")
 						img(id="user-img",src="/pillars/img/user.jpg")
 						div(id="user-info")
-							div(id="user-name") Javier Gallego Martín {{env.lang}}
+							div(id="user-name")= gw.user.firstname+" "+gw.user.lastname+" {{env.lang}}"
 						ul(id="user-options",class="dropdown dropdown-right menu")
 							li
 								a(href="#") Preferences
@@ -269,7 +269,7 @@ html(lang=gw.language,ng-app="PillarsCRUD")
 			#bottom
 				#left
 					#navigation
-						h2.nav-title t12n("backend.navigation-title")
+						h2.nav-title i18n("backend.navigation-title")
 						nav
 							ul
 								li
@@ -302,10 +302,10 @@ html(lang=gw.language,ng-app="PillarsCRUD")
 							#view-header
 								ol#breadcrumb
 									li
-										a(href="#")= t12n("crud.home")
+										a(href="#")= i18n("crud.home")
 									li
-										a(href="#")= t12n("crud.admin")
-								#view-title= t12n("schemas."+schema.id+".h1")
+										a(href="#")= i18n("crud.admin")
+								#view-title= i18n("schemas."+schema.id+".h1")
 
 								#actions
 									+crudListActions
@@ -364,7 +364,7 @@ html(lang=gw.language,ng-app="PillarsCRUD")
 				}])
 				.run(function ($rootScope) {
 					$rootScope.env = {
-						apiurl : 'http://#{gw.host}:#{gw.port}#{gw.pillar.config.path}/api',
+						apiurl : 'http://#{gw.host}:3001#{gw.pillar.path}/api',
 						lang : '#{gw.language}',
 						langlist : ['#{gw.textualization.langs.join("','")}']
 					}

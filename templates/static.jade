@@ -1,7 +1,7 @@
 doctype html
 html(lang=gw.language)
 	head
-		title= t12n("static.title",{path:path})
+		title= i18n("static.title",{path:path})
 		meta(charset="utf-8")
 		meta(http-equiv='X-UA-Compatible', content='IE=edge')
 		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
@@ -10,7 +10,7 @@ html(lang=gw.language)
 	body
 		.container
 			header#header
-				h1=t12n("static.h1",{path:path})
+				h1=i18n("static.h1",{path:path})
 			#page
 				if files.length==0
 					p empty directory

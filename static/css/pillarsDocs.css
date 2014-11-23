@@ -95,7 +95,7 @@
   color: #999999;
 }
 body {
-  background-color: #f3f3f3;
+  background-color: #F3F3F3;
 }
 #space {
   max-width: 1200px;
@@ -200,6 +200,56 @@ body {
   margin: 0.5em;
   float: left;
 }
+#breadcrumbs {
+  display: block;
+  float: left;
+  padding: 0.2em 5em 0.2em 0.5em;
+  background-image: linear-gradient(-45deg, transparent 1.5em, #f3f3f3 0px);
+  font-style: italic;
+  color: #AAAAAA;
+}
+#breadcrumbs ul:before {
+  display: inline-block;
+  font-family: 'FontAwesome';
+  font-size: inherit;
+  font-size-adjust: none;
+  font-stretch: normal;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: normal;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: '\f14e';
+}
+#breadcrumbs ul li {
+  display: inline-block;
+}
+#breadcrumbs ul li a {
+  padding: 0;
+  display: block;
+}
+#breadcrumbs ul li:not(:last-child) a:after {
+  display: inline-block;
+  font-family: 'FontAwesome';
+  font-size: inherit;
+  font-size-adjust: none;
+  font-stretch: normal;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: normal;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: '\f105';
+  font-weight: 700;
+  margin-left: 0.2em;
+}
+#breadcrumbs ul li:last-child a {
+  font-weight: 700;
+}
 #main {
   float: none;
   clear: both;
@@ -216,21 +266,22 @@ body {
 }
 #sidebar nav {
   font-size: 1.2em;
-  background-color: #d40041;
-  color: #ffffff;
+  background-color: transparent;
+  color: #AAAAAA;
   margin-bottom: 2em;
 }
 #sidebar nav h2 {
-  background-image: linear-gradient(45deg, transparent 2em, #333333 0px);
+  background-image: linear-gradient(-45deg, transparent 1.25em, #333333 0px);
   display: block;
-  padding: 0.2em 0.5em 0.2em 3em;
+  padding: 0.2em 3em 0.2em 0.5em;
   margin-bottom: 0;
+  color: #FFFFFF;
 }
 #sidebar nav ul {
-  padding: 0.5em;
+  padding: 0;
 }
 #sidebar nav > ul > li {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 a.source:before {
   display: inline-block;
@@ -311,6 +362,9 @@ a.source:before {
   vertical-align: top;
 }
 @media (max-width: 800px) {
+  #header {
+    border-bottom: 1.5em solid #ffffff;
+  }
   #header #mainmenu {
     background-image: none;
     float: none;
@@ -336,6 +390,11 @@ a.source:before {
   }
   #header #social > ul {
     margin-bottom: -0.9em;
+  }
+  #breadcrumbs {
+    background-color: transparent;
+    background-image: none;
+    float: none;
   }
   #sidebar {
     display: none;

@@ -1,7 +1,7 @@
 doctype html
 html(lang=gw.language)
 	head
-		title= t12n("login.title")
+		title= i18n("login.title")
 		meta(charset="utf-8")
 		meta(http-equiv='X-UA-Compatible', content='IE=edge')
 		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
@@ -10,26 +10,26 @@ html(lang=gw.language)
 	body
 		.container
 			header#header
-				h1= t12n("login.h1")
+				h1= i18n("login.h1")
 			#page
 				if msg
 					if msg == 'login.ok'
-						div(class="alert alert-success")=t12n(msg)
+						div(class="alert alert-success")=i18n(msg)
 					else
-						div(class="alert alert-danger")=t12n(msg)
+						div(class="alert alert-danger")=i18n(msg)
 
 				form(method='post')
 					.form-group
-						label(for="user")= t12n("login.user.label")
-						input(type="text", class="form-control", id="user" name="user", placeholder=t12n("login.user.placeholder"))
+						label(for="user")= i18n("login.user.label")
+						input(type="text", class="form-control", id="user" name="user", placeholder=i18n("login.user.placeholder"))
 					.form-group
-						label(for="password")= t12n("login.password.label")
-						input(type="password", class="form-control", id="password" name="password", placeholder=t12n("login.password.placeholder"))
+						label(for="password")= i18n("login.password.label")
+						input(type="password", class="form-control", id="password" name="password", placeholder=i18n("login.password.placeholder"))
 					.form-group
-						label(for="redirect")= t12n("login.redirect.label")
-						input(type="text", class="form-control", id="redirect" name="redirect", value=redirect, placeholder=t12n("login.redirect.placeholder"))
+						label(for="redirect")= i18n("login.redirect.label")
+						input(type="text", class="form-control", id="redirect" name="redirect", value=redirect, placeholder=i18n("login.redirect.placeholder"))
 
-					button(type="submit", class="btn btn-default")= t12n("login.submit")
+					button(type="submit", class="btn btn-default")= i18n("login.submit")
 			footer#footer
 
 
