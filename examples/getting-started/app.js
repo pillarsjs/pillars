@@ -1,7 +1,9 @@
 require('../../pillars').configure({
   database:{db:'pillarsExample'},
   debug:true,
-  languages:['es','en']
+  languages:['es','en'],
+  templates:{cache:false},
+  server:{port:3001}
 }).start();
 
 var Utilities = new Route({

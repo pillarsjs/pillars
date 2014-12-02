@@ -1,14 +1,3 @@
-var pillars = require('../../pillars.js').global().configure({
-	templatesCache:false
-});
+require('../../pillars.js').start();
 
-var app = new App().start();
-var pillar = new Pillar();
-
-app.add(pillar
-	.add(new Beam(function(gw){
-		console.log(pillar.path, pillar.id, pillar.priority, pillar.host, pillar.beams);
-		gw.send("holaa");
-	}))
-)
-;
+ENV.languages = ['es','en'];
