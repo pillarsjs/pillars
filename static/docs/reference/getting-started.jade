@@ -1,0 +1,38 @@
+include ../.layout.jade
+doctype html
+html(lang=gw.language)
+	+reference-layout("Pillars.js Reference - Getting Started - 'make it easy'")
+		h1 Getting Started
+			em Pillars.js Reference
+		:markdown
+			## Preparando el entorno (noveles en Node.js)
+
+			Para empezar a utilizar Pillars.js necesitas tener instalado **NodeJS**, **NPM** y **MongoDB**, en los siguientes enlaces puedes encontrar como instalar tanto [NodeJS como NPM](http://nodejs.org/) y [MongoDB](https://www.mongodb.org/downloads).
+
+			Creamos un nuevo directorio para nuestro primer proyecto Pillars.js y añadimos los dos archivos básicos para comenzar a trabajar: *package.json* (un descriptor de nuestra aplicación) y *app.js* (el archivo principal de nuestro proyecto).
+
+			El archivo *package.json* puede funcionar con una información mínima. Es suficiente con indicar que utilizaremos Pillars en la lista de dependencias:
+
+		:highlight(lang='javascript')
+			{
+			  "dependencies": {
+			    "pillars": "*"
+			  }
+			}
+
+
+		:markdown
+			> Puedes encontrar más información sobre cómo funciona este archivo en el sitio web de [npmjs](https://www.npmjs.org/doc/files/package.json.html).
+
+			Ahora utilizaremos *npm* para cargar nuestras dependencias, utilizando el comando `npm install` por consola en el directorio del proyecto. Esto creará un directorio */node_modules* en el que se colocarán las dependencias descritas en nuestro archivo *package.json*.
+
+			Ya podemos empezar a utilizar Pillars.js, en el archivo *app.js* escribiremos un ejemplo básico para comprobar el funcionamiento:
+
+		:highlight(lang='javascript')
+			require('pillars').start();
+
+			addRoute(new Route(function(gw){
+			  gw.send("Hola Mundo");
+			}));
+
+			
