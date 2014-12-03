@@ -272,6 +272,9 @@ body {
 #sidebar nav ul {
   padding: 0;
 }
+#sidebar nav ul li.toc-h3 {
+  padding-left: 1em;
+}
 #sidebar nav > ul > li {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }

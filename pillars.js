@@ -46,16 +46,7 @@ global.precasts = require('./lib/precasts');
 // --------------------------------------------
 // Pillars addons
 
-ENV
-	.add(precasts.pillarsLogin)
-	.add(precasts.pillarsStatic)
-;
-
-
-/*
-
 var pillarsUsersSchema = new modelator.Schema('users',{
-	app : app,
 	collection : 'users',
 	limit : 5,
 	filter : ['_id','user','firstname','lastname'], 
@@ -67,15 +58,23 @@ var pillarsUsersSchema = new modelator.Schema('users',{
 	.addField('Text','password')
 	.addField('Text','keys')
 
-var pillarsUsersBackend = new Pillar({
+var pillarsUsersBackend = new Route({
 	id:'users',
 	path:'/users'
 });
 
-precasts.crudBeams(pillarsUsersBackend,pillarsUsersSchema);
+precasts.CRUD(pillarsUsersBackend,pillarsUsersSchema);
 
-app.addPillar(pillarsUsersBackend);
-*/
+ENV
+	.add(precasts.pillarsLogin)
+	.add(precasts.pillarsStatic)
+	.add(pillarsUsersBackend)
+;
+
+
+
+
+
 
 
 

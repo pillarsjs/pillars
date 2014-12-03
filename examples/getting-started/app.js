@@ -1,10 +1,10 @@
 require('../../pillars').configure({
-  database:{db:'pillarsExample'},
+  database:{store:'primera'},
   debug:true,
   languages:['es','en'],
   templates:{cache:false},
-  server:{port:3001}
-}).start();
+  server:{port:3000}
+})
 
 var Utilities = new Route({
   id:'Tools',

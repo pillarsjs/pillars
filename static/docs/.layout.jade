@@ -61,7 +61,14 @@ mixin base(title)
 		link(rel='stylesheet', type='text/css', href='http://fonts.googleapis.com/css?family=Inconsolata:400,700')
 		link(rel="stylesheet", type='text/css', href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css")
 		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
-
+		script(src='/pillars/docs/js/toc.min.js')
+		script.
+			$(function(){
+				$('#TOC').toc({
+					selectors:'h2,h3',
+					container: '#contents'
+				}).prepend('<h2>Table of contents</h2>');
+			})
 
 
 mixin layout(title,path)
@@ -73,25 +80,7 @@ mixin reference-layout(title,path)
 	+base(title,path)
 		#sidebar
 
-			nav
-				h2 Table of contents
-				ul
-					li: a(href="pillars-library.jade") Sinopsis
-					li: a(href="class-app.jade") Alcance
-					li: a(href="class-pillar.jade") Getting Started
-					li: a(href="class-beam.jade") Entorno (ENV)
-					li: a(href="class-beam.jade") Route
-					li: a(href="class-beam.jade") Gangway
-					li: a(href="class-beam.jade") Plugin
-					li: a(href="class-beam.jade") i18n
-					li
-						a(href="reference/class-app.jade") Clase App
-						ul
-							li: a(href="") Menu item
-							li: a(href="#") Menu item
-							li: a(href="#") Menu item
-					li: a(href="#") Menu item
-					li: a(href="#") Menu item
+			nav#TOC
 
 			nav
 				h2 Reference index
