@@ -14,11 +14,11 @@ html(lang=gw.language)
 		section.summary
 			h2#summary Sumario
 			:markdown
-				Al realizar la inclusión de la librería con `.require('pillars')` tenemos disponible la variable global `ENV`. 		
+				La variable `ENV` está disponible de forma global al realizar la inclusión de la librería. Mediante `ENV` se configura el entorno de la aplicación.
 
-				Mediante esta variable se **configura el entorno** de la aplicación, se arranca el servidor HTTP, se conecta a la base de datos, se añaden rutas y manejadores a la aplicación y también se añaden Plugins.
+				El entorno de la aplicación es todo aquello que necesitamos configurar para una aplicación web como; puerto al que responderá, configuración del smtp, configuración de los idiomas de la aplicación, tamaño de archivo máximo permitido por el servidor, etc.
 
-				Para setar el entorno de la aplicación de forma más eficiente podemos hacerlo mediante el método `ENV.configure()`.
+				Además `ENV` es el punto de anclaje para el resto de los elementos que componen el framework.
 	
 				
 		//- Syntax
@@ -40,27 +40,55 @@ html(lang=gw.language)
 		section.description
 			h2#description Descripción
 			:markdown
-				`ENV` **configura** el funcionamiento del servidor HTTP, la base de datos, idiomas de la aplicación, datos del administrador, configuración smtp del servidor, templates y directorios de la aplicación. Por otra parte también **arranca el servidor HTTP**, **conecta a la base de datos**, añade a la aplicación **rutas y manejadores**, y **plugins**.
+				Obtenemos acceso al entorno Pillars.js al realizar el require() de la librería. El entorno consiste en una serie de propiedades y funciones que nos permiten trabajar con el framework. La variable global `ENV` es la más importante, punto central de configuración y arranque del entorno. Además tendremos acceso a Clases como Plugin o Route, y las diferentes funciones que nos permitiran construir nuestra aplicación.
 
-				Para configurar el servidor HTTP lo hacemos con la propiedad [`.server`](#property-server), que nos permite configurar opciones como puerto y host, entre otras. Si necesitamos configurar una base de datos lo haremos mediante [`.database`](#property-database), será necesaria la conexión a la base de datos si vamos a utilizar el Plugin de sesiones. Con la propiedad [`.smtp`](#property-smtp) se configura el servidor smtp, que utilizará el [Módulo Mailer](#) para el envío de correos y con la propiedad [`.languages`](#property-languages) definimos los idiomas en los que trabajará la aplicación. 
+				`ENV` es un objeto global cuyas propiedades conforman la configuración de nuestra aplicación y sus métodos nos permiten la construción de la misma. Tenemos propiedades que nos permiten configurar el servicio HTTP o la conexión a la base de datos, mientras otros métodos como .addRoute o .addPlugin son el mecanismo para añadir controladores a nuestro entorno.
 
-				> Al definir varios idiomas en la aplicación mediante `ENV.languages`, el primer idioma del array es el idioma predeterminado, y por lo tanto el idioma al que se traducirá la consola y mensajes del entorno. Además tendremos disponible, una vez arranquemos la aplicación, todas las subrutas para los diferentes idiomas: `http://midominio.com/es/`, `http://midominio.es/en/`, `http://midominio.com/de/`. Estando en la ruta raíz `http://midominio` el idioma por defecto será el que se definió. Consulta la [librería Textualization](#) para saber más.
+				Junto a `ENV` se establecen de forma global las referencias a clases como Plugin o Route para que sea posible instanciar dichos objetos, también acceso a funcionalidades como renderer, i18n, logger o cron. Todo esto nos ofrece un entorno de trabajo completo y centralizado cuyo punto central es `ENV`.
 
-				Otros parámetros que podremos configurar son los directorios que usará la aplicación, tanto el directorio de subida de archivos como el directorio de archivos temporales. Lo hacemos mediante [`ENV.directories`](#property-directories). También se puede definir los templates que usará la aplicación o activar el sistema de caché de los templates con [`ENV.templates`](#property-templates) .
+				> Puedes encontrar una referencia a las variables globales de Pillars [aquí](#).
 
-				> El motor por defecto de renderizado de Pillars.js es Jade. Podrás añadir otros motores de renderizado como XXXX gracias al [Módulo Renderer](#). aquí hablar más del módulo de renderer.
+				En el ejemplo podemos ver una configuración básica del entorno por medio de la variable ENV. Es posible establecer propiedades de forma individual o agrupada usando el método `.configure()`.
 
-				Finalmente también tenemos la posibilidad de configurar en `ENV` los datos del [administrador de la aplicación](#property-administrator), y activar o desactivar el [modo debug](#property-debug). 
+			:highlight(lang='javascript')
+					ENV.configure({
+						debug : true,
+						directories:{
+							uploads:'./uploads',
+							temp:'./temp'
+						},
+						templates:{
+							cache:false
+						},
+						languages : ['es','en'],
+						administrator:{
+							mail:'administrator@domain.com',
+							firstname:'Name',
+							lastname:'Surname'
+						},
+						server:{
+							port:3000,
+							timeout:10*1000
+						},
+						database:{
+							store:'databaseName'
+						},
+						smtp: {
+							service: 'gmail',
+							auth: {
+								user: 'myuser@gmail.com',
+								pass: '******'
+							}
+						}
+					});
+
+					
 
 
-				Para arrancar el servidor HTTP ejecutamos el método [`.start()`](#method-start), que tomará como valores los configurados en la propiedad `.server`, en otro caso, arrancará con los valores por defecto. Paramos el servicio con [`.stop()`](#method-stop). La conexión a una base de datos se realiza con [`.connect()`](#method-connect) y la desconexión con [`.disconnect()`](#method-disconnect) que igualmente se realizará con los datos configurados en la propiedad `.database`, en este caso si es necesario configurar el nombre de la base de datos. 
-
-				Respecto a las rutas que atenderá la aplicación y los manejadores, tenemos el conjunto de métodos de `ENV` que trabaja con la [Clase Route](#), que son [`.addRoute()`](#method-addRoute), [`.getRoute()`](#method-getRoute) y [`.removeRoute()`](#method-removeRoute). Estos métodos son para añadir un objeto route, recuperar un objeto route y eliminarlo de `ENV` respectivamente.
-
-				Finalmente `ENV` cuenta con el conjunto de métodos para añadir, recuperar y eliminar instancias de la [Clase Plugin](). 
 
 
-
+			:markdown
+				----
 
 
 		//- Properties
@@ -186,7 +214,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						La propiedad `.directories` es un conjunto de propiedades para configurar los directorios de subidas y temporal:
+						La propiedad `.directories` es un conjunto de propiedades para configurar los directorios del sistema:
 						+ `uploads`: **String**. Ruta relativa o absoluta del directorio donde se almacenarán los archivos subidos al servidor. Por defecto es undefined.
 						+ `temp`: **String**. Ruta relativa o absoluta del directorio de archivos temporales. Por defecto es undefined.
 
@@ -207,10 +235,10 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						La propiedad `.templates` es un conjunto de propiedades para configurar opciones de los templates:
+						La propiedad `.templates` es un conjunto de propiedades para configurar opciones de templates y templates en concreto que utilizará el sistema:
 						+ `cache`: Tipo **Boolean** determina si está activa la caché de templates o no. Por defecto está activa en **true**.
-						+ `static`: Tipo **String** para determinar la plantilla estática. Por defecto es: **./templates/static.jade**.
-						+ `error`: Tipo **String** para determinarla plantilla de errores. Por defecto es: **./templates/error.jade**.
+						+ `static`: Tipo **String** para determinar la plantilla estática. Ésta se utiliza en el listado de directorios. Por defecto es: **./templates/static.jade**.
+						+ `error`: Tipo **String** para determinarla plantilla de errores. Se utiliza en cualquier página de error del sistema, por ejemplo un error 404. Por defecto es: **./templates/error.jade**.
 
 					:highlight(lang='javascript')
 						ENV.templates={
@@ -231,9 +259,9 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						La propiedad `.smtp` es un conjunto de propiedades para configurar opciones de los templates:
-						+ `hostname`: 
-						+ `port`: 
+						La propiedad `.smtp` es un conjunto de propiedades para configurar el servidor smtp.  Utiliza la librería [node-mailer](#):
+						+ `hostname`: nombre de host
+						+ `port`: puerto 
 						+ `user`: usuario del servidor de correo. Tipo **String**.
 						+ `password`: contraseña del usuario. Tipo **String**.
 
@@ -751,25 +779,42 @@ html(lang=gw.language)
 
 
 
+		//- Eventos
+		section.events
+			h2#events Eventos
+
+			section.event
+				h3#property-debug: code
+					| languages
+
+				:markdown
+					Cuando la propiedad `.languages` es seteada se emite el evento **'languages'**. 
+
+				:highlight(lang='javascript')
+					//Capturar el evento
+					ENV.on('languages');
+
+				h3#property-debug: code
+					| database
+
+				:markdown
+					Se emite el evento 'database' cuando la conexión a la base de datos .....
+
+				:highlight(lang='javascript')
+					//Capturar el evento database con callback
+					ENV.on('database' , function(){
+						ENV.database.getCollection('sessions');
+					});
+
 		//- Examples
 		section.examples
-			h2#examples Examples
+			h2#examples Ejemplos
 
 			//- Example
 			section.example
-				h3#example-1 Example 1
+				h3#example-1 Ejemplo 1. Primer Contacto.
 				:markdown
-					Class `App` _Example 1_ lorem ipsum __synopsis__ hola [link to Google!](http://google.com)
-
-				:highlight(lang='javascript')
-					var app = new App([{
-						database:'',
-						languages:['en'],
-						port:3000,
-						host:'*'
-					}]);
-
-				:markdown
+					El código fuente de este ejemplo está en .... 
 				:highlight(lang='javascript')
 					require("pillars").start();
 
@@ -800,7 +845,7 @@ html(lang=gw.language)
 
 					Seguidamente con el método `.configure()` hemos configurado: idiomas, datos del administrador, puerto en el que servirá la aplicación web y smtp. Puedes encontrar todas las opciones configurables de `ENV` en las [Propiedades](#properties).
 
-					> Al establecer como idioma predeterminado `es` a través de la propiedad `.language`, hemos configurado que los mensajes nos aparezcan en Español. En este punto de la aplicación si volvemos a consultar el path: `/` veremos el error 404 como 'Error 404: La página no existe, disculpe las molestias', es decir, en Español. Para saber más consulta el [Módulo i18n](#)
+					> Al establecer como idioma predeterminado `es` a través de la propiedad `.language`, hemos configurado que los mensajes aparezcan en Español. En este punto de la aplicación si volvemos a consultar el path: `/` veremos el error 404 como 'Error 404: La página no existe, disculpe las molestias', es decir, en Español. Para saber más consulta el [Módulo i18n](#)
 
 					La [clase Route](#) permite crear el par ruta-manejador. Añadimos a `ENV` las rutas, y los manejadores para las mismas, mediante el método `.addRoute(configuración, manejador);`.  
 					
@@ -844,4 +889,64 @@ html(lang=gw.language)
 
 					> Nótese que hemos añadido el `Route`, primero creándolo mediante `route = new Route(...)` y posteriormente agregándolo a `ENV` con el método `.addRoute()`.
 
+				//- Example
+			
+
+
+
+			section.example
+				h3#example-2 Ejemplo 2. Conexión a base de datos.
+				:markdown
+					El código fuente de este ejemplo está en .... 
+				:highlight(lang='javascript')
+					require("pillars").start();
+
+					ENV.configure(
+						database:{
+							hostname:'youremail@domain.com',
+							user:'name',
+							password:'surname'
+						}
+					);
+
+				:markdown
+					
+
+				:highlight(lang='javascript')
+					ENV.addRoute(
+						{
+							path:'/'
+						},
+
+						function(gw){
+							gw.send("Hola Mundo");
+						}
+					);
+
+				:markdown
+					Ahora la aplicación responderá en `/` el mensaje *Hola Mundo*. 
+
+					> Nótese que como hemos definido el entorno en dos idiomas se crean subrutas para el resto de idiomas. En este caso tendremos disponible el árbol de rutas `/en/` y `/es/`, y en `/` estará el idioma definido como predeterminado.
+					
+					El par configuración-manejador es un objeto route. Seguidamente vamos a crear primero el objeto y posteriormente añadirlo a `ENV`:
+
+				:highlight(lang='javascript')
+					route = new Route(
+						{
+							path:'/email'
+						},
+						function(gw){
+							Mailer.send(
+								to: "youremail@domain.com"
+								subject: "Hola!",
+								html: "Hola! Este correo electrónico fue enviado con el framework Pillars.js"
+							);
+						});
+
+					ENV.addRoute(route);
+
+				:markdown
+					Al haber configurado el servidor smtp, tenemos disponible la [librería Mailer](#), y mediante el método `.send()` enviamos un correo electrónico. Por lo tanto, dada la configuración del `Route`, cuando el usuario visite la URL `/email` automáticamente se enviará un email a la dirección descrita en el parámetro `to:`.
+
+					> Nótese que hemos añadido el `Route`, primero creándolo mediante `route = new Route(...)` y posteriormente agregándolo a `ENV` con el método `.addRoute()`.
 

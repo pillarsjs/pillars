@@ -353,3 +353,30 @@ html(lang=gw.language)
 				:markdown
 					Class App Example 1 Review
 
+
+
+
+				//- TEXTO PERTENECIENTE A ENV     
+
+
+				`ENV` **configura** el funcionamiento del servidor HTTP, la base de datos, idiomas de la aplicación, datos del administrador, configuración smtp del servidor, templates y directorios de la aplicación. Por otra parte también **arranca el servidor HTTP**, **conecta a la base de datos**, añade a la aplicación **rutas y manejadores**, y **plugins**.
+
+				Para configurar el servidor HTTP lo hacemos con la propiedad [`.server`](#property-server), que nos permite configurar opciones como puerto y host, entre otras. Si necesitamos configurar una base de datos lo haremos mediante [`.database`](#property-database), será necesaria la conexión a la base de datos si vamos a utilizar el Plugin de sesiones. Con la propiedad [`.smtp`](#property-smtp) se configura el servidor smtp, que utilizará el [Módulo Mailer](#) para el envío de correos y con la propiedad [`.languages`](#property-languages) definimos los idiomas en los que trabajará la aplicación. 
+
+				> Al definir varios idiomas en la aplicación mediante `ENV.languages`, el primer idioma del array es el idioma predeterminado, y por lo tanto el idioma al que se traducirá la consola y mensajes del entorno. Además tendremos disponible, una vez arranquemos la aplicación, todas las subrutas para los diferentes idiomas: `http://midominio.com/es/`, `http://midominio.es/en/`, `http://midominio.com/de/`. Estando en la ruta raíz `http://midominio` el idioma por defecto que se definió. Consulta la [librería Textualization](#) para saber más.
+
+				Otros parámetros que podremos configurar son los directorios que usará la aplicación, tanto el directorio de subida de archivos como el directorio de archivos temporales. Lo hacemos mediante [`.directories`](#property-directories). También se puede definir los templates que usará la aplicación o activar/desactivar el sistema de caché de los templates con [`.templates`](#property-templates) .
+
+				> El motor por defecto de renderizado de Pillars.js es Jade. Podrás añadir otros motores de renderizado como Mustache.js gracias al [Módulo Renderer](#). 
+
+				Finalmente también tenemos la posibilidad de configurar en `ENV` los datos del [administrador de la aplicación](#property-administrator), y activar o desactivar el [modo debug](#property-debug). 
+
+
+				Para arrancar el servidor HTTP ejecutamos el método [`.start()`](#method-start), que tomará como valores los configurados en la propiedad `.server`, en otro caso, arrancará con los valores por defecto. Paramos el servicio con [`.stop()`](#method-stop). La conexión a una base de datos se realiza con [`.connect()`](#method-connect) y la desconexión con [`.disconnect()`](#method-disconnect) que igualmente se realizará con los datos configurados en la propiedad `.database`, en este caso sí es necesario configurar el nombre de la base de datos. 
+
+				Respecto a las rutas que atenderá la aplicación y los manejadores, tenemos el conjunto de métodos de `ENV` que trabaja con la [Clase Route](#), que son [`.addRoute()`](#method-addRoute), [`.getRoute()`](#method-getRoute) y [`.removeRoute()`](#method-removeRoute). Estos métodos son para añadir un objeto route, recuperar un objeto route y eliminarlo de `ENV` respectivamente.
+
+				Finalmente `ENV` cuenta con el conjunto de métodos para añadir, recuperar y eliminar instancias de la [Clase Plugin](#). 
+
+
+

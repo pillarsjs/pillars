@@ -1,0 +1,363 @@
+include ../.layout.jade
+
+doctype html
+html(lang=gw.language)
+	- var path = [{label:'Pillars.js Reference',url:'/pillars/docs/reference/'},{label:'Clase Route',url:'/pillars/docs/reference/route.jade'}];
+	+reference-layout("Pillars.js Reference - Clase Route - 'make it easy!'",path)
+
+		#title
+			h1 Clase Route
+				em  Pillars.js Reference
+			a.source(href="#") Source
+
+		//- Summary
+		section.summary
+			h2#summary Sumario
+			:markdown
+				La Clase Route aporta la funcionalidad de añadir las rutas en las que responderá la aplicación, y el manejador concreto para dicha ruta.
+
+	
+		
+		//- Syntax
+		section.syntax
+			h2#syntax Sintaxis
+			:highlight(lang='javascript')
+				//Inclusión de la librería y método start() para arrancar el servidor.
+				require("pillars").start();
+
+				//
+				ENV.addRoute();
+
+		//- Description
+		section.description
+			h2#description Descripción
+			:markdown
+				La Clase Route aporta la funcionalidad de añadir las rutas en las que responderá la aplicación, y el manejador concreto para dicha ruta.
+
+			:highlight(lang='javascript')
+					
+
+					
+
+
+			
+				
+
+
+		//- Properties
+		section.properties
+			h2#properties Propiedades
+
+			//- Property
+			section.property
+				h3#property-routes: code
+					small Route
+					| .routes
+
+				//- Property description
+				section.description
+					:markdown
+						 La propiedad `.debug` establece el entorno en modo debug, lo que hará que se muestre información adicional de los errores. 
+						 Es de tipo **Boolean**
+						 Por defecto es: **true**
+
+			
+			
+			//- Property
+			section.property
+				h3#property-version: code 
+					small ENV
+					| .version
+
+				//- Property description
+				section.description
+					:markdown
+						`.version` es de solo lectura. Devuelve la versión del framework instalada.
+
+			//- Property
+			section.property
+				h3#property-path: code 
+					small ENV
+					| .path
+
+				//- Property description
+				section.description
+					:markdown
+						La propiedad `.path` es de solo lectura y devuelve el path absoluto de la librería pillars.
+
+
+			//- Property
+			section.property
+				h3#property-status: code 
+					small ENV
+					| .status
+
+				//- Property description
+				section.description
+					:markdown
+						La propiedad `.status` es de solo lectura. Devuelve un objeto con todos los routes y todos los plugins que la aplicación tiene añadidos.
+
+
+
+		//- Methods
+		section.methods
+			h2#methods Métodos
+
+			//- Method
+			section.method
+				h3#method-addroute: code
+					small ENV
+					| .addRoute()
+
+				//- Method description
+				section.description
+					:markdown
+						---
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:highlight(lang='javascript')
+						//Inicio del servidor con los valores por defecto:
+						route.addRoute();
+
+			//- Method
+			section.method
+				h3#method-stop: code
+					small ENV
+					| .stop()
+
+				//- Method description
+				section.description
+					:markdown
+						El método `.stop()` detiene el servidor HTTP.
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:highlight(lang='javascript')
+						//Detención del servidor HTTP
+						ENV.stop();
+
+						//Detención de servidor con callback
+						ENV.stop(function(){
+							console.log("Servidor parado");
+						});
+
+			//- Method
+			section.method
+				h3#method-connect: code
+					small ENV
+					| .connect()
+
+				//- Method description
+				section.description
+					:markdown
+						El método `.connect()` conecta a una base de datos MongoDB. Acepta como parámetros el conjunto de propiedades [ENV.database](#property-database).
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:highlight(lang='javascript')
+						
+						
+
+	
+			//- Method
+			section.method
+				h3#method-resolve: code
+					small ENV
+					| .resolve()
+
+				//- Method description
+				section.description
+					:markdown
+						El método `.resolve()` devuelve una ruta absoluta sobre un directorio relativo respecto al directorio de ejecución de la librería `pillars`. 
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:highlight(lang='javascript')
+						pathStatic = ENV.resolve('./static');
+
+					section.parameters
+						h5 Parámetros
+						dl
+							dt directory
+							dd
+								:markdown
+									Ruta relativa del directorio.
+
+
+
+		//- Eventos
+		section.events
+			h2#events Eventos
+
+			section.event
+				h3#property-debug: code
+					| languages
+
+				:markdown
+					Cuando la propiedad `.languages` es seteada se emite el evento **'languages'**. 
+
+				:highlight(lang='javascript')
+					//Capturar el evento
+					ENV.on('languages');
+
+				h3#property-debug: code
+					| database
+
+				:markdown
+					Se emite el evento 'database' cuando la conexión a la base de datos .....
+
+				:highlight(lang='javascript')
+					//Capturar el evento database con callback
+					ENV.on('database' , function(){
+						ENV.database.getCollection('sessions');
+					});
+
+		//- Examples
+		section.examples
+			h2#examples Ejemplos
+
+			//- Example
+			section.example
+				h3#example-1 Ejemplo 1. Primer Contacto.
+				:markdown
+					El código fuente de este ejemplo está en .... 
+				:highlight(lang='javascript')
+					require("pillars").start();
+
+					ENV.configure(
+						debug:true,
+						languages:['es','en'],
+						administrator:{
+							mail:'youremail@domain.com',
+							firstname:'name',
+							lastname:'surname'
+						},
+						server:{
+							port:80,
+						},
+						smtp{
+							service: 'gmail',
+							auth: {
+								user: 'myuser@gmail.com',
+								pass: '******'
+							}
+						}
+					);
+
+				:markdown
+					En el ejemplo lo primero que hemos hecho ha sido incluir la librería `pillars` y seguidamente ejecutar el método `.start()`. En este punto de la aplicación tenemos en el puerto `3000`, que es el puerto por defecto, el servicio HTTP arrancado, pero como no hemos definido rutas a atender,  si consultamos `/` tendremos como resultado un `Error 404: Not Found`.
+					
+					Al realizar la inclusión de la librería `pillars`, también estará disponible el **directorio público estático**, que por defecto está disponible en el path `/pillars` y en el directorio `static`. Contiene CSS, JS, NG y toda la documentación del framework en: `docs/reference/`. Para más información puedes consultar el [Módulo Static](#)
+
+					Seguidamente con el método `.configure()` hemos configurado: idiomas, datos del administrador, puerto en el que servirá la aplicación web y smtp. Puedes encontrar todas las opciones configurables de `ENV` en las [Propiedades](#properties).
+
+					> Al establecer como idioma predeterminado `es` a través de la propiedad `.language`, hemos configurado que los mensajes aparezcan en Español. En este punto de la aplicación si volvemos a consultar el path: `/` veremos el error 404 como 'Error 404: La página no existe, disculpe las molestias', es decir, en Español. Para saber más consulta el [Módulo i18n](#)
+
+					La [clase Route](#) permite crear el par ruta-manejador. Añadimos a `ENV` las rutas, y los manejadores para las mismas, mediante el método `.addRoute(configuración, manejador);`.  
+					
+					En la configuración para la creación del Route especificamos, entre otras cosas, la ruta o path, y en el segundo parámetro declaramos el manejador que atenderá en el path especificado. En el caso de no especificar path, por defecto será `/`. Seguidamente vamos a añadir un Route a `ENV`, mediante el método `.addRoute()`. 
+
+				:highlight(lang='javascript')
+					ENV.addRoute(
+						{
+							path:'/'
+						},
+
+						function(gw){
+							gw.send("Hola Mundo");
+						}
+					);
+
+				:markdown
+					Ahora la aplicación responderá en `/` el mensaje *Hola Mundo*. 
+
+					> Nótese que como hemos definido el entorno en dos idiomas se crean subrutas para el resto de idiomas. En este caso tendremos disponible el árbol de rutas `/en/` y `/es/`, y en `/` estará el idioma definido como predeterminado.
+					
+					El par configuración-manejador es un objeto route. Seguidamente vamos a crear primero el objeto y posteriormente añadirlo a `ENV`:
+
+				:highlight(lang='javascript')
+					route = new Route(
+						{
+							path:'/email'
+						},
+						function(gw){
+							Mailer.send(
+								to: "youremail@domain.com"
+								subject: "Hola!",
+								html: "Hola! Este correo electrónico fue enviado con el framework Pillars.js"
+							);
+						});
+
+					ENV.addRoute(route);
+
+				:markdown
+					Al haber configurado el servidor smtp, tenemos disponible la [librería Mailer](#), y mediante el método `.send()` enviamos un correo electrónico. Por lo tanto, dada la configuración del `Route`, cuando el usuario visite la URL `/email` automáticamente se enviará un email a la dirección descrita en el parámetro `to:`.
+
+					> Nótese que hemos añadido el `Route`, primero creándolo mediante `route = new Route(...)` y posteriormente agregándolo a `ENV` con el método `.addRoute()`.
+
+				//- Example
+			
+
+
+
+			section.example
+				h3#example-2 Ejemplo 2. Conexión a base de datos.
+				:markdown
+					El código fuente de este ejemplo está en .... 
+				:highlight(lang='javascript')
+					require("pillars").start();
+
+					ENV.configure(
+						database:{
+							hostname:'youremail@domain.com',
+							user:'name',
+							password:'surname'
+						}
+					);
+
+				:markdown
+					
+
+				:highlight(lang='javascript')
+					ENV.addRoute(
+						{
+							path:'/'
+						},
+
+						function(gw){
+							gw.send("Hola Mundo");
+						}
+					);
+
+				:markdown
+					Ahora la aplicación responderá en `/` el mensaje *Hola Mundo*. 
+
+					> Nótese que como hemos definido el entorno en dos idiomas se crean subrutas para el resto de idiomas. En este caso tendremos disponible el árbol de rutas `/en/` y `/es/`, y en `/` estará el idioma definido como predeterminado.
+					
+					El par configuración-manejador es un objeto route. Seguidamente vamos a crear primero el objeto y posteriormente añadirlo a `ENV`:
+
+				:highlight(lang='javascript')
+					route = new Route(
+						{
+							path:'/email'
+						},
+						function(gw){
+							Mailer.send(
+								to: "youremail@domain.com"
+								subject: "Hola!",
+								html: "Hola! Este correo electrónico fue enviado con el framework Pillars.js"
+							);
+						});
+
+					ENV.addRoute(route);
+
+				:markdown
+					Al haber configurado el servidor smtp, tenemos disponible la [librería Mailer](#), y mediante el método `.send()` enviamos un correo electrónico. Por lo tanto, dada la configuración del `Route`, cuando el usuario visite la URL `/email` automáticamente se enviará un email a la dirección descrita en el parámetro `to:`.
+
+					> Nótese que hemos añadido el `Route`, primero creándolo mediante `route = new Route(...)` y posteriormente agregándolo a `ENV` con el método `.addRoute()`.
+
