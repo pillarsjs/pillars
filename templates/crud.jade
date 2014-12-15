@@ -15,7 +15,7 @@ mixin field(field)
 		.input
 			p.help= i18n("schemas."+field.schema.id+".fields."+field.path+".details",{_default:""})
 			if field.i18n
-				each lang in gw.textualization.langs
+				each lang in textualization.langs
 					div(class="lang",ng-hide="env.lang!='"+lang+"'", datapath=lang)
 						+field-validation(field)
 						+#{field.template}(field)
