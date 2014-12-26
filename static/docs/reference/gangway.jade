@@ -2,19 +2,19 @@ include ../.layout.jade
 
 doctype html
 html(lang=gw.language)
-	- var path = [{label:'Pillars.js Reference',url:'/pillars/docs/reference/'},{label:'Clase Route',url:'/pillars/docs/reference/route.jade'}];
-	+reference-layout("Pillars.js Reference - Clase Route - 'make it easy!'",path)
+	- var path = [{label:'Pillars.js Reference',url:'/pillars/docs/reference/'},{label:'Objeto gangway',url:'/pillars/docs/reference/gangway.jade'}];
+	+reference-layout("Pillars.js Reference - Objeto gangway - 'make it easy!'",path)
 
 		#title
-			h1 Clase Route
+			h1 Objeto gangway
 				em  Pillars.js Reference
-			a.source(href="https://github.com/bifuer/pillars/blob/master/lib/Route.js") Source
+			a.source(href="https://github.com/bifuer/pillars/blob/master/lib/gangway.js") Source
 
 		//- Summary
 		section.summary
 			h2#summary Sumario
 			:markdown
-				Añadiendo objetos route a `ENV` definimos rutas en las que responderá la aplicación y el manejador para dicha ruta.
+				El objeto gangway ... 
 
 	
 		
@@ -22,6 +22,10 @@ html(lang=gw.language)
 		section.syntax
 			h2#syntax Sintaxis
 			:highlight(lang='javascript')
+				//Inclusión de la librería y método start() para arrancar el servidor.
+				require("pillars").start();
+
+				//
 				ENV.addRoute();
 
 		//- Description

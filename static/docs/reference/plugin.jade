@@ -2,19 +2,19 @@ include ../.layout.jade
 
 doctype html
 html(lang=gw.language)
-	- var path = [{label:'Pillars.js Reference',url:'/pillars/docs/reference/'},{label:'Clase Route',url:'/pillars/docs/reference/route.jade'}];
-	+reference-layout("Pillars.js Reference - Clase Route - 'make it easy!'",path)
+	- var path = [{label:'Pillars.js Reference',url:'/pillars/docs/reference/'},{label:'Clase Plugin',url:'/pillars/docs/reference/plugin.jade'}];
+	+reference-layout("Pillars.js Reference - Clase Plugin - 'make it easy!'",path)
 
 		#title
-			h1 Clase Route
+			h1 Clase Plugin
 				em  Pillars.js Reference
-			a.source(href="https://github.com/bifuer/pillars/blob/master/lib/Route.js") Source
+			a.source(href="https://github.com/bifuer/pillars/blob/master/lib/Plugin.js") Source
 
 		//- Summary
 		section.summary
 			h2#summary Sumario
 			:markdown
-				Añadiendo objetos route a `ENV` definimos rutas en las que responderá la aplicación y el manejador para dicha ruta.
+				La Clase Plugin ....
 
 	
 		
@@ -22,13 +22,17 @@ html(lang=gw.language)
 		section.syntax
 			h2#syntax Sintaxis
 			:highlight(lang='javascript')
+				//Inclusión de la librería y método start() para arrancar el servidor.
+				require("pillars").start();
+
+				//
 				ENV.addRoute();
 
 		//- Description
 		section.description
 			h2#description Descripción
 			:markdown
-				La Clase Route aporta la funcionalidad de añadir las rutas en las que responderá la aplicación, y el manejador concreto para dicha ruta.
+				La Clase Plugin aporta la funcionalidad de añadir las rutas en las que responderá la aplicación, y el manejador concreto para dicha ruta.
 
 			:highlight(lang='javascript')
 				Lorem ipsum					
@@ -40,7 +44,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-routes: code
-					small Route
+					small Plugin
 					| .routes
 
 				//- Property description
