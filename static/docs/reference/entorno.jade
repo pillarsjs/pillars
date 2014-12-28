@@ -353,7 +353,10 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
+					:markdown
+						ENV.start( *Server configuration* , *callback* );
+
 					:highlight(lang='javascript')
 						//Inicio del servidor con los valores por defecto:
 						ENV.start();
@@ -390,7 +393,10 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
+					:markdown
+						ENV.stop( *callback* );
+
 					:highlight(lang='javascript')
 						//Detención del servidor HTTP
 						ENV.stop();
@@ -413,7 +419,10 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
+					:markdown
+						ENV.connect( *Database configuration* , *callback* );
+
 					:highlight(lang='javascript')
 						//Conecta a la base de datos con los parámetros indicados: 
 						ENV.connect({
@@ -451,7 +460,10 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
+					:markdown
+						ENV.disconnect( *callback* );
+
 					:highlight(lang='javascript')
 						//Desconecta la base de datos 
 						ENV.disconnect();
@@ -478,7 +490,13 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
+					:markdown
+						ENV.addRoute( *route object* );
+
+						ENV.addRoute( *route configuration* , *controller* );
+
+
 					:highlight(lang='javascript')
 						//Objeto route creado previamente
 						ENV.addRoute(route);
@@ -518,7 +536,10 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
+					:markdown
+						ENV.getRoute( *string: route id* );
+
 					:highlight(lang='javascript')
 						route = ENV.getRoute("home");
 
@@ -528,7 +549,7 @@ html(lang=gw.language)
 							dt id
 							dd
 								:markdown
-									id del objeto route.
+									String. id del objeto route.
 
 			
 			//- Method
@@ -544,7 +565,7 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
 					:highlight(lang='javascript')
 						ENV.removeRoute("home");
 
@@ -554,7 +575,7 @@ html(lang=gw.language)
 							dt id
 							dd
 								:markdown
-									id del objeto route.
+									String. id del objeto route.
 				
 
 
@@ -574,7 +595,7 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
 					:highlight(lang='javascript')
 						//Objeto route creado previamente
 						ENV.addPlugin(plugin);
@@ -616,7 +637,7 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
 					:highlight(lang='javascript')
 						plugin = ENV.getPlugin("pluginOne");
 
@@ -643,7 +664,7 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
 					:highlight(lang='javascript')
 						ENV.removePlugin("pluginOne");
 
@@ -671,7 +692,7 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
 					:highlight(lang='javascript')
 						ENV.add(route);
 						ENV.add(plugin)
@@ -705,7 +726,7 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
 					:highlight(lang='javascript')
 						ENV.configure({
 							debug : true,
@@ -756,7 +777,7 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
 					:highlight(lang='javascript')
 						pathStatic = ENV.resolve('./static');
 
@@ -789,7 +810,7 @@ html(lang=gw.language)
 					| database
 
 				:markdown
-					Se emite el evento 'database' cuando la conexión a la base de datos .....
+					Se emite el evento 'database' cuando la conexión a la base de datos es seteada.
 
 				:highlight(lang='javascript')
 					//Capturar el evento database con callback

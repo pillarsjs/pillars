@@ -14,9 +14,10 @@ html(lang=gw.language)
 		section.summary
 			h2#summary Sumario
 			:markdown
-				Creando objetos route se definen rutas y el manejador que responderá en dicha ruta.
-
-				`new Route(configuración, manejador);`
+				Mediante objetos de la clase Route se declaran manejadores para una ruta concreta. Así mismo los objetos route son anidables por lo que organizan y/o agrupan funcionalidades de la aplicación.
+				
+				Instancia de un objeto route: `route = new Route(*configuration*, *controller*);`. Donde *configuration* es un objeto de definición de parámetros, y *controller* es el controlador que se ejecutará en el path configurado en *configuration*, por defecto el path es `/`.  
+				La creación más básica de un route se puede realizar tan sólo con el parámetro *controller*, tomando por tanto toda la conffiguración por defecto.
 
 	
 		
@@ -25,12 +26,13 @@ html(lang=gw.language)
 			h2#syntax Sintaxis
 			:highlight(lang='javascript')
 				//Creación más básica de un objeto route. Al no realizar configuración por defecto se define el path /
-				new Route(function(gw){
+				route = new Route(function(gw){
 					gw.send("Hola Mundo");
 				});
 
-				//Creación de un route que responde en el path /web. El manejador envía al cliente el renderizado del archivo example.jade 
-				new Route(
+				//Creación de un route con id 'web' y que responde en el path /web. El manejador envía al cliente el 
+				//renderizado del archivo example.jade -javi-
+				route = new Route(
 					{
 						id: "web",
 						path: "/web/"
@@ -44,9 +46,9 @@ html(lang=gw.language)
 		section.description
 			h2#description Descripción
 			:markdown
-				La arquitectura de la aplicación web se define mediante objetos route. Son anidables, editables en ejecución y se pueden eliminar, para ello necesitaremos siempre el identificador del objeto. 
+				La arquitectura de la aplicación web se define mediante objetos route. Son anidables, editables en ejecución y se pueden eliminar, y para ello necesitaremos siempre el identificador del objeto. 
 
-				El objeto se puede declarar sin configuración, por lo que toma los valores predeterminados. También se puede declarar sin manejador, por lo que podemos utilizarlo para agrupar funcionalidades similares. 
+				El objeto se puede declarar sin configuración, por lo que toma los valores predeterminados. También se puede declarar sin manejador, por lo que en este caso actuaría como elemento organizativo. 				
 
 			:highlight(lang='javascript')
 				new Route({id:"user", path:"/user/"})
@@ -54,7 +56,8 @@ html(lang=gw.language)
 					.addRoute({parth:""})
 				; 
 
-
+			:markdown
+				> Los parámetros de configuración del route adquieren bastante importancia cuando combinamos objetos route y plugin, ya que será en este objeto de configuración *configuration* donde activaremos los plugins que requiramos en el route.
 						
 		//- Properties
 		section.properties
@@ -63,18 +66,18 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-id: code
-					small Route
+					small route
 					| .id
 
 				//- Property description
 				section.description
 					:markdown
-						**String** identificador del objeto route. Si no se especifica en la creación se autogenera. 
+						**String** identificador del objeto route. Si no declara en la creación se autogenera. 
 
 					:highlight(lang='javascript')
 						route = new Route(function(gw){gw.send("Hola Mundo")});
 						console.log(route.id);
-						//Imprime: 
+						//Imprime: i47a45wc6
 						route.id = "myRoute";
 						console.log(route.id);
 						//Imprime: myRoute
@@ -83,25 +86,25 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-path: code
-					small Route
+					small route
 					| .path
 
 				//- Property description
 				section.description
 					:markdown
-						Path al que responderá el route. Por defecto es '/'.
+						Path al que responderá el route. Por defecto es '/'. **String**.
 
 
 			//- Property
 			section.property
 				h3#property-method: code
-					small Route
+					small route
 					| .method
 
 				//- Property description
 				section.description
 					:markdown
-						Método `GET` y/o `POST` que acepta el route.
+						Método `GET` y/o `POST` que acepta el route. Para un sólo método acepta un **String**, para dos métodos se setea como **Array**.
 
 					:highlight(lang='javascript')
 						route.method = "GET"; //sólo acepta GET 
@@ -110,112 +113,210 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-host: code
-					small Route
+					small route
 					| .host
 
 				//- Property description
 				section.description
 					:markdown
-						Host al que responderá el route.
+						Host al que responderá el route. **String**.
 
 					:highlight(lang='javascript')
-						route.host = "www.pillarsjs.com";						
+						route.host = "www.pillarsjs.com";		
+
+					:markdown
+						> Esta propiedad es útil si se requiere que un objeto route sólo responda cuando el cliente esté visitando un host específico como el del ejemplo.			
 
 			//- Property
 			section.property
 				h3#property-routes: code
-					small Route
+					small route
 					| .routes
 
 				//- Property description
 				section.description
 					:markdown
-						Objetos route que cuelgan del objeto.
+						Sólo lectura. Devuelve un Array con todos los objetos route hijos.
+
+					:highlight(lang='javascript')
+						var home = new Route({id:"home"},function(gw){
+							gw.send(home.routes);
+						});
+
+						var web = new Route({id:"web",path:"/web"},function(gw){
+							gw.render("example.jade");
+						});
+
+						var fileDownload = new Route({id:"file", path:"file", host:"localhost"},function(gw){
+							gw.file("example.jade");
+						});
+
+						home.addRoute(web);
+						home.addRoute(fileDownload);
+
+						addRoute(home);
+
+						/*En http://127.0.0.1:3000/ Imprime: 
+						[
+							{
+								"domain":null,
+								"_events":{},
+								"_maxListeners":10,
+								"id":"web",
+								"path":"web",
+								"handlers":[ [Function] ],
+								"params":[],
+								"pathRegex":"/^\\/?web\\/?/i",
+								"method":["GET"],
+								"priority":1000,
+								"active":true,
+								"routes":[]
+							},
+							{
+								"domain":null,
+								"_events":{},
+								"_maxListeners":10,
+								"id":"file",
+								"path": "file",
+								"host": "localhost",
+								"handlers":[ [Function] ],
+								"params":[],
+								"pathRegex":"/^\\/?file\\/?/i",
+								"path":""
+								,"method":["GET"],
+								"priority":1000,
+								"active":true,
+								"routes":[]
+							}
+						]
+						*/
+
+					:markdown
+						> Al ser Route un EventEmitter en el objeto de propiedades del route tenemos también las propiedades: `domain`, `_events` y `_maxListeners`
+
 
 			//- Property
 			section.property
 				h3#property-handlers: code
-					small Route
+					small route
 					| .handlers
 
 				//- Property description
 				section.description
 					:markdown
-						Listado de manejadores de un route. Realmente un route lo podemos crear con varios manejadores, conocidos como middleware. 
+						Listado de manejadores de un route. Un route lo podemos crear con varios manejadores, conocidos como middleware. 
 
 					:highlight(lang='javascript')
-						
-						middleware = function(gw,next){...};
+						//Creación del middleware
+						var msg = function(gw,next){ 
+							gw.data.myData="Hola Mundo!!!"; 
+							next(); 
+						};
 
-						route = new Route(
-							{
-								id:"sample"
-							},
-							middleware,
-							function (gw){
-
+						//Creación del route con un middleware
+						var home = new Route(
+							{id:"home"},
+							msg,
+							function(gw){
+								gw.send(gw.data.myData);
 							}
 						);
+
+						addRoute(home);
+
+						//Imprime: Hola Mundo!!!
+
+					:markdown
+						La propiedad `.handlers` devuelve un Array con todos los manejadores del route. Podemos realizar modificaciones de la propiedad: 
+
+
+					:highlight(lang='javascript')
+						console.log(home.handlers);
+
+						/*Imprime: 
+							[ [Function], [Function] ]
+						*/
+
+						home.handlers.shift(); // Eliminamos el primer elemento del Array
+						console.log(home.handlers);
+
+						/*Imprime: 
+							[ [Function] ]
+						*/
+
 
 			//- Property
 			section.property
 				h3#property-priority: code
-					small Route
+					small route
 					| .priority
 
 				//- Property description
 				section.description
 					:markdown
-						Prioridad de ejecución de un route. Por defecto es 1000. 
-						Cobra (serpiente) sentido cuando pensamos en acciones que se tienen que ejecutar antes de que la petición del cliente pase por el enrutado, por ejemplo este sería el caso de XXX.
+						**Integer** que especifica la prioridad de ejecución del route. Por defecto es 1000. 
+						Cobra sentido cuando pensamos en acciones que se tienen que ejecutar antes de que la petición del cliente pase por el enrutado, por ejemplo.
+						Por defecto es 1000.
 
 			//- Property
 			section.property
 				h3#property-active: code
-					small Route
+					small route
 					| .active
 
 				//- Property description
 				section.description
 					:markdown
-						**Boolean** que indica si el route está activo o no. Por defecto es true.
+						**Boolean** que define si el route está activo o no. Por defecto es **true**, activo.
 
 					:highlight(lang='javascript')
-						//Desactivamos un route cuando un mismo usuario visite la página 3 veces.
+						home.active = false;
+						//En este momento la aplicación no respondería
 
 
 
 			//- Property
 			section.property
 				h3#property-params: code
-					small Route
+					small route
 					| .params
 
 				//- Property description
 				section.description
 					:markdown
-						Propiedad de sólo lectura. Array de sólo lectura que acumula los parámetros que se han pasado en la creación de la ruta. Herencia.
+						Devuelve un Array de **sólo lectura** que acumula los parámetros que se han pasado en la creación de la ruta.
+						GET, POST Y PATH. 
 
 					:highlight(lang='javascript')
-						new Route({path:"admin",method:"GET"})
-							.addRoute(new Route({host:""})
-								.addRoute({path:"login", method:"POST"},function(gw){
+						users = new Route({path:"/user/:param1/:param2"},function(gw){
+							gw.send(users.params);
+						});
 
-								});
-							)
-						;
+						addRoute(users);
+
+						/* Visitando http://127.0.0.1:3000/user/javi/fotos - Imprime: 
+							[
+								"param1",
+								"param2"
+							]
+						*/
+
+
+					:markdown
+						> El contenido de los parámetros pasados por la URL, así como del POST y del GET, pueden ser consultados con el objeto gangway. (gw.params)[#].
+						
 
 
 			//- Property
 			section.property
 				h3#property-pathRegex: code
-					small Route
+					small route
 					| .pathRegex
 
 				//- Property description
 				section.description
 					:markdown
-						Propiedad de sólo lectura que contiene la expresión regular de la propiedad `path`. Si modificamos `path`, `pathRegex` se actualiza automáticamente.
+						Propiedad de **sólo lectura** que contiene la expresión regular de la propiedad `path`. Si modificamos `path`, `pathRegex` se actualiza automáticamente.
 
 		//- Methods
 		section.methods
@@ -224,45 +325,94 @@ html(lang=gw.language)
 			//- Method
 			section.method
 				h3#method-addroute: code
-					small prototype
+					small route
 					| .addRoute()
 
 				//- Method description
 				section.description
 					:markdown
-						Añade un objeto de la clase route al objeto route.
+						Añade un objeto de la clase route al objeto route. De esta forma creamos estructuras anidadas.
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
-					:highlight(lang='javascript')
-						//Inicio del servidor con los valores por defecto:
-						route.addRoute();
+					h4 Sintaxis
+					:markdown
+						.addRoute( *route Object* );
 
+						+ *route object*: Objeto de la Clase Route previamente creado mediante `new Route()`
+
+
+						.addRoute (*route configuration *, *route controller* );
+
+						+ *route configuration* : objeto de configuración del route.
+						+ *route controller* : controlador del route.
+
+
+				//- Method syntax
+				section.example
+					h4 Ejemplo
+					:highlight(lang='javascript')
+						var home = new Route({id:"home"},function(gw){
+							gw.send("Home");
+						});
+
+						var web = new Route({id:"web",path:"/web"},function(gw){
+							gw.render("example.jade");
+						});
+
+						var fileDownload = new Route({id:"file", path:"file", host:"localhost"},function(gw){
+							gw.file("example.jade");
+						});
+
+						home.addRoute(web);
+						home.addRoute(fileDownload);
+
+						addRoute(home);
+
+					:markdown
+						> Hay que notar que con método `addRoute(home)`, lo estamos realizando sobre `ENV`, y con `route.addRoute()`, se ejecuta el método del objeto, por lo que estamos añadiendo un 'hijo' al route home.
 
 				//- Method
 			section.method
 				h3#method-add: code
-					small prototype
+					small route
 					| .add()
 
 				//- Method description
 				section.description
 					:markdown
-						Lorem ipsum
+						Alias de `.addRoute()`.
+
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
+					:markdown
+						.add(*route Object*);
+
 					:highlight(lang='javascript')
-						//Inicio del servidor con los valores por defecto:
-						route.add();
+						var home = new Route({id:"home"},function(gw){
+							gw.send("Home");
+						});
+
+						var web = new Route({id:"web",path:"/web"},function(gw){
+							gw.render("example.jade");
+						});
+
+						var fileDownload = new Route({id:"file", path:"file", host:"localhost"},function(gw){
+							gw.file("example.jade");
+						});
+
+						home.add(web);
+						home.add(fileDownload);
+
+						addRoute(home);
 
 
 				//- Method
 			section.method
 				h3#method-getRoute: code
-					small prototype
+					small route
 					| .getRoute()
 
 				//- Method description
@@ -272,15 +422,14 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
 					:highlight(lang='javascript')
-						//Inicio del servidor con los valores por defecto:
 						route.getRoute();
 
 				//- Method
 			section.method
 				h3#method-removeRoute: code
-					small prototype
+					small route
 					| .removeRoute()
 
 				//- Method description
@@ -290,9 +439,8 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
 					:highlight(lang='javascript')
-						//Inicio del servidor con los valores por defecto:
 						route.removeRoute();
 
 
@@ -302,41 +450,53 @@ html(lang=gw.language)
 			h2#events Eventos
 
 			section.event
-				h3#property-debug: code
+				h3#event-idUpdate: code
 					| idUpdate
 
 				:markdown
-					Lorem ipsum 
+					 Evento que se emite cuando el id del route es actualizado.
 
 				:highlight(lang='javascript')
+					//Creación del route
+					route = new Route(function(gw){
+						gw.send("Message");
+					});
+
 					//Capturar el evento
-					ENV.on('priority');
+					route.on('idUpdate', function(){
+						console.log("Evento idUpdate capturado");
+					});
+
+					route.id = "home";
+
+					/*Imprime: 
+						Evento idUpdate capturado
+					*/
+
 
 			section.event
-				h3#property-debug: code
+				h3#event-priorityUpdate: code
 					| priorityUpdate
 
 				:markdown
-					Lorem ipsum 
+					Evento que se emite cuando la prioridad del route es actualizada.
 
 				:highlight(lang='javascript')
+					//Creación del route
+					route = new Route(function(gw){
+						gw.send("Message");
+					});
+
 					//Capturar el evento
-					ENV.on('priority');
+					route.on('priorityUpdate', function(){
+						console.log("Evento priorityUpdate capturado");
+					});
 
-				
-		//- Examples
-		section.examples
-			h2#examples Ejemplos
+					route.priority = 1001;
 
-			//- Example
-			section.example
-				h3#example-1 Ejemplo 1. Primer Contacto.
-				:markdown
-					Lorem ipsum 
-				:highlight(lang='javascript')
-					require("pillars").start();
+					/*Imprime: 
+						Evento priorityUpdate capturado
+					*/
 
-				:markdown
-					Lorem ipsum
-
+		
 

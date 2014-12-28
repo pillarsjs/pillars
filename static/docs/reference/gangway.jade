@@ -14,25 +14,37 @@ html(lang=gw.language)
 		section.summary
 			h2#summary Sumario
 			:markdown
-				El objeto gangway ... 
+				Se genera un objeto gangway por cada solicitud al servidor. El objeto gangway contiene todos los datos de la solicitud del cliente.
+				Está disponible en el controlador de un objeto route, ya que el **controller** del objeto route lo recibe como parámetro.  
 
-	
+				// Los plugins sirven para ampliar las funcionalidades de gangway. Por ejemplo añadir soporte de sesiones, etc.
+
 		
 		//- Syntax
 		section.syntax
 			h2#syntax Sintaxis
 			:highlight(lang='javascript')
-				//Inclusión de la librería y método start() para arrancar el servidor.
-				require("pillars").start();
 
-				//
-				ENV.addRoute();
+				var home = new Route(function(gw){
+					var id = gw.id; 					// id del objeto gangway para la petición.
+					var ip = gw.ip;						// ip del cliente
+					var browserLang = gw.language;		// Primer idioma del navegador del cliente 
+					var cors = gw.cors; 						// gestion de orígenes cruzados. 
+					var method = gw.method;
+					var auth = gw.auth; está en el getting started. método autenticate. Esetará el usuario y el password del usuario. Cunado se hace lo del htaccess.
+					var encoding = gw.encoding; 					// encoding que se utiliza para el envío al cliente.
+
+
+					gw.send("<pre>"+util.inspect(gw)+"</pre>");
+				});
+
+				
 
 		//- Description
 		section.description
 			h2#description Descripción
 			:markdown
-				La Clase Route aporta la funcionalidad de añadir las rutas en las que responderá la aplicación, y el manejador concreto para dicha ruta.
+				Lorem Ipsum
 
 			:highlight(lang='javascript')
 				Lorem ipsum					
@@ -43,14 +55,234 @@ html(lang=gw.language)
 
 			//- Property
 			section.property
-				h3#property-routes: code
-					small Route
-					| .routes
+				h3#property-timer: code
+					small gangway
+					| .timer
 
 				//- Property description
 				section.description
 					:markdown
-						Lorem ipsum
+						**TimeStamp** de cuando se creó el gangway.
+
+			//- Property
+			section.property
+				h3#property-id: code
+					small gangway
+					| .id
+
+				//- Property description
+				section.description
+					:markdown
+						Id del objeto gangway, se genera automáticamente.
+
+			//- Property
+			section.property
+				h3#property-closed: code
+					small gangway
+					| .closed
+
+				//- Property description
+				section.description
+					:markdown
+						**Boolean** que indica si el objeto gangway está en proceso de cerrarse o cerrado.
+
+
+			//- Property
+			section.property
+				h3#property-req: code
+					small gangway
+					| .req
+
+				//- Property description
+				section.description
+					:markdown
+						Alias del [objeto request original de Node](http://nodejs.org/api/http.html#http_http_incomingmessage).
+
+			//- Property
+			section.property
+				h3#property-res: code
+					small gangway
+					| .res
+
+				//- Property description
+				section.description
+					:markdown
+						Alias del [objeto response original de Node](#)
+
+			//- Property
+			section.property
+				h3#property-socket: code
+					small gangway
+					| .socket
+
+				//- Property description
+				section.description
+					:markdown
+						Es el socket de la solicitud. Es un alias de [request.socket de Node](http://nodejs.org/api/http.html#http_message_socket).
+
+			//- Property
+			section.property
+				h3#property-statusCode: code
+					small gangway
+					| .statusCode
+
+				//- Property description
+				section.description
+					:markdown
+						Código de estado de la solicitud. Alias de [statusCode original de Node.](http://nodejs.org/api/http.html#http_response_statuscode).
+
+			//- Property
+			section.property
+				h3#property-headersSent: code
+					small gangway
+					| .headersSent
+
+				//- Property description
+				section.description
+					:markdown
+						Informa si se han enviado las cabeceras de la respuesta o no. Alias de [headersSent original de Node.](http://nodejs.org/api/http.html#http_response_headerssent)
+
+			//- Property
+			section.property
+				h3#property-accepts: code
+					small gangway
+					| .accepts
+
+				//- Property description
+				section.description
+					:markdown
+						Encabezados accepts de la solicitud HTTP. `.accepts` devuelve un objeto con: 
+						+ gw.accepts.types: **Array** con los Content-types que espera como respuesta el navegador en la solicitud.
+						+ gw.accepts.language: **Array** con los idiomas que espera el navegador.
+						+ gw.accepts.encodings: **Array** que contiene los encodigns que soporta el navegador.
+
+			//- Property
+			section.property
+				h3#property-content: code
+					small gangway
+					| .content
+
+				//- Property description
+				section.description
+					:markdown
+						Alias de content de Node.
+
+			//- Property
+			section.property
+				h3#property-ranges: code
+					small gangway
+					| .ranges
+
+				//- Property description
+				section.description
+					:markdown
+						Alias de ranges de Node.
+
+			//- Property
+			section.property
+				h3#property-cookie: code
+					small gangway
+					| .cookie
+
+				//- Property description
+				section.description
+					:markdown
+						Alias de cookie de Node.
+
+			//- Property
+			section.property
+				h3#property-auth: code
+					small gangway
+					| .auth
+
+				//- Property description
+				section.description
+					:markdown
+						Alias de auth de Node.
+
+			//- Property
+			section.property
+				h3#property-ua: code
+					small gangway
+					| .ua
+
+				//- Property description
+				section.description
+					:markdown
+						Alias de ua de Node.
+
+			//- Property
+			section.property
+				h3#property-origin: code
+					small gangway
+					| .origin
+
+				//- Property description
+				section.description
+					:markdown
+						Alias de origin de Node.
+
+			//- Property
+			section.property
+				h3#property-ip: code
+					small gangway
+					| .ip
+
+				//- Property description
+				section.description
+					:markdown
+						Alias de ip de Node.
+
+			//- Property
+			section.property
+				h3#property-httpVersion: code
+					small gangway
+					| .httpVersion
+
+				//- Property description
+				section.description
+					:markdown
+						Alias de httpVersion de Node.
+
+			//- Property
+			section.property
+				h3#property-https: code
+					small gangway
+					| .https
+
+				//- Property description
+				section.description
+					:markdown
+						Alias de https de Node.
+
+			//- Property
+			section.property
+				h3#property-host: code
+					small gangway
+					| .host
+
+				//- Property description
+				section.description
+					:markdown
+						Alias de host de Node.
+
+			//- Property
+			section.property
+				h3#property-port: code
+					small gangway
+					| .port
+
+				//- Property description
+				section.description
+					:markdown
+						Devuelve un **String** con la ip del cliente.
+
+
+
+
+
+
+
 
 
 		//- Methods
