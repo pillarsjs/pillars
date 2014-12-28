@@ -24,7 +24,6 @@ html(lang=gw.language)
 		section.syntax
 			h2#syntax Sintaxis
 			:highlight(lang='javascript')
-
 				var home = new Route(function(gw){
 					var id = gw.id; 					// id del objeto gangway para la petición.
 					var ip = gw.ip;						// ip del cliente
@@ -84,7 +83,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						**Boolean** que indica si el objeto gangway está en proceso de cerrarse o cerrado.
+						**Boolean**, indica si el objeto gangway está en proceso de cerrarse o cerrado.
 
 
 			//- Property
@@ -129,7 +128,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Código de estado de la solicitud. Alias de [statusCode original de Node.](http://nodejs.org/api/http.html#http_response_statuscode).
+						Código de estado de la solicitud. Alias de [statusCode original de Node.](http://nodejs.org/api/http.html#http_response_statuscode)
 
 			//- Property
 			section.property
@@ -152,8 +151,8 @@ html(lang=gw.language)
 				section.description
 					:markdown
 						Encabezados accepts de la solicitud HTTP. `.accepts` devuelve un objeto con: 
-						+ gw.accepts.types: **Array** con los Content-types que espera como respuesta el navegador en la solicitud.
-						+ gw.accepts.language: **Array** con los idiomas que espera el navegador.
+						+ gw.accepts.types: **Array** que contiene los Content-types que espera como respuesta el navegador en la solicitud.
+						+ gw.accepts.language: **Array** que contiene los idiomas que espera el navegador.
 						+ gw.accepts.encodings: **Array** que contiene los encodigns que soporta el navegador.
 
 			//- Property
@@ -165,7 +164,11 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Alias de content de Node.
+						No se sabe 
+						+ type:
+						+ length: 
+						+ boundary:
+						+ params: 
 
 			//- Property
 			section.property
@@ -177,6 +180,10 @@ html(lang=gw.language)
 				section.description
 					:markdown
 						Alias de ranges de Node.
+						+ check
+						+ unit:
+						+ start:
+						+ end: 
 
 			//- Property
 			section.property
@@ -198,7 +205,14 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Alias de auth de Node.
+						Control de la autenticación HTTP del usuario.
+						Devuelve false, en caso de no estar seteado y un objeto con `user` y `pass` en el caso de estarlo. 
+
+					:highlight(lang='javascript')
+						auth:{
+							user: 'UserName',
+							pass: 'PassUser'
+						}
 
 			//- Property
 			section.property
@@ -209,7 +223,25 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Alias de ua de Node.
+						User Agent. Contiene información relativa al cliente: 
+						+ mobile: **Boolean**. Si es dispositivo móvil o no.
+						+ os: **String** con el Sistema Operativo del cliente.
+						+ engine: **String** . Motor de renderizado. Gecko, Webkit, Trident, Blink o Unknow.
+						+ browser: **String** . Navegador del cliente. Firefox, Seamonkey, Chrome,, Chromium, Safari, Opera, MSIE o Unknow
+
+					:highlight(lang='javascript')
+						/*
+						ua:{ 
+							mobile: false,
+							os: 'Windows NT 6.1; WOW64',
+							engine: 'Blink',
+							browser: 'Chrome'
+						},*/
+
+						gw.ua.mobile;
+						gw.ua.os;
+						gw.ua.engine;
+						gw.ua.browser;
 
 			//- Property
 			section.property
@@ -231,7 +263,11 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Alias de ip de Node.
+						Devuelve la dirección IP del cliente en un **String**.
+
+					:highlight(lang='javascript')
+							console.log(gw.ip);
+							//>127.0.0.1
 
 			//- Property
 			section.property
@@ -242,7 +278,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Alias de httpVersion de Node.
+						Versión del protocolo HTTP.
 
 			//- Property
 			section.property
@@ -253,7 +289,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Alias de https de Node.
+						Lorem ipsum
 
 			//- Property
 			section.property
@@ -264,7 +300,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Alias de host de Node.
+						Host al que se realiza la petición.
 
 			//- Property
 			section.property
@@ -275,15 +311,243 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Devuelve un **String** con la ip del cliente.
+						Puerto al que se realiza la petición.
+
+			//- Property
+			section.property
+				h3#property-method: code
+					small gangway
+					| .method
+
+				//- Property description
+				section.description
+					:markdown
+						Método utilizado para la petición. POST y/o GET.
+
+			//- Property
+			section.property
+				h3#property-path: code
+					small gangway
+					| .path
+
+				//- Property description
+				section.description
+					:markdown
+						Path completo al que se realiza la petición. 
+
+
+			//- Property
+			section.property
+				h3#property-originalPath: code
+					small gangway
+					| .originalPath
+
+				//- Property description
+				section.description
+					:markdown
+						lorem ipsum
+
+
+			//- Property
+			section.property
+				h3#property-query: code
+					small gangway
+					| .query
+
+				//- Property description
+				section.description
+					:markdown
+						lorem ipsum
+
+			//- Property
+			section.property
+				h3#property-referer: code
+					small gangway
+					| .referer
+
+				//- Property description
+				section.description
+					:markdown
+						lorem ipsum
+
+			//- Property
+			section.property
+				h3#property-connection: code
+					small gangway
+					| .connection
+
+				//- Property description
+				section.description
+					:markdown
+						lorem ipsum
+
+
+			//- Property
+			section.property
+				h3#property-cache: code
+					small gangway
+					| .cache
+
+				//- Property description
+				section.description
+					:markdown
+						lorem ipsum
+						+ control: 
+						+ nonemath:
+						+ modsince:
+
+			//- Property
+			section.property
+				h3#property-files: code
+					small gangway
+					| .files
+
+				//- Property description
+				section.description
+					:markdown
+						lorem ipsum
+
+
+			//- Property
+			section.property
+				h3#property-pathParams: code
+					small gangway
+					| .pathParams
+
+				//- Property description
+				section.description
+					:markdown
+						lorem ipsum
+
+
+			//- Property
+			section.property
+				h3#property-params: code
+					small gangway
+					| .params
+
+				//- Property description
+				section.description
+					:markdown
+						lorem ipsum
+
+
+			//- Property
+			section.property
+				h3#property-queryHeap: code
+					small gangway
+					| .queryHeap
+
+				//- Property description
+				section.description
+					:markdown
+						lorem ipsum
+
+
+			//- Property
+			section.property
+				h3#property-data: code
+					small gangway
+					| .data
+
+				//- Property description
+				section.description
+					:markdown
+						Propiedad creada para que sea el mejor lugar donde guardar datos temporales :-)
+
+
+			
+			//- Property
+			section.property
+				h3#property-encoding: code
+					small gangway
+					| .encoding
+
+				//- Property description
+				section.description
+					:markdown
+						Encoding que va a usar el servidor para la respuesta. Está basado en gw.accepts.encodings. 
+
+
+			//- Property
+			section.property
+				h3#property-language: code
+					small gangway
+					| .language
+
+				//- Property description
+				section.description
+					:markdown
+						Idioma que va a usar el servidor para la respuesta.
+
+
+			//- Property
+			section.property
+				h3#property-responseCookies: code
+					small gangway
+					| .responseCookies
+
+				//- Property description
+				section.description
+					:markdown
+						Paquete de cookies parseadas para enviar en la respuesta.
+
+
+			//- Property
+			section.property
+				h3#property-cors: code
+					small gangway
+					| .cors
+
+				//- Property description
+				section.description
+					:markdown
+						Cabeceras CORS para la respuesta. 
+						+ origin: 
+						+ credentials:
+						+ methods:
+						+ headers: 
 
 
 
+			//- Property
+			section.property
+				h3#property-size: code
+					small gangway
+					| .size
+
+				//- Property description
+				section.description
+					:markdown
+						Tamaño de la respuesta.
+
+
+			//- Property
+			section.property
+				h3#property-lastmod: code
+					small gangway
+					| .lastmod
+
+				//- Property description
+				section.description
+					:markdown
+						lorem ipsum
 
 
 
+			//- Property
+			section.property
+				h3#property-etag: code
+					small gangway
+					| .etag
+
+				//- Property description
+				section.description
+					:markdown
+						lorem ipsum
 
 
+	
 
 		//- Methods
 		section.methods
@@ -291,9 +555,30 @@ html(lang=gw.language)
 
 			//- Method
 			section.method
-				h3#method-addroute: code
-					small ENV
-					| .addRoute()
+				h3#method-setTimeout: code
+					small gw
+					| .setTimeout()
+
+				//- Method description
+				section.description
+					:markdown
+						Lorem ipsum
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:markdown
+
+					:highlight(lang='javascript')
+						
+						gw.setTimeout();
+
+
+			//- Method
+			section.method
+				h3#method-writeContinue: code
+					small gw
+					| .writeContinue()
 
 				//- Method description
 				section.description
@@ -304,8 +589,447 @@ html(lang=gw.language)
 				section.syntax
 					h4 Syntax
 					:highlight(lang='javascript')
-						//Inicio del servidor con los valores por defecto:
-						route.addRoute();
+						
+						gw.writeContinue();
+
+
+			//- Method
+			section.method
+				h3#method-writeHead: code
+					small gw
+					| .writeHead()
+
+				//- Method description
+				section.description
+					:markdown
+						Lorem ipsum
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:highlight(lang='javascript')
+						
+						gw.writeHead();
+
+
+			//- Method
+			section.method
+				h3#method-setHeader: code
+					small gw
+					| .setHeader()
+
+				//- Method description
+				section.description
+					:markdown
+						Lorem ipsum
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:highlight(lang='javascript')
+						
+						gw.setHeader();
+
+
+
+
+			//- Method
+			section.method
+				h3#method-getHeader: code
+					small gw
+					| .getHeader()
+
+				//- Method description
+				section.description
+					:markdown
+						Lorem ipsum
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:highlight(lang='javascript')
+						
+						gw.getHeader();
+
+
+
+
+			//- Method
+			section.method
+				h3#method-removeHeader: code
+					small gw
+					| .removeHeader()
+
+				//- Method description
+				section.description
+					:markdown
+						Lorem ipsum
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:highlight(lang='javascript')
+						
+						gw.removeHeader();
+
+
+
+
+
+			//- Method
+			section.method
+				h3#method-addTrailers: code
+					small gw
+					| .addTrailers()
+
+				//- Method description
+				section.description
+					:markdown
+						Lorem ipsum
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:highlight(lang='javascript')
+						
+						gw.addTrailers();
+
+
+
+
+
+			//- Method
+			section.method
+				h3#method-write: code
+					small gw
+					| .write()
+
+				//- Method description
+				section.description
+					:markdown
+						Lorem ipsum
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:highlight(lang='javascript')
+						
+						gw.write();
+
+
+
+			//- Method
+			section.method
+				h3#method-end: code
+					small gw
+					| .end()
+
+				//- Method description
+				section.description
+					:markdown
+						Lorem ipsum
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:highlight(lang='javascript')
+						
+						gw.end();
+
+
+
+
+
+
+			//- Method
+			section.method
+				h3#method-close: code
+					small gw
+					| .close()
+
+				//- Method description
+				section.description
+					:markdown
+						Lorem ipsum
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:highlight(lang='javascript')
+						
+						gw.close();
+
+
+
+
+
+			//- Method
+			section.method
+				h3#method-setCookie: code
+					small gw
+					| .setCookie()
+
+				//- Method description
+				section.description
+					:markdown
+						Lorem ipsum
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:highlight(lang='javascript')
+						
+						gw.setCookie();
+
+
+
+
+
+
+			//- Method
+			section.method
+				h3#method-i18n: code
+					small gw
+					| .i18n()
+
+				//- Method description
+				section.description
+					:markdown
+						Lorem ipsum
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:highlight(lang='javascript')
+						
+						gw.i18n();
+
+
+			//- Method
+			section.method
+				h3#method-file: code
+					small gw
+					| .file()
+
+				//- Method description
+				section.description
+					:markdown
+						Lorem ipsum
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					codesyntax.
+						gw.file(String, functyion(){});
+
+					:markdown
+						Esta es la sintaxis etc...
+						+ String: File to send to client.
+
+					:highlight(lang='javascript')
+						gw.file();
+
+
+			//- Method
+			section.method
+				h3#method-cacheck: code
+					small gw
+					| .cacheck()
+
+				//- Method description
+				section.description
+					:markdown
+						Lorem ipsum
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:highlight(lang='javascript')
+						gw.cacheck();
+
+
+			//- Method
+			section.method
+				h3#method-authenticate: code
+					small gw
+					| .authenticate()
+
+				//- Method description
+				section.description
+					:markdown
+						Lorem ipsum
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:highlight(lang='javascript')
+						gw.authenticate();
+
+
+
+
+			//- Method
+			section.method
+				h3#method-redirect: code
+					small gw
+					| .redirect()
+
+				//- Method description
+				section.description
+					:markdown
+						Redirección a la URL indicada.
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:highlight(lang='javascript')
+						gw.redirect();
+
+
+
+
+
+			//- Method
+			section.method
+				h3#method-head: code
+					small gw
+					| .head()
+
+				//- Method description
+				section.description
+					:markdown
+						Lorem ipsum
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:highlight(lang='javascript')
+						gw.head();
+
+
+
+
+
+			//- Method
+			section.method
+				h3#method-send: code
+					small gw
+					| .send()
+
+				//- Method description
+				section.description
+					:markdown
+						Lorem ipsum
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:markdown
+						
+					:highlight(lang='javascript')
+						
+						gw.send();
+
+
+			//- Method
+			section.method
+				h3#method-json: code
+					small gw
+					| .json()
+
+				//- Method description
+				section.description
+					:markdown
+						Lorem ipsum
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:highlight(lang='javascript')
+						
+						gw.json();
+
+
+			//- Method
+			section.method
+				h3#method-text: code
+					small gw
+					| .text()
+
+				//- Method description
+				section.description
+					:markdown
+						Lorem ipsum
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:highlight(lang='javascript')
+						
+						gw.text();
+
+
+			//- Method
+			section.method
+				h3#method-html: code
+					small gw
+					| .html()
+
+				//- Method description
+				section.description
+					:markdown
+						Lorem ipsum
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:highlight(lang='javascript')
+						
+						gw.html();
+
+
+
+			//- Method
+			section.method
+				h3#method-render: code
+					small gw
+					| .render()
+
+				//- Method description
+				section.description
+					:markdown
+						Lorem ipsum
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:highlight(lang='javascript')
+						
+						gw.render();
+
+
+
+
+
+			//- Method
+			section.method
+				h3#method-error: code
+					small gw
+					| .error()
+
+				//- Method description
+				section.description
+					:markdown
+						Lorem ipsum
+
+				//- Method syntax
+				section.syntax
+					h4 Syntax
+					:highlight(lang='javascript')
+						
+						gw.error();
+
+
 
 
 
@@ -314,15 +1038,15 @@ html(lang=gw.language)
 			h2#events Eventos
 
 			section.event
-				h3#property-debug: code
-					| Lorem ipsum
+				h3#event-close: code
+					| close
 
 				:markdown
-					Lorem ipsum 
+					Dispara el evento `close` cuando se cierra el objeto gangway. 
 
 				:highlight(lang='javascript')
 					//Capturar el evento
-					ENV.on('Lorem ipsum');
+					gw.on('close');
 
 				
 		//- Examples
