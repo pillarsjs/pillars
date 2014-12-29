@@ -58,7 +58,7 @@ html(lang=gw.language)
 
 				Junto a `ENV` se establecen de forma global las referencias a clases como Plugin o Route para que sea posible instanciar dichos objetos, también acceso a funcionalidades como renderer, i18n, logger o cron. Todo esto nos ofrece un entorno de trabajo completo y centralizado cuyo **punto central** es `ENV`.
 
-				> Puedes encontrar una referencia a las variables globales de Pillars [aquí](#).
+				> Nota: Puedes encontrar una referencia a las variables globales de Pillars [aquí](#).
 
 				En el ejemplo podemos ver una configuración básica del entorno por medio de la variable ENV. Es posible establecer propiedades de forma individual o agrupada usando el método `.configure()`.
 
@@ -179,7 +179,7 @@ html(lang=gw.language)
 						};
 
 					:markdown
-						> El servidor HTTP comprime previamente los envíos a cliente. Esta compresión la realiza dependiendo de los compresores que tenga disponibles el cliente, por defecto si está disponible usa deflate. Con la propiedad `.maxZipSize` establecemos a partir de qué tamaño el servidor no comprimirá los archivos.
+						> Nota: El servidor HTTP comprime previamente los envíos a cliente. Esta compresión la realiza dependiendo de los compresores que tenga disponibles el cliente, por defecto si está disponible usa deflate. Con la propiedad `.maxZipSize` establecemos a partir de qué tamaño el servidor no comprimirá los archivos.
 
 			//- Property
 			section.property
@@ -251,7 +251,7 @@ html(lang=gw.language)
 						};
 
 					:markdown
-						> Pillars.js cuenta por defecto con Jade como lenguaje de templating. Para aumentar la eficiencia, la primera vez que se envía la plantilla a cliente....
+						> Nota: Pillars.js cuenta por defecto con Jade como lenguaje de templating. Para aumentar la eficiencia, la primera vez que se envía la plantilla a cliente....
 
 			//- Property
 			section.property
@@ -344,7 +344,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						La propiedad `.status` es de solo lectura. Devuelve un objeto con todos los routes y todos los plugins que la aplicación tiene añadidos.
+						La propiedad `.status` es de solo lectura. Devuelve un objeto con todos los routes y plugins que la aplicación tiene añadidos, además de la configuración del entorno.
 
 
 
@@ -361,7 +361,7 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						El método `.start()` arranca el servidor HTTP. Puede arrancar sin aceptar parámetros, por lo que arrancaría con los valores por defecto. Acepta como parámetros el conjunto de propiedades [ENV.server](#property-server).
+						Arranca el servidor HTTP. Puede arrancar sin aceptar parámetros, por lo que se pondría en marcha con los valores por defecto. Acepta como parámetros el conjunto de propiedades [ENV.server](#property-server).
 
 				//- Method syntax
 				section.syntax
@@ -370,9 +370,11 @@ html(lang=gw.language)
 						ENV.start( Server configuration , callback );
 
 					:markdown
-						+ Server configuration: configuración del objeto server.
-						+ callback: Opcional. Callback que se ejecutará cuando se arranque el entorno.
+						+ *Server configuration*: Opcional. configuración del conjunto de propiedades [ENV.server](#property-server).
+						+ *callback*: Opcional. Callback que se ejecutará cuando se arranque el entorno.
 
+				section.example
+					h4 Ejemplo
 					:highlight(lang='javascript')
 						//Inicio del servidor con los valores por defecto:
 						ENV.start();
@@ -413,9 +415,11 @@ html(lang=gw.language)
 					codesyntax.
 						ENV.stop( callback );
 
-					:markdown						
-						+ callback: Opcional. Callback que se ejecutará cuando se detenga el entorno.
+					:markdown
+						+ *callback*: Opcional. Callback que se ejecutará cuando se detenga el entorno.
 
+				section.example
+					h4 Ejemplo
 					:highlight(lang='javascript')
 						//Detención del servidor HTTP
 						ENV.stop();
@@ -440,12 +444,14 @@ html(lang=gw.language)
 				section.syntax
 					h4 Sintaxis
 					codesyntax.
-						ENV.connect( Database configuration , callback);
+						ENV.connect( database configuration , callback);
 
-					:markdown	
-						+ Database configuration: objeto de configuración de la conexión a la base de datos.
-						+ callback: Opcional. Callback que se ejecutará cuando se arranque el entorno.
-												
+					:markdown
+						+ *database configuration*: [conjunto de propiedades para configurar la base de datos.](#property-database)
+						+ *callback*: Opcional. Callback que se ejecutará cuando se arranque el entorno.
+
+				section.example
+					h4 Ejemplo
 					:highlight(lang='javascript')
 						//Conecta a la base de datos con los parámetros indicados: 
 						ENV.connect({
@@ -484,9 +490,14 @@ html(lang=gw.language)
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
-					:markdown
-						ENV.disconnect( *callback* );
+					codesyntax.
+						ENV.disconnect( callback );
 
+					:markdown
+						+ *callback*: Opcional. Callback que se ejecutará cuando se desconecte la base de datos.
+
+				section.example
+					h4 Ejemplo
 					:highlight(lang='javascript')
 						//Desconecta la base de datos 
 						ENV.disconnect();
@@ -508,23 +519,49 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						El método `.addRoute()` añade el par path-manejador a la aplicación, es decir, un objeto tipo Route. 
-						Acepta como parámetro el objeto creado previamente, o la configuración para su creación.
+						El método `.addRoute()` añade controladores a la aplicación, es decir, un objeto de la [Clase Route](route.jade). 
+						Acepta como parámetro el objeto creado previamente, o la configuración para su creación, por lo que lo podemos añadir de dos formas.
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
+					codesyntax.
+						ENV.addRoute( route object );
+
 					:markdown
-						ENV.addRoute( *route object* );
+						+ *route object*: Objeto route creado previamente.
 
-						ENV.addRoute( *route configuration* , *controller* );
+					codesyntax.
+						ENV.addRoute( route configuration , controller );
 
+					:markdown
+						+ *route configuration*: objeto de configuración para la creación del route.
+						+ *controller*: controlador para el nuevo route.
 
+				section.example
+					h4 Ejemplo
 					:highlight(lang='javascript')
-						//Objeto route creado previamente
+						// Objeto route creado previamente
+
+						var route = new Route(
+							{
+								id:'home', 
+								path:'/'
+							},
+							function(gw){
+								gw.send("Hola Mundo");
+							}
+						);
+
+
+						// Añadimos el objeto route al entorno
+
 						ENV.addRoute(route);
 
-						//Parámetros para la creación del route
+					:highlight(lang='javascript')
+						// Pasamos los parámetros para la creación del objeto route al método addRoute. 
+						// Se crea y añade al entorno simultáneamente
+
 						ENV.addRoute(
 							{
 								id: 'home',
@@ -535,13 +572,6 @@ html(lang=gw.language)
 								gw.send("Hola Mundo");
 							});
 
-					section.parameters
-						h5 Parámetros
-						dl
-							dt route
-							dd
-								:markdown
-									Objeto de la Clase Route.
 
 					.msg.msg-icon.bg-alert La segunda forma de creación no admite anidación de distintos objetos tipo Route.
 
@@ -555,25 +585,21 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						El método `.getRoute()` captura un objeto tipo route. 
+						El método `.getRoute()` captura un objeto tipo route hijo.
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
-					:markdown
-						ENV.getRoute( *string: route id* );
+					codesyntax.
+						ENV.getRoute( route id );
 
+					:markdown
+						+ *route id*: **String** identificador del objeto route.
+
+				section.example
+					h4 Ejemplo
 					:highlight(lang='javascript')
 						route = ENV.getRoute("home");
-
-					section.parameters
-						h5 Parámetros
-						dl
-							dt id
-							dd
-								:markdown
-									String. id del objeto route.
-
 			
 			//- Method
 			section.method
@@ -584,24 +610,21 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						El método `.removeRoute()` elimina un objeto tipo Route del entorno. Toma como parámetro el id del route previamente creado.
+						El método `.removeRoute()` elimina un objeto tipo Route hijo. Toma como parámetro el id del route previamente creado.
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
+					codesyntax.
+						ENV.removeRoute( route id );
+
+					:markdown
+						+ *route id*: **String** identificador del objeto route.
+
+				section.example
+					h4 Ejemplo
 					:highlight(lang='javascript')
 						ENV.removeRoute("home");
-
-					section.parameters
-						h5 Parámetros
-						dl
-							dt id
-							dd
-								:markdown
-									String. id del objeto route.
-				
-
-
 
 			//- Method
 			section.method
@@ -612,41 +635,56 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						El método `.addPlugin()` añade un objeto tipo Plugin a la aplicación.
+						El método `.addPlugin()` añade un objeto de la Clase Plugin a la aplicación.
 
 						Acepta como parámetro el objeto plugin creado previamente o la configuración para la creación del mismo.
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
+					codesyntax.
+						ENV.addPlugin( plugin );
+
+					:markdown
+						+ *plugin*: **objeto plugin** creado previamente.
+
+					codesyntax.
+						ENV.addPlugin( plugin configuration , controller );
+
+					:markdown
+						+ *plugin configuration*: configuración para la creación del plugin.
+						+ *controller*: controlador que ejecutará el plugin.
+
+				section.example
+					h4 Ejemplo
 					:highlight(lang='javascript')
-						//Objeto route creado previamente
+						//Creación del objeto plugin
+						var plugin = new Plugin(
+							{
+								id: 'pluginOne'
+							}, 
+							function(gw, next){
+								//...
+								next();
+							}
+						);
+						
+						//Adicción del objeto plugin al entorno
 						ENV.addPlugin(plugin);
 
-						//Parámetros para la creación del plugin
+					:highlight(lang='javascript')
+						//Parámetros para la creación del plugin pasados a addPlugin
+						//Creación y adicción simultánea.
 						ENV.addPlugin(
 							{
 								id: 'pluginOne'
 							},
 
 							function(gw,next){
-							//....
+								//...
+								next();
 							});
 
-
-
-					section.parameters
-						h5 Parámetros
-						dl
-							dt plugin
-							dd
-								:markdown
-									Objeto de la Clase Plugin.  
-
-		
-		
-
-			
 			//- Method
 			section.method
 				h3#method-getPlugin: code
@@ -656,23 +694,21 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						El método `.getPlugin()` captura un objeto tipo Plugin. 
+						Captura un objeto tipo Plugin. 
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
+					codesyntax.
+						ENV.getPlugin( plugin id );
+
+					:markdown
+						+ *plugin id*: **String** identificador del objeto plugin.
+
+				section.example
+					h4 Ejemplo
 					:highlight(lang='javascript')
 						plugin = ENV.getPlugin("pluginOne");
-
-					section.parameters
-						h5 Parámetros
-						dl
-							dt id
-							dd
-								:markdown
-									id del objeto plugin.
-
-
 
 			//- Method
 			section.method
@@ -683,24 +719,21 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						El método `.removePlugin()` elimina un objeto tipo Plugin del entorno. Toma como parámetro el id del plugin previamente creado.
+						Elimina un objeto tipo Plugin del entorno. Toma como parámetro el id del plugin previamente creado.
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
+					codesyntax.
+						ENV.removePlugin( plugin id );
+
+					:markdown
+						+ *plugin id*: **String** identificador del objeto plugin.
+
+				section.example
+					h4 Ejemplo
 					:highlight(lang='javascript')
 						ENV.removePlugin("pluginOne");
-
-					section.parameters
-						h5 Parámetros
-						dl
-							dt id
-							dd
-								:markdown
-									id del objeto plugin.
-				
-
-
 
 			//- Method
 			section.method
@@ -711,29 +744,38 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						El método `.add()` añade un objeto tipo Route o un objeto tipo Plugin. Es un método de ahorro de escritura para el desarrollador.
+						Añade un objeto de la Clase Route o un objeto de la Clase Plugin. Es un método de ahorro de escritura para el desarrollador.
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
+					codesyntax.
+						ENV.add( route );
+
+					:markdown
+						+ *route*: **objeto route**.
+
+					codesyntax.
+						ENV.add( plugin );
+
+					:markdown
+						+ *plugin*: **objeto plugin**.
+
+				section.example
+					h4 Ejemplo
 					:highlight(lang='javascript')
+						var route = new Route(function(gw){
+							gw.send("Hola Mundo!");
+						});
+
 						ENV.add(route);
+
+
+						var plugin = new Plugin(function(gw,next){
+							next();
+						});
+
 						ENV.add(plugin)
-
-					section.parameters
-						h5 Parámetros
-						dl
-							dt route
-							dd
-								:markdown
-									Objeto de la Clase Route.
-							dt plugin
-							dd
-								:markdown
-									Objeto de la Clase Plugin. 
-
-	
-
 
 		
 			//- Method
@@ -749,7 +791,7 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Sintaxis
+					h4 Sintaxis y ejemplo
 					:highlight(lang='javascript')
 						ENV.configure({
 							debug : true,
@@ -796,22 +838,21 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						El método `.resolve()` devuelve una ruta absoluta sobre un directorio relativo respecto al directorio de ejecución de la librería `pillars`. 
+						Devuelve una ruta absoluta sobre un directorio relativo respecto al directorio de ejecución de la librería `pillars`. 
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
+					codesyntax.
+						ENV.resolve(directory);
+
+					:markdown
+						+ *directory*: **String** del directorio relativo.
+
+				section.example
+					h4 Ejemplo
 					:highlight(lang='javascript')
 						pathStatic = ENV.resolve('./static');
-
-					section.parameters
-						h5 Parámetros
-						dl
-							dt directory
-							dd
-								:markdown
-									Ruta relativa del directorio.
-
 
 
 		//- Eventos
@@ -833,7 +874,7 @@ html(lang=gw.language)
 					| database
 
 				:markdown
-					Se emite el evento 'database' cuando la conexión a la base de datos es seteada.
+					Se emite el evento **'database'** cuando la conexión a la base de datos es seteada.
 
 				:highlight(lang='javascript')
 					//Capturar el evento database con callback
@@ -880,7 +921,7 @@ html(lang=gw.language)
 
 					Seguidamente con el método `.configure()` hemos configurado: idiomas, datos del administrador, puerto en el que servirá la aplicación web y smtp. Puedes encontrar todas las opciones configurables de `ENV` en las [Propiedades](#properties).
 
-					> Al establecer como idioma predeterminado `es` a través de la propiedad `.language`, hemos configurado que los mensajes aparezcan en Español. En este punto de la aplicación si volvemos a consultar el path: `/` veremos el error 404 como 'Error 404: La página no existe, disculpe las molestias', es decir, en Español. Para saber más consulta el [Módulo i18n](#)
+					> Nota: Al establecer como idioma predeterminado `es` a través de la propiedad `.language`, hemos configurado que los mensajes aparezcan en Español. En este punto de la aplicación si volvemos a consultar el path: `/` veremos el error 404 como 'Error 404: La página no existe, disculpe las molestias', es decir, en Español. Para saber más consulta el [Módulo i18n](#)
 
 					La [clase Route](#) permite crear el par ruta-manejador. Añadimos a `ENV` las rutas, y los manejadores para las mismas, mediante el método `.addRoute(configuración, manejador);`.  
 					
@@ -900,7 +941,7 @@ html(lang=gw.language)
 				:markdown
 					Ahora la aplicación responderá en `/` el mensaje *Hola Mundo*. 
 
-					> Nótese que como hemos definido el entorno en dos idiomas se crean subrutas para el resto de idiomas. En este caso tendremos disponible el árbol de rutas `/en/` y `/es/`, y en `/` estará el idioma definido como predeterminado.
+					> Nota: Nótese que como hemos definido el entorno en dos idiomas se crean subrutas para el resto de idiomas. En este caso tendremos disponible el árbol de rutas `/en/` y `/es/`, y en `/` estará el idioma definido como predeterminado.
 					
 					El par configuración-manejador es un objeto route. Seguidamente vamos a crear primero el objeto y posteriormente añadirlo a `ENV`:
 

@@ -17,7 +17,6 @@ html(lang=gw.language)
 				Se genera un objeto gangway por cada solicitud al servidor. El objeto gangway contiene todos los datos de la solicitud del cliente.
 				Está disponible en el controlador de un objeto route, ya que el **controller** del objeto route lo recibe como parámetro.  
 
-				// Los plugins sirven para ampliar las funcionalidades de gangway. Por ejemplo añadir soporte de sesiones, etc.
 
 		
 		//- Syntax
@@ -564,16 +563,6 @@ html(lang=gw.language)
 					:markdown
 						Lorem ipsum
 
-				//- Method syntax
-				section.syntax
-					h4 Syntax
-					:markdown
-
-					:highlight(lang='javascript')
-						
-						gw.setTimeout();
-
-
 			//- Method
 			section.method
 				h3#method-writeContinue: code
@@ -585,14 +574,7 @@ html(lang=gw.language)
 					:markdown
 						Lorem ipsum
 
-				//- Method syntax
-				section.syntax
-					h4 Syntax
-					:highlight(lang='javascript')
-						
-						gw.writeContinue();
-
-
+				
 			//- Method
 			section.method
 				h3#method-writeHead: code
@@ -604,14 +586,7 @@ html(lang=gw.language)
 					:markdown
 						Lorem ipsum
 
-				//- Method syntax
-				section.syntax
-					h4 Syntax
-					:highlight(lang='javascript')
-						
-						gw.writeHead();
-
-
+			
 			//- Method
 			section.method
 				h3#method-setHeader: code
@@ -623,16 +598,6 @@ html(lang=gw.language)
 					:markdown
 						Lorem ipsum
 
-				//- Method syntax
-				section.syntax
-					h4 Syntax
-					:highlight(lang='javascript')
-						
-						gw.setHeader();
-
-
-
-
 			//- Method
 			section.method
 				h3#method-getHeader: code
@@ -643,15 +608,6 @@ html(lang=gw.language)
 				section.description
 					:markdown
 						Lorem ipsum
-
-				//- Method syntax
-				section.syntax
-					h4 Syntax
-					:highlight(lang='javascript')
-						
-						gw.getHeader();
-
-
 
 
 			//- Method
@@ -665,16 +621,6 @@ html(lang=gw.language)
 					:markdown
 						Lorem ipsum
 
-				//- Method syntax
-				section.syntax
-					h4 Syntax
-					:highlight(lang='javascript')
-						
-						gw.removeHeader();
-
-
-
-
 
 			//- Method
 			section.method
@@ -686,16 +632,6 @@ html(lang=gw.language)
 				section.description
 					:markdown
 						Lorem ipsum
-
-				//- Method syntax
-				section.syntax
-					h4 Syntax
-					:highlight(lang='javascript')
-						
-						gw.addTrailers();
-
-
-
 
 
 			//- Method
@@ -709,14 +645,6 @@ html(lang=gw.language)
 					:markdown
 						Lorem ipsum
 
-				//- Method syntax
-				section.syntax
-					h4 Syntax
-					:highlight(lang='javascript')
-						
-						gw.write();
-
-
 
 			//- Method
 			section.method
@@ -729,17 +657,6 @@ html(lang=gw.language)
 					:markdown
 						Lorem ipsum
 
-				//- Method syntax
-				section.syntax
-					h4 Syntax
-					:highlight(lang='javascript')
-						
-						gw.end();
-
-
-
-
-
 
 			//- Method
 			section.method
@@ -751,17 +668,6 @@ html(lang=gw.language)
 				section.description
 					:markdown
 						Lorem ipsum
-
-				//- Method syntax
-				section.syntax
-					h4 Syntax
-					:highlight(lang='javascript')
-						
-						gw.close();
-
-
-
-
 
 			//- Method
 			section.method
@@ -776,13 +682,9 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
 					:highlight(lang='javascript')
-						
 						gw.setCookie();
-
-
-
 
 
 
@@ -799,7 +701,7 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
 					:highlight(lang='javascript')
 						
 						gw.i18n();
@@ -814,21 +716,24 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Lorem ipsum
+						Envía al cliente un archivo.
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
 					codesyntax.
-						gw.file(String, functyion(){});
+						.file(filename);
 
 					:markdown
-						Esta es la sintaxis etc...
-						+ String: File to send to client.
+						+ filename: **String** que contiene el archivo a enviar al cliente.
 
+						> Nota: Si el archivo es menor de 5MB el servidor lo comprimirá antes del envío y lo enviará comprimido. Si es mayor, lo enviará sin comprimir. Soporta el protocolo HTTP por partes, es decir, podemos pausar la descarga y reanudar la descarga desde el punto en el que se paró.
+
+
+				section.example
+					h4 Ejemplo
 					:highlight(lang='javascript')
-						gw.file();
-
+						gw.file("document.pdf");
 
 			//- Method
 			section.method
@@ -843,10 +748,14 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
+					codesyntax.
+						.cacheck();
+
+				section.example
+					h4 Ejemplo
 					:highlight(lang='javascript')
 						gw.cacheck();
-
 
 			//- Method
 			section.method
@@ -861,11 +770,14 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
+					codesyntax.
+						.authenticate();
+
+				section.example
+					h4 Ejemplo
 					:highlight(lang='javascript')
 						gw.authenticate();
-
-
 
 
 			//- Method
@@ -881,11 +793,17 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
+					codesyntax.
+						.redirect(urlToRedirect);
+
+					:markdown
+						urlToRedirect: **String**. URL de la redirección.
+
+				section.example
+					h4 Ejemplo
 					:highlight(lang='javascript')
-						gw.redirect();
-
-
+						gw.redirect("www.pillarsjs.com");
 
 
 
@@ -902,11 +820,9 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
 					:highlight(lang='javascript')
 						gw.head();
-
-
 
 
 
@@ -919,15 +835,21 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Lorem ipsum
+						Envía en formato al cliente. Si es un objeto JSON.
+						Cuando se realiza un `.send()` finaliza la ejecución del route en cuestión.
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
+					codesyntax.
+						.send("message");
+
 					:markdown
-						
+						+ message: **String**. URL de la redirección.
+
+				section.example
+					h4 Ejemplo
 					:highlight(lang='javascript')
-						
 						gw.send();
 
 
@@ -944,7 +866,7 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
 					:highlight(lang='javascript')
 						
 						gw.json();
@@ -963,7 +885,7 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
 					:highlight(lang='javascript')
 						
 						gw.text();
@@ -982,7 +904,7 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
 					:highlight(lang='javascript')
 						
 						gw.html();
@@ -1002,7 +924,7 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
 					:highlight(lang='javascript')
 						
 						gw.render();
@@ -1024,7 +946,7 @@ html(lang=gw.language)
 
 				//- Method syntax
 				section.syntax
-					h4 Syntax
+					h4 Sintaxis
 					:highlight(lang='javascript')
 						
 						gw.error();
@@ -1047,21 +969,3 @@ html(lang=gw.language)
 				:highlight(lang='javascript')
 					//Capturar el evento
 					gw.on('close');
-
-				
-		//- Examples
-		section.examples
-			h2#examples Ejemplos
-
-			//- Example
-			section.example
-				h3#example-1 Ejemplo 1. Primer Contacto.
-				:markdown
-					Lorem ipsum 
-				:highlight(lang='javascript')
-					require("pillars").start();
-
-				:markdown
-					Lorem ipsum
-
-

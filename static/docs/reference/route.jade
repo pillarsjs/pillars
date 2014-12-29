@@ -92,7 +92,6 @@ html(lang=gw.language)
 
 				El objeto se puede declarar sin configuración, por lo que toma los valores predeterminados. También se puede declarar sin manejador, por lo que en este caso actuaría como elemento organizativo. 				
 
-		
 			:markdown
 				> Los parámetros de configuración del route adquieren bastante importancia cuando combinamos objetos route y plugin, ya que será en este objeto de configuración *configuration* donde activaremos los plugins que requiramos en el route.
 						
@@ -156,7 +155,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Host al que responderá el route. **String**.
+						Host al que responderá el route. **String**. Por defecto es `*`, todos.
 
 					:highlight(lang='javascript')
 						route.host = "www.pillarsjs.com";		
@@ -173,7 +172,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Sólo lectura. Devuelve un Array con todos los objetos route hijos.
+						Sólo lectura. Devuelve un **Array** con todos los objetos route hijos.
 
 					:highlight(lang='javascript')
 						var home = new Route({id:"home"},function(gw){
@@ -450,6 +449,8 @@ html(lang=gw.language)
 					:markdown
 						+ *route Object*: objeto route creado previmente mediante `new Route(*configuration*, *controller*)`.
 
+				section.example
+					h4 Ejemplo
 					:highlight(lang='javascript')
 						var home = new Route({id:"home"},function(gw){
 							gw.send("Home");
@@ -489,6 +490,8 @@ html(lang=gw.language)
 					:markdown
 						+ *route identificator*: **String** identificador del objeto route.
 
+				section.example
+					h4 Ejemplo
 					:highlight(lang='javascript')
 						var web = home.getRoute('web');						
 
@@ -512,6 +515,8 @@ html(lang=gw.language)
 					:markdown
 						+ *route identificator*: **String** identificador del objeto route.
 
+				section.example
+					h4 Ejemplo
 					:highlight(lang='javascript')
 						var web = home.removeRoute('web');	
 						// Dejaría de estar disponible las funcionalidades en /web
