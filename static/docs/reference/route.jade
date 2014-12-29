@@ -24,14 +24,33 @@ html(lang=gw.language)
 		//- Syntax
 		section.syntax
 			h2#syntax Sintaxis
+			codesyntax.
+				route = new Route( configuration, controller );
+
+			:markdown
+				+ *configuration*: opcional. Objeto de configuración del route. En la creación del route se pueden configurar los siguientes parámetros: 
+					+ [id](#property-id): Identificador del route.
+					+ [path](#property-path): path al que responderá.
+					+ [host](#property-host): nombre o ip de host que atenderá.
+					+ [priority](#property-priority): prioridad del route.
+					+ [active](#property-active): si está activo o no.
+					+ [method](#property-method): método GET y/o POST.
+
+				+ *controller*: opcional. Controlador que se ejecutará para el route concreto. El controller siempre recibe como parámetro el [objeto gangway](gangway.jade).
+
+
 			:highlight(lang='javascript')
-				//Creación más básica de un objeto route. Al no realizar configuración por defecto se define el path /
+				// Creación más básica de un objeto route. 
+				// Al omitir el objeto de configuración se establecen los valores por defecto
+
 				route = new Route(function(gw){
 					gw.send("Hola Mundo");
 				});
 
-				//Creación de un route con id 'web' y que responde en el path /web. El manejador envía al cliente el 
-				//renderizado del archivo example.jade -javi-
+
+				// Creación de un objeto route con id 'web' y path '/web'. 
+				// El manejador envía al cliente el renderizado del archivo example.jade
+
 				route = new Route(
 					{
 						id: "web",
@@ -42,6 +61,29 @@ html(lang=gw.language)
 					}
 				);
 
+				// Creación de un objeto route con id 'nodo-padre' sin controlador, por lo que 
+				// la aplicación no responderá en /. Y creación
+				// de otros dos routes hijos dependientes de éste.
+
+				route = new Route({id: 'nodo-padre'});
+
+				route.addRoute(
+						{path: 'hola' }, 
+						function(gw){
+							gw.send("Hola!!");
+						});
+
+				route.addRoute(
+						{path: 'adios'}, 
+						function(gw){
+							gw.send("Adios! :P");
+						})
+				;
+
+				//Añadimos el objeto route al entorno ENV
+
+				addRoute(route);
+
 		//- Description
 		section.description
 			h2#description Descripción
@@ -50,12 +92,7 @@ html(lang=gw.language)
 
 				El objeto se puede declarar sin configuración, por lo que toma los valores predeterminados. También se puede declarar sin manejador, por lo que en este caso actuaría como elemento organizativo. 				
 
-			:highlight(lang='javascript')
-				new Route({id:"user", path:"/user/"})
-					.addRoute({path:""})
-					.addRoute({parth:""})
-				; 
-
+		
 			:markdown
 				> Los parámetros de configuración del route adquieren bastante importancia cuando combinamos objetos route y plugin, ya que será en este objeto de configuración *configuration* donde activaremos los plugins que requiramos en el route.
 						
@@ -331,42 +368,62 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Añade un objeto de la clase route al objeto route. De esta forma creamos estructuras anidadas.
+						Añade un objeto de la clase route al objeto route padre. De esta forma creamos estructuras anidadas. 
+						Para añadir un 'hijo' podemos hacerlo: 
+						+ Creando primero el route hijo y posteriormente agregarlo mediante `addRoute()`
+						+ O, pasando por parámetro a `addRoute()` los valores del route hijo para su creación y adicción simultánea.
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
 					:markdown
-						.addRoute( *route Object* );
+						El método `addRoute()` admite dos tipos de parámetros. Bien el *objeto route* ya creado, o la *configuración* y el *controlador* para la creación y adicción del mismo.
+						> Si deseamos anidar objetos routes debemos tener en cuenta que debemos utilizar la primera forma, ya que con la segunda resultaría imposible.
+					codesyntax.
+						.addRoute( route Object );
 
-						+ *route object*: Objeto de la Clase Route previamente creado mediante `new Route()`
+					:markdown
+						+ *route Object*: objeto route creado previmente con `new Route(*configuration*, *controller*)`.
 
+					codesyntax.
+						.addRoute( configuration , controller );
 
-						.addRoute (*route configuration *, *route controller* );
-
-						+ *route configuration* : objeto de configuración del route.
-						+ *route controller* : controlador del route.
+					:markdown
+						+ *configuration* : objeto de configuración del route que se va a crear.
+						+ *controller* : controlador para el route que se va a crear.
 
 
 				//- Method syntax
 				section.example
 					h4 Ejemplo
 					:highlight(lang='javascript')
+						// route padre 'home'
 						var home = new Route({id:"home"},function(gw){
 							gw.send("Home");
 						});
 
+						// Creación route hijo 'web'
 						var web = new Route({id:"web",path:"/web"},function(gw){
 							gw.render("example.jade");
 						});
 
-						var fileDownload = new Route({id:"file", path:"file", host:"localhost"},function(gw){
-							gw.file("example.jade");
-						});
-
+						// Adicción al route padre 'home' del route hijo 'web'
 						home.addRoute(web);
-						home.addRoute(fileDownload);
 
+						// Creación del route hijo 'fileDownload' y adicción al route padre 
+						// 'home' en un solo paso.
+						home.addRoute(
+							{
+								id:"file", 
+								path:"file", 
+								host:"localhost"
+							},
+							function(gw){
+								gw.file("example.jade");
+							}
+						);
+						
+						// Adicción del route padre al entorno. 
 						addRoute(home);
 
 					:markdown
@@ -387,8 +444,11 @@ html(lang=gw.language)
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
+					codesyntax.
+						.add( route Object );
+
 					:markdown
-						.add(*route Object*);
+						+ *route Object*: objeto route creado previmente mediante `new Route(*configuration*, *controller*)`.
 
 					:highlight(lang='javascript')
 						var home = new Route({id:"home"},function(gw){
@@ -418,13 +478,19 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Lorem ipsum
+						Dado el identificador de un objeto route hijo devuelve el objeto hijo.
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
+					codesyntax.
+						.getRoute( route identificator );
+
+					:markdown
+						+ *route identificator*: **String** identificador del objeto route.
+
 					:highlight(lang='javascript')
-						route.getRoute();
+						var web = home.getRoute('web');						
 
 				//- Method
 			section.method
@@ -435,13 +501,20 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Lorem ipsum
+						Dado el identificador de un objeto route hijo, elimina el objeto hijo.
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
+					codesyntax.
+						.removeRoute( route identificator );
+
+					:markdown
+						+ *route identificator*: **String** identificador del objeto route.
+
 					:highlight(lang='javascript')
-						route.removeRoute();
+						var web = home.removeRoute('web');	
+						// Dejaría de estar disponible las funcionalidades en /web
 
 
 
