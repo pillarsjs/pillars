@@ -14,11 +14,11 @@ html(lang=gw.language)
 		section.summary
 			h2#summary Sumario
 			:markdown
-				La variable `ENV` está disponible de forma global al realizar la inclusión de la librería. Mediante `ENV` se configura el entorno de la aplicación.
+				La variable `ENV` está disponible de forma global al realizar la inclusión de la librería. 
+
+				Mediante `ENV` se **configura el entorno de la aplicación web** y es el **punto de anclaje** para el resto de los elementos que componen el framework
 
 				El entorno de la aplicación es todo aquello que necesitamos configurar para una aplicación web como; puerto al que responderá, configuración del smtp, configuración de los idiomas de la aplicación, tamaño de archivo máximo permitido por el servidor, etc.
-
-				Además `ENV` es el punto de anclaje para el resto de los elementos que componen el framework.
 	
 				
 		//- Syntax
@@ -29,22 +29,34 @@ html(lang=gw.language)
 				require("pillars").start();
 
 				//Configuración del entorno
-				ENV.languages=['es','en'];
-				ENV.debug=false;
-				ENV.server{
-					port:80,
-					maxUploadSize: 1000
-				};
+				ENV.configure({
+					languages: ['es','en'],
+					debug: true,
+					server:{
+						port: 80,
+						maxUploadSize: 1024*1024*50;
+					}
+				});
+				
+
+				//Añadimos al entono otros componentes del framework
+
+				// - Un objeto route
+				ENV.addRoute(function(gw){gw.send("Hola Mundo!")});
+
+				// - Un objeto plugin
+				ENV.addPlugin();
+				
 
 		//- Description
 		section.description
 			h2#description Descripción
 			:markdown
-				Obtenemos acceso al entorno Pillars.js al realizar el require() de la librería. El entorno consiste en una serie de propiedades y funciones que nos permiten trabajar con el framework. La variable global `ENV` es la más importante, punto central de configuración y arranque del entorno. Además tendremos acceso a Clases como Plugin o Route, y las diferentes funciones que nos permitiran construir nuestra aplicación.
+				Obtenemos acceso al entorno Pillars.js al realizar el require() de la librería. El entorno consiste en una serie de **propiedades** y **funciones** que nos permiten trabajar con el framework. La variable global `ENV` es la más importante, punto central de configuración y arranque del entorno. Además tendremos acceso a **Clases como Plugin o Route**, y a las diferentes funciones que nos permitiran construir nuestra aplicación.
 
-				`ENV` es un objeto global cuyas propiedades conforman la configuración de nuestra aplicación y sus métodos nos permiten la construción de la misma. Tenemos propiedades que nos permiten configurar el servicio HTTP o la conexión a la base de datos, mientras otros métodos como .addRoute o .addPlugin son el mecanismo para añadir controladores a nuestro entorno.
+				`ENV` es un objeto global cuyas propiedades conforman la configuración de nuestra aplicación y sus métodos nos permiten la construción de la misma. Disponemos de propiedades que nos permiten configurar el servicio HTTP o la conexión a la base de datos, mientras otros métodos como `.addRoute()` o `.addPlugin()` son el mecanismo para añadir controladores a nuestro entorno.
 
-				Junto a `ENV` se establecen de forma global las referencias a clases como Plugin o Route para que sea posible instanciar dichos objetos, también acceso a funcionalidades como renderer, i18n, logger o cron. Todo esto nos ofrece un entorno de trabajo completo y centralizado cuyo punto central es `ENV`.
+				Junto a `ENV` se establecen de forma global las referencias a clases como Plugin o Route para que sea posible instanciar dichos objetos, también acceso a funcionalidades como renderer, i18n, logger o cron. Todo esto nos ofrece un entorno de trabajo completo y centralizado cuyo **punto central** es `ENV`.
 
 				> Puedes encontrar una referencia a las variables globales de Pillars [aquí](#).
 
@@ -354,8 +366,12 @@ html(lang=gw.language)
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
+					codesyntax.
+						ENV.start( Server configuration , callback );
+
 					:markdown
-						ENV.start( *Server configuration* , *callback* );
+						+ Server configuration: configuración del objeto server.
+						+ callback: Opcional. Callback que se ejecutará cuando se arranque el entorno.
 
 					:highlight(lang='javascript')
 						//Inicio del servidor con los valores por defecto:
@@ -394,8 +410,11 @@ html(lang=gw.language)
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
-					:markdown
-						ENV.stop( *callback* );
+					codesyntax.
+						ENV.stop( callback );
+
+					:markdown						
+						+ callback: Opcional. Callback que se ejecutará cuando se detenga el entorno.
 
 					:highlight(lang='javascript')
 						//Detención del servidor HTTP
@@ -420,9 +439,13 @@ html(lang=gw.language)
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
-					:markdown
-						ENV.connect( *Database configuration* , *callback* );
+					codesyntax.
+						ENV.connect( Database configuration , callback);
 
+					:markdown	
+						+ Database configuration: objeto de configuración de la conexión a la base de datos.
+						+ callback: Opcional. Callback que se ejecutará cuando se arranque el entorno.
+												
 					:highlight(lang='javascript')
 						//Conecta a la base de datos con los parámetros indicados: 
 						ENV.connect({
