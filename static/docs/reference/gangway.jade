@@ -301,6 +301,10 @@ html(lang=gw.language)
 					:markdown
 						Host al que se realiza la petición.
 
+					:highlight(lang='javascript')
+							console.log(gw.host);
+							//>localhost
+
 			//- Property
 			section.property
 				h3#property-port: code
@@ -311,6 +315,10 @@ html(lang=gw.language)
 				section.description
 					:markdown
 						Puerto al que se realiza la petición.
+
+					:highlight(lang='javascript')
+							console.log(gw.port);
+							//>3000
 
 			//- Property
 			section.property
@@ -323,6 +331,10 @@ html(lang=gw.language)
 					:markdown
 						Método utilizado para la petición. POST y/o GET.
 
+					:highlight(lang='javascript')
+							console.log(gw.method);
+							//>GET
+
 			//- Property
 			section.property
 				h3#property-path: code
@@ -334,6 +346,10 @@ html(lang=gw.language)
 					:markdown
 						Path completo al que se realiza la petición. 
 
+					:highlight(lang='javascript')
+						console.log(gw.path);
+						//>/
+
 
 			//- Property
 			section.property
@@ -344,7 +360,11 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						lorem ipsum
+						Path original desde el que se realiza la petición
+
+					:highlight(lang='javascript')
+							console.log(gw.originalPath);
+							//>/
 
 
 			//- Property
@@ -356,7 +376,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						lorem ipsum
+						GET + POST + ¿¿?
 
 			//- Property
 			section.property
@@ -380,6 +400,10 @@ html(lang=gw.language)
 					:markdown
 						lorem ipsum
 
+					:highlight(lang='javascript')
+						console.log(gw.connection);
+						//>keep-alive
+
 
 			//- Property
 			section.property
@@ -395,6 +419,12 @@ html(lang=gw.language)
 						+ nonemath:
 						+ modsince:
 
+					:highlight(lang='javascript')
+						console.log(gw.cache);
+						//>{ control: 'max-age=0',
+						//	 nonematch: false,
+						//   modsince: 'Tue, 30 Dec 2014 18:47:00 GMT' },
+
 			//- Property
 			section.property
 				h3#property-files: code
@@ -404,7 +434,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						lorem ipsum
+						asd
 
 
 			//- Property
@@ -416,8 +446,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						lorem ipsum
-
+						lorem
 
 			//- Property
 			section.property
@@ -428,7 +457,18 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						lorem ipsum
+						Devuelve un objeto con el par parámetro-valor de la solicitud.
+
+					:highlight(lang='javascript')
+						route = new Route({path:'/:var'},function(gw){
+							console.log(gw.params);
+							gw.send("end");
+						});
+						//Consultando localhost:300/test/ imprime en consola:
+						//>{var: 'test'}
+
+					:markdown
+						> Consulta cómo funcionan los path que admiten parámetros [aquí](#).
 
 
 			//- Property
@@ -453,7 +493,13 @@ html(lang=gw.language)
 				section.description
 					:markdown
 						Propiedad creada para que sea el mejor lugar donde guardar datos temporales :-)
-
+					
+					:highlight(lang='javascript')
+						route = new Route(function(gw){
+							gw.data.userNick = "lilxelo";
+							gw.send("Hola: "+gw.data.miNick);
+						});
+						// Imprime: Hola: lilxelo
 
 			
 			//- Property
@@ -465,7 +511,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Encoding que va a usar el servidor para la respuesta. Está basado en gw.accepts.encodings. 
+						Encoding que va a usar el servidor para la respuesta. Está basado en [gw.accepts.encodings](#accepts). 
 
 
 			//- Property
@@ -561,7 +607,7 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Lorem ipsum
+						Alias de [response.setTimeout(msecs, callback)](http://nodejs.org/api/all.html#all_response_settimeout_msecs_callback) de Node.
 
 			//- Method
 			section.method
@@ -572,7 +618,7 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Lorem ipsum
+						Alias de [response.writeContinue(statusCode, [reasonPhrase], [headers])](http://nodejs.org/api/all.html#all_response_writecontinue) de Node.
 
 				
 			//- Method
@@ -584,7 +630,7 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Lorem ipsum
+						Alias de [response.writeHead(statusCode, [reasonPhrase], [headers])](http://nodejs.org/api/all.html#all_response_writehead_statuscode_reasonphrase_headers) de Node.
 
 			
 			//- Method
@@ -596,7 +642,7 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Lorem ipsum
+						Alias de [response.setHeader(name, value)](http://nodejs.org/api/all.html#all_response_setheader_name_value) de Node.
 
 			//- Method
 			section.method
@@ -607,7 +653,7 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Lorem ipsum
+						Alias de [response.getHeader(name)](http://nodejs.org/api/all.html#all_response_getheader_name) de Node.
 
 
 			//- Method
@@ -619,7 +665,7 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Lorem ipsum
+						Alias de [response.removeHeader(name)](http://nodejs.org/api/all.html#all_response_removeheader_name) de Node.
 
 
 			//- Method
@@ -631,7 +677,7 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Lorem ipsum
+						Alias de [response.addTrailers(headers)](http://nodejs.org/api/all.html#all_response_addtrailers_headers) de Node.
 
 
 			//- Method
@@ -643,7 +689,7 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Lorem ipsum
+						Alias de [response.write(chunk, [encoding])](http://nodejs.org/api/all.html#all_response_write_chunk_encoding) de Node.
 
 
 			//- Method
@@ -655,7 +701,7 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Lorem ipsum
+						Alias de [response.end([data], [encoding])](http://nodejs.org/api/all.html#all_response_end_data_encoding) de Node.
 
 
 			//- Method
@@ -667,7 +713,15 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Lorem ipsum
+						Cierra y finaliza el objeto gangway.
+						En el [logger establece la información de qué se ha cerrado... ](https://github.com/bifuer/pillars/blob/master/lib/gangway.js#L202)
+
+				section.syntax
+					h4 Sintaxis
+					codesyntax.
+						.close();
+
+
 
 			//- Method
 			section.method
@@ -678,13 +732,33 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Lorem ipsum
+						Guarda una nueva cookie para el envío en la respuesta.
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
+					codesyntax.
+						.setCookie(name, value, config);
+					:markdown
+						+ name: **String** nombre de la cookie.
+						+ value: 
+						+ config: **objeto** que puede contener los siguientes parámetros;
+							+ domain: 
+							+ path: 
+							+ expires: 
+							+ maxAge: 
+							+ secure: 
+							+ httpOnly: 
+
 					:highlight(lang='javascript')
-						gw.setCookie();
+						gw.setCookie(
+							name: "userPreferences",
+							value: ,
+							config:{
+								expires: 
+							}
+
+						);
 
 
 
@@ -697,13 +771,20 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Lorem ipsum
+						Devuelve el i18n alias con el idioma seteado en gw.language.
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
-					:highlight(lang='javascript')
-						
+					codesyntax.
+						.i18n(text, params);
+					:markdown
+						+ text: 
+						+ params: 
+
+				section.example
+					h4 Ejemplo
+					:highlight(lang='javascript')						
 						gw.i18n();
 
 
@@ -798,14 +879,12 @@ html(lang=gw.language)
 						.redirect(urlToRedirect);
 
 					:markdown
-						urlToRedirect: **String**. URL de la redirección.
+						+ urlToRedirect: **String**. URL de la redirección.
 
 				section.example
 					h4 Ejemplo
 					:highlight(lang='javascript')
 						gw.redirect("www.pillarsjs.com");
-
-
 
 			//- Method
 			section.method
@@ -960,12 +1039,26 @@ html(lang=gw.language)
 			h2#events Eventos
 
 			section.event
-				h3#event-close: code
-					| close
+				h3#event-closing: code
+					| closing
 
 				:markdown
-					Dispara el evento `close` cuando se cierra el objeto gangway. 
+					Dispara el evento `closing` cuando se comienza a cerrar el objeto gangway. 
 
 				:highlight(lang='javascript')
 					//Capturar el evento
-					gw.on('close');
+					gw.on('closing');
+
+
+			section.event
+				h3#event-closed: code
+					| closed
+
+				:markdown
+					Dispara el evento `closed` cuando se cierra y finaliza el objeto gangway. 
+
+				:highlight(lang='javascript')
+					//Capturar el evento
+					gw.on('closed', function(){
+						console.log("Evento capturado");
+					});

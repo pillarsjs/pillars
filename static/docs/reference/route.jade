@@ -385,12 +385,13 @@ html(lang=gw.language)
 						+ *route Object*: objeto route creado previmente con `new Route(*configuration*, *controller*)`.
 
 					codesyntax.
-						.addRoute( configuration , controller );
+						.addRoute( [configuration] , [controller] );
 
 					:markdown
 						+ *configuration* : objeto de configuración del route que se va a crear.
 						+ *controller* : controlador para el route que se va a crear.
 
+						      > Nota: Es posible crear un objeto route sin configuración y sin controlador, éste actuaría en el path '/' y no ejecutaría ningún controlador para dicho path. Crear un objeto tipo route con estas características no tendría mucho sentido, pero es posible.
 
 				//- Method syntax
 				section.example

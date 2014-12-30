@@ -367,7 +367,7 @@ html(lang=gw.language)
 				section.syntax
 					h4 Sintaxis
 					codesyntax.
-						ENV.start( Server configuration , callback );
+						ENV.start( [Server configuration] , [callback] );
 
 					:markdown
 						+ *Server configuration*: Opcional. configuración del conjunto de propiedades [ENV.server](#property-server).
@@ -407,13 +407,13 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						El método `.stop()` detiene el servidor HTTP.
+						Detiene el servidor HTTP.
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
 					codesyntax.
-						ENV.stop( callback );
+						ENV.stop( [callback] );
 
 					:markdown
 						+ *callback*: Opcional. Callback que se ejecutará cuando se detenga el entorno.
@@ -438,13 +438,13 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						El método `.connect()` conecta a una base de datos MongoDB. Acepta como parámetros el conjunto de propiedades [ENV.database](#property-database).
+						Conecta a una base de datos MongoDB. Acepta como parámetros el conjunto de propiedades [ENV.database](#property-database).
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
 					codesyntax.
-						ENV.connect( database configuration , callback);
+						ENV.connect( database configuration [, callback]);
 
 					:markdown
 						+ *database configuration*: [conjunto de propiedades para configurar la base de datos.](#property-database)
@@ -485,13 +485,13 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						El método `.disconnect()` desconecta la base de datos MongoDB.
+						Desconecta la base de datos MongoDB.
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
 					codesyntax.
-						ENV.disconnect( callback );
+						ENV.disconnect( [callback] );
 
 					:markdown
 						+ *callback*: Opcional. Callback que se ejecutará cuando se desconecte la base de datos.
@@ -532,11 +532,13 @@ html(lang=gw.language)
 						+ *route object*: Objeto route creado previamente.
 
 					codesyntax.
-						ENV.addRoute( route configuration , controller );
+						ENV.addRoute( [route configuration] , [controller] );
 
 					:markdown
 						+ *route configuration*: objeto de configuración para la creación del route.
 						+ *controller*: controlador para el nuevo route.
+
+						> Nota: Es posible crear un objeto route sin configuración y sin controlador, éste actuaría en el path '/' y no ejecutaría ningún controlador para dicho path. Crear un objeto tipo route con estas características no tendría mucho sentido, pero es posible.
 
 				section.example
 					h4 Ejemplo
@@ -585,7 +587,7 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						El método `.getRoute()` captura un objeto tipo route hijo.
+						Captura un objeto tipo route hijo.
 
 				//- Method syntax
 				section.syntax
@@ -610,7 +612,7 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						El método `.removeRoute()` elimina un objeto tipo Route hijo. Toma como parámetro el id del route previamente creado.
+						Elimina un objeto tipo Route hijo. Toma como parámetro el id del route previamente creado.
 
 				//- Method syntax
 				section.syntax
@@ -844,7 +846,7 @@ html(lang=gw.language)
 				section.syntax
 					h4 Sintaxis
 					codesyntax.
-						ENV.resolve(directory);
+						ENV.resolve( directory );
 
 					:markdown
 						+ *directory*: **String** del directorio relativo.
