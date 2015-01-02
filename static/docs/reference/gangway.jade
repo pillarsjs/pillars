@@ -6,7 +6,7 @@ html(lang=gw.language)
 	+reference-layout("Pillars.js Reference - Objeto gangway - 'make it easy!'",path)
 
 		#title
-			h1 Objeto gangway
+			h1 Clase Gangway
 				em  Pillars.js Reference
 			a.source(href="https://github.com/bifuer/pillars/blob/master/lib/gangway.js") Source
 
@@ -14,9 +14,9 @@ html(lang=gw.language)
 		section.summary
 			h2#summary Sumario
 			:markdown
-				Se genera un objeto gangway por cada solicitud al servidor. El objeto gangway contiene todos los datos de la solicitud del cliente.
-				Está disponible en el controlador de un objeto route, ya que el **controller** del objeto route lo recibe como parámetro.  
-
+				Pillars.js **genera de forma automática** un objeto gangway en cada petición, por lo que esta clase nunca será instanciada por el desarrollador. Este objeto está disponible en el *controller* tanto del objeto route, como en el objeto plugin.
+				
+				El **objeto gangway** contiene todos los datos de la solicitud del cliente.				 
 
 		
 		//- Syntax
@@ -24,13 +24,14 @@ html(lang=gw.language)
 			h2#syntax Sintaxis
 			:highlight(lang='javascript')
 				var home = new Route(function(gw){
-					var id = gw.id; 					// id del objeto gangway para la petición.
-					var ip = gw.ip;						// ip del cliente
-					var browserLang = gw.language;		// Primer idioma del navegador del cliente 
-					var cors = gw.cors; 						// gestion de orígenes cruzados. 
+					var id = gw.id; 			// id del objeto gangway para la petición.
+					var ip = gw.ip;			// ip del cliente
+					var browserLang = gw.language;	// Primer idioma del navegador del cliente 
+					var cors = gw.cors; 			// gestion de orígenes cruzados. 
 					var method = gw.method;
-					var auth = gw.auth; está en el getting started. método autenticate. Esetará el usuario y el password del usuario. Cunado se hace lo del htaccess.
-					var encoding = gw.encoding; 					// encoding que se utiliza para el envío al cliente.
+					var auth = gw.auth; 		// está en el getting started. método autenticate. 
+					// Esetará el usuario y el password del usuario. Cunado se hace lo del htaccess.
+					var encoding = gw.encoding; 		// encoding que se utiliza para el envío al cliente.
 
 
 					gw.send("<pre>"+util.inspect(gw)+"</pre>");
@@ -54,7 +55,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-timer: code
-					small gangway
+					small gw
 					| .timer
 
 				//- Property description
@@ -65,7 +66,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-id: code
-					small gangway
+					small gw
 					| .id
 
 				//- Property description
@@ -76,7 +77,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-closed: code
-					small gangway
+					small gw
 					| .closed
 
 				//- Property description
@@ -88,7 +89,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-req: code
-					small gangway
+					small gw
 					| .req
 
 				//- Property description
@@ -99,7 +100,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-res: code
-					small gangway
+					small gw
 					| .res
 
 				//- Property description
@@ -110,7 +111,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-socket: code
-					small gangway
+					small gw
 					| .socket
 
 				//- Property description
@@ -121,7 +122,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-statusCode: code
-					small gangway
+					small gw
 					| .statusCode
 
 				//- Property description
@@ -132,7 +133,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-headersSent: code
-					small gangway
+					small gw
 					| .headersSent
 
 				//- Property description
@@ -143,7 +144,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-accepts: code
-					small gangway
+					small gw
 					| .accepts
 
 				//- Property description
@@ -157,7 +158,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-content: code
-					small gangway
+					small gw
 					| .content
 
 				//- Property description
@@ -172,7 +173,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-ranges: code
-					small gangway
+					small gw
 					| .ranges
 
 				//- Property description
@@ -187,18 +188,18 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-cookie: code
-					small gangway
+					small gw
 					| .cookie
 
 				//- Property description
 				section.description
 					:markdown
-						Alias de cookie de Node.
+						Objeto con las cookies de la petición parseadas.
 
 			//- Property
 			section.property
 				h3#property-auth: code
-					small gangway
+					small gw
 					| .auth
 
 				//- Property description
@@ -216,7 +217,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-ua: code
-					small gangway
+					small gw
 					| .ua
 
 				//- Property description
@@ -245,18 +246,18 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-origin: code
-					small gangway
+					small gw
 					| .origin
 
 				//- Property description
 				section.description
 					:markdown
-						Alias de origin de Node.
+						Lorem ipsum
 
 			//- Property
 			section.property
 				h3#property-ip: code
-					small gangway
+					small gw
 					| .ip
 
 				//- Property description
@@ -271,7 +272,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-httpVersion: code
-					small gangway
+					small gw
 					| .httpVersion
 
 				//- Property description
@@ -282,7 +283,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-https: code
-					small gangway
+					small gw
 					| .https
 
 				//- Property description
@@ -293,7 +294,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-host: code
-					small gangway
+					small gw
 					| .host
 
 				//- Property description
@@ -308,7 +309,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-port: code
-					small gangway
+					small gw
 					| .port
 
 				//- Property description
@@ -323,7 +324,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-method: code
-					small gangway
+					small gw
 					| .method
 
 				//- Property description
@@ -338,7 +339,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-path: code
-					small gangway
+					small gw
 					| .path
 
 				//- Property description
@@ -354,7 +355,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-originalPath: code
-					small gangway
+					small gw
 					| .originalPath
 
 				//- Property description
@@ -370,7 +371,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-query: code
-					small gangway
+					small gw
 					| .query
 
 				//- Property description
@@ -381,7 +382,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-referer: code
-					small gangway
+					small gw
 					| .referer
 
 				//- Property description
@@ -392,7 +393,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-connection: code
-					small gangway
+					small gw
 					| .connection
 
 				//- Property description
@@ -408,7 +409,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-cache: code
-					small gangway
+					small gw
 					| .cache
 
 				//- Property description
@@ -428,30 +429,30 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-files: code
-					small gangway
+					small gw
 					| .files
 
 				//- Property description
 				section.description
 					:markdown
-						asd
+						Descriptor de los archivos para la subida tipo multipart.
 
 
 			//- Property
 			section.property
 				h3#property-pathParams: code
-					small gangway
+					small gw
 					| .pathParams
 
 				//- Property description
 				section.description
 					:markdown
-						lorem
+						Parámetros pasados por GET parseados.
 
 			//- Property
 			section.property
 				h3#property-params: code
-					small gangway
+					small gw
 					| .params
 
 				//- Property description
@@ -474,25 +475,27 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-queryHeap: code
-					small gangway
+					small gw
 					| .queryHeap
 
 				//- Property description
 				section.description
 					:markdown
-						lorem ipsum
+						Todos los parámetros agrupados; parámetros de post, get... ¿?
+						+ only post: gw.content.params
+						+ only query: gw.query
 
 
 			//- Property
 			section.property
 				h3#property-data: code
-					small gangway
+					small gw
 					| .data
 
 				//- Property description
 				section.description
 					:markdown
-						Propiedad creada para que sea el mejor lugar donde guardar datos temporales
+						El mejor lugar donde guardar datos temporales.
 					
 					:highlight(lang='javascript')
 						route = new Route(function(gw){
@@ -505,7 +508,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-encoding: code
-					small gangway
+					small gw
 					| .encoding
 
 				//- Property description
@@ -517,7 +520,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-language: code
-					small gangway
+					small gw
 					| .language
 
 				//- Property description
@@ -529,7 +532,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-responseCookies: code
-					small gangway
+					small gw
 					| .responseCookies
 
 				//- Property description
@@ -541,7 +544,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-cors: code
-					small gangway
+					small gw
 					| .cors
 
 				//- Property description
@@ -558,7 +561,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-size: code
-					small gangway
+					small gw
 					| .size
 
 				//- Property description
@@ -570,7 +573,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-lastmod: code
-					small gangway
+					small gw
 					| .lastmod
 
 				//- Property description
@@ -583,13 +586,13 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-etag: code
-					small gangway
+					small gw
 					| .etag
 
 				//- Property description
 				section.description
 					:markdown
-						lorem ipsum
+						Propiedad etag para la respuesta.
 
 
 	
@@ -1039,15 +1042,15 @@ html(lang=gw.language)
 			h2#events Eventos
 
 			section.event
-				h3#event-closing: code
-					| closing
+				h3#event-close: code
+					| close
 
 				:markdown
-					Dispara el evento `closing` cuando se comienza a cerrar el objeto gangway. 
+					Dispara el evento `close` cuando se comienza a cerrar el objeto gangway. 
 
 				:highlight(lang='javascript')
 					//Capturar el evento
-					gw.on('closing');
+					gw.on('close');
 
 
 			section.event

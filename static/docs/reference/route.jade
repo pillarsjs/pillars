@@ -23,7 +23,7 @@ html(lang=gw.language)
 		
 		//- Syntax
 		section.syntax
-			h2#syntax Sintaxis
+			h2#syntax Constructor
 			codesyntax.
 				route = new Route( configuration, controller );
 
@@ -102,7 +102,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-id: code
-					small route
+					small Route.prototype
 					| .id
 
 				//- Property description
@@ -122,7 +122,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-path: code
-					small route
+					small Route.prototype
 					| .path
 
 				//- Property description
@@ -134,7 +134,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-method: code
-					small route
+					small Route.prototype
 					| .method
 
 				//- Property description
@@ -149,7 +149,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-host: code
-					small route
+					small Route.prototype
 					| .host
 
 				//- Property description
@@ -166,7 +166,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-routes: code
-					small route
+					small Route.prototype
 					| .routes
 
 				//- Property description
@@ -234,7 +234,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-handlers: code
-					small route
+					small Route.prototype
 					| .handlers
 
 				//- Property description
@@ -284,7 +284,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-priority: code
-					small route
+					small Route.prototype
 					| .priority
 
 				//- Property description
@@ -297,7 +297,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-active: code
-					small route
+					small Route.prototype
 					| .active
 
 				//- Property description
@@ -314,7 +314,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-params: code
-					small route
+					small Route.prototype
 					| .params
 
 				//- Property description
@@ -346,7 +346,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-pathRegex: code
-					small route
+					small Route.prototype
 					| .pathRegex
 
 				//- Property description
@@ -361,7 +361,7 @@ html(lang=gw.language)
 			//- Method
 			section.method
 				h3#method-addroute: code
-					small route
+					small Route.prototype
 					| .addRoute()
 
 				//- Method description
@@ -391,7 +391,7 @@ html(lang=gw.language)
 						+ *configuration* : objeto de configuración del route que se va a crear.
 						+ *controller* : controlador para el route que se va a crear.
 
-						      > Nota: Es posible crear un objeto route sin configuración y sin controlador, éste actuaría en el path '/' y no ejecutaría ningún controlador para dicho path. Crear un objeto tipo route con estas características no tendría mucho sentido, pero es posible.
+						> Nota: Es posible crear un objeto route sin configuración y sin controlador, éste actuaría en el path '/' y no ejecutaría ningún controlador para dicho path. Crear un objeto tipo route con estas características no tendría mucho sentido, pero es posible.
 
 				//- Method syntax
 				section.example
@@ -432,7 +432,7 @@ html(lang=gw.language)
 				//- Method
 			section.method
 				h3#method-add: code
-					small route
+					small Route.prototype
 					| .add()
 
 				//- Method description
@@ -474,7 +474,7 @@ html(lang=gw.language)
 				//- Method
 			section.method
 				h3#method-getRoute: code
-					small route
+					small Route.prototype
 					| .getRoute()
 
 				//- Method description
@@ -499,7 +499,7 @@ html(lang=gw.language)
 				//- Method
 			section.method
 				h3#method-removeRoute: code
-					small route
+					small Route.prototype
 					| .removeRoute()
 
 				//- Method description

@@ -14,29 +14,68 @@ html(lang=gw.language)
 		section.summary
 			h2#summary Sumario
 			:markdown
-				La Clase Plugin ....
-				Los plugins sirven para ampliar las funcionalidades de gangway. Por ejemplo añadir soporte de sesiones, etc.
+				La Clase Plugin permiten ampliar las funcionalidades del framework. Por ejemplo añadir soporte de sesiones, etc. El framework Pillars.js en su versión actual ofrece con una serie de [plugins integrados](https://github.com/bifuer/pillars/tree/master/lib/Plugins): 
+				+ Accounts.js
+				+ BodyReader.js
+				+ CORS.js
+				+ Encoding.js
+				+ LangPath.js
+				+ MaxUploadSize.js
+				+ OPTIONS.js
+				+ Router.js
+				+ Sessions.js
+				+ index.js
+
 
 	
 		
 		//- Syntax
 		section.syntax
-			h2#syntax Sintaxis
-			:highlight(lang='javascript')
-				//Inclusión de la librería y método start() para arrancar el servidor.
-				require("pillars").start();
+			h2#syntax Constructor
+			codesyntax.
+				plugin = new Plugin( configuration, controller );
 
-				//
-				ENV.addRoute();
+			:markdown
+				+ *configuration*: opcional. Objeto de configuración del plugin. En la creación del plugin se pueden configurar los siguientes parámetros: 
+					+ [id](#property-id): Identificador del plugin.
+					+ [priority](#property-priority): prioridad del plugin.
+					+ [active](#property-active): si está activo o no.
+
+				+ *controller*: opcional. Controlador que se ejecutará el plugin. El controller siempre recibe como parámetro el [objeto gangway](gangway.jade) y **next**.
+
+
+				Next forma parte del sistema Nexting.... 
+
+
+			:highlight(lang='javascript')
+				// Creación más básica de un objeto plugin. 
+				// Al omitir el objeto de configuración se establecen los valores por defecto
+
+				plugin = new Plugin(function(gw, next){
+					next();
+				});
+
+
+				// Creación de un objeto plugin con id 'web' y path '/web'. 
+				// El manejador envía al cliente el renderizado del archivo example.jade
+
+				plugin = new Plugin(
+					{
+						id: "web",
+						path: "/web/"
+					},
+					function(gw, next){
+						gw.render("example.jade");
+					}
+				);
+
 
 		//- Description
 		section.description
 			h2#description Descripción
 			:markdown
-				La Clase Plugin aporta la funcionalidad de añadir las rutas en las que responderá la aplicación, y el manejador concreto para dicha ruta.
+				La Clase Plugin.....
 
-			:highlight(lang='javascript')
-				Lorem ipsum					
 
 		//- Properties
 		section.properties
@@ -44,69 +83,62 @@ html(lang=gw.language)
 
 			//- Property
 			section.property
-				h3#property-routes: code
-					small Plugin
-					| .routes
+				h3#property-id: code
+					small Plugin.prototype
+					| .id
 
 				//- Property description
 				section.description
 					:markdown
 						Lorem ipsum
 
+			//- Property
+			section.property
+				h3#property-active: code
+					small Plugin.prototype
+					| .active
 
-		//- Methods
-		section.methods
-			h2#methods Métodos
-
-			//- Method
-			section.method
-				h3#method-addroute: code
-					small ENV
-					| .addRoute()
-
-				//- Method description
+				//- Property description
 				section.description
 					:markdown
-						Lorem ipsum
+						**Boolean** que indica si el plugin está activo o no. Por defecto es **true**.
 
-				//- Method syntax
-				section.syntax
-					h4 Syntax
-					:highlight(lang='javascript')
-						//Inicio del servidor con los valores por defecto:
-						route.addRoute();
+			//- Property
+			section.property
+				h3#property-priority: code
+					small Plugin.prototype
+					| .priority
 
-
+				//- Property description
+				section.description
+					:markdown
+						Prioridad de ejecución del objeto plugin. **Integer**. Por defecto es **1000**.
+						Pregunta: ¿la prioridad de ejecutación del un plugin está en la misma cola de ejecución que un route?
+		
 
 		//- Eventos
 		section.events
 			h2#events Eventos
 
 			section.event
-				h3#property-debug: code
-					| Lorem ipsum
+				h3#property-idUpdate: code
+					| idUpdate
 
 				:markdown
-					Lorem ipsum 
+					Evento que se emite cuando se actualiza el id del plugin. [Código](https://github.com/bifuer/pillars/blob/master/lib/Plugin.js#L26)
 
 				:highlight(lang='javascript')
 					//Capturar el evento
-					ENV.on('Lorem ipsum');
+					ENV.on('idUpdate');
 
-				
-		//- Examples
-		section.examples
-			h2#examples Ejemplos
+			section.event
+				h3#property-priorityUpdate: code
+					| priorityUpdate
 
-			//- Example
-			section.example
-				h3#example-1 Ejemplo 1. Primer Contacto.
 				:markdown
-					Lorem ipsum 
+					Evento que se emite cuando se actualiza la prioridad del plugin. [Código](https://github.com/bifuer/pillars/blob/master/lib/Plugin.js#L39)
+
 				:highlight(lang='javascript')
-					require("pillars").start();
-
-				:markdown
-					Lorem ipsum
-
-
+					//Capturar el evento
+					ENV.on('priorityUpdate');
+		
