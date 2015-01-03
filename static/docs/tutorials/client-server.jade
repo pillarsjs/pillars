@@ -1,0 +1,66 @@
+include ../.layout.jade
+
+doctype html
+html(lang=gw.language)
+	- var path = [{label:'Pillars.js Tutorials',url:'/pillars/docs/tutorials/'},{label:'Cliente-Servidor',url:'/pillars/docs/tutorials/client-server.jade'}];
+	+tutorial-layout("Pillars.js Tutorials - Envío de datos de Cliente a Servidor - 'make it easy!'",path)
+
+		#title
+			h1 Datos Cliente-Servidor
+				em  Pillars.js Tutorials
+		
+
+		//- Summary
+		section.summary
+			h2#summary Sumario
+			:markdown
+				Lorem ipsum. 
+
+				Las dos formas en las que se pueden enviar datos del cliente al servidor son: 
+
+				+ Query String: 
+				+ Contenido de la solicitud:
+				
+				En el protocolo HTTP existen varios métodos de petición, en concreto 8, aunque normalmente se han usado en el desarrollo sólo GET y POST.
+
+
+
+
+		//- Examples
+		section.examples
+			h2#examples Ejemplos
+
+			//- Example
+			section.example
+				h3#example-1 QUERY STRING
+				:markdown
+					El código fuente de este ejemplo está en ....
+					método de la solicitud: GET
+
+
+				:highlight(lang='javascript')
+					require("pillars").start();
+
+
+			//- Example
+			section.example
+				h3#example-1 CONTENIDO DE LA SOLICITUD
+				:markdown
+					método de la solicitud: POST - PUT
+
+				:highlight(lang='javascript')
+					require("pillars").start();
+
+
+			//- Example
+			section.example
+				h3#example-1 PARÁMETROS
+				:markdown
+					El código fuente de este ejemplo está en ....
+
+				:highlight(lang='javascript')
+					require("pillars").start();
+
+
+		
+

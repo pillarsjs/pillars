@@ -1,0 +1,66 @@
+include ../.layout.jade
+
+doctype html
+html(lang=gw.language)
+	- var path = [{label:'Pillars.js Tutorials',url:'/pillars/docs/tutorials/'},{label:'Servidor-Cliente',url:'/pillars/docs/tutorials/i18n.jade'}];
+	+tutorial-layout("Pillars.js Tutorials - i18n - 'make it easy!'",path)
+
+		#title
+			h1 i18n
+				em  Pillars.js Tutorials
+		
+
+		//- Summary
+		section.summary
+			h2#summary Sumario
+			:markdown
+				Pillars.js cuenta con un sistema de internacionalización versátil, cómodo y escalable. 
+
+				Una de las cosas más importantes es que para una web en varios idiomas, tendremos un sólo código fuente frontend y backend, SEO Friendly y escalable a otros idiomas. 
+
+				> Olvida las tediosas Web's en varios idiomas con varios códigos fuentes. Hazlo todo en uno con Pillars.js.
+
+				La filosofía de la librería i18n (aka Textualization) es librar al desarrollador de las tediosas tareas de traducción mientras que se está programando la lógica
+
+
+		//- Examples
+		section.examples
+			h2#examples Ejemplos
+
+			//- Example
+			section.example
+				h3#example-1 Sencillo i18n Landing
+				:markdown
+					En el siguiente ejemplo trata de un Landing inicialmente en dos idiomas, y que posteriormente agregaremos el tercero. Disponemos de los siguientes archivos en /examples/004 - i18n/: 
+					+ *landing.jade*: Plantilla en JADE del Landing. Recuerda que puedes añadir más engines de renderizado con la librería Renderer.
+					+ Directorio languages
+						+ *es.js*: archivo de traducción al español.
+						+ *en.js*: archivo de traducción al inglés.
+					+ *004.js*: código de la web.
+
+
+				:highlight(lang='javascript')
+					require("pillars").start();
+
+
+			//- Example
+			section.example
+				h3#example-1 i18n con variables
+				:markdown
+					El código fuente de este ejemplo está en ....
+
+				:highlight(lang='javascript')
+					require("pillars").start();
+
+
+			//- Example
+			section.example
+				h3#example-1 i18n con funciones
+				:markdown
+					El código fuente de este ejemplo está en ....
+
+				:highlight(lang='javascript')
+					require("pillars").start();
+
+
+		
