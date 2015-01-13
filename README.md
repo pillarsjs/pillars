@@ -7,7 +7,7 @@ With a simple and modular approach lets you introduce in Node.js with a soft lea
 ## Current Status
 
 > *Pillars.js is still an Alpha version. Now we are writing reference, tutorials and refactoring.*
-> *ASAP available the first stable version of Pillars.js*
+> *Available the first stable version of Pillars.js ASAP*
 
 > *If you want to install and test examples, you can do it!. We promise that your computer will not turn into flame ;)*
 
