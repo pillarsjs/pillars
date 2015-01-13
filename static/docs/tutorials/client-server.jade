@@ -14,15 +14,12 @@ html(lang=gw.language)
 		section.summary
 			h2#summary Sumario
 			:markdown
-				Lorem ipsum. 
-
 				Las dos formas en las que se pueden enviar datos del cliente al servidor son: 
 
-				+ Query String: 
-				+ Contenido de la solicitud:
+				+ Query String. *(El conocido GET)*
+				+ Contenido de la solicitud. *(El conocido POST)*
 				
-				En el protocolo HTTP existen varios métodos de petición, en concreto 8, aunque normalmente se han usado en el desarrollo sólo GET y POST.
-
+				En el protocolo HTTP existen varios [métodos de petición](http://es.wikipedia.org/wiki/Hypertext_Transfer_Protocol#M.C3.A9todos_de_petici.C3.B3n), en concreto 8, aunque usualmente se han usado en el desarrollo sólo GET y POST.
 
 
 
@@ -52,14 +49,7 @@ html(lang=gw.language)
 					require("pillars").start();
 
 
-			//- Example
-			section.example
-				h3#example-1 PARÁMETROS
-				:markdown
-					El código fuente de este ejemplo está en ....
-
-				:highlight(lang='javascript')
-					require("pillars").start();
+			
 
 
 		
