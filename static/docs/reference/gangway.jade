@@ -385,7 +385,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Lo que ha llegado por query.
+						Lo que ha llegado por query al servidor.
 
 					:highlight(lang='javascript')
 							// Se visita http://localhost/?q=1
@@ -463,7 +463,16 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Ruta parametrizada. Ruta con parámetros libres. /:var, /*:var.*/ 
+						Contiene un objeto con los parámetros y valores que han llegado al servidor a través de larRuta parametrizada. 
+						En Pillars.js puedes configurar los path de los objetos route con parámetros libres. /:var , /*:var , /:var1/:var2
+
+				:highlight(lang='javascript')
+						route = new Route({path:'/:var1/:var2'},function(gw){
+							console.log(gw.params);
+							gw.send("end");
+						});
+						//Consultando localhost:300/users/john imprime en consola:
+						//>{var1: 'users', var2:'john'}
 
 			//- Property
 			section.property
@@ -474,34 +483,11 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						pathParams + query + content.params(POST). 
-
-
-					:highlight(lang='javascript')
-						route = new Route({path:'/:var'},function(gw){
-							console.log(gw.params);
-							gw.send("end");
-						});
-						//Consultando localhost:300/test/ imprime en consola:
-						//>{var: 'test'}
+						Contiene un objeto con todo lo que le ha llegado a la petición por POST, GET y rutas parametrizadas. 
+						Es decir, gw.pathParams (/:var, /*:var) + gw.query (?q=1) + gw.content.params(POST). 
 
 					:markdown
 						> Consulta cómo funcionan los path que admiten parámetros [aquí](#).
-
-
-			//- Property
-			section.property
-				h3#property-queryHeap: code
-					small gw
-					| .queryHeap
-
-				//- Property description
-				section.description
-					:markdown
-						es una función. No es una propiedad. ni método, es función independiente.
-						Toma como parámetro un array en el que puede haber nombres con la estructura, y en base a esta genera un árbol. Arregla los datos para que sean fácil de utilizar.
-						+ only post: gw.content.params
-						+ only query: gw.query
 
 
 			//- Property
@@ -559,7 +545,6 @@ html(lang=gw.language)
 						Paquete de cookies parseadas para enviar en la respuesta.
 
 
-
 			//- Property
 			section.property
 				h3#property-cors: code
@@ -569,13 +554,14 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Cabeceras CORS para la respuesta. 
-						+ origin: 
-						+ credentials:
-						+ methods:
-						+ headers: 
+						Cabeceras CORS. 
 
-
+					:highlight(lang='javascript')
+						//cors: 
+						//	{ origin: false,
+						//	credentials: false,
+						//	methods: false,
+						//	headers: false }
 
 			//- Property
 			section.property
@@ -586,7 +572,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Tamaño de la respuesta.
+						Es el tamaño de la respuesta al cliente. Es usado para generar el encabezado HTTP "Content-Length" cuando ejecutamos cualquier método de envío a cliente.
 
 
 			//- Property
@@ -598,14 +584,8 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Propiedad relacionada con el sistema de caché.
-						Fecha de última modificación del contenido actual. se puede poner de forma manual.
-
-						la forma más sencilla de setear es; si ya se cuando se modificó, es más fácil utilizar cacheck(). Te administra la cache.
-
-						Es la que va a utilizar el navegador, cuando pida otra vez el contenido.
-
-						Si no se especifica es Now(). 
+						La propiedad .lastmod (objeto Date) indica la fecha de última modificación de la respuesta, este valor es usado para generar el encabezado HTTP "Last-modified".
+						Por defecto será la fecha y hora en la que se efectúa dicha respuesta y la forma más apropiada de asignarlo es por medio del uso de .cacheck() para, en un solo paso, establecer dicho valor y realizar la comprobación de caché.
 
 
 
@@ -859,15 +839,15 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Permite gestionar la caché del cliente, debemos pasar un objeto Date indicando la última fecha de modificación del contenido que será enviado, este método responderá con false si el cliente no tiene cacheado el contenido y true junto con un 304 automáticamente si el cliente ya dispone del contenido. La forma ideal de utilizar este método es como condición en una sentencia if, de la forma if(!cacheck(lastmod)){}.
+						Permite gestionar la caché del cliente, debemos pasar un objeto Date indicando la última fecha de modificación del contenido que será enviado, este método responderá con false si el cliente no tiene cacheado el contenido y true junto con un 304 automáticamente si el cliente ya dispone del contenido. La forma ideal de utilizar este método es como condición en una sentencia if, de la forma if(!cacheck(date)){}, como vemos en el ejemplo.
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
 					codesyntax.
-						.cacheck( lastmod );
+						.cacheck( date );
 					:markdown
-						+ lastmod: **String** con la fecha de la última modificación.
+						+ date: **String** con la fecha de la última modificación.
 
 				section.example
 					h4 Ejemplo
