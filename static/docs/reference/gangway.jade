@@ -17,9 +17,7 @@ html(lang=gw.language)
 				Pillars.js **genera de forma automática** un objeto gangway en cada petición, por lo que esta clase nunca será instanciada por el desarrollador. Este objeto está disponible en el *controller* tanto del objeto route, como en el objeto plugin.
 				
 				El **objeto gangway** contiene todos los datos de la solicitud del cliente.	
-
-				send, file, json, text, html, render - todos llaman a head que es el método que escribe el encabezado de la respuesta. 			 
-
+				
 		
 		//- Syntax
 		section.syntax
@@ -29,10 +27,8 @@ html(lang=gw.language)
 					var id = gw.id; 			// id del objeto gangway para la petición.
 					var ip = gw.ip;			// ip del cliente
 					var browserLang = gw.language;	// Primer idioma del navegador del cliente 
-					var cors = gw.cors; 			// gestion de orígenes cruzados. 
-					var method = gw.method;
-					var auth = gw.auth; 		// está en el getting started. método autenticate. 
-					// Esetará el usuario y el password del usuario. Cunado se hace lo del htaccess.
+					var cors = gw.cors; 			// Gestion de orígenes cruzados. 
+					var method = gw.method;			// Método de la petición					
 					var encoding = gw.encoding; 		// encoding que se utiliza para el envío al cliente.
 
 
@@ -181,7 +177,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Tiene que ver con la solicitud de rangos en las solcitudesf. Negociación del protocolo de partes, bytes-ranges-request. 
+						Relacionado con la solicitud de rangos en las solicitudes. Negociación del protocolo de partes, bytes-ranges-request. 
 
 						+ check: parámetro de control para saber si se nos ha hecho una petición por rangos.
 						+ unit: unidad en la que se solicitan los rangos. Normalmente bytes.
@@ -219,6 +215,9 @@ html(lang=gw.language)
 							pass: 'PassUser'
 						}
 
+					:markdown
+						> Echa un vistazo al método [.authenticate](#method-authenticate) para ver el uso conjunto.
+
 			//- Property
 			section.property
 				h3#property-ua: code
@@ -232,7 +231,7 @@ html(lang=gw.language)
 						+ mobile: **Boolean**. Si es dispositivo móvil o no.
 						+ os: **String** con el Sistema Operativo del cliente.
 						+ engine: **String** . Motor de renderizado. Gecko, Webkit, Trident, Blink o Unknow.
-						+ browser: **String** . Navegador del cliente. Firefox, Seamonkey, Chrome,, Chromium, Safari, Opera, MSIE o Unknow
+						+ browser: **String** . Navegador del cliente. Firefox, Seamonkey, Chrome, Chromium, Safari, Opera, MSIE o Unknow.
 
 					:highlight(lang='javascript')
 						/*
@@ -335,19 +334,15 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Método utilizado para la petición. POST y/o GET:
-						+ POST
-						+ GET
-						+ HEAD
-						+ OPTIONS
-						+ PUT 
-						+ DELETE
-
-						Buscar en wikipedia los tipos que hay.
+						Método utilizado para la petición. Usualmente POST y/o GET. 										
 
 					:highlight(lang='javascript')
 							console.log(gw.method);
 							//>GET
+
+					:markdown
+						> Hay que tener en cuenta que en el momento que se configura el objeto route, si indicamos que el método es POST, el route sólo funcionará si se envía algo mediante POST.
+
 
 			//- Property
 			section.property
@@ -393,7 +388,9 @@ html(lang=gw.language)
 						Lo que ha llegado por query.
 
 					:highlight(lang='javascript')
-							// Se visita www.pillarsjs.com/?q=1
+							// Se visita http://localhost/?q=1
+							//> query: { q: '1' }
+							gw.send("Has enviado mediante Query String el valor: " + gw.query['q']);
 
 
 			//- Property
@@ -432,7 +429,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Engloba la información sobre como tranbajar con el cache en esta solicitud. 
+						Engloba la información sobre como trabajar con el cache en esta solicitud. 
 						+ control: 
 						+ nonemath: si no hay coincidencias. 
 						+ modsince: si ha sido moficado desde. 
@@ -466,7 +463,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Ruta parametrizada. Ruta con parámetros libres. /:var, /*:var. 
+						Ruta parametrizada. Ruta con parámetros libres. /:var, /*:var.*/ 
 
 			//- Property
 			section.property
@@ -746,14 +743,8 @@ html(lang=gw.language)
 				section.description
 					:markdown
 						Cierra y finaliza el objeto gangway.
-						En el [logger establece la información de qué se ha cerrado... ](https://github.com/bifuer/pillars/blob/master/lib/gangway.js#L202)
-
-				section.syntax
-					h4 Sintaxis
-					codesyntax.
-						.close();
-
-
+						Antes de cerrarse se emite el [evento close](#event-close), y despúes de cerrarse el [evento closed](#event-closed).
+						Cuando se ejecuta el método `.close()` también se escribe en el [logger la información](https://github.com/bifuer/pillars/blob/master/lib/gangway.js#L202).						
 
 			//- Method
 			section.method
@@ -783,6 +774,10 @@ html(lang=gw.language)
 							+ secure: si es segura.
 							+ httpOnly: si es una cookie solo compatible con el protocolo http.
 
+
+				//- Method syntax
+				section.example
+					h4 Ejemplo
 					:highlight(lang='javascript')
 						gw.setCookie(
 							name: "userPreferences",
@@ -790,9 +785,7 @@ html(lang=gw.language)
 							config:{
 								expires: 
 							}
-
 						);
-
 
 
 			//- Method
@@ -838,21 +831,18 @@ html(lang=gw.language)
 						and cache control.
 
 
-
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
 					codesyntax.
-						.file(file,clientname,download);
+						.file(filename, clientname, download);
 
 					:markdown
-						+ filename: **String** que contiene el archivo a enviar al cliente.
+						+ filename: **String**, fichero a enviar, dentro de tu sistema de archivos del servidor.
+						+ clientname: nombre del fichero para el cliente, en caso de que no sea el mismo.
+						+ download: **Boolean**. True para forzar el diálogo de descarga. Por defecto es *false*.
 
-						+ file: fichero a enviar, dentro de tu sistema de archivos del servidor.
-						+ clientname: nombre del fichero que quieres que sea, en caso de que no sea elmismo. Nombre del fichero para el cliente.
-						+ download: forzar el diálogo de descarga.
-
-						> Nota: Si el archivo es menor de 5MB el servidor lo comprimirá antes del envío y lo enviará comprimido. Si es mayor, lo enviará sin comprimir. Soporta el protocolo HTTP por partes, es decir, podemos pausar la descarga y reanudar la descarga desde el punto en el que se paró.
+						> Nota: Adicionalmente, el archivo será comprimido antes de su envío y quedará guardada su versión comprimida para sucesivas peticiones, este método es compatible con el protocolo de partes HTTP por lo que si la descarga es interrumpida podrá continuar en una siguiente solicitud desde el último byte recibido. Este método también tiene gestión de caché automática, por lo que si el cliente ya tiene el archivo no volverá a ser enviado y se responderá con un código 304.
 
 
 				section.example
@@ -869,19 +859,54 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Para comprobar en base a una fecha de modificación, si el cliente ya tiene el contenido.
+						Permite gestionar la caché del cliente, debemos pasar un objeto Date indicando la última fecha de modificación del contenido que será enviado, este método responderá con false si el cliente no tiene cacheado el contenido y true junto con un 304 automáticamente si el cliente ya dispone del contenido. La forma ideal de utilizar este método es como condición en una sentencia if, de la forma if(!cacheck(lastmod)){}.
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
 					codesyntax.
-						.cacheck(lastmod);
+						.cacheck( lastmod );
+					:markdown
+						+ lastmod: **String** con la fecha de la última modificación.
 
 				section.example
 					h4 Ejemplo
 					:highlight(lang='javascript')
-						gw.cacheck();
+						require('../../pillars.js').start();
 
+						route = new Route(function(gw){
+							date = new Date("2015-01-02");
+
+							if (!gw.cacheck(date)){
+								gw.render("example.jade", 
+									{
+										title:"Título de la página",
+										h1: "h1 de la página",
+										contents: "Contenidos de la página"
+									}
+								); 
+							}
+						});
+
+						addRoute(route);
+
+
+						/*
+						Peticiones al servidor y mensajes por consola: 
+
+							Primera petición, se envían datos al cliente: 
+
+								INFO pillars.gangway.close
+								GET: localhost:3000/ [200]  417bytes 36ms 
+
+							Segunda petición, no se envían datos, el cliente ya descargó la página, 
+							y con un código de estado 304, le decimos al cliente que recargue lo que ya tiene. 
+							Se reducen tiempos de proceso y peso de la respuesta, reduciendo el tiempo de carga:
+
+								INFO pillars.gangway.close
+								GET: localhost:3000/ [304]  0bytes 4ms 
+
+						*/
 			//- Method
 			section.method
 				h3#method-authenticate: code
@@ -891,7 +916,9 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Emite una cabecera especial, para que salte el mensaje de que se introduzca nombre de usuario y contraseña.
+						Emite una cabecera HTTP especial para que en cliente aparezca el mensaje de "introduzca nombre de usuario y contraseña".
+
+						> Se podría decir que el conjunto .authenticate() y .auth son similares a la restricción de acceso que se realiza en el archivo .htaccess en otros servidores HTTP.
 
 
 				//- Method syntax
@@ -900,14 +927,23 @@ html(lang=gw.language)
 					codesyntax.
 						.authenticate(msg);
 
+					:markdown
+						+ msg: **String**. Mensaje a mostrar al usuario.
+
 				section.example
 					h4 Ejemplo
 					:highlight(lang='javascript')
-						if(gw.auth && gw.auth.user=='javi' && gw.auth.pass=='1234'){
-							gw.send('secret!');
-						} else {
-							gw.authenticate("escribe perra");
-						}
+						require('../../pillars.js').start();
+
+						route = new Route(function(gw){
+							if(gw.auth && gw.auth.user=='javi' && gw.auth.pass=='1234'){
+								gw.send('secret!');
+							} else {
+								gw.authenticate("Escribe tu nombre y contraseña");
+							}
+						});
+
+						addRoute(route);
 
 
 			//- Method
@@ -958,8 +994,9 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Si el dato es un string se envía como text/html, si es un objeto lo envía como objeto parseado tipo application/json.
-						Cuando se realiza un `.send()` finaliza la ejecución del route en cuestión.
+						Método para enviar una respuesta al cliente. 
+						Si la respuesta es un string se envía como *text/html* y si es un objeto lo envía como objeto parseado tipo *application/json*.
+						Cuando se llama al método `.send()` finaliza la ejecución del route en cuestión.
 
 				//- Method syntax
 				section.syntax
@@ -975,7 +1012,7 @@ html(lang=gw.language)
 				section.example
 					h4 Ejemplo
 					:highlight(lang='javascript')
-						gw.send();
+						gw.send("Secret!");
 
 
 			//- Method
@@ -987,14 +1024,27 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Lorem ipsum
+						Envía al cliente una respuesta parseada como json. 
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
+					codesyntax.
+						.json(data);
+
+					:markdown
+						+ data: *'application/json'* object.						
+
+				//- Method ejemplo
+				section.example
+					h4 Ejemplo
 					:highlight(lang='javascript')
-						
-						gw.json();
+						var dataPerson = {
+							"id":"246874113",
+							"name": "myname",
+							"surname": "mysurname"
+						}
+						gw.json(DataPerson);
 
 
 			//- Method
@@ -1006,14 +1056,22 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Lorem ipsum
+						Envía al cliente la respuesta parseada como *'text/plain'*.
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
+					codesyntax.
+						.text(data);
+
+					:markdown
+						+ data: *String*.	
+
+				//- Method syntax
+				section.syntax
+					h4 Ejemplo
 					:highlight(lang='javascript')
-						
-						gw.text();
+						gw.text("Texto plano");
 
 
 			//- Method
@@ -1025,13 +1083,21 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Lorem ipsum
+						Envía al cliente la respuesta parseada como *'text/html'*.
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
+					codesyntax.
+						.html(data);
+
+					:markdown
+						+ data: *'text/html'* object.	
+
+				//- Method syntax
+				section.syntax
+					h4 Ejemplo
 					:highlight(lang='javascript')
-						
 						gw.html();
 
 
@@ -1045,26 +1111,28 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						
+						Este método permite enviar al cliente un template renderizado. Hace uso de la librería Renderer. Por defecto está añadido el motor Jade para la creación de templates, pero puedes añadir los que quieras con el método [`.addEngine()` de la librería Renderer]().
+
+						Al usar el método .render() desde Gangway, tendremos disponible en el layout el objeto gw, i18n y util.  
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
 					codesyntax.
-						.render(template,locals) 
+						.render( template, locals ) 
 
 					:markdown
-						Estoy haciendo un render desde gangway, porl o que se le añade gw e i18n. 
-						Hace uso de la librería Renderer. 
+						+ template: ruta del template.
+						+ locals: Opcional. Variables locales que existan en la ejecución del fichero .jade. Gangway (gw), i18n y util se le pasa como locals. 
+						
 
-						+ template: ruta del templa
-						+ locals: variables locales que existan en la ejecución de ese fichero .jade. Gangway (gw), i18n y util se le pasa como locals. 
-
-						El idioma es #{gw.language}
-
+				//- Method syntax
+				section.syntax
+					h4 Ejemplo
 					:highlight(lang='javascript')
 						gw.render("example.jade", {title:"Título de página", h1:"h1 de la página"} );
 
+					:highlight(lang='javascript')
 						// example.jade
 						title=title
 							h1=h1
@@ -1082,23 +1150,31 @@ html(lang=gw.language)
 				section.description
 					:markdown
 						// Compose a generic HTTP error page by code, optional argument Error object for details.
-						Cuando se visita una URL que no existe debemos enviar un error HTTP. 
+						Compone una página genérica de error HTTP, opcionalmente se le puede pasar un mensaje para detalles.
+						El uso viene dado cuando el cliente visita una URL que no existe, momento en el cual debemos enviar un error HTTP. 
 
-						Sentencia try-catch y falla el codigo. Lo mejor es enviar error(500). 
+						Otro ejemplo, en una Sentencia try-catch y se ejecuta el cath. Lo mejor es enviar error(500). 
 
-						De otra forma, si enviaramos al cliente un mensaje como: "esta página no existe", y una araña visita el contenido, parecerá que si hay contenido. Por lo que cuando nos encontramos con código no existente, lo más coherente es emitir un error 404.
-						Emitir un error 404 debe ser común.
+						De otra forma, si enviaramos al cliente un mensaje de texto plano como: "esta página no existe", y una araña visita el contenido, parecerá que sí hay contenido. Por lo que cuando nos encontramos en esta situación, lo más coherente es emitir un error 404.
+						Por lo tanto emitir un error 404 debe ser común en el desarrollo de una aplicación Web.
 
 						El template por defecto de error es error.jade.
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
+					codesyntax.
+						.error(errorCode [, text]) 
+
+					:markdown
+						+ errorCode: Código de error HTTP, [puedes consultar este listado](http://es.wikipedia.org/wiki/Anexo:C%C3%B3digos_de_estado_HTTP#4xx_Errores_del_cliente).
+						+ text: Optional. **String** con texto a mostrar al cliente.
+
+				//- Method syntax
+				section.example
+					h4 Ejemplo
 					:highlight(lang='javascript')
-						
-						gw.error();
-
-
+						gw.error(404, "La página no existe");
 
 
 
