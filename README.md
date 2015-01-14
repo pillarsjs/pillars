@@ -51,7 +51,7 @@ With a simple and modular approach lets you introduce in Node.js with a soft lea
   - Full **i18n** integration.
   - Translations based in nodes. 
   - Attached to each message context and adapts the translation in each case from translation sheets.
-  - *Translation sheets in JS/JSON**, *cases*, *functions* and *printf* allowed.
+  - **Translation sheets in JS/JSON**, *cases*, *functions* and *printf* allowed.
   - Language management of request automatic.
 
 ### **Utils**
