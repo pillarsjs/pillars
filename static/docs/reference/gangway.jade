@@ -777,21 +777,24 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Es una alias de textualization.i18n(). Pero el tercer parámetro lo saca de gw.languge y así no hay que escribirlo. 
+						El método `.i18n` es usado junto con el método `.render()` para implementar en las páginas la internacionalización.
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
 					codesyntax.
-						.i18n(text, params);
+						.i18n(nodo, params);
 					:markdown
-						+ text: 
-						+ params: 
+						+ nodo: **String**, nodo al que hace referencia.
+						+ params: objeto con variables a pasar al template.
 
 				section.example
 					h4 Ejemplo
 					:highlight(lang='javascript')
-						gw.i18n();
+						gw.i18n("example.h1");
+
+					:markdown
+						> [Ver el tutorial de i18n.](../tutorials/i18n.jade)
 
 
 			//- Method
