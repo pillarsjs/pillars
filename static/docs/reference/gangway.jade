@@ -24,13 +24,13 @@ html(lang=gw.language)
 			h2#syntax Sintaxis
 			:highlight(lang='javascript')
 				var home = new Route(function(gw){
+
 					var id = gw.id; 			// id del objeto gangway para la petición.
 					var ip = gw.ip;			// ip del cliente
 					var browserLang = gw.language;	// Primer idioma del navegador del cliente 
 					var cors = gw.cors; 			// Gestion de orígenes cruzados. 
 					var method = gw.method;			// Método de la petición					
 					var encoding = gw.encoding; 		// encoding que se utiliza para el envío al cliente.
-
 
 					gw.send("<pre>"+util.inspect(gw)+"</pre>");
 				});
@@ -467,7 +467,7 @@ html(lang=gw.language)
 						En Pillars.js puedes configurar los path de los objetos route con parámetros libres. /:var , /*:var , /:var1/:var2
 
 				:highlight(lang='javascript')
-						route = new Route({path:'/:var1/:var2'},function(gw){
+						var route = new Route({path:'/:var1/:var2'},function(gw){
 							console.log(gw.params);
 							gw.send("end");
 						});
@@ -502,7 +502,7 @@ html(lang=gw.language)
 						El mejor lugar donde guardar datos temporales.
 					
 					:highlight(lang='javascript')
-						route = new Route(function(gw){
+						var route = new Route(function(gw){
 							gw.data.userNick = "lilxelo";
 							gw.send("Hola: "+gw.data.miNick);
 						});
@@ -822,7 +822,7 @@ html(lang=gw.language)
 
 					:markdown
 						+ filename: **String**, fichero a enviar, dentro de tu sistema de archivos del servidor.
-						+ clientname: nombre del fichero para el cliente, en caso de que no sea el mismo.
+						+ clientname: Opcional, **String** con el nombre del fichero para el cliente, en caso de que no sea el mismo que el original.
 						+ download: **Boolean**. True para forzar el diálogo de descarga. Por defecto es *false*.
 
 						> Nota: Adicionalmente, el archivo será comprimido antes de su envío y quedará guardada su versión comprimida para sucesivas peticiones, este método es compatible con el protocolo de partes HTTP por lo que si la descarga es interrumpida podrá continuar en una siguiente solicitud desde el último byte recibido. Este método también tiene gestión de caché automática, por lo que si el cliente ya tiene el archivo no volverá a ser enviado y se responderá con un código 304.
@@ -857,15 +857,16 @@ html(lang=gw.language)
 					:highlight(lang='javascript')
 						require('../../pillars.js').start();
 
-						route = new Route(function(gw){
-							date = new Date("2015-01-02");
+						var route = new Route(function(gw){
+
+							var date = new Date("2015-01-02");
 
 							if (!gw.cacheck(date)){
 								gw.render("example.jade", 
 									{
-										title:"Título de la página",
-										h1: "h1 de la página",
-										contents: "Contenidos de la página"
+													title:"Título de la página",
+													h1: "h1 de la página",
+													contents: "Contenidos de la página"
 									}
 								); 
 							}
@@ -918,12 +919,14 @@ html(lang=gw.language)
 					:highlight(lang='javascript')
 						require('../../pillars.js').start();
 
-						route = new Route(function(gw){
+						var route = new Route(function(gw){
+
 							if(gw.auth && gw.auth.user=='javi' && gw.auth.pass=='1234'){
 								gw.send('secret!');
 							} else {
 								gw.authenticate("Escribe tu nombre y contraseña");
 							}
+
 						});
 
 						addRoute(route);
@@ -1029,6 +1032,7 @@ html(lang=gw.language)
 							"name": "myname",
 							"surname": "mysurname"
 						}
+
 						gw.json(DataPerson);
 
 
