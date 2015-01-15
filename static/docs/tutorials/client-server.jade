@@ -58,11 +58,12 @@ html(lang=gw.language)
 
 			:markdown
 				Cuando declaramos un objeto route, uno de los parámetros de la configuración es el path. Éste admite varias formas de configuración, que son las siguientes: 
-				+ Ruta del Path a secas. `path:'pathestatico'`
-				+ Una o varias variables definidas. ´path:'/:var'´ para una variable, o `path:'/:var1/:var2'` para varias variables.
-				+ Variables sin definir en número. `path: '/*:var'`
+				
+				**1)** Ruta del Path a secas. *path:'pathestatico'*. Esta es la forma habitual en la que hemos declarado los path en los ejemplos.
 				
 
+				**2)** Una o varias variables definidas. *path:'/:var'* para una variable, o *path:'/:var1/:var2'* para varias variables.
+			
 			:highlight(lang='javascript')
 				addRoute({path:'/:var'},function(gw){
 					gw.send(gw.pathParams['var']);
@@ -70,6 +71,38 @@ html(lang=gw.language)
 				// http://localhost/hola , devuelve 'hola'
 				// http://localhost/users , devuelve 'users'
 
+				addRoute({path:'/:var1/:var2'},function(gw){
+					gw.send("var1: "+ gw.pathParams['var1']+", var2: "+gw.pathParams['var2'] );
+				});
+				// http://localhost/hola/maria , devuelve var1: hola, var2:maria
+				// http://localhost/users/juan , devuelve var1: users, var2:juan,
+
+				
+			:markdown
+				**3)** Variables sin definir en número. *path: '/*:var'*
+				
+			:highlight(lang='javascript')
+				addRoute({path:'/*:var'},function(gw){
+					gw.send(gw.pathParams['var']);
+				});
+				// http://localhost/hola , devuelve 'hola'
+				// http://localhost/users/juan , devuelve 'users/juan'
+				// http://localhost/users/juan/fotos , devuelve 'users/juan/fotos'
+
+			:markdown
+				Para finalizar, un ejemplo de combinación de las tres rutas parametrizadas en un mismo path: 
+
+			:highlight(lang='javascript')
+				addRoute({path:'/users/:user/:dir/*:resto'},function(gw){
+					gw.send("user: "+ gw.pathParams['user']+", dir: "+gw.pathParams['dir']+
+						", resto: "+gw.pathParams['resto']);
+				});
+				// http://localhost/users/juan/fotos/2014/album1 , 
+				// devuelve 'user: juan, dir: fotos, resto: 2014/album1'
+			
+
+
+				
 
 
 

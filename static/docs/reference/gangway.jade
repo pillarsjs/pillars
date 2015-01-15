@@ -981,6 +981,8 @@ html(lang=gw.language)
 						Si la respuesta es un string se envía como *text/html* y si es un objeto lo envía como objeto parseado tipo *application/json*.
 						Cuando se llama al método `.send()` finaliza la ejecución del route en cuestión.
 
+						Este método se encarga de componer también las cabeceras HTTP y enviarlas a cliente, por lo que este proceso transparente.
+
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
@@ -1007,7 +1009,7 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Envía al cliente una respuesta parseada como json. 
+						Envía al cliente una respuesta parseada como json. También se encarga de componer las cabeceras HTTP y enviarlas a cliente, por lo que este proceso transparente.
 
 				//- Method syntax
 				section.syntax
@@ -1039,7 +1041,7 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Envía al cliente la respuesta parseada como *'text/plain'*.
+						Envía al cliente la respuesta parseada como *'text/plain'*. Compone también las cabeceras HTTP y enviarlas a cliente, por lo que este proceso transparente.
 
 				//- Method syntax
 				section.syntax
@@ -1066,7 +1068,7 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Envía al cliente la respuesta parseada como *'text/html'*.
+						Envía al cliente la respuesta parseada como *'text/html'*. Compone también las cabeceras HTTP y las manda en el envío, por lo que este proceso transparente.
 
 				//- Method syntax
 				section.syntax
@@ -1082,7 +1084,6 @@ html(lang=gw.language)
 					h4 Ejemplo
 					:highlight(lang='javascript')
 						gw.html();
-
 
 
 			//- Method
@@ -1132,7 +1133,6 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						// Compose a generic HTTP error page by code, optional argument Error object for details.
 						Compone una página genérica de error HTTP, opcionalmente se le puede pasar un mensaje para detalles.
 						El uso viene dado cuando el cliente visita una URL que no existe, momento en el cual debemos enviar un error HTTP. 
 
