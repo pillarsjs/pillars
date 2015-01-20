@@ -1,0 +1,32 @@
+include ../.layout.jade
+
+doctype html
+html(lang=gw.language)
+	- var path = [{label:'Pillars.js Tutorials',url:'/pillars/docs/tutorials/'},{label:'Clase Route',url:'/pillars/docs/tutorials/holamundo.jade'}];
+	+tutorial-layout("Pillars.js Tutorials - Hola Mundo - 'make it easy!'",path)
+
+		#title
+			h1 Hola Mundo
+				em  Tutoriales Pillars.js
+			//a.source(href="https://github.com/bifuer/pillars/blob/master/lib/Route.js") Source
+
+	
+		//- Syntax
+		section.syntax
+			h2#syntax Código
+
+			:highlight(lang='javascript')
+				require("pillars").start();
+				
+				addRoute(function(gw){
+					gw.send("Hola Mundo");
+				});
+
+
+			
+
+		//- Description
+		section.description
+			h2#description Descripción
+			:markdown
+				Lorem ipsum

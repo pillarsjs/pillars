@@ -16,7 +16,7 @@ html(lang=gw.language)
 		:highlight(lang='javascript')
 			{
 			  "dependencies": {
-			    "pillars": "*"
+			  		"pillars": "*"
 			  }
 			}
 
@@ -35,4 +35,432 @@ html(lang=gw.language)
 			  gw.send("Hola Mundo");
 			}));
 
-			
+		:markdown
+			## El Framework
+
+			Los conceptos principales en los que se basa Pillars.js son:
+			- **ENV**: Punto central de configuración y gestión de nuestro proyecto, permite añadir controladores de ruta (Route) y Plugins entre otras funciones.
+			- **Route**: Controlador de ruta, define una ruta y propiedades adicionales para un manejador/controlador. Recibe un objeto Gangway como parámetro y son anidables.
+			- **Gangway**: Un objeto con todas las propiedades y métodos relacionados con la gestión de una solicitud.
+			- **Plugin**: Permite añadir controladores al entorno general, pueden modificar el funcionamiento de Gangway y Route, y acceder a sus propiedades.
+
+			## ENV (Entorno)
+
+			Mediante la variable global `ENV` administramos el entorno de la aplicación Pillars.js. Es un EventEmitter que sirve de punto central de configuración, podremos acceder a las propiedades y métodos de ENV desde cualquier módulo de nuestra aplicación.
+
+			Para establecer el entorno sólo es necesario realizar la llamada `require('pillars')`, esto dispondrá de forma global acceso a las clases, objetos y funciones necesarias para trabajar con Pillars.js, como `ENV`, `Route`, `Plugin`, `addRoute()`, entre otras.
+
+			Por ejemplo podremos configurar nuestro servicio HTTP por medio de `ENV.server` estableciendo las propiedades `hostname` y `port`, también podremos establecer el tiempo máximo de espera `timeout` o el tamaño máximo de subida de archivos `maxUploadSize`.
+
+		:highlight(lang='javascript')
+			require('pillars');
+			ENV.server = {
+			        hostname:'localhost',
+			        port: 3030,
+			        timeout: 30000
+			};
+		
+		:markdown
+			También podremos establecer el modo `debug` o los datos de conexión a la base de datos. En este sentido nos ayudará el método `ENV.configure()` para configurar múltiples propiedades en una sola función:
+
+		:highlight(lang='javascript')
+			require('pillars').configure(
+			  debug: true, // Por defecto false.
+			  server: {
+			    hostname:'localhost',
+			    port: 3030,
+			    timeout: 30000
+			  },
+			  database: {
+			    hostname:'localhost',
+			    port: 27017,
+			    db: 'PillarsExample'
+			  }
+			);
+
+
+		:markdown
+			Por defecto Pillars.js no inicia el servico HTTP ni la conexión a base de datos, los métodos `ENV.start([config[,callback]])` y `ENV.stop([callback])` inician y detienen el servicio HTTP, mientras `ENV.connect([config[,callback]])` y `ENV.disconnect([callback])` conectan y desconectan la base de datos.
+			Si se establece la propiedad `.server` o `.database` se procede a utilizar dichas configuraciones para iniciar el servicio HTTP o conectar a la base de datos en cada caso de forma automática.
+
+			Por último tenemos los métodos que nos permiten administrar las rutas y plugins de nuestra aplicación:
+
+			- `addRoute()`: Añade una nueva ruta al sistema. Por medio de `removeRoute()` y `getRoute()` podremos eliminar y modificar respectivamente rutas ya insertadas. La propiedad `ENV.routes` devuelve una lista de las rutas ordenadas por prioridad.
+			- `addPlugin()`: Añade un nuevo plugin al sistema. Por medio de `removePlugin()` y `getPlugin()` podremos eliminar y modificar respectivamente plugins ya insertados. La propiedad `ENV.plugins` devuelve una lista de los plugins ordenados por prioridad.
+
+
+			## Route
+
+			Es una clase que te permite asociar un controlador/manejador para una ruta y configuración concretas, un objeto Route consiste en una función manejador y una serie de propiedades que servirán para controlar cuándo y cómo ejecutar dicho manejador, la forma más básica de crear un objeto Route es declarando sólo su manejador, dejando las opciones por defecto:
+
+		:highlight(lang='javascript')
+			myRoute = new Route(function(gw){
+			  gw.send('¡Hola Mundo!');
+			});
+
+		:markdown
+			Aunque en general necesitaremos configurar nuestro Route de la siguiente forma:
+
+		:highlight(lang='javascript')
+			myRoute = new Route({ // Configuración
+			  id:'Status',
+			  path:'admin/status',
+			  method:'get'
+			},function(gw){ // Manejador
+			  gw.send('¡Hola Mundo!');
+			});
+
+		:markdown
+			Route establece por defecto valores para las siguientes propiedades si no son especificadas:
+			- .id: Por defecto se genera un identificador único para la ruta en caso de no especificar uno.
+			- .path: Por defecto es '/'
+			- .method: por defecto es 'GET'
+
+			Los objetos Route a su vez pueden tener sub-rutas, de la misma forma que podemos añadir objetos Route al entorno, podemos añadirlos también como 'hijos' de otro objeto Route, estos funcionarán como subrutas, permitiéndonos organizar el árbol de rutas de forma más orgánica y como veremos más adelante nos servirá para trabajar con propiedades por herencia y tener un control organizado sobre grupos de controladores.
+
+		:highlight(lang='javascript')
+			new Route({
+			  id: 'Administration',
+			  path: '/admin'
+			},function(gw){
+			  gw.send('Admin area');
+			})
+			  .addRoute(new Route({
+			    id: 'Status',
+			    path: '/status'
+			  },function(gw){
+			    gw.send('Admin area: Show status');
+			}))
+
+		:markdown
+			El objeto Route con el id 'Status' responderá a la ruta '/admin/status'. Si desactivamos al Route con el id 'Administration', dejarán de estar disponibles todos sus descendientes.
+
+			Para poder establecer un orden en los objetos Route disponemos de la propiedad `.priority` que por defecto es `1000` y nos permite controlar el orden en el que serán comprobados por el Router. También disponemos de la propiedad `.active` que por defecto es `true` y nos permite desactivar un Route junto con su correspondiente descendencia.
+
+			## Gangway (gw)
+
+			Es la solicitud HTTP, si ya has trabajado con Node.js estarás acostumbrado a los objetos `request` y `response`. En Pillars.js estos objetos son propiedades de Gangway, un objeto Gangway consiste en la solicitud del cliente completamente parseada y organizada para su uso. Con cada solicitud al servidor HTTP se crea un objeto Gangway que es enviado al manejador correspondiente. Algunas de las propiedades y métodos de Gangway:
+
+			- **`.cookie`**: Devuelve un objeto con el contenido de la *cookie*, si existiese.
+			- **`.ua`**: Un objeto con información sobre el agente de usuario, `.mobile` nos indica (*booleano*) si el cliente es un dispositivo móvil y el resto de propiedades nos aporta información sobre el sistema operativo y el navegador (os,engine,browser).
+			- **`.ip`**: La dirección IP del cliente.
+			- **`.accepts`**: Cabeceras accept ya resueltas y organizadas por prioridad.
+			- **`.host`**: El nombre de host o dirección IP que se ha utilizado al realizar la petición.
+			- **`.method`**: El método utilizado por la petición (*GET,POST,PUT,DELETE,HEAD*).
+			- **`.path`**: Ruta que se ha solicitado, exclusivamente el valor de la ruta sin la parte *host* ni *query*, este valor puede verse modificado internamente si por alguna razón una ruta es redirigida a otro punto del entorno, para conocer el *path* original tenemos la propiedad **`.originalPath`**.
+			- **`.query`**: Un objeto con el contenido del *query* de la petición.
+			- **`.params`**: Un objeto con todos los parámetros recibidos en la petición, ya sea por *GET* o *POST*. Los valores *POST* prevalecerán sobre los de *GET* en caso de ser idénticos.
+			- **`.files`**: Un objeto que contiene únicamente los archivos, si existiesen, que han sido enviados en la petición. En `.params` también podremos encontrar dichos archivos junto con el resto de parámetros que fueron enviados.
+			- **`.session`**: Un objeto que mantendrá sus propiedades entre distintas peticiones del mismo cliente.
+			- **`.referer`**: Si la solicitud se ha realizado por medio de un *link*, este valor nos indica la dirección que nos ha referenciado.
+
+			> Puedes encontrar una descripción más amplia y el resto de propiedades
+			> en la referencia.
+
+			- **`.setHeader(name, value)`**: Añade un encabezado a la respuesta. `getHeader(name)` y `removeHeader(name)`, nos permite leer un valor de encabezado ya existente o eliminarlo.
+			- **`.send(data)`**: Envía el contenido especificado al cliente y termina la petición, si *data* es un *objeto* se convertirá en *JSON* y la respuesta se enviará como *'aplication/json',* si data es un *string* será enviado como *'text/html'*.
+			- **`.file(path, clientname, download)`**: Envía un archivo al cliente, mediante `clientname` podremos especificar un nombre que será utilizado en el diálogo de guardado y con `download=true` podremos forzar la descarga del mismo. Por defecto el nombre es el que corresponda en la ruta y forzar descarga es *false*. Adicionalmente, el archivo será **comprimido** antes de su envío y quedará guardada su versión comprimida para sucesivas peticiones, este método es compatible con el protocolo de **partes HTTP** por lo que si la descarga es interrumpida podrá continuar en una siguiente solicitud desde el último byte recibido. Este método también tiene *gestión de caché automática*, por lo que si el cliente ya tiene el archivo no volverá a ser enviado y se responderá con un código *304*.
+			- **`.cacheck(lastmod)`**: Nos permite gestionar la caché del cliente, debemos pasar un objeto *Date* indicando la última fecha de modificación del contenido que será enviado, este método responderá con *false* si el cliente no tiene cacheado el contenido y *true* junto con un *304* automáticamente si el cliente ya dispone del contenido. La forma ideal de utilizar este método es como condición en una sentencia *if*, de la forma `if(!cacheck(lastmod)){}`.
+			- **`.authenticate(msg)`**: Envía un mensaje de *autenticación HTTP básica* con el código *401*. Podremos comprobar las credenciales del usuario en la propiedad `.auth` de Gangway, este objeto contendrá el nombre de usuario y contraseña indicados por el cliente en las propiedades `.user` y `.pass`.
+			- **`.redirect(location)`**: Redirige la solicitud a otra dirección mediante un código *301*.
+			- **`.render(template, locals)`**: Definiendo la ruta a un template y la variables de entorno con las que debe trabajar enviaremos al cliente el resultado como HTML, por defecto el motor de plantillas es *JADE* y la gestión de caché de las plantillas es automática. Pillars.js permite añadir nuevos motores de plantillas mediante `renderer.addEngine(ext,compiler)`.
+			- **`.error(code, data)`**: Mediante este método podemos mostrar mensajes de *error* manualmente, nos permite especificar un *status-code (404, 500...)* y un objeto *Error* si fuese necesario, el objeto *Error* no se mostrará al cliente si la variable de entorno `debug` es *false*.
+
+			## Plugin
+
+			Es una clase que nos da control sobre las solicitudes a un nivel distinto a Route, los Plugins no funcionan sobre rutas sino que se ejecutan en cadena para cada solicitud. Los Plugins permiten extender el funcionamiento de Pillars.js ampliando sus posibilidades.
+
+			> Para más detalles sobre estos elementos visita la referencia de Pillars.js
+
+
+			##Una aplicación sencilla
+
+			Para crear una aplicación Pillars.js comenzaremos por configurar el entorno, será necesario especificar una configuración de servidor, unos datos de acceso a la base de datos y configuraremos algunas opciones adicionales.
+
+			´ENV´ es seteado de forma global, aunque también se devuelve una referencia a esta variable al realizar el require de la librería. Utilizaremos esta referencia para configurar el entorno mediante el método `.configure()`.
+
+		:highlight(lang='javascript')
+			require('pillars').configure({
+			  server:{port:3030,hostname:'localhost'}, // al configurar la propiedad .server se inicia el servicio.
+			  database:{db:'pillarsExample'}, // al configurar la propiedad .database se conecta automáticamente.
+			  debug:true, // Mostrar errores detallados y otras opciones de depuración
+			  languages:['es','en'] // El primer idioma del listado se utilizará como idioma por defecto.
+			});
+
+			addRoute(new Route({
+			  id:'myFirstRoute', // Identificador de nuestro Route, nos permitirá modificar o eliminarlo en cualquier momento.
+			  session:true // Propiedad utilizada por el Plugin 'Session', inicia el soporte de sesiones para este manejador.
+			},function(gw){
+			  gw.session.count = gw.session.count || 0;
+			  gw.session.count++;
+			  gw.send('Has visto este mensaje '+session.count+' veces');
+			}));
+		
+		:markdown
+			En este ejemplo definimos algunas propiedades básicas del entorno y utilizamos la propiedad `.session` de Gangway para contabilizar el número de veces que el usuario visualiza la página.
+
+			Hemos configurado una lista de idiomas, al establecer como idioma por defecto el castellano se nos mostrarán los mensajes de consola en este idioma, veremos como utilizar el sistema de traducciones más adelante.
+
+			El soporte de sesiones nos lo proporciona el Plugin **Session** que utiliza la propiedad `.session` de Route para iniciar el soporte de sesiones para su correspondiente manejador.
+
+			> Puedes conocer las opciones de la propiedad `.server` y `.database` en más profundidad visitando la referencia de Pillars.js
+
+
+			## Route y Gangway
+
+			Vamos a ver un uso en más profundidad de Route y Gangway, en el ejemplo crearemos una estructura de rutas y veremos cómo cambiar su funcionamiento una vez han sido añadidas al entorno.
+
+
+			***
+			App.js
+
+		:highlight(lang='javascript')
+			require('pillars').configure({
+			  database:{db:'pillarsExample'},
+			  debug:true,
+			  languages:['es','en']
+			}).start();
+
+			var Utilities = new Route({
+			  id:'Tools',
+			  path:'/tools'
+			},function(gw){
+			  // Podemos enviar HTML directamente por medio del método .html(), .send(String) tiene el mismo funcionamiento.
+			  // Utilizaremos este método para crear una página de inicio básica para nuestros ejemplos.
+			  gw.html(
+			    '<h1>Utilidades</h1>'
+			    +'<ul>'
+			      +'<li><a href="/tools/status">Estado del entorno</li>'
+			      +'<li><a href="/tools/source">C&oacute;digo fuente</li>'
+			      +'<li><a href="/tools/errorhandler">Test de error interno</li>'
+			      +'<li><a href="/tools/template">Test de platilla HTML</li>'
+			      +'<li><a href="/tools/queryparams?a=1&b=2&c=3">Test de par&aacutemetros query</li>'
+			      +'<li><a href="/tools/pathparams/a/b/c">Test de par&aacutemetros de ruta</li>'
+			      +'<li><a href="/tools/session">Test de sesi&oacute;n</li>'
+			      +'<li><a href="/tools/secret">Test de autenticaci&oacute;n b&aacute;sica</li>'
+			      +'<li><a href="/tools/static">Directorio</li>'
+			      +'<li><a href="/tools/cache">Control de cach&eacute;</li>'
+			      +'<li><a href="/tools/edit-routes">A&ntilde;adir Route</li>'
+			    +'</ul>'
+			  );
+			});
+			addRoute(Utilities); // o ENV.addRoute(Utilities) indistintamente.
+
+			Utilities.addRoute(new Route({
+			  id:'Status',
+			  path:'/status'
+			},function(gw){
+			  // Enviamos el estado de nuestro entorno como datos JSON
+			  gw.json(ENV.status); // El método .json envía un objeto JS como application/json. .send(Object) tiene el mismo funcionamiento.
+			}));
+
+			Utilities.addRoute(new Route({
+			  id:'Source',
+			  path:'/source'
+			},function(gw){
+			  // Mediante .file() podemos enviar un archivo al cliente, en este caso enviamos 
+			  // el propio fuente de nuestra aplicación.
+			  gw.file('./app.js','Código fuente de mi aplicación');
+			  // El segundo parámetro fuerza un nuevo nombre para el archivo y con el tercer
+			  // parámetro a 'true' podríamos forzar la descarga.
+			}));
+
+			Utilities.addRoute(new Route({
+			  id:'ErrorControl',
+			  path:'/errorhandler'
+			},function(gw){
+			  // Cualquier error dentro de un manejador de ruta será gestionado por el framework enviando el correspondiente codigo 500.
+			  var a = b + c;
+			  // En caso de establecer el modo 'debug' obtendremos el stack del error.
+			}));
+
+			Utilities.addRoute(new Route({
+			  id:'Template',
+			  path:'/template'
+			},function(gw){
+			  // El método .render() nos permite utilizar plantillas.
+			  // Establecemos la ruta del template y las variables locales que tendrá disponibles.
+			  gw.render('./example.jade',{
+			    title: 'Mi primer template en Pillars.js',
+			    h1: 'Ejemplo de template básico',
+			    contents: '<strong>Hola mundo!</strong>'
+			  });
+			  // El código del template lo puedes encontrar tras el código de este ejemplo.
+			  // Por defecto Pillars.js utiliza JADE aunque pueden añadirse fácilmente otros motores al sistema.
+			}));
+
+			Utilities.addRoute(new Route({
+			  id:'Query',
+			  path:'queryparams'
+			},function(gw){
+			  // Enviamos los parámetros recibidos por query como objeto JSON
+			  gw.json(gw.query);
+			}));
+
+			Utilities.addRoute(new Route({
+			  id:'PathParams',
+			  path:'/pathparams/:parametro1/*:restoDeRuta'
+			},function(gw){
+			  // Al establecer la propiedad 'path' podremos usar capturas de parámetros en la ruta
+			  // utilizando /: capturaremos un sólo parámetro mientras que con /*: capturaremos cualquier subruta.
+			  gw.json(gw.pathParams);
+			}));
+
+			Utilities.addRoute(new Route({
+			  id:'Session',
+			  path:'/session',
+			  session: true 
+			  // Algunos Plugins hacen uso de propiedades de ruta, en este caso 
+			  // la propiedad session activa el Plugin Sessions.
+			},function(gw){
+			  // El Plugin Sessions nos aporta la propiedad .session de Gangway que nos permitirá 
+			  // guardar datos entre diferentes solicitudes.
+			  gw.session.contador = gw.session.contador || 0; // Iniciamos la vriable contador.
+			  gw.session.contador++;
+			  gw.html('Contador:<strong>'+gw.session.contador+'</strong>');
+			}));
+
+			Utilities.addRoute(new Route({
+			  id:'Authenticate',
+			  path:'/secret'
+			},function(gw){
+			  // Este contenido sólo será visible bajo autenticación.
+			  // comprobamos si exite autenticación y es correcta, en caso contrario utilizamos .authenticate(msg):
+			  if(gw.auth && gw.auth.user=='admin' && gw.auth.pass=='1234'){
+			    gw.render('./example.jade',{
+			      title: 'El sentido de la vida, el universo y todo lo demás',
+			      h1: 'El sentido de la vida, el universo y todo lo demás',
+			      contents: '<h2>42</h2><blockquote><p>The Hitchhiker´s Guide to the Galaxy</p></blockquote>'
+			    })
+			  } else {
+			    gw.authenticate('Es necesario usuario y clave para ver este contenido');
+			  }
+			}));
+
+			Utilities.addRoute(new Route({
+			  id:'pillarsStatic',
+			  path:'/static/*:path'
+			  // Utilizamos una ruta abierta mediante '/:', nos permite capturar el resto de la ruta como parámetro.
+			},precasts.static({
+			        // Mediante el precast 'static' creamos un manejador de directorios estáticos.
+			  directory:'./static', // Indicamos el directorio a servir.
+			  listing:true // Habilitamos el listado de directorios.
+			})));
+
+			Utilities.addRoute(new Route({
+			  id:'CacheControl',
+			  path:'/cache'
+			},function(gw){
+			  var lastmod = new Date(0); // Establecemos una fecha antigua
+			  if(!gw.cacheck(lastmod)){
+			    gw.send('Este contenido no ha sido modificado desde '+lastmod.toUTCString());
+			  }
+			  // Podrás comprobar en la consola o con herramientas de desarrollo en el nevegador como 
+			  // se responde con un código 200 o 304 dependiendo de la caché.
+			}));
+
+			// Creamos un nuevo Route que usaremos más adelante, simplemente responde con un 'Ok'.
+			Extra = new Route({
+			  id:'Extra',
+			  path:'/new-route'
+			},function(gw){
+			  gw.send('Ok');
+			});
+
+			Utilities.addRoute(new Route({
+			  id:'editRoutes',
+			  path:'/edit-routes'
+			},function(gw){
+			  // Eliminamos el Route 'CacheControl' del entorno.
+			  Utilities.removeRoute('CacheControl');
+			  // Localizamos el Route 'ErrorControl' y modificamos su propiedad '.path' y la prioridad
+			  Utilities.getRoute('ErrorControl').configure({path:'geterror',priority:900});
+			  // Comprobamos si ya hemos añadido el Route adicional o no.
+			  if(!Utilities.getRoute('Extra')){
+			    // Añadidmos un nuevo Route.
+			    Utilities.addRoute(Extra);
+			  }
+			  gw.html('Se ha a&ntilde;adido una nueva ruta, puedes visitarla <a href="/tools/new-route">aqu&iacute;</a>');
+			}));
+
+
+
+		:markdown
+			***
+			example.jade
+
+		:highlight(lang='javascript')
+			doctype html
+			html(lang=gw.language)
+			  // Por defecto se añade a locals el objeto 'gw' actual, la librería 'util' y la función 'i18n' con el idioma actual.
+			  head
+			    title=title
+			    meta(charset="utf-8")
+			    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+			    meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
+			    link(rel='stylesheet', href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css')
+
+			  body
+			    .container
+			      header#header
+			        h1=h1
+			      #page!=contents
+
+		:markdown
+			En el ejemplo utilizamos `start()` ya que no hemos establecido configuración del servidor, en este caso se utilizan los valores por defecto que son cualquier hostname y el puerto 3000.
+
+			Podemos ver el funcionamiento de diversos métodos de Gangway junto con el uso de estructuras anidadas de Route, en las últimas lineas vemos como modificar una estructura ya creada y en funcionamiento añadiendo nuevo elementos o modificando los existentes.
+
+			El sistema de estructuras Route nos permite crear funcionalidades que otros podran integrar en sus aplicaciones, permitiendo a la misma vez adaptar su funcionamiento a nuestra necesidades, eliminando o modificando partes de la estructura.
+
+			Adicionalmente es interesante conocer que tanto `ENV` como `Route` y `Gangway` son eventEmitter lo que nos permite un control adicional sobre su funcionamiento.
+
+			## Plugins
+
+			Los plugins te permiten crear controladores globales que podrán acceder a las propiedades de Route, ampliar las funciones de Gangway o modificar el comportamiento general del framework.
+
+			Son la parte central de la gestión de solicitudes en Pillars.js. Cuando se recibe una solicitud HTTP al servidor de Pillars.js se instancia un nuevo objeto Gangway, éste es enviado a una cadena de plugins organizados que irán pasando el control de dicho Gangway al siguiente Plugin.
+
+			La construcción de un plugin es muy similar a la de un Route, es necesario especificar unas propiedades y un manejador:
+
+		:highlight(lang='javascript')
+			myPlugin = new Plugin({
+			        id: 'paramsLog',
+			        priority: 1000
+			},function(gw,next){
+			        console.log(gw.params);
+			        next();
+			});
+			addPlugin(myPlugin);
+
+		:markdown
+			Este plugin de ejemplo envía a la consola los parámetros de cualquier solicitud recibida y pasa el control al siguiente plugin. Plugin a diferencia de Route recibe dos parámetros en el manejador 'gw' y 'next', next es una función que nos permite pasar el control al siguiente Plugin.
+
+			Uno de los Plugins integrados es 'Router' que decide qué objeto Route es el encargado de atender una solicitud concreta, pasando el control al manejador de dicho Route cuando finaliza la cadena de Plugins.
+
+			Cuando el control llega al Plugin 'Router', éste busca el Route adecuado para la solicitud, en caso de encontrar uno guarda la referencia en la propiedad `routing` de Gangway. En caso contrario reponde con un 404 y detiene la cadena de Plugins.
+
+			Desde cualquier Plugin con prioridad posterior a 'Router' se tendrá acceso a la propiedad `gw.routing` que tiene el siguiente formato:
+			- `routing.routes`: Cadena de Routes que se ha seguido si estos han sido anidados, en orden de descendencia.
+			- `routing.handlers`: Manejador o manejadores del Route que responderá a la ruta. Serán llamados al finalizar la cadena de Plugins.
+			- `routing.options`: Objeto con las propiedades del Route que atenderá la solicitud, propias y heredadas de otros Routes superiores.
+			- `routing.check(prop, preset)`: Utilidad para comprobar propiedades del Route pudiendo recibir el valor `preset` en caso de no estar definida.
+
+			La propiedad `gw.routing` nos permite crear Plugins que sólo se ejecutarán ante configuraciones concretas Route, por ejemplo un Plugin que realize log como el ejemplo anterior pero sólo para objetos Route que tengan la propiedad 'log=true':
+
+		:highlight(lang='javascript')
+			myPlugin = new Plugin({
+			        id: 'logPlugin'
+			},function(gw,next){
+			        var log = gw.routing.check('log');
+			        if(log===true){
+			                console.log(gw.path,gw.params);
+			        }
+			        next();
+			});
+			addPlugin(myPlugin);
+
+		:markdown
+			Mediante Plugins podemos actuar tanto antes como después de pasar por el Router, pudiendo por ejemplo modificar la ruta o métodos antes del Router o comprobar propiedades del objeto Route cuando éste ya ha sido seleccionado. Cada Plugin puede modificar o extender las propiedades y métodos de Gangway para nuestro manejador, por ejemplo el Plugin 'Sessions' nos ofrece la propiedad `gw.session` en la cual se encarga de insertar los valores almacenados en la sesión y guardar los cambios una vez finalizada la solicitud.
+
+			Los Plugins ofrecen una forma de añadir funcionalidades a Pillars.js o modificar su comportamiento general, esto es útil para crear Plugins genéricos que añadan funciones a cualquier proyecto o para realizar tareas comunes entre diferentes manejadores puediendo disparar el Plugin sólo ante ciertas propiedades de Route.
