@@ -46,11 +46,11 @@ html(lang=gw.language)
 
 			## ENV (Entorno)
 
-			Mediante la variable global `ENV` administramos el entorno de la aplicación Pillars.js. Es un EventEmitter que sirve de punto central de configuración, podremos acceder a las propiedades y métodos de ENV desde cualquier módulo de nuestra aplicación.
+			Mediante la variable global `ENV` se administra el entorno de la aplicación Pillars.js. Es un EventEmitter que sirve de punto central de configuración, podremos acceder a las propiedades y métodos de ENV desde cualquier módulo de la aplicación.
 
-			Para establecer el entorno sólo es necesario realizar la llamada `require('pillars')`, esto dispondrá de forma global acceso a las clases, objetos y funciones necesarias para trabajar con Pillars.js, como `ENV`, `Route`, `Plugin`, `addRoute()`, entre otras.
+			Para establecer el entorno sólo es necesario realizar la llamada `require('pillars')`, esto hará que esté disponible de forma global el acceso a las clases, objetos y funciones necesarias para trabajar con Pillars.js; tales como `ENV`, `Route`, `Plugin`, `addRoute()`, entre otras.
 
-			Por ejemplo podremos configurar nuestro servicio HTTP por medio de `ENV.server` estableciendo las propiedades `hostname` y `port`, también podremos establecer el tiempo máximo de espera `timeout` o el tamaño máximo de subida de archivos `maxUploadSize`.
+			Por ejemplo, podemos configurar el servicio HTTP mediante de `ENV.server` estableciendo las propiedades `hostname` y `port`; también podremos establecer el tiempo máximo de espera con `timeout` o el tamaño máximo de subida de archivos con `maxUploadSize`.
 
 		:highlight(lang='javascript')
 			require('pillars');
@@ -80,18 +80,19 @@ html(lang=gw.language)
 
 
 		:markdown
-			Por defecto Pillars.js no inicia el servico HTTP ni la conexión a base de datos, los métodos `ENV.start([config[,callback]])` y `ENV.stop([callback])` inician y detienen el servicio HTTP, mientras `ENV.connect([config[,callback]])` y `ENV.disconnect([callback])` conectan y desconectan la base de datos.
-			Si se establece la propiedad `.server` o `.database` se procede a utilizar dichas configuraciones para iniciar el servicio HTTP o conectar a la base de datos en cada caso de forma automática.
+			Por defecto Pillars.js no inicia el servicio HTTP ni la conexión a base de datos, los métodos `ENV.start([config[,callback]])` y `ENV.stop([callback])` inician y detienen el servicio HTTP, mientras `ENV.connect([config[,callback]])` y `ENV.disconnect([callback])` conectan y desconectan la base de datos.
+			
+			Si se setea la propiedad `.server` o `.database` se inicia el servicio HTTP o se conecta a la base de datos respectivamente,  en cada caso de forma automática.
 
-			Por último tenemos los métodos que nos permiten administrar las rutas y plugins de nuestra aplicación:
+			Por último tenemos los métodos que nos permiten administrar las rutas y plugins de la aplicación:
 
-			- `addRoute()`: Añade una nueva ruta al sistema. Por medio de `removeRoute()` y `getRoute()` podremos eliminar y modificar respectivamente rutas ya insertadas. La propiedad `ENV.routes` devuelve una lista de las rutas ordenadas por prioridad.
-			- `addPlugin()`: Añade un nuevo plugin al sistema. Por medio de `removePlugin()` y `getPlugin()` podremos eliminar y modificar respectivamente plugins ya insertados. La propiedad `ENV.plugins` devuelve una lista de los plugins ordenados por prioridad.
+			- `addRoute()`: Añade una nueva ruta al sistema. Por medio de `removeRoute()` y `getRoute()` se puede eliminar y modificar respectivamente rutas ya insertadas. La propiedad `ENV.routes` devuelve una lista de las rutas ordenadas por prioridad.
+			- `addPlugin()`: Añade un nuevo plugin al sistema. Por medio de `removePlugin()` y `getPlugin()` se puede eliminar y modificar respectivamente plugins ya insertados. La propiedad `ENV.plugins` devuelve una lista de los plugins ordenados por prioridad.
 
 
 			## Route
 
-			Es una clase que te permite asociar un controlador/manejador para una ruta y configuración concretas, un objeto Route consiste en una función manejador y una serie de propiedades que servirán para controlar cuándo y cómo ejecutar dicho manejador, la forma más básica de crear un objeto Route es declarando sólo su manejador, dejando las opciones por defecto:
+			Esta clase permite asociar un controlador/manejador con una ruta y configuración concretas, un objeto route consiste en una función manejador y una serie de propiedades que servirán para controlar cuándo y cómo ejecutar dicho manejador, la forma más básica de crear un objeto route es declarando sólo su manejador, dejando las opciones por defecto:
 
 		:highlight(lang='javascript')
 			myRoute = new Route(function(gw){
@@ -99,7 +100,7 @@ html(lang=gw.language)
 			});
 
 		:markdown
-			Aunque en general necesitaremos configurar nuestro Route de la siguiente forma:
+			Aunque en general será necesario configurar el route de la siguiente forma:
 
 		:highlight(lang='javascript')
 			myRoute = new Route({ // Configuración
@@ -112,7 +113,7 @@ html(lang=gw.language)
 
 		:markdown
 			Route establece por defecto valores para las siguientes propiedades si no son especificadas:
-			- .id: Por defecto se genera un identificador único para la ruta en caso de no especificar uno.
+			- .id: En caso de no especificar uno, se genera un identificador único.
 			- .path: Por defecto es '/'
 			- .method: por defecto es 'GET'
 

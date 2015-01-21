@@ -7,11 +7,11 @@ html(lang=gw.language)
 		:markdown
 			## Setting the environment (Node.js beginners)
 
-			To start using Pillars.js you need to install **NodeJS** and **MongoDB**, in the followings links you can find and install both; [NodeJS](http://nodejs.org/) and [MongoDB](https://www.mongodb.org/downloads).
+			To start using Pillars.js you need to install **NodeJS**, and if you are going to use database connection **MongoDB**, in the followings links you can find and install both; [NodeJS](http://nodejs.org/) and [MongoDB](https://www.mongodb.org/downloads).
 
-			Create; a new directory for your first Pillars.js project, *package.json* file (a descriptor for your application) and *app.js* (your application).			
+			After instalation create a new directory for your first Pillars.js project. In this directory create a *package.json* file (a descriptor for your application) and *app.js* file(your application).
 
-			*package.json* file can operate with a minimal information. Its enough to indicate that use Pillars.js in the dependency list:			
+			*package.json* file can operate with a minimal information. Its enough to indicate that use Pillars.js in the dependency list:
 
 		:highlight(lang='javascript')
 			{
@@ -20,15 +20,13 @@ html(lang=gw.language)
 			  }
 			}
 
-
 		:markdown
-			> You can find more information about how package.json works on the [npmjs](https://www.npmjs.org/doc/files/package.json.html) website.			
+			> You can find more information about how package.json works on the [npmjs](https://www.npmjs.org/doc/files/package.json.html) website.
 			
-			Now we use *npm* to load dependencies, in the project directory runs command-line `npm install`. This commmand create a directory */node_modules* in which will be loaded all the dependencies described in *package.json* file.
+			Now we use *npm* to load dependencies, in the project directory runs in the command prompt `npm install`. This commmand create a directory */node_modules* in which will be loaded all the dependencies described in *package.json* file.
 
 			Now we can start to use Pillars.js. You have the "Hello World" code below *(app.js file)*:  
 			
-
 		:highlight(lang='javascript')
 			require('pillars').start();
 
@@ -37,21 +35,25 @@ html(lang=gw.language)
 			}));
 
 		:markdown
+			Once you write code, execute in command prompt `node app.js` and visit your `http://localhost:3000/`
+
+		:markdown
 			## The Framework
 
-			The main concepts in Pillars.js are:			
-			- **ENV**: Central point of setup and management of our project. ENV allows add route controllers (Route Class) and Plugins among other functions.
-			- **Route**: route controller, defines a route and additional properties for this controller. Receives a gangway object as parameter, and route objects are nestable.
-			- **Gangway**: An object with all information of the request and methods to management of the request.
-			- **Plugin**: Allows add controllers - Permite añadir controladores al entorno general, pueden modificar el funcionamiento de Gangway y Route, y acceder a sus propiedades.
+			The main concepts in Pillars.js are:
+			- **ENV**: Main place to configure the environment of the application. `ENV` allows add route controllers (Route Class) and Plugins among other functions.
+			- **Route**: Controller. Its composed of a *configuration* and a *handler*. Configuration defines additional properties, handler receives a gangway object as parameter. route objects are nestable.
+			- **Gangway**: An object with all information of the request and methods to manage the request and response.
+			- **Plugin**: Allows add additional controllers to the environment. Plugins can modify how runs Route Class and gangway object, can access to theirs properties too.
 
-			## ENV (Entorno)
+			## ENV (Environment)
 
-			Mediante la variable global `ENV` administramos el entorno de la aplicación Pillars.js. Es un EventEmitter que sirve de punto central de configuración, podremos acceder a las propiedades y métodos de ENV desde cualquier módulo de nuestra aplicación.
+			With the global variable `ENV` you can manage the environment of the application. Its an EventEmitter and its the main place to configure the environment, can access to `ENV` properties and methods from  anywhere of application. 
 
-			Para establecer el entorno sólo es necesario realizar la llamada `require('pillars')`, esto dispondrá de forma global acceso a las clases, objetos y funciones necesarias para trabajar con Pillars.js, como `ENV`, `Route`, `Plugin`, `addRoute()`, entre otras.
+			To set the environment is only necessary to call `require('pillars')`, this will be available globally access to classes, objects and functions necessary to work with Pillars.js; such as `ENV`, `Route`, `Plugin`, `addRoute()` among others.
 
-			Por ejemplo podremos configurar nuestro servicio HTTP por medio de `ENV.server` estableciendo las propiedades `hostname` y `port`, también podremos establecer el tiempo máximo de espera `timeout` o el tamaño máximo de subida de archivos `maxUploadSize`.
+			For example, we can configure the HTTP Service using `ENV.server`, setting `hostname`and `port` properties, also set the time out with `timeout` or maximum file upload size with `maxUploadSize`.
+			
 
 		:highlight(lang='javascript')
 			require('pillars');
@@ -62,7 +64,7 @@ html(lang=gw.language)
 			};
 		
 		:markdown
-			También podremos establecer el modo `debug` o los datos de conexión a la base de datos. En este sentido nos ayudará el método `ENV.configure()` para configurar múltiples propiedades en una sola función:
+			Other possibilities are enable `debug` mode or database connection. In this way, is available the `ENV.configure()` method, to configure all properties needed in an only step:
 
 		:highlight(lang='javascript')
 			require('pillars').configure(
@@ -79,28 +81,34 @@ html(lang=gw.language)
 			  }
 			);
 
-
 		:markdown
-			Por defecto Pillars.js no inicia el servico HTTP ni la conexión a base de datos, los métodos `ENV.start([config[,callback]])` y `ENV.stop([callback])` inician y detienen el servicio HTTP, mientras `ENV.connect([config[,callback]])` y `ENV.disconnect([callback])` conectan y desconectan la base de datos.
-			Si se establece la propiedad `.server` o `.database` se procede a utilizar dichas configuraciones para iniciar el servicio HTTP o conectar a la base de datos en cada caso de forma automática.
+			> Obviously for database connection is needed to have installed MongoDB.
 
-			Por último tenemos los métodos que nos permiten administrar las rutas y plugins de nuestra aplicación:
+			By default Pillars.js not start the HTTP Service or database connection. Methods `ENV.start([config[,callback]])` and `ENV.stop([callback])` start and stop the HTTP Service, while `ENV.connect([config[,callback]])` and `ENV.disconnect([callback])` connect and disconnect the database.
 
-			- `addRoute()`: Añade una nueva ruta al sistema. Por medio de `removeRoute()` y `getRoute()` podremos eliminar y modificar respectivamente rutas ya insertadas. La propiedad `ENV.routes` devuelve una lista de las rutas ordenadas por prioridad.
-			- `addPlugin()`: Añade un nuevo plugin al sistema. Por medio de `removePlugin()` y `getPlugin()` podremos eliminar y modificar respectivamente plugins ya insertados. La propiedad `ENV.plugins` devuelve una lista de los plugins ordenados por prioridad.
+			If `.server` or `.database` properties are set, HTTP server starts or database is connected respectively, in each case automatically.
+
+			Finally you have methods that allows manage routes and plugins in application:
+
+			- `addRoute()`: Add a new route to aplication. Through `removeRoute()` and `getRoute()` can delete and modify routes already inserted. `ENV.routes` returns a list of routes in application ordered by priority.
+
+			- `addPlugin()`: Add a new plugin to application. Through `removePlugin()` and `getPlugin()` can delete and modify plugins already inserted. The `ÈNV.plugins` property returns a list of plugins sorted by priority.
 
 
 			## Route
 
-			Es una clase que te permite asociar un controlador/manejador para una ruta y configuración concretas, un objeto Route consiste en una función manejador y una serie de propiedades que servirán para controlar cuándo y cómo ejecutar dicho manejador, la forma más básica de crear un objeto Route es declarando sólo su manejador, dejando las opciones por defecto:
+			This class allows to associate a handler with a route (path) with a specific configuration. A route object consists in a handler and in a several properties that allows to take the control about when and where runs this handler.
+
+			The basic way to create a route object is declaring only the handler, leaving default options for properties:
+
 
 		:highlight(lang='javascript')
 			myRoute = new Route(function(gw){
-			  gw.send('¡Hola Mundo!');
+			  gw.send('¡Hello World!');
 			});
 
 		:markdown
-			Aunque en general necesitaremos configurar nuestro Route de la siguiente forma:
+			Although overrall you need to configure the route objects follows:
 
 		:highlight(lang='javascript')
 			myRoute = new Route({ // Configuración
@@ -108,16 +116,17 @@ html(lang=gw.language)
 			  path:'admin/status',
 			  method:'get'
 			},function(gw){ // Manejador
-			  gw.send('¡Hola Mundo!');
+			  gw.send('¡Hello World!');
 			});
 
 		:markdown
-			Route establece por defecto valores para las siguientes propiedades si no son especificadas:
-			- .id: Por defecto se genera un identificador único para la ruta en caso de no especificar uno.
-			- .path: Por defecto es '/'
-			- .method: por defecto es 'GET'
+			Route set default values for the following properties if not specified:
+			- `.id`: if you dont specify one, an unique identifier is generated.
+			- .path: '/' by default.
+			- .method: 'GET' by default.
 
-			Los objetos Route a su vez pueden tener sub-rutas, de la misma forma que podemos añadir objetos Route al entorno, podemos añadirlos también como 'hijos' de otro objeto Route, estos funcionarán como subrutas, permitiéndonos organizar el árbol de rutas de forma más orgánica y como veremos más adelante nos servirá para trabajar con propiedades por herencia y tener un control organizado sobre grupos de controladores.
+			Route objects can have sub-routes. In the same way that can add route objects to environment `ENV`, is possible to add route objects like 'children' to another route object. This route objects added works like sub-paths, allows organize the routes tree in a more organic way, and as we will see later, working with properties with inheritance, and have an organized control on groups of controllers. 
+
 
 		:highlight(lang='javascript')
 			new Route({
@@ -134,29 +143,33 @@ html(lang=gw.language)
 			}))
 
 		:markdown
-			El objeto Route con el id 'Status' responderá a la ruta '/admin/status'. Si desactivamos al Route con el id 'Administration', dejarán de estar disponibles todos sus descendientes.
+			Route object with 'Status' id, respond to the path '/admin/status'. If route object with 'Administrator' id is disabled, not will available all their descendants.
 
-			Para poder establecer un orden en los objetos Route disponemos de la propiedad `.priority` que por defecto es `1000` y nos permite controlar el orden en el que serán comprobados por el Router. También disponemos de la propiedad `.active` que por defecto es `true` y nos permite desactivar un Route junto con su correspondiente descendencia.
+			To establish order in route objects can use `.priority` property, by default is `1000`. This allow to control the order in which they will be checked by the Router.
+
+			Also have the `.active` property, which defaults is `true`, and allows disable a route object with the corresponding descendence.
+
 
 			## Gangway (gw)
 
-			Es la solicitud HTTP, si ya has trabajado con Node.js estarás acostumbrado a los objetos `request` y `response`. En Pillars.js estos objetos son propiedades de Gangway, un objeto Gangway consiste en la solicitud del cliente completamente parseada y organizada para su uso. Con cada solicitud al servidor HTTP se crea un objeto Gangway que es enviado al manejador correspondiente. Algunas de las propiedades y métodos de Gangway:
+			Gangway is the HTTP request, if you've worked with Node.js `request` and `response` objects will be familiar. In Pillars.js these objects are Gangway properties. A gangway object consists in client request fully parsed and ordered for usage.
 
-			- **`.cookie`**: Devuelve un objeto con el contenido de la *cookie*, si existiese.
-			- **`.ua`**: Un objeto con información sobre el agente de usuario, `.mobile` nos indica (*booleano*) si el cliente es un dispositivo móvil y el resto de propiedades nos aporta información sobre el sistema operativo y el navegador (os,engine,browser).
-			- **`.ip`**: La dirección IP del cliente.
-			- **`.accepts`**: Cabeceras accept ya resueltas y organizadas por prioridad.
-			- **`.host`**: El nombre de host o dirección IP que se ha utilizado al realizar la petición.
-			- **`.method`**: El método utilizado por la petición (*GET,POST,PUT,DELETE,HEAD*).
-			- **`.path`**: Ruta que se ha solicitado, exclusivamente el valor de la ruta sin la parte *host* ni *query*, este valor puede verse modificado internamente si por alguna razón una ruta es redirigida a otro punto del entorno, para conocer el *path* original tenemos la propiedad **`.originalPath`**.
-			- **`.query`**: Un objeto con el contenido del *query* de la petición.
-			- **`.params`**: Un objeto con todos los parámetros recibidos en la petición, ya sea por *GET* o *POST*. Los valores *POST* prevalecerán sobre los de *GET* en caso de ser idénticos.
-			- **`.files`**: Un objeto que contiene únicamente los archivos, si existiesen, que han sido enviados en la petición. En `.params` también podremos encontrar dichos archivos junto con el resto de parámetros que fueron enviados.
+			In each HTTP request to the server, a gangway object is created and is sent to the appropriate handler. Some gangway properties and methods:
+
+			- **`.cookie`**: Returns an object with the *cookie* content, if exists.
+			- **`.ua`**: An object with information about User Agent, `.mobile` indicate (*booleano*) if client if a mobil device, and the rest of properties give us information about Operative System and the Browser. (os, engine, browser).
+			- **`.ip`**: Client IP address.
+			- **`.accepts`**: Accept headers already resolved and organized by priority.
+			- **`.host`**: Hostname or IP address used in request.
+			- **`.method`**: Method used in request. (*GET,POST,PUT,DELETE,HEAD*).
+			- **`.path`**: Route requested, only route value, without *host* or *query* parts. This value can be change internally if for some reason a route is redirected to another point of the environment. To know original path use **.`originalPath`** property.
+			- **`.query`**: An object with *query* content of the request.
+			- **`.params`**: An object with all parameters received in resquest, either by *GET* or *POST*. *POST* values prevail over *GET* if identical.
+			- **`.files`**: An object that Un objeto que contiene únicamente los archivos, si existiesen, que han sido enviados en la petición. En `.params` también podremos encontrar dichos archivos junto con el resto de parámetros que fueron enviados.
 			- **`.session`**: Un objeto que mantendrá sus propiedades entre distintas peticiones del mismo cliente.
 			- **`.referer`**: Si la solicitud se ha realizado por medio de un *link*, este valor nos indica la dirección que nos ha referenciado.
 
-			> Puedes encontrar una descripción más amplia y el resto de propiedades
-			> en la referencia.
+			> Read a larger description and rest of properties in [reference](gangway.jade).
 
 			- **`.setHeader(name, value)`**: Añade un encabezado a la respuesta. `getHeader(name)` y `removeHeader(name)`, nos permite leer un valor de encabezado ya existente o eliminarlo.
 			- **`.send(data)`**: Envía el contenido especificado al cliente y termina la petición, si *data* es un *objeto* se convertirá en *JSON* y la respuesta se enviará como *'aplication/json',* si data es un *string* será enviado como *'text/html'*.
