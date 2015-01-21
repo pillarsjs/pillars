@@ -5,13 +5,13 @@ html(lang=gw.language)
 		h1 Getting Started
 			em Pillars.js Reference
 		:markdown
-			## Preparando el entorno (noveles en Node.js)
+			## Setting the environment (Node.js beginners)
 
-			Para empezar a utilizar Pillars.js necesitas tener instalado **NodeJS** y **MongoDB**, en los siguientes enlaces puedes encontrar como instalar [NodeJS](http://nodejs.org/) y [MongoDB](https://www.mongodb.org/downloads).
+			To start using Pillars.js you need to install **NodeJS** and **MongoDB**, in the followings links you can find and install both; [NodeJS](http://nodejs.org/) and [MongoDB](https://www.mongodb.org/downloads).
 
-			Creamos un nuevo directorio para el primer proyecto Pillars.js y añadimos los dos archivos para comenzar a trabajar: *package.json* (un descriptor de la aplicación) y *app.js* (el archivo principal del proyecto).
+			Create; a new directory for your first Pillars.js project, *package.json* file (a descriptor for your application) and *app.js* (your application).			
 
-			El archivo *package.json* puede funcionar con una información mínima. Es suficiente con indicar que utilizaremos Pillars.js en la lista de dependencias:
+			*package.json* file can operate with a minimal information. Its enough to indicate that use Pillars.js in the dependency list:			
 
 		:highlight(lang='javascript')
 			{
@@ -22,27 +22,28 @@ html(lang=gw.language)
 
 
 		:markdown
-			> Puedes encontrar más información sobre cómo funciona este archivo en el sitio web de [npmjs](https://www.npmjs.org/doc/files/package.json.html).
+			> You can find more information about how package.json works on the [npmjs](https://www.npmjs.org/doc/files/package.json.html) website.			
+			
+			Now we use *npm* to load dependencies, in the project directory runs command-line `npm install`. This commmand create a directory */node_modules* in which will be loaded all the dependencies described in *package.json* file.
 
-			Ahora utilizamos *npm* para cargar las dependencias, ejecutamos el comando `npm install` en consola en el directorio del proyecto. Esto creará un directorio */node_modules* en el que se colocarán las dependencias descritas en el archivo *package.json*.
-
-			Ya podemos empezar a utilizar Pillars.js, en el archivo *app.js* escribiremos un ejemplo básico para comprobar el funcionamiento, el típico "Hola Mundo":
+			Now we can start to use Pillars.js. You have the "Hello World" code below *(app.js file)*:  
+			
 
 		:highlight(lang='javascript')
 			require('pillars').start();
 
 			addRoute(new Route(function(gw){
-			  gw.send("Hola Mundo");
+			  gw.send("Hello World");
 			}));
 
 		:markdown
-			## El Framework
+			## The Framework
 
-			Los conceptos principales en los que se basa Pillars.js son:
-			- **ENV**: Punto central de configuración y gestión de nuestro proyecto, permite añadir controladores de ruta (Route) y Plugins entre otras funciones.
-			- **Route**: Controlador de ruta, define una ruta y propiedades adicionales para un manejador/controlador. Recibe un objeto Gangway como parámetro y son anidables.
-			- **Gangway**: Un objeto con todas las propiedades y métodos relacionados con la gestión de una solicitud.
-			- **Plugin**: Permite añadir controladores al entorno general, pueden modificar el funcionamiento de Gangway y Route, y acceder a sus propiedades.
+			The main concepts in Pillars.js are:			
+			- **ENV**: Central point of setup and management of our project. ENV allows add route controllers (Route Class) and Plugins among other functions.
+			- **Route**: route controller, defines a route and additional properties for this controller. Receives a gangway object as parameter, and route objects are nestable.
+			- **Gangway**: An object with all information of the request and methods to management of the request.
+			- **Plugin**: Allows add controllers - Permite añadir controladores al entorno general, pueden modificar el funcionamiento de Gangway y Route, y acceder a sus propiedades.
 
 			## ENV (Entorno)
 
