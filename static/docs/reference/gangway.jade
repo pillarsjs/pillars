@@ -806,13 +806,9 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Envía al cliente un archivo y termina la petición.
-						Gestiona el sistema de cache. 
-						El protocolo de partes. Envía ficheros al cliente. 
-						// Automatic byte-range negotiation (allow broken donwloads and streaming), 
-						compression (if size<maxZipSize). y cambia enconding a deflate o gzip.
-						and cache control.
-
+						Envía al cliente un archivo y finaliza la petición.
+						Gestiona el sistema de caché e implementa el protocolo de partes, esto quiere decir que realiza la negociación automática de rango de bytes en la descarga, por lo que permite descargas por partes y streaming.
+						Si el archivo a enviar es de menor tamaño que el declarado en `ENV.server.maxZipSize` se realiza compresión del archivo y cambia el encoding a deflate o gzip.
 
 				//- Method syntax
 				section.syntax

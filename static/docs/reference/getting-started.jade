@@ -155,42 +155,52 @@ html(lang=gw.language)
 			- **`.session`**: Un objeto que mantendrá sus propiedades entre distintas peticiones del mismo cliente.
 			- **`.referer`**: Si la solicitud se ha realizado por medio de un *link*, este valor nos indica la dirección que nos ha referenciado.
 
-			> Puedes encontrar una descripción más amplia y el resto de propiedades
-			> en la referencia.
+			> Puedes encontrar una descripción más amplia y el resto de propiedades en la [referencia](gangway.jade).
 
 			- **`.setHeader(name, value)`**: Añade un encabezado a la respuesta. `getHeader(name)` y `removeHeader(name)`, nos permite leer un valor de encabezado ya existente o eliminarlo.
 			- **`.send(data)`**: Envía el contenido especificado al cliente y termina la petición, si *data* es un *objeto* se convertirá en *JSON* y la respuesta se enviará como *'aplication/json',* si data es un *string* será enviado como *'text/html'*.
-			- **`.file(path, clientname, download)`**: Envía un archivo al cliente, mediante `clientname` podremos especificar un nombre que será utilizado en el diálogo de guardado y con `download=true` podremos forzar la descarga del mismo. Por defecto el nombre es el que corresponda en la ruta y forzar descarga es *false*. Adicionalmente, el archivo será **comprimido** antes de su envío y quedará guardada su versión comprimida para sucesivas peticiones, este método es compatible con el protocolo de **partes HTTP** por lo que si la descarga es interrumpida podrá continuar en una siguiente solicitud desde el último byte recibido. Este método también tiene *gestión de caché automática*, por lo que si el cliente ya tiene el archivo no volverá a ser enviado y se responderá con un código *304*.
-			- **`.cacheck(lastmod)`**: Nos permite gestionar la caché del cliente, debemos pasar un objeto *Date* indicando la última fecha de modificación del contenido que será enviado, este método responderá con *false* si el cliente no tiene cacheado el contenido y *true* junto con un *304* automáticamente si el cliente ya dispone del contenido. La forma ideal de utilizar este método es como condición en una sentencia *if*, de la forma `if(!cacheck(lastmod)){}`.
+			- **`.file(path, clientname, download)`**: Envía un archivo al cliente, mediante `clientname` podremos especificar el nombre del fichero con el que será enviado, y con `download=true` podremos forzar la descarga del mismo. Por defecto el nombre del fichero es el que éste tenga en el servidor y forzar descarga es *false*. Adicionalmente, el archivo será **comprimido** antes de su envío y quedará guardada su versión comprimida para sucesivas peticiones, este método es compatible con el protocolo de **partes HTTP** por lo que si la descarga es interrumpida podrá continuar en una siguiente solicitud desde el último byte recibido. Este método también tiene *gestión de caché automática*, por lo que si el cliente ya tiene el archivo no volverá a ser enviado y se responderá con un código *304*.
+			- **`.cacheck(lastmod)`**: Permite gestionar la caché del cliente, debemos pasar un objeto *Date* indicando la última fecha de modificación del contenido que será enviado, este método responderá con *false* si el cliente no tiene cacheado el contenido y *true* junto con un *304* automáticamente si el cliente ya dispone del contenido. La forma ideal de utilizar este método es como condición en una sentencia *if*, de la forma `if(!cacheck(lastmod)){}`.
 			- **`.authenticate(msg)`**: Envía un mensaje de *autenticación HTTP básica* con el código *401*. Podremos comprobar las credenciales del usuario en la propiedad `.auth` de Gangway, este objeto contendrá el nombre de usuario y contraseña indicados por el cliente en las propiedades `.user` y `.pass`.
 			- **`.redirect(location)`**: Redirige la solicitud a otra dirección mediante un código *301*.
-			- **`.render(template, locals)`**: Definiendo la ruta a un template y la variables de entorno con las que debe trabajar enviaremos al cliente el resultado como HTML, por defecto el motor de plantillas es *JADE* y la gestión de caché de las plantillas es automática. Pillars.js permite añadir nuevos motores de plantillas mediante `renderer.addEngine(ext,compiler)`.
+			- **`.render(template, locals)`**: Definiendo la ruta a un template y las variables de entorno con las que debe trabajar, enviaremos al cliente el resultado como HTML, por defecto el motor de plantillas es *JADE* y la gestión de caché de las plantillas es automática. Pillars.js permite añadir nuevos motores de plantillas mediante `renderer.addEngine(ext,compiler)`.
 			- **`.error(code, data)`**: Mediante este método podemos mostrar mensajes de *error* manualmente, nos permite especificar un *status-code (404, 500...)* y un objeto *Error* si fuese necesario, el objeto *Error* no se mostrará al cliente si la variable de entorno `debug` es *false*.
 
 			## Plugin
 
-			Es una clase que nos da control sobre las solicitudes a un nivel distinto a Route, los Plugins no funcionan sobre rutas sino que se ejecutan en cadena para cada solicitud. Los Plugins permiten extender el funcionamiento de Pillars.js ampliando sus posibilidades.
+			Esta clase ofrece control sobre las solicitudes a un nivel distinto que Route, los Plugins no funcionan sobre rutas sino que se ejecutan en cadena para cada solicitud. Los Plugins permiten extender el funcionamiento de Pillars.js ampliando sus posibilidades.
 
 			> Para más detalles sobre estos elementos visita la referencia de Pillars.js
 
 
 			##Una aplicación sencilla
 
-			Para crear una aplicación Pillars.js comenzaremos por configurar el entorno, será necesario especificar una configuración de servidor, unos datos de acceso a la base de datos y configuraremos algunas opciones adicionales.
+			Para crear una aplicación Pillars.js comenzaremos por configurar el entorno. Vamos a especificar una configuración de servidor, unos datos de acceso a la base de datos y algunas opciones adicionales.
 
 			´ENV´ es seteado de forma global, aunque también se devuelve una referencia a esta variable al realizar el require de la librería. Utilizaremos esta referencia para configurar el entorno mediante el método `.configure()`.
 
 		:highlight(lang='javascript')
 			require('pillars').configure({
-			  server:{port:3030,hostname:'localhost'}, // al configurar la propiedad .server se inicia el servicio.
-			  database:{db:'pillarsExample'}, // al configurar la propiedad .database se conecta automáticamente.
-			  debug:true, // Mostrar errores detallados y otras opciones de depuración
-			  languages:['es','en'] // El primer idioma del listado se utilizará como idioma por defecto.
+			  server:{port:3030,hostname:'localhost'}, 
+			  // al configurar la propiedad .server se inicia el servicio.
+
+			  database:{db:'pillarsExample'}, 
+			  // al configurar la propiedad .database se conecta automáticamente.
+
+			  debug:true, 
+			  // Mostrar errores detallados y otras opciones de depuración
+
+			  languages:['es','en'] 
+			  // El primer idioma del listado se utilizará como idioma por defecto.
 			});
 
 			addRoute(new Route({
-			  id:'myFirstRoute', // Identificador de nuestro Route, nos permitirá modificar o eliminarlo en cualquier momento.
-			  session:true // Propiedad utilizada por el Plugin 'Session', inicia el soporte de sesiones para este manejador.
+			  id:'myFirstRoute', 
+			  // Identificador de Route, permitirá modificar o eliminarlo
+
+			  session:true 
+			  // Propiedad utilizada por el Plugin 'Session', inicia el soporte de sesiones para este manejador.
+
 			},function(gw){
 			  gw.session.count = gw.session.count || 0;
 			  gw.session.count++;
@@ -198,7 +208,7 @@ html(lang=gw.language)
 			}));
 		
 		:markdown
-			En este ejemplo definimos algunas propiedades básicas del entorno y utilizamos la propiedad `.session` de Gangway para contabilizar el número de veces que el usuario visualiza la página.
+			En este ejemplo definimos algunas propiedades básicas del entorno y utilizamos la propiedad `.session` de Gangway para contabilizar el número de veces que el usuario recarga la página.
 
 			Hemos configurado una lista de idiomas, al establecer como idioma por defecto el castellano se nos mostrarán los mensajes de consola en este idioma, veremos como utilizar el sistema de traducciones más adelante.
 
@@ -226,8 +236,9 @@ html(lang=gw.language)
 			  id:'Tools',
 			  path:'/tools'
 			},function(gw){
-			  // Podemos enviar HTML directamente por medio del método .html(), .send(String) tiene el mismo funcionamiento.
-			  // Utilizaremos este método para crear una página de inicio básica para nuestros ejemplos.
+			  // Podemos enviar HTML directamente por medio del método .html(), 
+			  // .send(String) tiene el mismo funcionamiento.
+			  // Utilizaremos .html() para crear una página de inicio básica para nuestros ejemplos.
 			  gw.html(
 			    '<h1>Utilidades</h1>'
 			    +'<ul>'
@@ -252,7 +263,9 @@ html(lang=gw.language)
 			  path:'/status'
 			},function(gw){
 			  // Enviamos el estado de nuestro entorno como datos JSON
-			  gw.json(ENV.status); // El método .json envía un objeto JS como application/json. .send(Object) tiene el mismo funcionamiento.
+			  // El método .json envía un objeto JS como application/json. 
+			  // .send(Object) tiene el mismo funcionamiento.
+			  gw.json(ENV.status); 
 			}));
 
 			Utilities.addRoute(new Route({
