@@ -50,9 +50,8 @@
 	},
 	'renderer':{
 		'ok':"Template ".cyan+"'%(path)s'".yellow+" loaded".cyan,
-		'error':"Template load error ".red+"'%(path)s'".yellow,
-		'unknow-engine':"Unknow template engine".red+" '%(path)s'".yellow,
-		'template-noexist':"Template '%(path)s' no exist.".red
+		'compile-error':"Template load error ".red+"'%(path)s'".yellow,
+		'unknow-engine':"Unknow template engine".red+" '%(path)s'".yellow
 	},
 	'plugins':{
 		'loaded':function(){return "Loaded Plugins: ".cyan+("["+list.map(function(e){return e.id;}).join(',')+"]").yellow;},
@@ -63,7 +62,17 @@
 		},
 		'BodyReader':{
 			'unlink-ok':"Temp file %(file)s' deleted".green,
-			'unlink-error':"Delete temp file error '%(file)s'".red
+			'unlink-error':"Delete temp file error '%(file)s'".red,
+			'directories':{
+				'uploads':{
+					'ok':"Directory 'uploads' setted at ".cyan+"'%(path)s'".yellow,
+					'error':"Error on set 'uploads' directory at ".cyan+"'%(path)s'".yellow
+				},
+				'temp':{
+					'ok':"Directory 'temp' setted at ".cyan+"'%(path)s'".yellow,
+					'error':"Error on set 'temp' directory at ".cyan+"'%(path)s'".yellow
+				}
+			}
 		}
 	},
 	'gangway':{

@@ -51,9 +51,12 @@
 	},
 	'renderer':{
 		'ok':"Plantilla ".cyan+"'%(path)s'".yellow+" cargada".cyan,
-		'error':"Error al cargar la plantilla ".red+"'%(path)s'".yellow,
+		'compile-error':"Error al cargar la plantilla ".red+"'%(path)s'".yellow,
 		'unknow-engine':"Template engine desconocida".red+" '%(path)s'".yellow,
-		'template-noexist':"No existe el template '%(path)s'.".red
+		'render':{
+			'compile-error':"Error al cargar la plantilla",
+			'unknow-engine':"Template engine desconocida",
+		}
 	},
 	'plugins':{
 		'loaded':function(){return "Plugins cargados: ".cyan+("["+list.map(function(e){return e.id;}).join(',')+"]").yellow;},
@@ -64,7 +67,17 @@
 		},
 		'BodyReader':{
 			'unlink-ok':"Archivo temporal %(file)s' borrado".green.inverse.white,
-			'unlink-error':"Error al borrar el archivo temporal '%(file)s'".red.inverse.white
+			'unlink-error':"Error al borrar el archivo temporal '%(file)s'".red.inverse.white,
+			'directories':{
+				'uploads':{
+					'ok':"Directorio 'uploads' hubicado correctamente en ".cyan+"'%(path)s'".yellow,
+					'error':"Error al hubicar el directorio 'uploads' en ".cyan+"'%(path)s'".yellow
+				},
+				'temp':{
+					'ok':"Directorio 'temp' hubicado correctamente en ".cyan+"'%(path)s'".yellow,
+					'error':"Error al hubicar el directorio 'temp' en ".cyan+"'%(path)s'".yellow
+				}
+			}
 		}
 	},
 	'gangway':{

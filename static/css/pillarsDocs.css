@@ -295,8 +295,7 @@ a.source:before {
   font-size: 1.5em !important;
 }
 #contents {
-  font-size: 1.2em;
-  line-height: normal;
+  font-size: 1em;
   padding: 0 1em 3em;
 }
 #contents a {
@@ -330,20 +329,25 @@ a.source:before {
 #contents h1 {
   color: #d40041;
 }
-#contents h2 {
-  border-bottom: 1px solid #d40041;
-}
 #contents h1 em {
+  font-size: 0.5em;
+}
+#contents h2 {
+  border-bottom: 2px solid #d40041;
+  margin-top: 80px;
+  padding-bottom: 15px;
+}
+#contents h2 em {
   font-size: 0.5em;
 }
 #contents > section {
   margin-bottom: 4em;
 }
 #contents > section section {
-  margin: 1em;
+  margin: 1em 1em 2em;
 }
 #contents > section section section {
-  margin: 0.5em;
+  margin: 0.5em 0.5em 1.5em;
 }
 #sidebar + #contents {
   padding-left: 2em;
