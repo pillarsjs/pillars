@@ -26,6 +26,8 @@ With a simple and modular approach lets you introduce in Node.js with a soft lea
  - **[en]**: [Scope](https://github.com/bifuer/pillars/wiki/Pillars.js-Getting-Started#scope)
  - **[es]**: [Alcance](https://github.com/bifuer/pillars/wiki/Comenzando-con-Pillars.js#alcance)
 
+## Licence
+MIT Licence
 
 ---
  
