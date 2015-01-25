@@ -192,8 +192,7 @@ a.source {
 }
 
 #contents {
-	font-size: 1.2em;
-	line-height: normal;
+	font-size: 1em;
 	padding: 0 1em 3em;
 	a {
 		.a;
@@ -218,13 +217,15 @@ a.source {
 
 	h1 {
 		color: @color-primary;
+		em {
+			font-size: 0.5em;
+		}
 	}
 
 	h2 {
-		border-bottom: 1px solid @color-primary;
-	}
-
-	h1 {
+		border-bottom: 2px solid @color-primary;
+		margin-top: 80px;
+		padding-bottom: 15px;
 		em {
 			font-size: 0.5em;
 		}
@@ -233,9 +234,9 @@ a.source {
 	&>section {
 		margin-bottom: 4em;
 		section {
-			margin: 1em;
+			margin: 1em 1em 2em;
 			section {
-				margin: 0.5em;
+				margin: 0.5em 0.5em 1.5em;
 			}
 		} 
 	}
