@@ -1,4 +1,4 @@
-mixin base(title)
+mixin base(title,path)
 	head
 		title=title
 		meta(charset="utf-8")
@@ -85,18 +85,18 @@ mixin reference-layout(title,path)
 			nav
 				h2 Reference index
 				ul
-					li: a(href="index.jade") Sinopsis
-					li: a(href="alcance.jade") Alcance
-					li: a(href="getting-started.jade") Getting Started
-					li: a(href="entorno.jade") Entorno (ENV)
-					li: a(href="route.jade") Route
-					li: a(href="gangway.jade") Gangway
-					li: a(href="plugin.jade") Plugin
+					li: a(href="/pillars/docs/reference/index.jade") Sinopsis
+					li: a(href="/pillars/docs/reference/alcance.jade") Alcance
+					li: a(href="/pillars/docs/reference/getting-started.jade") Getting Started
+					li: a(href="/pillars/docs/reference/entorno.jade") Entorno (ENV)
+					li: a(href="/pillars/docs/reference/route.jade") Route
+					li: a(href="/pillars/docs/reference/gangway.jade") Gangway
+					li: a(href="/pillars/docs/reference/plugin.jade") Plugin
 					li
 						a(href="#") Librerías
 						ul
-							li: a(href="i18n.jade") i18n
-							li: a(href="logger.jade") Logger
+							li: a(href="/pillars/docs/reference/i18n.jade") i18n
+							li: a(href="/pillars/docs/reference/logger.jade") Logger
 							li: a(href="#") Renderer
 							li: a(href="#") Modelator
 							li: a(href="#") Mailer
@@ -118,14 +118,14 @@ mixin tutorial-layout(title,path)
 			nav
 				h2 Tutorial index
 				ul
-					li: a(href="index.jade") Hola Mundo
+					li: a(href="/pillars/docs/tutorials/index.jade") Hola Mundo
 					li: a(href="#") Visión Global de Pillars.js
-					li: a(href="client-server.jade") Envío datos Cliente-Servidor
-					li: a(href="server-client.jade") Envío datos Servidor-Cliente
-					li: a(href="i18n.jade") i18n
-					li: a(href="usuarios.jade") Autenticación de Usuarios
-					li: a(href="bbdd.jade") Bases de Datos
-					li: a(href="crud.jade") CRUD
+					li: a(href="/pillars/docs/tutorials/client-server.jade") Envío datos Cliente-Servidor
+					li: a(href="/pillars/docs/tutorials/server-client.jade") Envío datos Servidor-Cliente
+					li: a(href="/pillars/docs/tutorials/i18n.jade") i18n
+					li: a(href="/pillars/docs/tutorials/usuarios.jade") Autenticación de Usuarios
+					li: a(href="/pillars/docs/tutorials/bbdd.jade") Bases de Datos
+					li: a(href="/pillars/docs/tutorials/crud.jade") CRUD
 
 
 					li

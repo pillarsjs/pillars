@@ -3,12 +3,17 @@ require('../../pillars').configure({
   debug:true,
   languages:['es','en'],
   templates:{cache:false},
-  server:{port:3000},
+  server:{
+  	port:3000,
+  	// https:{key:'./localhost.key',cert:'./localhost.crt'}
+  },
   directories:{
   	uploads:'./uploads',
   	temp:'./temp'
   }
 })
+
+addRoute(new Route({id:'Root'},function(gw){gw.html('Hola mundo!');}));
 
 var Utilities = new Route({
   id:'Tools',
@@ -35,7 +40,8 @@ addRoute(Utilities); // o ENV.addRoute(Utilities) indistintamente.
 
 Utilities.addRoute(new Route({
   id:'Status',
-  path:'/status'
+  path:'/status',
+  // https:true
 },function(gw){
   // Enviamos el estado de nuestro entorno como datos JSON
   gw.json(ENV.status); // El metodo .json envia un objeto JS como application/json. .send(Object) tiene el mismo funcionamiento.

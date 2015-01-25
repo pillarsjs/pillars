@@ -24,6 +24,11 @@
 		'listening':"Servidor escuchando en ".green+"%(params.hostname)s:%(params.port)s".yellow,
 		'closed':"Servidor detenido ".red+"%(params.hostname)s:%(params.port)s".yellow+" %(timer)sm".grey
 	},
+	'https':{
+		'error':"Error en el servidor (SSL) ".red+"%(params.hostname)s:%(params.https.port)s".yellow,
+		'listening':"Servidor (SSL) escuchando en ".green+"%(params.hostname)s:%(params.https.port)s".yellow,
+		'closed':"Servidor (SSL) detenido ".red+"%(params.hostname)s:%(params.https.port)s".yellow+" %(timer)sm".grey
+	},
 	'db':{
 		'connect-ok':"Base de datos conectada en ".green+"%(url)s".yellow,
 		'connect-error':"Error en la base de datos ".red+"%(url)s".yellow,

@@ -24,6 +24,11 @@
 		'listening':"Server listening on ".green+"%(params.hostname)s:%(params.port)s".yellow,
 		'closed':"Server closed ".red+"%(params.hostname)s:%(params.port)s".yellow+" %(timer)sm".grey
 	},
+	'https':{
+		'error':"Server (SSL) error ".red+"%(params.hostname)s:%(params.https.port)s".yellow,
+		'listening':"Server (SSL) listening on ".green+"%(params.hostname)s:%(params.https.port)s".yellow,
+		'closed':"Server (SSL) closed ".red+"%(params.hostname)s:%(params.https.port)s".yellow+" %(timer)sm".grey
+	},
 	'database':{
 		'connect-ok':"Database connected on ".green+"%(url)s".yellow,
 		'connect-error':"Database error on ".red+"%(url)s".yellow,
