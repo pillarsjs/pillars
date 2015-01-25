@@ -34,7 +34,7 @@ With a simple and modular approach lets you introduce in Node.js with a soft lea
   - **Cookies** Management.
 
 ### **Controllers and environment**
-  - **Dynamic environment** in runtime, allows change your structure in fully operational.
+  - **Dynamic environment** in runtime, allows change the structure while application is running.
   - Nestable controllers by path, give a better functionality organization in **routing trees**.
   - **Plugins** allow expand controllers possibilities and modifying the system operation.
   - Integration with *EventEmitter* Class, allowing an extra level of control.
