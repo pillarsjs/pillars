@@ -9,9 +9,9 @@ html(lang=gw.language)
 
 			To start using Pillars.js you need to install **NodeJS**, and if you are going to use database connection **MongoDB**, in the followings links you can find and install both; [NodeJS](http://nodejs.org/) and [MongoDB](https://www.mongodb.org/downloads).
 
-			After instalation create a new directory for your first Pillars.js project. In this directory create a *package.json* file (a descriptor for your application) and *app.js* file(your application).
+			After instalation create a new directory for your first Pillars.js project. In this directory create a *package.json* file (a descriptor for your application) and *app.js* file (your application).
 
-			*package.json* file can operate with a minimal information. Its enough to indicate that use Pillars.js in the dependency list:
+			*package.json* file can operate with a minimal information. It´s enough to indicate that use Pillars.js in the dependency list:
 
 		:highlight(lang='javascript')
 			{
@@ -23,7 +23,7 @@ html(lang=gw.language)
 		:markdown
 			> You can find more information about how package.json works on the [npmjs](https://www.npmjs.org/doc/files/package.json.html) website.
 			
-			Now we use *npm* to load dependencies, in the project directory runs in the command prompt `npm install`. This commmand create a directory */node_modules* in which will be loaded all the dependencies described in *package.json* file.
+			Use *npm* to load dependencies, in the project directory runs in the command prompt `npm install`. This commmand create a directory */node_modules* in which will be loaded all the dependencies described in *package.json* file.
 
 			Now we can start to use Pillars.js. You have the "Hello World" code below *(app.js file)*:  
 			
@@ -37,20 +37,22 @@ html(lang=gw.language)
 		:markdown
 			Once you write code, execute in command prompt `node app.js` and visit your `http://localhost:3000/`
 
+			> Once installed and running you can find this documentation in `http://localhost:3000/pillars/docs/reference/` too to consult it off-line ;)
+
 		:markdown
 			## The Framework
 
-			The main concepts in Pillars.js are:
-			- **ENV**: Main place to configure the environment of the application. `ENV` allows add route controllers (Route Class) and Plugins among other functions.
-			- **Route**: Controller. Its composed of a *configuration* and a *handler*. Configuration defines additional properties, handler receives a gangway object as parameter. route objects are nestable.
+			Main concepts in Pillars.js are:
+			- **ENV**: Main place to configure application environment. `ENV` allows add route controllers (Route Class) and Plugins among other functions.
+			- **Route**: Controller. It´s made up of a *configuration* and a *handler*. Configuration defines additional properties, handler receives a gangway object as parameter. Route objects are nestable.
 			- **Gangway**: An object with all information of the request and methods to manage the request and response.
-			- **Plugin**: Allows add additional controllers to the environment. Plugins can modify how runs Route Class and gangway object, can access to theirs properties too.
+			- **Plugin**: Allows add additional controllers to the environment. Plugins can modify how runs Route Class and gangway object, can access to their properties too.
 
-			## ENV (Environment)
+			### ENV (Environment)
 
-			With the global variable `ENV` you can manage the environment of the application. Its an EventEmitter and its the main place to configure the environment, can access to `ENV` properties and methods from  anywhere of application. 
+			With the global variable `ENV` you can manage the environment of the application. It´s an EventEmitter and it´s the main place to configure the environment, can access to `ENV` properties and methods from  anywhere of application. 
 
-			To set the environment is only necessary to call `require('pillars')`, this will be available globally access to classes, objects and functions necessary to work with Pillars.js; such as `ENV`, `Route`, `Plugin`, `addRoute()` among others.
+			Set the environment with `require('pillars')` sentence, and will be globally available access to classes, objects and functions necessary to work with Pillars.js; such as `ENV`, `Route`, `Plugin`, `addRoute()` among others.
 
 			For example, we can configure the HTTP Service using `ENV.server`, setting `hostname`and `port` properties, also set the time out with `timeout` or maximum file upload size with `maxUploadSize`.
 			
@@ -95,11 +97,11 @@ html(lang=gw.language)
 			- `addPlugin()`: Add a new plugin to application. Through `removePlugin()` and `getPlugin()` can delete and modify plugins already inserted. The `ÈNV.plugins` property returns a list of plugins sorted by priority.
 
 
-			## Route
+			### Route
 
-			This class allows to associate a handler with a route (path) with a specific configuration. A route object consists in a handler and in a several properties that allows to take the control about when and where runs this handler.
+			This class allows to associate a handler with a route (path) with an specific configuration. A route object consists in a handler and in a several properties that allows to take the control about when and where runs this handler.
 
-			The basic way to create a route object is declaring only the handler, leaving default options for properties:
+			The basic way to create a route object is declaring only the handler, leaving the default properties:
 
 
 		:highlight(lang='javascript')
@@ -125,7 +127,7 @@ html(lang=gw.language)
 			- .path: '/' by default.
 			- .method: 'GET' by default.
 
-			Route objects can have sub-routes. In the same way that can add route objects to environment `ENV`, is possible to add route objects like 'children' to another route object. This route objects added works like sub-paths, allows organize the routes tree in a more organic way, and as we will see later, working with properties with inheritance, and have an organized control on groups of controllers. 
+			**Route objects can have sub-routes**. In the same way that can add route objects to environment `ENV`, is possible to add route objects like 'children' to another route object. This route objects added works like sub-paths, allows organize the routes tree in a more organic way, and as we will see later, working with properties with inheritance, and having groups of controllers with an organized control. 
 
 
 		:highlight(lang='javascript')
@@ -150,14 +152,14 @@ html(lang=gw.language)
 			Also have the `.active` property, which defaults is `true`, and allows disable a route object with the corresponding descendence.
 
 
-			## Gangway (gw)
+			### Gangway (gw)
 
 			Gangway is the HTTP request, if you've worked with Node.js `request` and `response` objects will be familiar. In Pillars.js these objects are Gangway properties. A gangway object consists in client request fully parsed and ordered for usage.
 
 			In each HTTP request to the server, a gangway object is created and is sent to the appropriate handler. Some gangway properties and methods:
 
 			- **`.cookie`**: Returns an object with the *cookie* content, if exists.
-			- **`.ua`**: An object with information about User Agent, `.mobile` indicate (*booleano*) if client if a mobil device, and the rest of properties give us information about Operative System and the Browser. (os, engine, browser).
+			- **`.ua`**: An object with information about User Agent, `.mobile` indicate (*boolean*) if client if a mobil device, the rest of properties give us information about Operative System and the Browser. (os, engine, browser).
 			- **`.ip`**: Client IP address.
 			- **`.accepts`**: Accept headers already resolved and organized by priority.
 			- **`.host`**: Hostname or IP address used in request.
@@ -165,14 +167,14 @@ html(lang=gw.language)
 			- **`.path`**: Route(path) requested, but only route value, without *host* or *query* parts. This value can be change internally if for some reason a route is redirected to another point of the environment. To know original path use **.`originalPath`** property.
 			- **`.query`**: An object with *query* content of the request.
 			- **`.params`**: An object with all parameters received in resquest, either by *GET* or *POST*. *POST* values prevail over *GET* if identical.
-			- **`.files`**: If in request files are sent, in this object can find only this files. In `.params` properties can find this files too, together with the rest of parameters was sent.
+			- **`.files`**: If files are sent in request, this object include only this files. In `.params` properties can find this files too, together with the rest of parameters was sent.
 			- **`.session`**: An object that keep properties between different request from the same client.	
 			- **`.referer`**: If request was made through a *link* this parameter indicates the direction that has referenced.
 
 			> Read a larger description and rest of properties in [reference](gangway.jade).
 
 			- **`.setHeader(name, value)`**: Add a header to the response. `getHeader(name)` and `removeHeader(name)` allows read a header value if exists, or delete it.
-			- **`.send(data)`**: Send the specified content `data` to the client and ends the request. If `data is an *object* will become *json* and the response will be sent as *'aplication/json'*, if data is a *string* will be sent as *'text/html'*.
+			- **`.send(data)`**: Send the specified content `data` to the client and ends the request. If data is an *object* will become *json* and the response will be sent as *'aplication/json'*, if data is a *string* will be sent as *'text/html'*.
 			- **`.file(path, clientname, download)`**: Send a file to the client. Through `clientname` can specify a file name for client and using `download=true` can force download. File name by default is the file name in server and download by default is *false*. Additionally, the file is **compressed** before sending and a version of this is saved on server to used it in successive request. This method is compatible with **HTTP by parts protocol** so, if download is interrupted, this download will can continue in a next request from the last byte sent.
 			- **`.cacheck(lastmod)`**: Allows manage client cache, must pass a *Date* object with the modifying last date of the content to be sent. This method will respond *false* if client hasnt cached the content and *true* with *304* code automatically if client already has content. The ideal way to use this method is in a conditional sentence *if* in this way: `if(!cacheck(lastmod)){}`.
 			- **`.authenticate(msg)`**: Send a *basic HTTP authentication* message with *401* code. We can check user credentials in `.auth` property of gangway, this object contains user name and password provided by client in `.user` and `.pass` properties.
@@ -181,9 +183,11 @@ html(lang=gw.language)
 			- **`.error(code, data)`**: With this method can show *error messages* manually, allows specify a *status-code (404, 500, ...)* and an *Error* object if needed. The *Error* object dont show to the client the error message if `ENV.debug` is set to *false*.
 
 
-			## Plugin
+			### Plugin *(brief)*
 
-			This class provides control over the requests in a different level that Route does it. Plugins do not work over routes (paths), but rather are executed serially for each application. Plugins allow extend how Pillars.js works, expanding possibilities.
+			This class provides control over the requests in a different level that Route does it. Plugins do not work over routes (paths), but rather are executed serially for each application. Plugins allows extend how Pillars.js works, expanding possibilities.
+
+
 
 			> More details of this items in [Pillars.js Reference](#)
 
@@ -225,15 +229,15 @@ html(lang=gw.language)
 		:markdown
 			In this example we defines some basic properties of the environment and use `.session` gangway property to count the number of times the page is reloaded by the user.
 
-			We have configured a language list, as we have established as the default language English, display console messages will be in this language. We will see how to use the translation system later.
+			We have configured a language list, and have established as the default language English, so console messages will be in this language. We will see how to use the translation system in reference and tutorials.
 
-			**Session** Plugin provides the session support, this use `.session` property of Route to start session support for its corresponding handler. 
+			**Session** Plugin provides the session support, this use `.session` property of Route to start session support for it´s corresponding handler. 
 
 			> Know options of `.server` and `.database` properties in [Pillars.js Reference](#) 
 
 			## Route and Gangway
 
-			Let's now see a use in more detailed for Route and Gangway, in the next example we will create a route structure and will check how to change its running once have been added to the environment.
+			Let's now see a use in more detailed for Route and Gangway, in the next example we will create a route structure and will check how to change it´s on running once have been added to the environment.
 
 			***
 			App.js
@@ -249,7 +253,7 @@ html(lang=gw.language)
 			  id:'Tools',
 			  path:'/tools'
 			},function(gw){
-				// We can sand HTML directly through .html() method. 
+				// We can send HTML directly through .html() method. 
 				// .send(String) operates in a similar way.  
 
 				// We use .html() to create a simple home page for examples.
@@ -329,16 +333,16 @@ html(lang=gw.language)
 			  id:'Query',
 			  path:'queryparams'
 			},function(gw){
-			  // Enviamos los parámetros recibidos por query como objeto JSON
+			  // Sending the query parameter received as JSON object.
 			  gw.json(gw.query);
 			}));
 
 			Utilities.addRoute(new Route({
 			  id:'PathParams',
-			  path:'/pathparams/:parametro1/*:restoDeRuta'
+			  path:'/pathparams/:parameter1/*:restOfPath'
 			},function(gw){
-			  // Al establecer la propiedad 'path' podremos usar capturas de parámetros en la ruta
-			  // utilizando /: capturaremos un sólo parámetro mientras que con /*: capturaremos cualquier subruta.
+			  // When setting 'path' property, you can catch path parameters
+			  // Using /: catch only one parameter, while /*: catch any route.
 			  gw.json(gw.pathParams);
 			}));
 
@@ -346,56 +350,55 @@ html(lang=gw.language)
 			  id:'Session',
 			  path:'/session',
 			  session: true 
-			  // Algunos Plugins hacen uso de propiedades de ruta, en este caso 
-			  // la propiedad session activa el Plugin Sessions.
+			  // Some Plugins use properties set in route configuration, in this case
+			  // session property in true, active the Sessions Plugin.
 			},function(gw){
-			  // El Plugin Sessions nos aporta la propiedad .session de Gangway que nos permitirá 
-			  // guardar datos entre diferentes solicitudes.
-			  gw.session.contador = gw.session.contador || 0; // Iniciamos la vriable contador.
-			  gw.session.contador++;
-			  gw.html('Contador:<strong>'+gw.session.contador+'</strong>');
+			  // The Sessions Plugin provides .session property in gangway that allows
+			  // save data between different requests.
+			  gw.session.counter = gw.session.counter || 0; // Start counter variable.
+			  gw.session.counter++;
+			  gw.html('Contador:<strong>'+gw.session.counter+'</strong>');
 			}));
 
 			Utilities.addRoute(new Route({
 			  id:'Authenticate',
 			  path:'/secret'
 			},function(gw){
-			  // Este contenido sólo será visible bajo autenticación.
-			  // comprobamos si exite autenticación y es correcta, en caso contrario utilizamos .authenticate(msg):
+			  // This content is only available with authentication
+			  // Checking if exists authentication and if is ok, otherwise use .authenticate(msg);
 			  if(gw.auth && gw.auth.user=='admin' && gw.auth.pass=='1234'){
 			    gw.render('./example.jade',{
-			      title: 'El sentido de la vida, el universo y todo lo demás',
-			      h1: 'El sentido de la vida, el universo y todo lo demás',
+			      title: 'The answer to life the universe and everything',
+			      h1: 'The answer to life the universe and everything',
 			      contents: '<h2>42</h2><blockquote><p>The Hitchhiker´s Guide to the Galaxy</p></blockquote>'
 			    })
 			  } else {
-			    gw.authenticate('Es necesario usuario y clave para ver este contenido');
+			    gw.authenticate('You need username and password to view this content');
 			  }
 			}));
 
 			Utilities.addRoute(new Route({
 			  id:'pillarsStatic',
 			  path:'/static/*:path'
-			  // Utilizamos una ruta abierta mediante '/:', nos permite capturar el resto de la ruta como parámetro.
+			  // Using an open path through '/:', this allows capture the rest of the path as a parameter
 			},precasts.static({
-			        // Mediante el precast 'static' creamos un manejador de directorios estáticos.
-			  directory:'./static', // Indicamos el directorio a servir.
-			  listing:true // Habilitamos el listado de directorios.
+			  // Through the 'static' precast we create a controller for static directories.
+			  directory:'./static', // Start directory to serve.
+			  listing:true // Enabling directory listing.
 			})));
 
 			Utilities.addRoute(new Route({
 			  id:'CacheControl',
 			  path:'/cache'
 			},function(gw){
-			  var lastmod = new Date(0); // Establecemos una fecha antigua
+			  var lastmod = new Date(0); // Set old date.
 			  if(!gw.cacheck(lastmod)){
-			    gw.send('Este contenido no ha sido modificado desde '+lastmod.toUTCString());
+			    gw.send('This content has not been modified since '+lastmod.toUTCString());
 			  }
-			  // Podrás comprobar en la consola o con herramientas de desarrollo en el nevegador como 
-			  // se responde con un código 200 o 304 dependiendo de la caché.
+			  // You can check on console or with development tools as server respond with
+			  // a 200 or 304 code, depending on the contents of the cache.  
 			}));
-
-			// Creamos un nuevo Route que usaremos más adelante, simplemente responde con un 'Ok'.
+			  // Creating a new Route to use later, respond 'ok'
 			Extra = new Route({
 			  id:'Extra',
 			  path:'/new-route'
@@ -407,16 +410,19 @@ html(lang=gw.language)
 			  id:'editRoutes',
 			  path:'/edit-routes'
 			},function(gw){
-			  // Eliminamos el Route 'CacheControl' del entorno.
+			  // 
+			  // Deleting 'CacheControl' route of the environment.
 			  Utilities.removeRoute('CacheControl');
-			  // Localizamos el Route 'ErrorControl' y modificamos su propiedad '.path' y la prioridad
+
+			  // Locating 'ErrorControl' route and modifying '.path' property and priority.
 			  Utilities.getRoute('ErrorControl').configure({path:'geterror',priority:900});
-			  // Comprobamos si ya hemos añadido el Route adicional o no.
+
+			  // Cheching is additional route was added or not.
 			  if(!Utilities.getRoute('Extra')){
-			    // Añadidmos un nuevo Route.
+			    // Adding a new route
 			    Utilities.addRoute(Extra);
 			  }
-			  gw.html('Se ha a&ntilde;adido una nueva ruta, puedes visitarla <a href="/tools/new-route">aqu&iacute;</a>');
+			  gw.html('A new route was added, you can visit it <a href="/tools/new-route">here</a>');
 			}));
 
 
@@ -428,7 +434,8 @@ html(lang=gw.language)
 		:highlight(lang='javascript')
 			doctype html
 			html(lang=gw.language)
-			  // Por defecto se añade a locals el objeto 'gw' actual, la librería 'util' y la función 'i18n' con el idioma actual.
+			  // By default 'gw' object, 'util' library and 'i18n' function with actual 
+			  // language is added to local variables of JADE template.  
 			  head
 			    title=title
 			    meta(charset="utf-8")
@@ -443,21 +450,22 @@ html(lang=gw.language)
 			      #page!=contents
 
 		:markdown
-			En el ejemplo utilizamos `start()` ya que no hemos establecido configuración del servidor, en este caso se utilizan los valores por defecto que son cualquier hostname y el puerto 3000.
+			In this example we use `.start()` method to start the service. This method accepts as parameter ENV.server, a collection of properties, which in this case we have not setting, so the server start with default values, port 3000 and any host. 
+			
+			You can check how different gangway methods runs with nested Route structures, in the last lines you can see how modify a structure already created and running, adding new items or modifying existing ones.
 
-			Podemos ver el funcionamiento de diversos métodos de Gangway junto con el uso de estructuras anidadas de Route, en las últimas lineas vemos como modificar una estructura ya creada y en funcionamiento añadiendo nuevo elementos o modificando los existentes.
+			Route system structure allows create packages of functionalities, that can be used later by others. And allows adapt performance to own application needs, deleting or modifying parts of structure.
 
-			El sistema de estructuras Route nos permite crear funcionalidades que otros podran integrar en sus aplicaciones, permitiendo a la misma vez adaptar su funcionamiento a nuestra necesidades, eliminando o modificando partes de la estructura.
-
-			Adicionalmente es interesante conocer que tanto `ENV` como `Route` y `Gangway` son eventEmitter lo que nos permite un control adicional sobre su funcionamiento.
+			Additionally is interesting to know that `ENV`, `Route` and `Gangway` are eventEmitter, so provides an additional control over performance.
 
 			## Plugins
 
-			Los plugins te permiten crear controladores globales que podrán acceder a las propiedades de Route, ampliar las funciones de Gangway o modificar el comportamiento general del framework.
+			Plugins allows create global controllers that can access to Route properties, extend Gangway functions or modify general framework performance.
 
-			Son la parte central de la gestión de solicitudes en Pillars.js. Cuando se recibe una solicitud HTTP al servidor de Pillars.js se instancia un nuevo objeto Gangway, éste es enviado a una cadena de plugins organizados que irán pasando el control de dicho Gangway al siguiente Plugin.
+			Plugins are the central part of the management requests in Pillars.js. When a HTTP request arrives to the Pillars.js server, a new gangway object is instantiated, this object is sent to a plugins chain organized that passed control of this gangway to the next plugin.
 
-			La construcción de un plugin es muy similar a la de un Route, es necesario especificar unas propiedades y un manejador:
+			Building a Plugin is very similar to Building a Route, specifying properties and a handler:
+			
 
 		:highlight(lang='javascript')
 			myPlugin = new Plugin({
@@ -470,19 +478,21 @@ html(lang=gw.language)
 			addPlugin(myPlugin);
 
 		:markdown
-			Este plugin de ejemplo envía a la consola los parámetros de cualquier solicitud recibida y pasa el control al siguiente plugin. Plugin a diferencia de Route recibe dos parámetros en el manejador 'gw' y 'next', next es una función que nos permite pasar el control al siguiente Plugin.
+			This plugin sends parameters of any request received to console and gives control to the next plugin. Plugin receive two parameters on handler `gw` and `next`; `next` is a function that allows gives control to the next plugin.
 
-			Uno de los Plugins integrados es 'Router' que decide qué objeto Route es el encargado de atender una solicitud concreta, pasando el control al manejador de dicho Route cuando finaliza la cadena de Plugins.
+			**A Plugins integrated on Pillars.js is `Router`**. `Router` decide which object route is the charge to address a request, passing control to the Route handler when plugins chain ends.
 
-			Cuando el control llega al Plugin 'Router', éste busca el Route adecuado para la solicitud, en caso de encontrar uno guarda la referencia en la propiedad `routing` de Gangway. En caso contrario reponde con un 404 y detiene la cadena de Plugins.
+			When control arrives to `Router` Plugin, search the suitable Route to service the request, if found, save reference in the `.routing` gangway property. Otherwise a 404 code is responded and the Plugins chain is stopped.
 
-			Desde cualquier Plugin con prioridad posterior a 'Router' se tendrá acceso a la propiedad `gw.routing` que tiene el siguiente formato:
-			- `routing.routes`: Cadena de Routes que se ha seguido si estos han sido anidados, en orden de descendencia.
-			- `routing.handlers`: Manejador o manejadores del Route que responderá a la ruta. Serán llamados al finalizar la cadena de Plugins.
-			- `routing.options`: Objeto con las propiedades del Route que atenderá la solicitud, propias y heredadas de otros Routes superiores.
-			- `routing.check(prop, preset)`: Utilidad para comprobar propiedades del Route pudiendo recibir el valor `preset` en caso de no estar definida.
+			Any Plugin that runs after `Router` has access to `gw.routing` property. `gw.routing` has the next format: 
+			- `routing.routes`: Routes chain that has been followed, if they have been nested, in order of descent.
+			- `routing.handlers`: handler or handlers that Route respond to the path. This handlers will be called when plugins chain ends.
+			- `routing.options`: Object with Route properties that manage the request, own and inherited of others higher Routes.
+			- `routing.check(prop, preset)`: Utility to check Route properties allowing receive the `preset` value if property not defined.
+			
+			
+			`gw.routing` allows create Plugins that only run with specific configurations Route, for example a Plugin that perform log, but only for Route objects that have `log` property in true.
 
-			La propiedad `gw.routing` nos permite crear Plugins que sólo se ejecutarán ante configuraciones concretas Route, por ejemplo un Plugin que realize log como el ejemplo anterior pero sólo para objetos Route que tengan la propiedad 'log=true':
 
 		:highlight(lang='javascript')
 			myPlugin = new Plugin({
@@ -497,6 +507,6 @@ html(lang=gw.language)
 			addPlugin(myPlugin);
 
 		:markdown
-			Mediante Plugins podemos actuar tanto antes como después de pasar por el Router, pudiendo por ejemplo modificar la ruta o métodos antes del Router o comprobar propiedades del objeto Route cuando éste ya ha sido seleccionado. Cada Plugin puede modificar o extender las propiedades y métodos de Gangway para nuestro manejador, por ejemplo el Plugin 'Sessions' nos ofrece la propiedad `gw.session` en la cual se encarga de insertar los valores almacenados en la sesión y guardar los cambios una vez finalizada la solicitud.
+			Through Plugins we can act before and after Router, so can for example; modify the route, or methods before Router, or check properties or Route object when this route has already been selected. Each Plugin can modify or extend Gangway properties and methods for handler. For example, Sessions Plugin provides `gw.session` property which stores values saved in session and saves changes once request ends.
 
-			Los Plugins ofrecen una forma de añadir funcionalidades a Pillars.js o modificar su comportamiento general, esto es útil para crear Plugins genéricos que añadan funciones a cualquier proyecto o para realizar tareas comunes entre diferentes manejadores puediendo disparar el Plugin sólo ante ciertas propiedades de Route.
+			Plugins allows a way to add functionalities to Pillars.js or modify general performance, this is useful to create generic Plugins that adds functions to any project or to new common tasks between different handlers, being able to **shoot Plugins only with certain configurations of Route**. 

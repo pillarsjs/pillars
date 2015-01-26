@@ -324,8 +324,8 @@ html(lang=gw.language)
 			  id:'Session',
 			  path:'/session',
 			  session: true 
-			  // Algunos Plugins hacen uso de propiedades de ruta, en este caso 
-			  // la propiedad session activa el Plugin Sessions.
+			  // Algunos Plugins hacen uso de propiedades declaradas en la configuración del route, en este caso 
+			  // la propiedad session en true activa el Plugin Sessions.
 			},function(gw){
 			  // El Plugin Sessions nos aporta la propiedad .session de Gangway que nos permitirá 
 			  // guardar datos entre diferentes solicitudes.
@@ -369,7 +369,7 @@ html(lang=gw.language)
 			  if(!gw.cacheck(lastmod)){
 			    gw.send('Este contenido no ha sido modificado desde '+lastmod.toUTCString());
 			  }
-			  // Podrás comprobar en la consola o con herramientas de desarrollo en el nevegador como 
+			  // Podrás comprobar en la consola o con herramientas de desarrollo en el navegador como 
 			  // se responde con un código 200 o 304 dependiendo de la caché.
 			}));
 
@@ -406,7 +406,8 @@ html(lang=gw.language)
 		:highlight(lang='javascript')
 			doctype html
 			html(lang=gw.language)
-			  // Por defecto se añade a locals el objeto 'gw' actual, la librería 'util' y la función 'i18n' con el idioma actual.
+			  // Por defecto se añade a las variables locales de la plantilla JADE el objeto 'gw' actual, 
+			  // la librería 'util' y la función 'i18n' con el idioma actual.
 			  head
 			    title=title
 			    meta(charset="utf-8")
@@ -421,11 +422,11 @@ html(lang=gw.language)
 			      #page!=contents
 
 		:markdown
-			En el ejemplo utilizamos `start()` ya que no hemos establecido configuración del servidor, en este caso se utilizan los valores por defecto que son cualquier hostname y el puerto 3000.
+			En el ejemplo utilizamos [el método `.start()` de ENV](entorno.jade#method-start) para arrancar el servicio. Éste método acepta como parámetro el conjunto de propiedades ENV.server, que en este caso al no haberlo seteado se arrancará el servidor con los valores por defecto.
 
 			Podemos ver el funcionamiento de diversos métodos de Gangway junto con el uso de estructuras anidadas de Route, en las últimas lineas vemos como modificar una estructura ya creada y en funcionamiento añadiendo nuevo elementos o modificando los existentes.
 
-			El sistema de estructuras Route nos permite crear funcionalidades que otros podran integrar en sus aplicaciones, permitiendo a la misma vez adaptar su funcionamiento a nuestra necesidades, eliminando o modificando partes de la estructura.
+			El sistema de estructuras Route permite crear paquetes de funcionalidades, que podrán ser utilizadas más tarde por otras aplicaciones y permitiendo a la misma vez adaptar su funcionamiento a nuestra necesidades, eliminando o modificando partes de la estructura.
 
 			Adicionalmente es interesante conocer que tanto `ENV` como `Route` y `Gangway` son eventEmitter lo que nos permite un control adicional sobre su funcionamiento.
 
@@ -475,6 +476,6 @@ html(lang=gw.language)
 			addPlugin(myPlugin);
 
 		:markdown
-			Mediante Plugins podemos actuar tanto antes como después de pasar por el Router, pudiendo por ejemplo modificar la ruta o métodos antes del Router o comprobar propiedades del objeto Route cuando éste ya ha sido seleccionado. Cada Plugin puede modificar o extender las propiedades y métodos de Gangway para nuestro manejador, por ejemplo el Plugin 'Sessions' nos ofrece la propiedad `gw.session` en la cual se encarga de insertar los valores almacenados en la sesión y guardar los cambios una vez finalizada la solicitud.
+			Mediante Plugins podemos actuar tanto antes como después de pasar por el Router, pudiendo por ejemplo modificar la ruta, o métodos antes del Router, o comprobar propiedades del objeto Route cuando éste ya ha sido seleccionado. Cada Plugin puede modificar o extender las propiedades y métodos de Gangway para nuestro manejador, por ejemplo el Plugin 'Sessions' nos ofrece la propiedad `gw.session` en la cual se encarga de insertar los valores almacenados en la sesión y guardar los cambios una vez finalizada la solicitud.
 
-			Los Plugins ofrecen una forma de añadir funcionalidades a Pillars.js o modificar su comportamiento general, esto es útil para crear Plugins genéricos que añadan funciones a cualquier proyecto o para realizar tareas comunes entre diferentes manejadores puediendo disparar el Plugin sólo ante ciertas propiedades de Route.
+			Los Plugins ofrecen una forma de añadir funcionalidades a Pillars.js o modificar su comportamiento general, esto es útil para crear Plugins genéricos que añadan funciones a cualquier proyecto o para realizar tareas comunes entre diferentes manejadores pudiendo disparar el Plugin sólo ante ciertas configuraciones de Route.

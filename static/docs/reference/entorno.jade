@@ -379,6 +379,9 @@ html(lang=gw.language)
 						//Inicio del servidor con los valores por defecto:
 						ENV.start();
 
+						//Inicio del servidor de forma abreviada, indicando solo el puerto
+						ENV.start(80);
+
 						//Inicio del servidor configurando los parámetros del servidor:
 						ENV.start({
 							hostname:'127.0.0.1',
@@ -389,12 +392,7 @@ html(lang=gw.language)
 						});
 
 						//Inicio del servidor con callback
-						ENV.start(
-						{
-							port:3000,
-						},
-
-						function(){
+						ENV.start(3000, function(){
 							console.log("Servidor arrancado");
 						});
 
