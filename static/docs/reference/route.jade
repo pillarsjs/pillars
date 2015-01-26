@@ -14,9 +14,9 @@ html(lang=gw.language)
 		section.summary
 			h2#summary Sumario
 			:markdown
-				Mediante objetos de la clase Route se declaran **controladores** que actuarán en una ruta concreta. La ruta en la que actuará, así como otras opciones de configuración del objeto route, se le pasan como *conjunto de parámetros* en la creación del mismo. 
+				Mediante objetos de la clase Route se declaran **controladores** que actuarán en una ruta concreta. La ruta en la que actuará, así como otras opciones de configuración del objeto, se le pasan como *conjunto de parámetros* en la creación. 
 
-				Así mismo los objetos route son anidables por lo que organizan y agrupan funcionalidades de la aplicación.
+				Los objetos route son anidables por lo que **organizan y agrupan funcionalidades** de la aplicación.
 				
 			
 		//- Syntax
@@ -26,7 +26,7 @@ html(lang=gw.language)
 				route = new Route( configuration, handler );
 
 			:markdown
-				+ *configuration*: opcional. Conjunto de *parámetros de configuración* del route. En la creación se pueden configurar las siguientes opciones: 
+				+ **configuration**: Opcional. Conjunto de *parámetros de configuración* del route. En la creación se pueden configurar las siguientes opciones: 
 					+ [id](#property-id): Identificador del route.
 					+ [path](#property-path): path al que responderá.
 					+ [host](#property-host): nombre o ip de host que atenderá.
@@ -34,7 +34,7 @@ html(lang=gw.language)
 					+ [active](#property-active): si está activo o no.
 					+ [method](#property-method): método GET y/o POST.
 
-				+ *handler*: opcional. Manejador que se ejecutará para el route concreto. El handler siempre recibe como parámetro el [objeto gangway](gangway.jade).
+				+ **handler**: Opcional. Manejador que se ejecutará para el route concreto. El handler siempre recibe como parámetro el [objeto gangway](gangway.jade).
 
 
 			:highlight(lang='javascript')
@@ -89,7 +89,7 @@ html(lang=gw.language)
 			:markdown
 				La arquitectura de la aplicación web se define mediante objetos route. Son anidables, editables en ejecución y se pueden eliminar, y para ello necesitaremos siempre el identificador del objeto. 
 
-				El objeto se puede declarar sin configuración, por lo que toma los valores predeterminados. También se puede declarar sin manejador, por lo que en este caso actuaría como elemento organizativo. 				
+				El objeto se puede declarar sin configuración, por lo que toma los valores predeterminados. También se puede declarar sin manejador, por lo que en este caso el objeto route actuaría como elemento organizativo. 				
 
 			:markdown
 				> Los parámetros de configuración del route adquieren bastante importancia cuando combinamos objetos route y plugin, ya que será en este objeto de configuración *configuration* donde activaremos los plugins que requiramos en el route.
@@ -107,7 +107,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						**String** identificador del objeto route. Si no declara en la creación se autogenera. 
+						**String** identificador del objeto route. Si no se declara el id en la creación del objeto, se autogenera. 
 
 					:highlight(lang='javascript')
 						route = new Route(function(gw){gw.send("Hola Mundo")});
@@ -239,7 +239,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Listado de manejadores de un route. Un route lo podemos crear con varios manejadores, conocidos como middleware. 
+						Listado de manejadores de un route. Un route lo podemos crear con varios manejadores, conocidos como **middleware**. 
 
 					:highlight(lang='javascript')
 						//Creación del middleware
@@ -338,7 +338,7 @@ html(lang=gw.language)
 
 
 					:markdown
-						> El contenido de los parámetros pasados por la URL, así como del POST y del GET, pueden ser consultados con el objeto gangway. (gw.params)[#].
+						> El contenido de los parámetros pasados por la URL, así como del POST y del GET, pueden ser consultados con el objeto gangway. [`gw.params`](/pillars/docs/reference/gangway.jade#property-params).
 						
 
 
@@ -375,26 +375,29 @@ html(lang=gw.language)
 				section.syntax
 					h4 Sintaxis
 					:markdown
-						El método `addRoute()` admite dos tipos de parámetros. Bien el *objeto route* ya creado, o la *configuración* y el *controlador* para la creación y adicción del mismo.
-						> Si deseamos anidar objetos routes debemos tener en cuenta que debemos utilizar la primera forma, ya que con la segunda resultaría imposible.
+						El método `.addRoute()` admite dos tipos de parámetros. Bien el *objeto route* ya creado, o la *configuración* y el *handler* para la creación y adicción del mismo.
+						
 					codesyntax.
 						.addRoute( route Object );
 
 					:markdown
-						+ *route Object*: objeto route creado previmente con `new Route(*configuration*, *controller*)`.
+						+ *route Object*: objeto route creado previmente con `new Route(*configuration*, *handler*)`.
 
 					codesyntax.
-						.addRoute( [configuration] , [controller] );
+						.addRoute( [configuration] , [handler] );
 
 					:markdown
-						+ *configuration* : objeto de configuración del route que se va a crear.
-						+ *controller* : controlador para el route que se va a crear.
+						+ *configuration* : Conjunto de parámetros de configuración para la creación del route.
+						+ *handler* : manejador para el route que se va a crear.
 
-						> Nota: Es posible crear un objeto route sin configuración y sin controlador, éste actuaría en el path '/' y no ejecutaría ningún controlador para dicho path. Crear un objeto tipo route con estas características no tendría mucho sentido, pero es posible.
+						> Nota: Si deseamos anidar objetos routes debemos tener en cuenta que debemos utilizar la primera forma, ya que con la segunda resultaría imposible.
+
+					:markdown
+						> Nota: El objeto se puede declarar sin configuración, por lo que toma los valores predeterminados. También se puede declarar sin manejador, por lo que en este caso el objeto route actuaría como elemento organizativo.
 
 				//- Method syntax
 				section.example
-					h4 Ejemplo
+					h4 Ejemplos
 					:highlight(lang='javascript')
 						// route padre 'home'
 						var home = new Route({id:"home"},function(gw){
@@ -426,7 +429,7 @@ html(lang=gw.language)
 						addRoute(home);
 
 					:markdown
-						> Hay que notar que con método `addRoute(home)`, lo estamos realizando sobre `ENV`, y con `route.addRoute()`, se ejecuta el método del objeto, por lo que estamos añadiendo un 'hijo' al route home.
+						> Hay que notar que con el método `addRoute(home)`, lo estamos realizando sobre `ENV`, y con `route.addRoute()`, se ejecuta el método del objeto, por lo que estamos añadiendo un 'hijo' al route home.
 
 				//- Method
 			section.method
@@ -447,7 +450,7 @@ html(lang=gw.language)
 						.add( route Object );
 
 					:markdown
-						+ *route Object*: objeto route creado previmente mediante `new Route(*configuration*, *controller*)`.
+						+ *route Object*: objeto route creado previmente mediante `new Route(*configuration*, *handler*)`.
 
 				section.example
 					h4 Ejemplo
