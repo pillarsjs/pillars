@@ -5,8 +5,6 @@ mixin base(title,path)
 		meta(http-equiv='X-UA-Compatible', content='IE=edge')
 		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
 		link(rel="shortcut icon", type="image/png", href="/pillars/docs/img/favicon-pillarsjs.png")
-		link(rel="stylesheet", type="text/css", href="/pillars/css/normalize.min.css")
-		link(rel="stylesheet", type="text/css", href="/pillars/css/pillars.css")
 		link(rel="stylesheet", type="text/css", href="/pillars/css/pillarsDocs.css")
 		script(src="/pillars/docs/js/loader.js",async="async")
 
@@ -16,13 +14,6 @@ mixin base(title,path)
 				a#logo Pillars.js - make it easy!
 				nav#mainmenu
 					h2 Main menu
-					.select
-						select(onchange="window.open(this.value, '_self');")
-							option(value="/pillars/docs/") Welcome
-							option(value="/pillars/docs/reference/") Reference
-							option(value="/pillars/docs/tutorials/") Tutorials
-							option(value="#") Contact
-
 					ul
 						li: a(href="/pillars/docs/") Welcome
 						li: a(href="/pillars/docs/reference/") Reference
