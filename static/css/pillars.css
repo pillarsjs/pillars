@@ -96,6 +96,7 @@ body {
   font-size: 14px;
   color: #333333;
   line-height: 1.5;
+  display: block;
 }
 a {
   color: inherit;
@@ -176,7 +177,7 @@ p del {
   color: #999999;
 }
 ul {
-  margin: 2em 10em 3em 1em;
+  margin: 2em 1em 3em 1em;
   padding: 0;
 }
 ul li {
@@ -216,6 +217,9 @@ nav h6 {
   display: none;
   font-size: 1em;
 }
+nav .select {
+  display: none;
+}
 nav ul {
   margin: 0;
   padding: 0;
@@ -239,6 +243,9 @@ codesyntax {
   display: block;
   background-color: #efefef;
   padding: 5px 10px;
+}
+pre {
+  margin: 1.5em 0;
 }
 pre > code {
   font-family: 'Inconsolata', monospace;

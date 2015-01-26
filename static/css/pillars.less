@@ -16,6 +16,7 @@ body {
 	font-size: 14px;
 	color: @color-default;
 	line-height: 1.5;
+	display: block;
 }
 
 a {
@@ -72,7 +73,7 @@ p {
 }
 
 ul {
-	margin: 2em 10em 3em 1em;
+	margin: 2em 1em 3em 1em;
 	padding: 0;
 	li {
 		margin: 0 0 1em 1.5em;
@@ -114,6 +115,9 @@ nav {
 		display: none;
 		font-size: 1em;
 	}
+	.select {
+		display: none;
+	}
 	ul {
 		margin: 0;
 		padding: 0;
@@ -142,19 +146,21 @@ codesyntax{
 	padding: 5px 10px;
 
 }
-
-pre>code {
-	font-family: 'Inconsolata', monospace;
-  overflow-x: auto;
-	margin: 0 0 0.5em;
-	padding: 1.2em !important;
-	color: #ffffff;
-	border: 1px solid #000000;
-	box-shadow: 0 0 15px 5px #000000 inset;
-	width: 100%;
-	background-color: @color-default;
-	display: block;
-	white-space: pre !important;
+pre {
+	margin: 1.5em 0;
+	&>code {
+		font-family: 'Inconsolata', monospace;
+		overflow-x: auto;
+		margin: 0 0 0.5em;
+		padding: 1.2em !important;
+		color: #ffffff;
+		border: 1px solid #000000;
+		box-shadow: 0 0 15px 5px #000000 inset;
+		width: 100%;
+		background-color: @color-default;
+		display: block;
+		white-space: pre !important;
+	}
 }
 
 .action, .bg-action,  .info, .bg-info, .ok, .bg-ok, .alert, .bg-alert, .danger, .bg-danger, .soft, .bg-soft {

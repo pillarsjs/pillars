@@ -5,11 +5,10 @@ mixin base(title,path)
 		meta(http-equiv='X-UA-Compatible', content='IE=edge')
 		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
 		link(rel="shortcut icon", type="image/png", href="/pillars/docs/img/favicon-pillarsjs.png")
-		link(rel='stylesheet', type='text/css', href='/pillars/css/normalize.css')
-		link(rel='stylesheet', type='text/css', href='/pillars/css/pillars.css')
-		link(rel='stylesheet', type='text/css', href='/pillars/css/pillarsDocs.css')
-		//link(rel='stylesheet', type='text/css', href='/pillars/docs/css/style.css')
-		link(rel="stylesheet", type='text/css', href="/pillars/docs/js/highlight/styles/monokai.css")
+		link(rel="stylesheet", type="text/css", href="/pillars/css/normalize.min.css")
+		link(rel="stylesheet", type="text/css", href="/pillars/css/pillars.css")
+		link(rel="stylesheet", type="text/css", href="/pillars/css/pillarsDocs.css")
+		script(src="/pillars/docs/js/loader.js",async="async")
 
 	body
 		#space
@@ -18,14 +17,14 @@ mixin base(title,path)
 				nav#mainmenu
 					h2 Main menu
 					.select
-						select
-							option(value="#") Welcome
+						select(onchange="window.open(this.value, '_self');")
+							option(value="/pillars/docs/") Welcome
 							option(value="/pillars/docs/reference/") Reference
 							option(value="/pillars/docs/tutorials/") Tutorials
 							option(value="#") Contact
 
 					ul
-						li: a(href="#") Welcome
+						li: a(href="/pillars/docs/") Welcome
 						li: a(href="/pillars/docs/reference/") Reference
 						li: a(href="/pillars/docs/tutorials/") Tutorials
 						li: a(href="#") Contact
@@ -55,22 +54,6 @@ mixin base(title,path)
 					.license MIT license
 
 
-
-
-		link(rel='stylesheet', type='text/css', href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400italic,600,600italic,700,700italic')
-		link(rel='stylesheet', type='text/css', href='http://fonts.googleapis.com/css?family=Inconsolata:400,700')
-		link(rel="stylesheet", type='text/css', href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css")
-		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
-		script(src='/pillars/docs/js/toc.min.js')
-		script.
-			$(function(){
-				$('#TOC').toc({
-					selectors:'h2,h3',
-					container: '#contents'
-				}).prepend('<h2>Table of contents</h2>');
-			})
-
-
 mixin layout(title,path)
 	+base(title,path)
 		#contents
@@ -82,7 +65,7 @@ mixin reference-layout(title,path)
 
 			nav#TOC
 
-			nav
+			nav#scopelinks
 				h2 Reference index
 				ul
 					li: a(href="/pillars/docs/reference/index.jade") Sinopsis
@@ -115,7 +98,7 @@ mixin tutorial-layout(title,path)
 
 			nav#TOC
 			
-			nav
+			nav#scopelinks
 				h2 Tutorial index
 				ul
 					li: a(href="/pillars/docs/tutorials/index.jade") Hola Mundo

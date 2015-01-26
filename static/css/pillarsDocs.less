@@ -172,8 +172,12 @@ body {
 				a {
 
 				}
-				&.toc-h3 {
-					padding-left: 1em;
+				ul {
+					border-left: 1px solid rgba(100, 100, 100, 0.1);
+					font-size: 0.8em;
+					li {
+						border-top: 1px solid rgba(100, 100, 100, 0.1);
+					}
 				}
 			}
 		}
@@ -224,15 +228,15 @@ a.source {
 
 	h2 {
 		border-bottom: 2px solid @color-primary;
-		margin-top: 80px;
-		padding-bottom: 15px;
+		margin-top: 1em;
+		padding-bottom: 0.1em;
 		em {
 			font-size: 0.5em;
 		}
 	}
 
 	&>section {
-		margin-bottom: 4em;
+		margin-bottom: 3em;
 		section {
 			margin: 1em 1em 2em;
 			section {
@@ -287,8 +291,17 @@ a.source {
 	}
 
 	#sidebar {
-		display: none;
+		display: block;
+		width: auto;
+		background-color: @color-default;
+		padding: 0.5em;
 		nav {
+			display: inline-block;
+			margin-bottom: 0;
+			width: 100%;
+			.select {
+				display: block;
+			}
 			&>ul {
 				display: none;
 			}
