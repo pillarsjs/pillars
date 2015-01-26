@@ -272,8 +272,12 @@ body {
 #sidebar nav ul {
   padding: 0;
 }
-#sidebar nav ul li.toc-h3 {
-  padding-left: 1em;
+#sidebar nav ul li ul {
+  border-left: 1px solid rgba(100, 100, 100, 0.1);
+  font-size: 0.8em;
+}
+#sidebar nav ul li ul li {
+  border-top: 1px solid rgba(100, 100, 100, 0.1);
 }
 #sidebar nav > ul > li {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -334,14 +338,14 @@ a.source:before {
 }
 #contents h2 {
   border-bottom: 2px solid #d40041;
-  margin-top: 80px;
-  padding-bottom: 15px;
+  margin-top: 1em;
+  padding-bottom: 0.1em;
 }
 #contents h2 em {
   font-size: 0.5em;
 }
 #contents > section {
-  margin-bottom: 4em;
+  margin-bottom: 3em;
 }
 #contents > section section {
   margin: 1em 1em 2em;
@@ -390,7 +394,18 @@ a.source:before {
     float: none;
   }
   #sidebar {
-    display: none;
+    display: block;
+    width: auto;
+    background-color: #333333;
+    padding: 0.5em;
+  }
+  #sidebar nav {
+    display: inline-block;
+    margin-bottom: 0;
+    width: 100%;
+  }
+  #sidebar nav .select {
+    display: block;
   }
   #sidebar nav > ul {
     display: none;
