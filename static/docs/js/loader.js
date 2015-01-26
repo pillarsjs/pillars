@@ -10,6 +10,27 @@
 		'/pillars/docs/js/highlight/styles/monokai.css'
 	],[
 		function(){
+			var mainmenu = $('#mainmenu');
+			var swrp = $('<div class="select"></div>');
+			var select = $('<select onchange="window.open(this.value, \'_self\');"></select>');
+			swrp.append(select);
+			$('h2',mainmenu).after(swrp);
+			$('a',mainmenu).each(function(i,e){
+				var e = $(e);
+				var lvl = e.parents('ul').length;
+				var href = e.attr('href');
+				var selected = window.location.pathname.indexOf(href)===0?' selected="selected" ':'';
+				var space = '';
+				if(lvl>1){
+					for(var i=1;i<lvl;i++){
+						space+='-';
+					}
+					space+='&nbsp;';
+				}
+				select.append('<option value="'+href+'"'+selected+'>'+space+e.text()+'</option>');
+			});
+		},
+		function(){
 			var TOC = $('#TOC');
 			var swrp = $('<div class="select"></div>');
 			var select = $('<select onchange="window.open(this.value, \'_self\');"></select>');
@@ -19,24 +40,30 @@
 			TOC.append(swrp);
 			TOC.append(ul);
 			var last = false;
+			var count = 0;
 			$('#contents h2, #contents h3').each(function(i,e){
+				count++;
 				var e = $(e);
 				var t = e.prop('tagName').toLowerCase();
-				console.log(t);
+				var href = '#'+e.attr('id');
+				var selected = (window.location.hash).indexOf(href)===0?' selected="selected" ':'';
+				var space = '';
 				if(t=='h2'){
 					last = $('<li></li>');
-					last.append('<a href="#'+e.attr('id')+'">'+e.html()+'</a>');
+					last.append('<a href="'+href+'">'+e.html()+'</a>');
 					ul.append(last);
-					select.append('<option value="#'+e.attr('id')+'">'+e.text()+'</option>');
 				} else {
 					if(!last.has( "ul" ).length){
 						last.append('<ul></ul>');
-						console.log('añadido ul');
 					}
-					$('ul',last).append('<li><a href="#'+e.attr('id')+'">'+e.html()+'</a></li>');
-					select.append('<option value="#'+e.attr('id')+'">- '+e.text()+'</option>');
+					$('ul',last).append('<li><a href="'+href+'">'+e.html()+'</a></li>');
+					space = '- ';
 				}
+				select.append('<option value="'+href+'"'+selected+'>'+space+e.text()+'</option>');
 			});
+			if(!count){
+				TOC.hide();
+			}
 		},
 		function(){
 			var scopelinks = $('#scopelinks');
@@ -47,6 +74,8 @@
 			$('a',scopelinks).each(function(i,e){
 				var e = $(e);
 				var lvl = e.parents('ul').length;
+				var href = e.attr('href');
+				var selected = (window.location.pathname).indexOf(href)===0?' selected="selected" ':'';
 				var space = '';
 				if(lvl>1){
 					for(var i=1;i<lvl;i++){
@@ -54,7 +83,7 @@
 					}
 					space+='&nbsp;';
 				}
-				select.append('<option value="'+e.attr('href')+'">'+space+e.text()+'</option>');
+				select.append('<option value="'+href+'"'+selected+'>'+space+e.text()+'</option>');
 			});
 		}
 	]
