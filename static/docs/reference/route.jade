@@ -14,21 +14,19 @@ html(lang=gw.language)
 		section.summary
 			h2#summary Sumario
 			:markdown
-				Mediante objetos de la clase Route se declaran manejadores para una ruta concreta. Así mismo los objetos route son anidables por lo que organizan y/o agrupan funcionalidades de la aplicación.
-				
-				Instancia de un objeto route: `route = new Route(*configuration*, *controller*);`. Donde *configuration* es un objeto de definición de parámetros, y *controller* es el controlador que se ejecutará en el path configurado en *configuration*, por defecto el path es `/`.  
-				La creación más básica de un route se puede realizar tan sólo con el parámetro *controller*, tomando por tanto toda la conffiguración por defecto.
+				Mediante objetos de la clase Route se declaran **controladores** que actuarán en una ruta concreta. La ruta en la que actuará, así como otras opciones de configuración del objeto route, se le pasan como *conjunto de parámetros* en la creación del mismo. 
 
-	
-		
+				Así mismo los objetos route son anidables por lo que organizan y agrupan funcionalidades de la aplicación.
+				
+			
 		//- Syntax
 		section.syntax
 			h2#syntax Constructor
 			codesyntax.
-				route = new Route( configuration, controller );
+				route = new Route( configuration, handler );
 
 			:markdown
-				+ *configuration*: opcional. Objeto de configuración del route. En la creación del route se pueden configurar los siguientes parámetros: 
+				+ *configuration*: opcional. Conjunto de *parámetros de configuración* del route. En la creación se pueden configurar las siguientes opciones: 
 					+ [id](#property-id): Identificador del route.
 					+ [path](#property-path): path al que responderá.
 					+ [host](#property-host): nombre o ip de host que atenderá.
@@ -36,7 +34,7 @@ html(lang=gw.language)
 					+ [active](#property-active): si está activo o no.
 					+ [method](#property-method): método GET y/o POST.
 
-				+ *controller*: opcional. Controlador que se ejecutará para el route concreto. El controller siempre recibe como parámetro el [objeto gangway](gangway.jade).
+				+ *handler*: opcional. Manejador que se ejecutará para el route concreto. El handler siempre recibe como parámetro el [objeto gangway](gangway.jade).
 
 
 			:highlight(lang='javascript')
@@ -47,7 +45,7 @@ html(lang=gw.language)
 					gw.send("Hola Mundo");
 				});
 
-
+			:highlight(lang='javascript')
 				// Creación de un objeto route con id 'web' y path '/web'. 
 				// El manejador envía al cliente el renderizado del archivo example.jade
 
@@ -61,6 +59,7 @@ html(lang=gw.language)
 					}
 				);
 
+			:highlight(lang='javascript')
 				// Creación de un objeto route con id 'nodo-padre' sin controlador, por lo que 
 				// la aplicación no responderá en /. Y creación
 				// de otros dos routes hijos dependientes de éste.
