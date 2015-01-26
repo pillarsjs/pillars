@@ -68,9 +68,6 @@ mixin reference-layout(title,path)
 			nav#scopelinks
 				h2 Reference index
 				ul
-					li: a(href="/pillars/docs/reference/index.jade") Sinopsis
-					li: a(href="/pillars/docs/reference/alcance.jade") Alcance
-					li: a(href="/pillars/docs/reference/getting-started.jade") Getting Started
 					li: a(href="/pillars/docs/reference/entorno.jade") Entorno (ENV)
 					li: a(href="/pillars/docs/reference/route.jade") Route
 					li: a(href="/pillars/docs/reference/gangway.jade") Gangway
@@ -80,10 +77,10 @@ mixin reference-layout(title,path)
 						ul
 							li: a(href="/pillars/docs/reference/i18n.jade") i18n
 							li: a(href="/pillars/docs/reference/logger.jade") Logger
-							li: a(href="#") Renderer
-							li: a(href="#") Modelator
-							li: a(href="#") Mailer
-							li: a(href="#") Cron
+							li: a(href="/pillars/docs/reference/renderer.jade") Renderer
+							li: a(href="/pillars/docs/reference/modelator.jade") Modelator
+							li: a(href="/pillars/docs/reference/mailer.jade") Mailer
+							li: a(href="/pillars/docs/reference/cron.jade") Cron
 
 		#contents
 			block
@@ -101,22 +98,13 @@ mixin tutorial-layout(title,path)
 			nav#scopelinks
 				h2 Tutorial index
 				ul
+					li: a(href="/pillars/docs/tutorials/instalacion.jade") Instalación
 					li: a(href="/pillars/docs/tutorials/index.jade") Hola Mundo
-					li: a(href="#") Visión Global de Pillars.js
+					li: a(href="/pillars/docs/tutorials/confentorno.jade") Configuración del entorno
+					li: a(href="/pillars/docs/tutorials/confentorno.jade") Añadiendo Controladores
+					li: a(href="/pillars/docs/tutorials/confentorno.jade") Trabajando con Controladores
 					li: a(href="/pillars/docs/tutorials/client-server.jade") Envío datos Cliente-Servidor
 					li: a(href="/pillars/docs/tutorials/server-client.jade") Envío datos Servidor-Cliente
-					li: a(href="/pillars/docs/tutorials/i18n.jade") i18n
-					li: a(href="/pillars/docs/tutorials/usuarios.jade") Autenticación de Usuarios
-					li: a(href="/pillars/docs/tutorials/bbdd.jade") Bases de Datos
-					li: a(href="/pillars/docs/tutorials/crud.jade") CRUD
-
-
-					li
-						a(href="#") Autenticación de usuarios
-						ul
-							li: a(href="#") htaccess 
-							li: a(href="#") Mediante base de datos
-
 					li
 						a(href="#") Bases de Datos
 						ul
@@ -125,7 +113,13 @@ mixin tutorial-layout(title,path)
 							li: a(href="#") Insercción
 							li: a(href="#") Borrado
 
+					li: a(href="/pillars/docs/tutorials/i18n.jade") i18n
 
+					li
+						a(href="#") Autenticación de usuarios
+						ul
+							li: a(href="#") htaccess 
+							li: a(href="#") Mediante base de datos
 					li
 						a(href="#") CRUD
 						ul
