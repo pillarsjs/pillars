@@ -17,6 +17,8 @@ global.ENV = module.exports = require('./lib/ENV');
  global.addRoute = ENV.addRoute;
  global.getRoute = ENV.getRoute;
  global.removeRoute = ENV.removeRoute;
+ global.encrypt = ENV.crypt.encrypt;
+ global.decrypt = ENV.crypt.decrypt;
 
 global.Plugin = require('./lib/Plugin');
 global.Route = require('./lib/Route');
