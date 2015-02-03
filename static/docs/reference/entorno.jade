@@ -18,7 +18,7 @@ html(lang=gw.language)
 
 				Mediante `ENV` se **configura el entorno de la aplicación web** y es el **punto central y de anclaje** para el resto de los elementos que componen el framework.
 
-				El entorno de la aplicación es todo aquello que necesitamos configurar para una aplicación web como; puerto al que responderá, configuración del smtp, configuración de los idiomas de la aplicación, tamaño de archivo máximo permitido por el servidor, etc.
+				El entorno de la aplicación es todo aquello que necesitamos configurar para una aplicación web. Podemos configurar elementos como; puerto al que responderá la aplicación, configuración del smtp, configuración de los idiomas de la aplicación, tamaño de archivo máximo permitido por el servidor, etc.
 	
 				
 		//- Syntax
@@ -52,15 +52,15 @@ html(lang=gw.language)
 		section.description
 			h2#description Descripción
 			:markdown
-				Al realizar el require() de la librería obtenemos acceso a `ENV`, el entorno de Pillars.js, que se instancia de forma global.
+				Al realizar el require() de la librería obtenemos acceso a `ENV`, el entorno de Pillars.js, que se instancia de forma **global**.
 				
-				El entorno consiste en una serie de **propiedades** y **funciones** que nos permiten trabajar con el framework. La variable global `ENV` es la más importante, punto central de configuración y arranque del entorno. Además tendremos acceso a **Clases como Plugin o Route**, y a las diferentes funciones que nos permitiran construir nuestra aplicación.
+				El entorno consiste en una serie de **propiedades** y **funciones** que nos permiten trabajar con el framework. La variable global `ENV` es la más importante, punto central de configuración y arranque del entorno. Además tendremos acceso a **Clases como Plugin o Route**, y a las diferentes funciones que nos permitirán construir nuestra aplicación.
 
 				`ENV` es un objeto global cuyas propiedades conforman la configuración de nuestra aplicación y sus métodos nos permiten la construción de la misma. Disponemos de propiedades que nos permiten configurar el servicio HTTP o la conexión a la base de datos, mientras otros métodos como `.addRoute()` o `.addPlugin()` son el mecanismo para añadir controladores a nuestro entorno.
 
 				Junto a `ENV` se establecen de forma global las referencias a clases como Plugin o Route para que sea posible instanciar dichos objetos, también acceso a funcionalidades como renderer, i18n, logger o cron. Todo esto nos ofrece un entorno de trabajo completo y centralizado cuyo **punto central** es `ENV`.
 
-				> Nota: Puedes encontrar una referencia a las variables globales de Pillars [aquí](#).
+				> Nota: Puedes encontrar una referencia a las **variables globales de Pillars** [aquí](/pillars/docs/reference/entorno.jade#vblesglobales).
 
 				En el ejemplo podemos ver una configuración básica del entorno por medio de la variable ENV. Es posible establecer propiedades de forma individual o agrupada usando el método `.configure()`.
 
@@ -264,7 +264,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						La propiedad `.smtp` es un conjunto de propiedades para configurar el servidor smtp.  Utiliza la librería [node-mailer](#):
+						La propiedad `.smtp` es un conjunto de propiedades para configurar el servidor smtp.  Utiliza la librería [node-mailer](https://github.com/andris9/Nodemailer):
 						+ `hostname`: nombre de host
 						+ `port`: puerto 
 						+ `user`: usuario del servidor de correo. Tipo **String**.
@@ -519,7 +519,7 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						El método `.addRoute()` añade controladores a la aplicación, es decir, un objeto de la [Clase Route](route.jade). 
+						El método `.addRoute()` añade controladores y rutas a la aplicación, es decir, un objeto de la [Clase Route](route.jade). 
 						Acepta como parámetro el objeto creado previamente, o la configuración para su creación, por lo que lo podemos añadir de dos formas.
 
 				//- Method syntax
@@ -887,7 +887,7 @@ html(lang=gw.language)
 
 		//- Variables Globales
 		section.vblesglobales
-			h2#events Anexo - Variables Globales
+			h2#vblesglobales Anexo - Variables Globales
 
 			:markdown
 				Cuando se realiza la llamada a la librería `require("pillars")`, se setean una serie de variables y métodos globales. 
