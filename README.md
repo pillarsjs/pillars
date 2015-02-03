@@ -61,9 +61,7 @@ With a simple and modular approach lets you introduce in Node.js with a soft lea
   - **MIT** Licence.
 
 
-## Scope
-
- - **[es]**: [Alcance](https://github.com/bifuer/pillars/wiki/Comenzando-con-Pillars.js#alcance)
+ - Scope **[es]**: [Alcance](https://github.com/bifuer/pillars/wiki/Comenzando-con-Pillars.js#alcance)
 
 
 ## Getting started
