@@ -902,22 +902,34 @@ html(lang=gw.language)
 				ENV=require("pillars");
 
 			:markdown
-				Adicionalmente setea de forma global los siguientes métodos, alias de los indicados: 
-				+ addRoute()
-				+ getRoute()
-				+ removeRoute()
-				+ addPlugin()
-				+ getPlugin()
-				+ removeRoute()
+				Adicionalmente **setea de forma global los siguientes métodos**, alias de los indicados: 
 
-				También tenemos seteados de forma Global las Clases: 
-				+ Plugin
-				+ Route
-				+ renderer
+				+ **addRoute()** alias de [ENV.addRoute()](#method-addRoute)
+
+				+ **getRoute()** alias de [ENV.getRoute()](#method-getRoute)
+
+				+ **removeRoute()** alias de [ENV.removeRoute()](#method-removeRoute)
+
+				+ **addPlugin()** alias de [ENV.addPlugin()](#method-addPlugin)
+
+				+ **getPlugin()** alias de [ENV.getPlugin()](#method-getPlugin)
+
+				+ **removePlugin()** alias de [ENV.removePlugin()](#method-removePlugin)
+
+
+				También **setea de forma Global las Clases**: 
+
+				+ **Route**. De esta forma podemos declarar el constructor como: `route = new Route()`.
+
+				+ **Plugin**. De esta forma podemos declarar el constructor como: `plugin = new Plugin()`. 
+
+				 
 
 				Y las librerías: 
+
 				+ modelator
 				+ mailer 
+				+ **renderer**
 				+ cron ??
 					
 

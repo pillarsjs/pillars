@@ -2,34 +2,35 @@ include ../.layout.jade
 
 doctype html
 html(lang=gw.language)
-	- var path = [{label:'Pillars.js Reference',url:'/pillars/docs/reference/'},{label:'Librería i18n',url:'/pillars/docs/reference/i18n.jade'}];
-	+reference-layout("Pillars.js Reference - Librería i18n - 'make it easy!'",path)
+	- var path = [{label:'Pillars.js Reference',url:'/pillars/docs/reference/'},{label:'Librería i18n',url:'/pillars/docs/reference/renderer.jade'}];
+	+reference-layout("Pillars.js Reference - Librería Renderer - 'make it easy!'",path)
 
 		#title
-			h1 Librería i18n
+			h1 Librería Renderer
 				em  Pillars.js Reference
-			a.source(href="https://github.com/bifuer/pillars/blob/master/lib/textualization.js") Source
+			a.source(href="https://github.com/bifuer/pillars/blob/master/lib/renderer.js") Source
 
 		//- Summary
 		section.summary
 			h2#summary Sumario
 			:markdown
-				La librería i18n (aka textualization) integra en Pillars.js un completo sistema de internacionalización, liberando al desarrollador de la duplicidad de código para cada idioma, e introduciendo un novedoso sistema de traducciones mediante objetos. 
+				La librería renderer ofrece la posibilidad de incluir otros templates engines, además de enviar al cliente ...
 
-				> Ver [Tutorial i18n](#)
-	
-		
+			.msg.msg-icon.bg-alert Estamos completando la referencia. ¡Disculpa las molestias!. Síguenos en las redes sociales para estar al tanto de las actualizaciones de la documentación. 
+
+
+//		
 		//- Syntax
 		section.syntax
 			h2#syntax Sintaxis
 			codesyntax.
-				var msg = i18n();
+				var msg = "making";
 
 			:markdown
 				Lorem ipsum
 
 			:highlight(lang='javascript')
-				var msg = i18n();
+				var msg = "making";
 
 
 
@@ -47,14 +48,14 @@ html(lang=gw.language)
 
 			//- Property
 			section.property
-				h3#property-pathRegex: code
-					small i18n
-					| .pathRegex
+				h3#property-xx: code
+					small renderer
+					| .xx
 
 				//- Property description
 				section.description
 					:markdown
-						Propiedad de **sólo lectura** que contiene la expresión regular de la propiedad `path`. Si modificamos `path`, `pathRegex` se actualiza automáticamente.
+						Lorem ipsum
 
 		//- Methods
 		section.methods
@@ -63,24 +64,24 @@ html(lang=gw.language)
 			//- Method			
 			section.method
 				h3#method-removeRoute: code
-					small i18n
-					| .removeRoute()
+					small renderer
+					| .xx()
 
 				//- Method description
 				section.description
 					:markdown
-						Dado el identificador de un objeto route hijo, elimina el objeto hijo.
+						Lorem ipsum
 
 				//- Method syntax
 				section.syntax
 					h4 Sintaxis
 					codesyntax.
-						var msg = i18n();
+						var msg = ();
 
 					:markdown
-						var msg = i18n();
+						var msg = ();
 
 				section.example
 					h4 Ejemplo
 					:highlight(lang='javascript')
-						var msg = i18n();						
+						var msg = ();						

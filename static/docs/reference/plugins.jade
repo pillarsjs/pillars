@@ -1,0 +1,88 @@
+include ../.layout.jade
+
+doctype html
+html(lang=gw.language)
+	- var path = [{label:'Pillars.js Reference',url:'/pillars/docs/reference/'},{label:'Plugins en Pillars.js',url:'/pillars/docs/reference/plugins.jade'}];
+	+reference-layout("Pillars.js Reference - Plugins en Pillars.js - 'make it easy!'",path)
+
+		#title
+			h1 Plugins en Pillars.js
+				em  Pillars.js Reference
+			a.source(href="https://github.com/bifuer/pillars/blob/master/lib/plugins") Source
+
+		//- Summary
+		section.summary
+			h2#summary Sumario
+			:markdown
+				El framework Pillars.js en su versión actual ofrece una serie de plugins integrados: estan en orden de ejecución
+				
+
+				+ **Gestión de la ruta para múltiples idiomas**: langPath.js: [en, es] - coge la ruta, detecta si el comienzo de la ruta coincide con algun idioma de los delcarados en languages que no sean el primero. elimina del gw.path el idioma correspondiente.(/es/tools -> /tools). Actúa sobre gangway antes del router. Una vez hecho eso setea gw.languages al idioma que ha eliminado.
+				+ **Codificaciones no válidas**: encoding.js: filtro chorra que devulve un 406, que es codificación no válida.
+				+ **Plugin de enroutado**: router.js: cuando llega pa ejecutarse el plugin router, empieza a comprar el listado de objetos route y los constrasta con el objeto gangway, que coincidan el path, host, method y protocolo http o https. El plugin mira en ENV los routes que se han añadido directamente a ENV. Si alguno coincide, pues sigue comparando con los hijos. Conforme va localizando los que coindicen, lo acumula en gw.routing; options. propiedades de cada route, al final me queda un listado de propiedades heredadas. Check: chequeo rápido de los options. Routes: array de route por los que pasa. handlers: handler del route que atiende finalmente la petición.
+				+ **Máximo tamaño permitido de la petición HTTP**: maxUploadSize.js: para cualquier petición de usuario se comprueba que el tamaño del cuerpo de la petición no supere el tamaño declarado en ENV.maxUploadSize. Este plugin se puede customizar. Cada route tiene una propiedad de configuración que es maxsize que nos permite especificar si para ese route concreto no le echa cuenta a la propiedad ENV.maxUploadSize. Utiliza la propiedad maxsize que permite especificar el tamaño máximo de la petición con un valor concreto y no el valor por defecto que viene de la propiedad ENV.maxUploadSize. El error devuelto en el caso de superar el tamño es un 413. 
+				+ **Compatibilidad con CORS**: CORS.js: Cross-origin resource sharing. Compartición de recursos entre distintos dominios. De que dominio utilizan recursos tuyos, porque cuando se hace una solicitud http, desde un dominio diferente, a ese otro en el encabezado HTTP aparece origin, que es desde donde se está haciendo lapetición. COMO FUNCIONA CORS. utiliza la propiedad cors del route. cors: true, cors: false, o un array de los dominios que van a poder hacerme peticiones http de ese tipo.
+				+ **Compatibilidad con el método OPTIONS**: OPTIONS.js: POST, GET, PUT, Y el nuevo.... OPTIONS :O que sirve para preguntar al servidor por una ruta dada qués metodos son soportados, por eso se ejecuta posterior al ruter.
+				+ **Sistema de sesiones**: sessions.js: Con estas propiedades session: true o account: true se activa el plugin sessions. Tener en cuenta la herencia. activa el estado de sesiones, iniciando una sesion en la base de datos, y asociando eso con una cookie que se le envía al usauario encriptada, ( se utiliza un me´todo de encriptación que es ENV.crypt.password, clave genérica con la que se encripta las cookies y el etag. ) dejando la propiedad gw.session lista para usar. es un objeto perene dentro de la sesión.
+				+ **Sistema de usuarios**: accounts.js. se ejecuta con account: true - cuentas de usuario. setea gw.user con los datos del usuario, utilizando el sistema de usuarios de PIllars.js
+				+ **Lector del cuerpo de la petición HTTP**: bodyReader.js: lee el cuerpo de la petición, lo mete en gw.content.params. La propiedad del route, multipart debe ser true para que el route acepte ficheros. Los ficheros los mete en gw.files.
+	
+		
+		
+		section.plugin
+			h2#plugin-langpath Gestión de la ruta para múltiples idiomas
+			
+			:markdown
+				ads
+
+
+		section.plugin
+			h2#plugin-encoding Codificaciones no válidas
+			
+			:markdown
+				ads
+
+		section.plugin
+			h2#plugin-router Plugin de enroutado
+			
+			:markdown
+				ads
+
+
+		section.plugin
+			h2#plugin-maxUploadSize Máximo tamaño permitido de la petición HTTP
+			
+			:markdown
+				ads
+
+		section.plugin
+			h2#plugin-cors Compatibilidad con CORS
+			
+			:markdown
+				ads
+
+
+		section.plugin
+			h2#plugin-options Compatibilidad con el método OPTIONS
+			
+			:markdown
+				ads
+
+		section.plugin
+			h2#plugin-sessions Sistema de sesiones
+			
+			:markdown
+				ads
+
+		section.plugin
+			h2#plugin-accounts Sistema de usuarios
+			
+			:markdown
+				ads
+
+
+		section.plugin
+			h2#plugin-bodyreader Lector del cuerpo de la petición HTTP
+			
+			:markdown
+				ads
