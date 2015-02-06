@@ -48,31 +48,32 @@ global.precasts = require('./lib/precasts');
 // --------------------------------------------
 // Pillars addons
 
-var pillarsUsersSchema = new modelator.Schema('users',{
+var usersSchema = new modelator.Schema({
 	collection : 'users',
-	limit : 5,
-	filter : ['_id','user','firstname','lastname'], 
-	headers : ['_id','user','firstname','lastname','password']
+	filter : ['_id','user','firstname','lastname'],
+	indexes : [],
+	uniques : [],
+	headers : ['_id','user','firstname','lastname','password'],
+	keys: {
+		see: '',
+		edit: '',
+		manage: ''
+	}
 })
-	.addField('Text','user')
-	.addField('Text','firstname')
-	.addField('Text','lastname')
-	.addField('Text','password')
-	.addField('Text','keys')
+	.addField(new modelator.Text({id:'user'}))
+	.addField(new modelator.Text({id:'firstname'}))
+	.addField(new modelator.Text({id:'lastname'}))
+	.addField(new modelator.Text({id:'password'}))
+	.addField(new modelator.Text({id:'keys'}))
+;
 
-var pillarsUsersBackend = new Route({
-	id:'users',
-	path:'/users'
-});
-
-precasts.CRUD(pillarsUsersBackend,pillarsUsersSchema);
+var usersBackend = modelator.schemaAPI(new Route({id:'usersBackend',path:'/users'}),usersSchema);
 
 ENV
 	.add(precasts.pillarsLogin)
 	.add(precasts.pillarsStatic)
-	.add(pillarsUsersBackend)
+	.add(usersBackend)
 ;
-
 
 
 

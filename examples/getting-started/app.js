@@ -11,7 +11,7 @@ require('../../pillars').configure({
   	uploads:'./uploads',
   	temp:'./temp'
   }
-})
+});
 
 addRoute(new Route({id:'Root'},function(gw){gw.html('Hola mundo!');}));
 
@@ -144,12 +144,29 @@ Utilities.addRoute(new Route({
 }));
 
 
+var sampleSchema = new modelator.Schema({
+	collection : 'sample',
+	limit : 10,
+	filter : ['_id','nombre','apellidos'],
+	headers : ['_id','nombre','apellidos']
+})
+	.addField(new modelator.Text({id:'nombre'}))
+	.addField(new modelator.Text({id:'apellidos'}))
+	.addField(new modelator.Fieldset({id:'horario'})
+		.addField(new modelator.Int({id:'horas'}))
+		.addField(new modelator.Int({id:'minutos'}))
+	)
+;
 
+
+var sampleSchemaApi = modelator.schemaAPI(new Route({id:'sampleAPI',path:'/sample'}),sampleSchema);
+
+ENV.add(sampleSchemaApi);
 
 
 /* Modelator example (on progress) */
 
-
+/*
 var systemModel = new modelator.Schema('system',{
 	collection : 'system',
 	limit : 5,
