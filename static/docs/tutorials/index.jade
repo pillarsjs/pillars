@@ -2,7 +2,7 @@ include ../.layout.jade
 
 doctype html
 html(lang=gw.language)
-	- var path = [{label:'Pillars.js Tutorials',url:'/pillars/docs/tutorials/'},{label:'Clase Route',url:'/pillars/docs/tutorials/hola-mundo.jade'}];
+	- var path = [{label:'Pillars.js Tutorials',url:'/pillars/docs/tutorials/'},{label:'Hola Mundo',url:'/pillars/docs/tutorials/hola-mundo.jade'}];
 	+tutorial-layout("Pillars.js Tutorials - Hola Mundo - 'make it easy!'",path)
 
 		#title
@@ -59,7 +59,9 @@ html(lang=gw.language)
 			:markdown
 				En la **línea 1** se realiza la inclusión de la librería y se ejecuta el método [`.start()`](/pillars/docs/reference/entorno.jade#method-start).
 
-				El `require("pillars")` también devuelve el entorno, es por ello que podemos ejecutar sobre el require el método `.start()`. Dicho de otro modo: 
+				El `require("pillars")` también devuelve el objeto ENV, que contiene la configuración del entorno, métodos para arrancar y parar la aplicación, y es el punto de anclaje para los controladores (objetos route) y plugins. 
+
+				Al devolver la llamada a `require("pillars")` el objeto ENV, podemos ejecutar sobre el require el método `.start()`. Dicho de otro modo: 
 
 			:highlight(lang='javascript')
 				// De esta forma, tenemos en la variable app, el entorno de la aplicación, y

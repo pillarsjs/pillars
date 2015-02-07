@@ -17,10 +17,10 @@ mixin base(title,path)
 				nav#mainmenu
 					h2 Main menu
 					ul
-						li: a(href="/pillars/docs/") Welcome
-						li: a(href="/pillars/docs/reference/") Reference
-						li: a(href="/pillars/docs/tutorials/") Tutorials
-						li: a(href="#") Contact
+						li: a(href="/pillars/docs/") Portada
+						li: a(href="/pillars/docs/reference/") Referencia
+						li: a(href="/pillars/docs/tutorials/") Tutoriales
+						li: a(href="#") Contacto
 
 				nav#social
 					h2 Social links
@@ -43,7 +43,7 @@ mixin base(title,path)
 				.logo Pillars.js - make it easy!
 				.legal
 					.phrase Pillars.js is a modular and scalable framework for web development in Node.js
-					.copyright ©2014 Javier Gallego Martín & Chelo Quilón (Just Married) & individual contributors
+					.copyright ©2015 Javier Gallego Martín & Chelo Quilón (Just Married) & individual contributors
 					.license MIT license
 
 
@@ -61,10 +61,11 @@ mixin reference-layout(title,path)
 			nav#scopelinks
 				h2 Reference index
 				ul
+					li: a(href="/pillars/docs/reference/vision-global.jade") Visión Global
 					li: a(href="/pillars/docs/reference/entorno.jade") Entorno (ENV)
-					li: a(href="/pillars/docs/reference/route.jade") Route
-					li: a(href="/pillars/docs/reference/gangway.jade") Gangway
-					li: a(href="/pillars/docs/reference/plugin.jade") Plugin
+					li: a(href="/pillars/docs/reference/route.jade") Clase Route
+					li: a(href="/pillars/docs/reference/gangway.jade") Objeto Gangway
+					li: a(href="/pillars/docs/reference/plugin.jade") Clase Plugin
 					li
 						a(href="#") Librerías
 						ul
@@ -74,6 +75,7 @@ mixin reference-layout(title,path)
 							li: a(href="/pillars/docs/reference/modelator.jade") Modelator
 							li: a(href="/pillars/docs/reference/mailer.jade") Mailer
 							li: a(href="/pillars/docs/reference/cron.jade") Cron
+					li: a(href="/pillars/docs/reference/plugins.jade") Plugins en Pillars.js
 
 		#contents
 			block
@@ -93,33 +95,15 @@ mixin tutorial-layout(title,path)
 				ul
 					li: a(href="/pillars/docs/tutorials/instalacion.jade") Instalación
 					li: a(href="/pillars/docs/tutorials/index.jade") Hola Mundo
-					li: a(href="/pillars/docs/tutorials/confentorno.jade") Configuración del entorno
-					li: a(href="/pillars/docs/tutorials/confentorno.jade") Añadiendo Controladores
-					li: a(href="/pillars/docs/tutorials/confentorno.jade") Trabajando con Controladores
+					li: a(href="/pillars/docs/tutorials/configuracion-entorno.jade") Configuración de ENV
+					li: a(href="/pillars/docs/tutorials/enrutado.jade") Enrutado
 					li: a(href="/pillars/docs/tutorials/client-server.jade") Envío datos Cliente-Servidor
 					li: a(href="/pillars/docs/tutorials/server-client.jade") Envío datos Servidor-Cliente
-					li
-						a(href="#") Bases de Datos
-						ul
-							li: a(href="#") Conexión
-							li: a(href="#") Consulta
-							li: a(href="#") Insercción
-							li: a(href="#") Borrado
-
-					li: a(href="/pillars/docs/tutorials/i18n.jade") i18n
-
-					li
-						a(href="#") Autenticación de usuarios
-						ul
-							li: a(href="#") htaccess 
-							li: a(href="#") Mediante base de datos
-					li
-						a(href="#") CRUD
-						ul
-							li: a(href="#") Básico
-							li: a(href="#") Multi-idioma
-							li: a(href="#") Con seguridad
-
+					li: a(href="/pillars/docs/tutorials/xx.jade") Autenticación de usuarios
+					li: a(href="/pillars/docs/tutorials/xx.jade") Conexión a base de datos
+					li: a(href="/pillars/docs/tutorials/xx.jade") Templating
+					li: a(href="/pillars/docs/tutorials/i18n.jade") Internacionalización
+					li: a(href="/pillars/docs/tutorials/xx.jade") CRUD
 
 			
 		#contents

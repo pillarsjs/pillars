@@ -1,0 +1,158 @@
+include ../.layout.jade
+
+doctype html
+html(lang=gw.language)
+	- var path = [{label:'Pillars.js Reference',url:'/pillars/docs/reference/'},{label:'Plugins en Pillars.js',url:'/pillars/docs/reference/plugins.jade'}];
+	+reference-layout("Pillars.js Reference - Plugins en Pillars.js - 'make it easy!'",path)
+
+		#title
+			h1 Plugins en Pillars.js
+				em  Pillars.js Reference
+			a.source(href="https://github.com/bifuer/pillars/blob/master/lib/plugins") Source
+
+		//- Summary
+		section.summary
+			h2#summary Sumario
+			:markdown
+				El framework Pillars.js en su versión actual ofrece una serie de plugins integrados: estan en orden de ejecución
+				
+
+				+ **Gestión de la ruta para múltiples idiomas**. `http://www.pillarsjs.com/en/entorno/` `http://www.pillarsjs/de/entorno`
+				+ **Codificaciones no válidas**.
+				+ **Plugin de enroutado**. Responsable de todo el sistema de enrutado de Pillars.js.
+				+ **Máximo tamaño permitido de la petición HTTP**. Permite definir para un controlador concreto (objeto route) su tamaño máximo de petición permitido. 
+				+ **Compatibilidad con CORS**. Establece compatibilidad con CORS.
+				+ **Compatibilidad con el método OPTIONS** del protocolo HTTP.
+				+ **Sistema de sesiones**. Permite establecer sesiones de usuario.
+				+ **Sistema de usuarios**. Permite de una forma sencilla tener un sistema de usuarios con template de login integrado.
+				+ **Lector del cuerpo de la petición HTTP**.
+	
+		
+		
+		section.plugin
+			h2#plugin-langpath Gestión de la ruta para múltiples idiomas
+			
+			:markdown
+				Plugin: [langPath.js](https://github.com/bifuer/pillars/blob/master/lib/plugins/langPath.js)
+
+				Este plugin lee la ruta que llega del request y detecta si en el comienzo de la ruta existe algún identificador de idioma de los declarados en [ENV.languages](/pillars/docs/reference/entorno.jade#property-languages), y que éste no sea el primero.
+
+				Este plugin actúa sobre gangway y se ejecuta el primero de la [Cadena de Plugins](/pillars/docs/reference/vision-global.jade#description-plugins), por lo que actúa antes que el plugin router.js.
+				Una vez hecho eso setea [gw.language](/pillars/docs/reference/gangway.jade#property-language) al idioma que ha eliminado.
+
+
+		section.plugin
+			h2#plugin-encoding Codificaciones no válidas
+			
+			:markdown
+				 Plugin: [encoding.js](https://github.com/bifuer/pillars/blob/master/lib/plugins/encoding.js). 
+
+				 Plugin que devuelve un error 406 en caso de que la codificación no [gw.encoding](/pillars/docs/reference/gangway.jade#property-encoding) tenga una codificación no válida.
+
+		section.plugin
+			h2#plugin-router Plugin de enroutado
+			
+			:markdown
+				 Plugin: [router.js](https://github.com/bifuer/pillars/blob/master/lib/plugins/router.js).
+
+				 Este plugin comprueba qué objeto route de los añadidos a ENV coincide con la petición de usuario. 
+
+				 Las propiedades que comprueba son: path, host, method y protocolo http o https.
+
+				 Si en alguno de los objetos route raíz, añadidos a ENV directamente, coindice parte de la ruta, sigue comparando con los hijos.
+
+				 Este plugin guarda una referencia a todos los objetos route por los que va pasando en gw.routing, propiedad no nativa en el objeto gangway y que añade este plugin al objeto.
+
+				 A medida que pasa por la estructura de objetos route anidados, guarda manteniendo la herencia la configuración de cada route. En gw.routing encontramos: 
+				 + options:  configuración de cada route. Finalmente queda un listado de propiedades heredadas. 
+				 + Check: chequeo rápido de los options. 
+				 + Routes: array de route por los que pasa. 
+				 + handlers: handler del route que atiende finalmente la petición.
+
+
+		section.plugin
+			h2#plugin-maxUploadSize Máximo tamaño permitido de la petición HTTP
+			
+			:markdown
+				Plugin [maxUploadSize.js](https://github.com/bifuer/pillars/blob/master/lib/plugins/maxUploadSize.js) 
+
+				Para cualquier petición de usuario se comprueba que el tamaño del cuerpo de la petición no supere el tamaño declarado en [ENV.server.maxUploadSize](http://localhost:3000/pillars/docs/reference/entorno.jade#property-server). 
+
+				Este plugin permite definir para un objeto route concreto el tamaño máximo de la petición, obviando por lo tanto el declarado en ENV.server.maxUploadSize. 
+
+				Si el route tiene en su configuración la propiedad `maxsize` seteada a un valor, será este valor el tamaño máximo permitido de la petición para ese route.
+
+				El error devuelto en el caso de superar el tamaño es un 413.
+
+			:highlight(lang='javascript')
+				var route = new Route({maxsize:10*1024*1024}, function(gw){...}); 
+
+		section.plugin
+			h2#plugin-cors Compatibilidad con CORS
+			
+			:markdown
+				Plugin: [CORS.js](https://github.com/bifuer/pillars/blob/master/lib/plugins/CORS.js).
+
+				Cross-origin resource sharing. Compartición de recursos entre distintos dominios. 
+
+				Permite definir si un controlador (objeto route) tendrá en cuenta CORS, mediante la propiedad `cors`.
+
+			:highlight(lang='javascript')
+				// Todos los dominios va a poder realizar peticiones a este route.
+				var route = new Route({cors:false}, function(gw){...}); 
+
+				// Ningún dominio va a pdoer realizar peticiones a este route.
+				var route = new Route({cors:true}, function(gw){...}); 
+
+				// Solo el dominio www.pillarsjs.com va a poder realizar peticiones a este route concreto.
+				var route = new Route({cors:['www.pillarsjs.com']}, function(gw){...}); 
+
+			:markdown
+
+
+		section.plugin
+			h2#plugin-options Compatibilidad con el método OPTIONS
+			
+			:markdown
+				Plugin: [OPTIONS.js](https://github.com/bifuer/pillars/blob/master/lib/plugins/OPTIONS.js)
+
+				Este plugin establece compatibilidad con el método OPTIONS del protocolo http.
+
+
+		section.plugin
+			h2#plugin-sessions Sistema de sesiones
+			
+			:markdown
+				Plugin: [sessions.js](https://github.com/bifuer/pillars/blob/master/lib/plugins/sessions.js)
+
+				Permite mediante la propiedad `session:true` activar las sesiones en un route dado y/o en toda su descendencia, ya que esta propiedad se hereda de nodos padres a nodos hijos en la estructura de árbol de los objetos route.
+
+				Para utilizar sesiones es necesario que esté configurada una base de datos en [ENV.database](/pillars/docs/reference/entorno.jade#property-database) y arrancada.
+
+				Una vez que se inicia la sesion se envía una cookie encriptada al cliente. La clave genérica para realizar las encriptaciones se encuentra en ENV.crypt.password. 
+
+				Este plugin también setea en gw.session los datos de la sesión. gw.session, no es una propiedad nativa de gangway, sino que es creada por este plugin.
+
+
+		section.plugin
+			h2#plugin-accounts Sistema de usuarios
+			
+			:markdown
+				Plugin: [accounts.js](https://github.com/bifuer/pillars/blob/master/lib/plugins/accounts.js)
+
+				Permite activar cuentas de usuario en la aplicación. Este plugin activa el plugin de sesiones sessions.js, por lo que necesita que exista una base de datos activa.
+
+				Este plugin setea gw.user con los datos del usuario. 
+
+
+		section.plugin
+			h2#plugin-bodyreader Lector del cuerpo de la petición HTTP
+			
+			:markdown
+				Plugin: [bodyReader.js](https://github.com/bifuer/pillars/blob/master/lib/plugins/bodyReader.js)
+
+				Lee el cuerpo de la petición y lo setea en [gw.content.params](/pillars/docs/reference/gangway.jade#property-content). 
+
+				Para que el controlador acepte ficheros se debe establecer la propiedad `multipart: true`. Los ficheros de la petición son seteados en [gw.files](/pillars/docs/reference/gangway.jade#property-files)
+
+			

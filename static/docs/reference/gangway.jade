@@ -6,7 +6,7 @@ html(lang=gw.language)
 	+reference-layout("Pillars.js Reference - Objeto gangway - 'make it easy!'",path)
 
 		#title
-			h1 Clase Gangway
+			h1 Objeto Gangway
 				em  Pillars.js Reference
 			a.source(href="https://github.com/bifuer/pillars/blob/master/lib/gangway.js") Source
 
@@ -14,9 +14,11 @@ html(lang=gw.language)
 		section.summary
 			h2#summary Sumario
 			:markdown
-				Pillars.js **genera de forma automática** un objeto gangway en cada petición, por lo que esta clase nunca será instanciada por el desarrollador. Este objeto está disponible en el *controller* tanto del objeto route, como en el objeto plugin.
-				
-				El **objeto gangway** contiene todos los datos de la solicitud del cliente.	
+				Pillars.js **genera de forma automática** un objeto gangway en cada petición. Contiene como propiedades los **datos del request parseados** y métodos para la respuesta. 
+
+				Este objeto está disponible en el *handler* tanto del **objeto route**, como en el **objeto plugin**.
+
+				Olvida el request y el response, ahora con gangway lo tienes todo parseado, directo y sin complicaciones.
 				
 		
 		//- Syntax
@@ -25,11 +27,34 @@ html(lang=gw.language)
 			:highlight(lang='javascript')
 				var home = new Route(function(gw){
 
+					var POST = gw.content.params; 
+
+					var GET = gw.query;
+					/*
+					{
+						id: '37',
+						value: 'lipsum'
+					}
+					*/
+
+					var cookie = gw.cookie;
+
+					var userAgent = gw.ua;
+					/*
+					ua:{ 
+						mobile: false,
+						os: 'Windows NT 6.1; WOW64',
+						engine: 'Blink',
+						browser: 'Chrome'
+					}
+					*/
+
+
 					var id = gw.id; 			// id del objeto gangway para la petición.
 					var ip = gw.ip;			// ip del cliente
 					var browserLang = gw.language;	// Primer idioma del navegador del cliente 
 					var cors = gw.cors; 			// Gestion de orígenes cruzados. 
-					var method = gw.method;			// Método de la petición					
+					var method = gw.method;		// Método de la petición  GET y/o POST					
 					var encoding = gw.encoding; 		// encoding que se utiliza para el envío al cliente.
 
 					gw.send("<pre>"+util.inspect(gw)+"</pre>");
@@ -41,10 +66,26 @@ html(lang=gw.language)
 		section.description
 			h2#description Descripción
 			:markdown
-				Lorem Ipsum
+				Gangway parsea los datos del request y los setea en sus propiedades de una forma usable y accesible directamente. 
 
-			:highlight(lang='javascript')
-				Lorem ipsum					
+				Algunos parses, como el parser del contenido de la petición HTTP, es posible desactivarlos para que no ocupen tiempo de proceso, si fuera necesario. 
+
+				Los Parses que realiza el objeto gangway son: 
+				+ **Parser del contenido de la Petición HTTP**. Setea la propiedad [`gw.content`](#property-content), por lo que podremos acceder directamente al POST con la propiedad `gw.content.params` en formato JSON, por ejemplo.
+
+				+ **Parser de las cabeceras HTTP accepts**. Teniendo toda esta información en [`gw.accepts`]() y pudiendo acceder directamente, entre otras cosas, a los idiomas que espera el navegador en `gw.accepts.language`. En este caso, también se resuelve el idioma que va a utilizar el servidor para el response y lo setea en `gw.language`. 
+				
+				+ **Parser de Ranges**. Gracias a este Pillars.js es compatible con HTTP-ranges, que permite entre otras cosas enviar archivos de gran tamaño con pausa y stop del navegador, o emitir un video en streaming.
+
+				+ **Parser auth**. Ofrece en la propiedad `gw.auth` un objeto JSON con el user y pass enviados como respuesta a una petición de autenticación HTTP básica. Esta petición HTTP de autenticación básica se realiza con el método [`gw.authenticate()`](#method-authenticate).
+
+				+ **Parser User Agent**. Acceso directo en un único string al motor de renderizado, navegador que usa, si es móvil o no, y os del cliente.
+
+				+ **Parser del encabezado cookie del request**. Deja las cookies setedas en un objeto JSON en la propiedad `gw.cookie`.
+
+
+				
+			
 
 		//- Properties
 		section.properties
@@ -150,8 +191,8 @@ html(lang=gw.language)
 					:markdown
 						Encabezados accepts de la solicitud HTTP. `.accepts` devuelve un objeto con: 
 						+ gw.accepts.types: **Array** que contiene los Content-types que espera como respuesta el navegador en la solicitud.
-						+ gw.accepts.language: **Array** que contiene los idiomas que espera el navegador.
-						+ gw.accepts.encodings: **Array** que contiene los encodigns que soporta el navegador.
+						+ gw.accepts.language: **Array** que contiene los idiomas que espera el navegador. El idioma que utilizará el servidor en el envío se setea en [`gw.language`](#property-language).
+						+ gw.accepts.encodings: **Array** que contiene los encodigns que soporta el navegador. El encoding que utilizará el servidor se setea en [`gw.encoding`](#property-encoding).
 
 			//- Property
 			section.property
@@ -163,7 +204,7 @@ html(lang=gw.language)
 				section.description
 					:markdown
 						Cabeceras HTTP que tienen que ver con el cuerpo de la petición. 
-						+ type: content-type. de la petición del usuario.
+						+ type: Content-type de la petición del usuario.
 						+ length: tamaño en bytes del cuerpo de la solicitud del cliente.
 						+ boundary: aparece solo en las solicitudes POST del tipo multipart-formdata. Código único.
 						+ params: gw lo deja vacío. El Plugin Content reader es el que se encarga de completarlo con las variables que recibe del POST del usuario, ficheros incluidos.
@@ -518,7 +559,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Encoding que va a usar el servidor para la respuesta. Está basado en [gw.accepts.encodings](#accepts). 
+						Encoding que va a usar el servidor para la respuesta. Está basado en [gw.accepts.encodings](#property-accepts). 
 
 
 			//- Property
@@ -530,7 +571,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Idioma que va a usar el servidor para la respuesta.
+						Idioma que va a usar el servidor para la respuesta.  Está basado en [gw.accepts.languages](#property-accepts). 
 
 
 			//- Property
@@ -744,17 +785,16 @@ html(lang=gw.language)
 						.setCookie(name, value, config);
 					:markdown
 						+ name: **String** nombre de la cookie.
-						+ value: 
+						+ value: **String** valor de la cookie.
 						+ config: **objeto** que puede contener los siguientes parámetros; objeto de configuración de la cookie.
-						ver la documentacón de las cookies, en wikipedia vienen los parámetros opcionales.
-							+ domain: donde va a funiconar la cookie.
-							+ path: 
+							+ domain: donde va a funcionar la cookie.
+							+ path: define el alcance de la cookie. (Un path dentro de un dominio, por ejemplo)
 							+ expires: cuando expira. 
-							+ maxAge: maximo numero de segundos que debe tener la cookie.
+							+ maxAge: máximo número de segundos que debe tener la cookie.
 							+ secure: si es segura.
 							+ httpOnly: si es una cookie solo compatible con el protocolo http.
 
-
+			//
 				//- Method syntax
 				section.example
 					h4 Ejemplo

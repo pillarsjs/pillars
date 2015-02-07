@@ -239,7 +239,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Listado de manejadores de un route. Un route lo podemos crear con varios manejadores, conocidos como **middleware**. 
+						Listado de manejadores de un route. Los usual es que un objeto route tenga un sólo manejador, aunque es posible crearlo con varios manejadores, conocidos como **middleware**. 
 
 					:highlight(lang='javascript')
 						//Creación del middleware
@@ -262,6 +262,8 @@ html(lang=gw.language)
 						//Imprime: Hola Mundo!!!
 
 					:markdown
+						Si bien es cierto, que deberemos sopesar la opción de incluir manejadores intermedios de esta forma, o incluir directamente un Plugin.
+
 						La propiedad `.handlers` devuelve un Array con todos los manejadores del route. Podemos realizar modificaciones de la propiedad: 
 
 
