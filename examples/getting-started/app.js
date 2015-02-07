@@ -144,6 +144,86 @@ Utilities.addRoute(new Route({
 }));
 
 
+
+
+
+
+
+
+
+
+
+
+var usersSchema = new modelator.Schema({
+	collection : 'users',
+	filter : ['_id','user','firstname','lastname'],
+	indexes : [],
+	uniques : [],
+	headers : ['_id','user','firstname','lastname','password'],
+	keys: {
+		get    : '',
+		insert : '',
+		update : '',
+		remove : ''
+	}
+})
+	.addField(new modelator.Text({id:'user'}))
+	.addField(new modelator.Text({id:'firstname'}))
+	.addField(new modelator.Text({id:'lastname'}))
+	.addField(new modelator.Text({id:'password'}))
+	.addField(new modelator.Text({id:'keys'}))
+;
+
+var usersBackend = modelator.schemaAPI(new Route({id:'usersBackend',path:'/users'}),usersSchema);
+ENV.add(usersBackend);
+
+
+
+
+
+var usersLogin = new Route({id:'pillarsLogin'})
+	.addRoute(new Route({id:'login',path:'/login',method:['get','post'],session:true},function(gw){
+		var redirect = gw.params.redirect;
+		if(typeof gw.params.redirect === 'undefined' && gw.referer){
+			redirect = gw.referer;
+		}
+		if(typeof gw.params.user === "string" && typeof gw.params.password === "string"){
+			var login = {
+				user : gw.params.user,
+				password : gw.params.password
+			};
+			var users = DB.collection('users');
+			users.findOne({user:login.user,password:login.password},function(error, result) {
+				if(!error && result){
+					gw.session.user = result._id.toString();
+					//gw.redirect(redirect);
+					gw.render(paths.resolve(__dirname,'../templates/login.jade'),{redirect:redirect,msg:'login.ok'});
+				} else {
+					gw.render(paths.resolve(__dirname,'../templates/login.jade'),{redirect:redirect,msg:'login.fail'});
+				}
+			});
+		} else {
+			gw.render(paths.resolve(__dirname,'../templates/login.jade'),{redirect:redirect});
+		}
+	}));
+
+ENV.add(usersLogin);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 var sampleSchema = new modelator.Schema({
 	collection : 'sample',
 	limit : 10,

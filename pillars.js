@@ -1,6 +1,6 @@
 
 // Setup Logger & Textualization
-var logger = global.logger = require('./lib/Logger');
+var logger = global.Logger = require('./lib/Logger');
 logger.addLvl('log','green').addLvl('info','green').addLvl('alert','orange').addLvl('error','red').addLvl('warn','red');
 logger = logger.addGroup('pillars');
 
@@ -41,43 +41,24 @@ global.mailer = require('./lib/Mailer');
 // Cron
 //global.cron = require('./lib/Cron');
 
-// Precasts
-global.precasts = require('./lib/precasts');
 
+// ---------- Pillars static directory -----------------
 
-// --------------------------------------------
-// Pillars addons
-
-var usersSchema = new modelator.Schema({
-	collection : 'users',
-	filter : ['_id','user','firstname','lastname'],
-	indexes : [],
-	uniques : [],
-	headers : ['_id','user','firstname','lastname','password'],
-	keys: {
-		see: '',
-		edit: '',
-		manage: ''
+var paths = require('path');
+var pillarsStatic = new Route({
+	id:'pillarsStatic',
+	path:'/pillars/*:path',
+	directory:{
+		path:paths.resolve(__dirname,'./static'),
+		listing:true
 	}
-})
-	.addField(new modelator.Text({id:'user'}))
-	.addField(new modelator.Text({id:'firstname'}))
-	.addField(new modelator.Text({id:'lastname'}))
-	.addField(new modelator.Text({id:'password'}))
-	.addField(new modelator.Text({id:'keys'}))
-;
+});
+ENV.add(pillarsStatic);
 
-var usersBackend = modelator.schemaAPI(new Route({id:'usersBackend',path:'/users'}),usersSchema);
+// --------------- Polyfilling -------------------------
 
-ENV
-	.add(precasts.pillarsLogin)
-	.add(precasts.pillarsStatic)
-	.add(usersBackend)
-;
-
-
-
-
-
+Number.isInteger = Number.isInteger || function(value) {
+	return typeof value === "number" && isFinite(value) && Math.floor(value) === value;
+};
 
 
