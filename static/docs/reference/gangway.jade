@@ -639,7 +639,9 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Propiedad etag para la respuesta.
+						Propiedad etag. Cuando el servidor va a enviar la respuesta cifra mediante ENV.encrypt() el etag del recurso y lo envía al cliente. 
+
+						Cuando recibe una solicitud, desencripta el etag mediante ENV.decrypt();
 
 
 	
