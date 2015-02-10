@@ -2,3 +2,4 @@ node_modules
 localhost.crt
 localhost.csr
 localhost.key
+pillars.log

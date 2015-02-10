@@ -103,7 +103,7 @@ Utilities.addRoute(new Route({
   session: true // Algunos Plugins hacen uso de propiedades de ruta, en este caso la propiedad session activa el Plugin Sessions.
 },function(gw){
   // El Plugin Sessions nos aporta la propiedad .session de Gangway que nos permitira guardar datos entre diferentes solicitudes.
-  gw.session.contador = gw.session.contador || 0; // Inciamos la vriable contador.
+  gw.session.contador = gw.session.contador || 0; // Inciamos la variable contador.
   gw.session.contador++;
   gw.html('Contador:<strong>'+gw.session.contador+'</strong>');
 }));
@@ -378,4 +378,6 @@ textualization.load('schemas.system',{
 });
 
 /* */
+
+/* pillars.log 2>&1 node app.js & */
 

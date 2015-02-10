@@ -81,7 +81,7 @@
 		}
 	},
 	'gangway':{
-		'close':"%(method)s:".cyan+" %(host)s:%(port)s%(path)s".white+" [%(code)s]".cyan+"  %(size)sbytes %(timer)sms".grey,
+		'close':"%(method)s:".cyan+" %(host)s:%(port)s%(req.url)s".white+" [%(statusCode)s]".cyan+"  %(size)sbytes %(responseTime)sms".grey,
 		'error':"Gangway error",
 		'error.h1':"Error %(code)s %(explain)s, disculpe las molestias"
 	},
