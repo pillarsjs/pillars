@@ -14,9 +14,13 @@ html(lang=gw.language)
 		section.summary
 			h2#summary Sumario
 			:markdown
-				Mediante objetos de la clase Route se declaran **controladores** que actuarán en una ruta concreta. La ruta en la que actuará, así como otras opciones de configuración del objeto, se le pasan como *conjunto de parámetros* en la creación. 
+				El sistema de enrutado de Pillars.js se basa en objetos de la clase Route. La **creación del objeto** acepta como parámetros una *configuración* y el *handler*. El *handler* se ejecutará cuando la **petición de usuario** coincida con la *configuración* del objeto.
 
-				Los objetos route son anidables por lo que **organizan y agrupan funcionalidades** de la aplicación.
+				Los objetos de la clase Route **permiten crear el enrutado de la aplicación** dotando a ésta de un **enrutado dinámico** y por lo tanto, pudiendo **conectar** y **deconectar** rutas de forma dinámica, es decir, con la aplicación en funcionamiento. Los objetos route se añaden o conectan a la aplicación mediante `ENV.addRoute()` y se desconectan mediante `ENV.removeRoute()`, dejando éste de estar disponible. 
+
+				También son **anidables** por lo que **organizan y agrupan funcionalidades** de la aplicación. Tienen la versatilidad de crear estructuras arbóreas donde el nodo raíz será el que se conecte a la aplicación mediante `ENV.addRoute()` ofreciendo la funcionalidad implementada en todo el árbol de n-nodos. Las estructuras creadas podrán ser árboles n-arios de altura h. El sistema de enrutado, por lo tanto, no tendrá que buscar coincidencia en todos los *parámetros de configuración* de todas las rutas añadidas de forma lineal y completa, sino que recorrerá sólo los hijos directos del nodo raíz en busca de coincidencias. 
+
+				El [Plugin routes](/pillars/docs/reference/plugins.jade#plugin-router) es el encargado de realizar el enrutado en base a los objetos route añadidos a `ENV`.
 				
 			
 		//- Syntax
@@ -30,11 +34,11 @@ html(lang=gw.language)
 					+ [id](#property-id): Identificador del route.
 					+ [path](#property-path): path al que responderá.
 					+ [host](#property-host): nombre o ip de host que atenderá.
-					+ [priority](#property-priority): prioridad del route.
-					+ [active](#property-active): si está activo o no.
-					+ [method](#property-method): método GET y/o POST.
+					+ [active](#property-active): si está activo o no. En el caso de no estar activo, no responderá.
+					+ [method](#property-method): **método/s de la petición HTTP** que acepta el route. Acepta uno o varios. Soporta HEAD, GET, POST, PUT, DELETE, TRACE, OPTIONS y CONNECT.
+					+ [https](#property-https): define si el route responderá o no en el servidor https definido en [`ENV.server`](/pillars/docs/reference/entorno.jade#property-server).
 
-				+ **handler**: Opcional. Manejador que se ejecutará para el route concreto. El handler siempre recibe como parámetro el [objeto gangway](gangway.jade).
+				+ **handler**: Opcional. Manejador que se ejecutará siempre y cuando la petición de usuario coincida con la *configuración* del objeto route. El handler siempre recibe como parámetro el [objeto gangway](gangway.jade).
 
 
 			:highlight(lang='javascript')
@@ -89,10 +93,14 @@ html(lang=gw.language)
 			:markdown
 				La arquitectura de la aplicación web se define mediante objetos route. Son anidables, editables en ejecución y se pueden eliminar, y para ello necesitaremos siempre el identificador del objeto. 
 
-				El objeto se puede declarar sin configuración, por lo que toma los valores predeterminados. También se puede declarar sin manejador, por lo que en este caso el objeto route actuaría como elemento organizativo. 				
+				Los *parámetros de configuración* con los que es instanciado el objeto route es de vital importancia para que se ejecuten, o no, **Plugins** instalados en la aplicación, ya que serán estos parámetros los que disparen los plugins pertinentes. Por lo tanto los plugins se ejecutan, ante una configuración concreta de un objeto route. De esta forma tendremos instalados plugins en el sistema, y no tendrán porqué ejecutarse todos necesariamente, dependerá de la configuración del route y de que esta configuración coindica con la petición de usuario. 
+
+				El objeto se puede declarar sin configuración, por lo que toma los valores predeterminados. También se puede declarar sin manejador, por lo que en este caso el objeto route actuaría como **elemento organizativo**.
 
 			:markdown
 				> Los parámetros de configuración del route adquieren bastante importancia cuando combinamos objetos route y plugin, ya que será en este objeto de configuración *configuration* donde activaremos los plugins que requiramos en el route.
+
+
 						
 		//- Properties
 		section.properties
@@ -127,7 +135,9 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Path al que responderá el route. Por defecto es '/'. **String**.
+						Path al que responderá el route. Por defecto es '/'. **String**. 
+
+						Están soportadas las rutas parametrizadas por lo que están permitidas las formas `path:'/*:var'`, `path:'/:var'`, etc. Para más información sobre rutas parametrizadas consulta [este tutorial](/pillars/docs/tutorials/client-server.jade#example-03).
 
 
 			//- Property
@@ -139,11 +149,35 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						Método `GET` y/o `POST` que acepta el route. Para un sólo método acepta un **String**, para dos métodos se setea como **Array**.
+						**Método de petición** que acepta el route. Para un sólo método acepta un **String**, para dos métodos se setea como **Array**.
 
 					:highlight(lang='javascript')
 						route.method = "GET"; //sólo acepta GET 
 						route.method = ["GET","POST"]; //acepta GET y POST
+
+					:markdown
+						La propiedad `.method` es **heredable** en una estructura arbórea de objetos route. Sigue el siguiente patrón: 
+						+ Si el padre 
+
+
+				//- Property
+			section.property
+				h3#property-https: code
+					small Route.prototype
+					| .https
+
+				//- Property description
+				section.description
+					:markdown
+						Esta propiedad define si el route responderá en https, http o ambas.
+						La propiedad `https` podrá tomar 2 valores: 
+						+ **true**: el objeto route sólo responde en https.
+						+ **false**: el objeto route sólo responde en http.
+
+						Si no se define la propiedad https el valor será undefined, por lo que el objeto route responderá tanto para http como para https.
+
+					:highlight(lang='javascript')
+						route.https = true;
 
 			//- Property
 			section.property

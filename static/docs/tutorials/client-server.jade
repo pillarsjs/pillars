@@ -3,10 +3,10 @@ include ../.layout.jade
 doctype html
 html(lang=gw.language)
 	- var path = [{label:'Pillars.js Tutorials',url:'/pillars/docs/tutorials/'},{label:'Cliente-Servidor',url:'/pillars/docs/tutorials/client-server.jade'}];
-	+tutorial-layout("Pillars.js Tutorials - Envío de datos de Cliente a Servidor - 'make it easy!'",path)
+	+tutorial-layout("Pillars.js Tutorials - Métodos de petición HTTP - 'make it easy!'",path)
 
 		#title
-			h1 GET, POST y Path
+			h1 Métodos de petición
 				em  Pillars.js Tutorials
 		
 
@@ -14,20 +14,20 @@ html(lang=gw.language)
 		section.summary
 			h2#summary Sumario
 			:markdown
-				Las dos formas en las que se pueden enviar datos del cliente al servidor son: 
+				El protocolo HTTP define 8 métodos de petición: HEAD, GET, POST, PUT, DELETE, TRACE, OPTIONS Y CONNECT, todos están soportados por Pillars.js. En este tutorial vamos a ver dos formas de enviar datos del cliente al servidor: 
 
 				+ Query String. *(El conocido GET)*
 				+ Contenido de la solicitud. *(El conocido POST)*
 				
-				En el protocolo HTTP existen varios [métodos de petición](http://es.wikipedia.org/wiki/Hypertext_Transfer_Protocol#M.C3.A9todos_de_petici.C3.B3n), en concreto 8, aunque usualmente se han usado en el desarrollo sólo GET y POST.
+				> Más información [8 métodos de petición del Protocolo HTTP](http://es.wikipedia.org/wiki/Hypertext_Transfer_Protocol#M.C3.A9todos_de_petici.C3.B3n).
 
-				Además, el framework permite el uso de rutas parametrizadas. 
+				Además, el framework permite el uso de rutas parametrizadas, que veremos en el último apartado. 
 
 
 
 		//- Examples
 		section.example-01
-			h2#examples Query String
+			h2#example-01 Query String
 
 			
 			:markdown
@@ -44,7 +44,7 @@ html(lang=gw.language)
 
 		//- Examples
 		section.example-02
-			h2#examples Contenido de la solicitud
+			h2#example-02 Contenido de la solicitud
 
 			:markdown
 				Cuando se envía al servidor un formulario por el método POST, los datos llegan en gw.content.params. 
@@ -53,8 +53,8 @@ html(lang=gw.language)
 				gw.content.params
 
 		//- Examples
-		section.example-02
-			h2#examples Rutas parametrizadas
+		section.example-03
+			h2#example-03 Rutas parametrizadas
 
 			:markdown
 				Cuando declaramos un objeto route, uno de los parámetros de la configuración es el path. Éste admite varias formas de configuración, que son las siguientes: 

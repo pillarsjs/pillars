@@ -19,13 +19,14 @@ html(lang=gw.language)
 
 				+ **Gestión de la ruta para múltiples idiomas**. `http://www.pillarsjs.com/en/entorno/` `http://www.pillarsjs/de/entorno`
 				+ **Codificaciones no válidas**.
-				+ **Plugin de enroutado**. Responsable de todo el sistema de enrutado de Pillars.js.
+				+ **Plugin de enrutado**. Responsable de todo el sistema de enrutado de Pillars.js.
 				+ **Máximo tamaño permitido de la petición HTTP**. Permite definir para un controlador concreto (objeto route) su tamaño máximo de petición permitido. 
 				+ **Compatibilidad con CORS**. Establece compatibilidad con CORS.
 				+ **Compatibilidad con el método OPTIONS** del protocolo HTTP.
-				+ **Sistema de sesiones**. Permite establecer sesiones de usuario.
-				+ **Sistema de usuarios**. Permite de una forma sencilla tener un sistema de usuarios con template de login integrado.
+				+ **Sistema de Sesiones**. Permite establecer sesiones de usuario.
+				+ **Sistema de Usuarios**. Permite de una forma sencilla tener un sistema de usuarios con template de login integrado.
 				+ **Lector del cuerpo de la petición HTTP**.
+				+ **Directorio estático**. Ofrece el soporte de directorio estático de ficheros.
 	
 		
 		
@@ -50,24 +51,29 @@ html(lang=gw.language)
 				 Plugin que devuelve un error 406 en caso de que la codificación no [gw.encoding](/pillars/docs/reference/gangway.jade#property-encoding) tenga una codificación no válida.
 
 		section.plugin
-			h2#plugin-router Plugin de enroutado
+			h2#plugin-router Plugin de enrutado
 			
 			:markdown
 				 Plugin: [router.js](https://github.com/bifuer/pillars/blob/master/lib/plugins/router.js).
 
 				 Este plugin comprueba qué objeto route de los añadidos a ENV coincide con la petición de usuario. 
 
-				 Las propiedades que comprueba son: path, host, method y protocolo http o https.
+				 Las propiedades que comprueba son: **path**, **host**, **method** y **protocolo http o https**.
 
-				 Si en alguno de los objetos route raíz, añadidos a ENV directamente, coindice parte de la ruta, sigue comparando con los hijos.
+				 Si los *parámetros de configuración* de alguno de los objetos route añadidos directamente a `ENV` coindice con la petición del usuario, el plugin routes sigue comparando con los hijos.
 
-				 Este plugin guarda una referencia a todos los objetos route por los que va pasando en gw.routing, propiedad no nativa en el objeto gangway y que añade este plugin al objeto.
+				 Este plugin guarda una referencia a todos los objetos route por los que va pasando en **gw.routing**, propiedad no nativa en el objeto gangway y que añade este plugin al objeto gangway.
 
-				 A medida que pasa por la estructura de objetos route anidados, guarda manteniendo la herencia la configuración de cada route. En gw.routing encontramos: 
-				 + options:  configuración de cada route. Finalmente queda un listado de propiedades heredadas. 
-				 + Check: chequeo rápido de los options. 
-				 + Routes: array de route por los que pasa. 
-				 + handlers: handler del route que atiende finalmente la petición.
+				 A medida que pasa por la estructura arbórea de objetos route, guarda (manteniendo la herencia) la configuración de cada route. En gw.routing encontramos: 
+				 + **options**:  configuración de cada route. Finalmente queda un listado de propiedades heredadas. 
+				 + **Check**: chequeo rápido de los options. 
+				 + **Routes**: array de route por los que pasa. 
+				 + **handlers**: handler del route que atiende finalmente la petición.
+
+
+				 Hay que tener en cuenta los siguientes casos: 
+				 + **Propiedad host** definida en los parámetros de configuración del route. Si no hay coincidencia en el host definido con el host de la petición de usuario, el plugin no seguirá buscando coincidencias en la descendencia de este nodo.
+				 + **Propiedad method** definida en los parámetros de configuración del route. Si hay coincidencia en el path, aunque el método definido en la configuración del route no coincida con el método de la petición de usuario, el plugin seguirá buscando coincidencias en la descendencia de este nodo. Esta propiedad se hereda en la estructura arbórea de objetos route, de forma que si el padre tiene definido el método, el hijo lo heredará en caso de no tenerlo definido. En caso de que padre e hijo tengan definidos ambos la propiedad method prevalecerá la del hijo.  
 
 
 		section.plugin
@@ -156,3 +162,33 @@ html(lang=gw.language)
 				Para que el controlador acepte ficheros se debe establecer la propiedad `multipart: true`. Los ficheros de la petición son seteados en [gw.files](/pillars/docs/reference/gangway.jade#property-files)
 
 			
+		section.plugin
+			h2#plugin-directory Directorio estático
+			
+			:markdown
+				Plugin: [directory.js](https://github.com/bifuer/pillars/blob/master/lib/plugins/directory.js)
+
+				Permite servir un directorio estático del servidor.
+
+				Para añadir a la aplicación un directorio estático añadimos un objeto route sin manejador (handler) y con una configuración específica para activar este plugin:
+
+			:highlight(lang='javascript')
+				// ---------- Pillars static directory -----------------
+
+				var paths = require('path');
+				var pillarsStatic = new Route({
+					id:'pillarsStatic',
+					path:'/pillars/*:path',
+					directory:{
+						path:paths.resolve(__dirname,'./static'),
+						listing:true
+					}
+				});
+				ENV.add(pillarsStatic);
+
+			:markdown
+				La configuración del objeto route debe ser la siguiente para activar el Plugin Directory: 
+				+ **path**. El path espera el parámetro path. *path:'/staticDirecotyName/*:path'*
+				+ **directory**. La propiedad directory que se añade a route consta de dos parámetros: path y listing, para especificar el directorio estático del servidor, y para permitir que se liste el directorio respectivamente.
+
+				> Actualmente, versión beta de Pillars.js, Pillars.js se arranca con un directorio estático montado en /pillars/, el código está en [pillars.js](https://github.com/bifuer/pillars/blob/master/pillars.js#L45) y es el del ejemplo.

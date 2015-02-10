@@ -131,7 +131,7 @@ html(lang=gw.language)
 						ENV.languages=['es','en','de'];
 
 					:markdown
-						> Para conocer más acerca de los idiomas de una aplicación, consultar el módulo [Textualization (i18n)](#)
+						> Para conocer más acerca de los idiomas de una aplicación, consultar el módulo [Textualization (i18n)](/pillars/docs/reference/i18n.jade)
 
 
 			//- Property
@@ -170,6 +170,7 @@ html(lang=gw.language)
 						- `timeout`: tiempo de espera máximo de cualquier solicitud HTTP. Es de tipo **Integer** y expresada en milisegundos. Por defecto: 10\*1000.
 						+ `maxUploadSize`: **Integer**, especifica el tamaño máximo de archivo permitido por el servidor HTTP. Por defecto 10\*1024\*1024 (10MB).
 						+ `maxZipSize`: **Integer** para determinar el tamaño máximo de archivo que comprimirá el servidor. Por defecto: 5\*1024\*1024 (5MB).
+						+ `https`: objeto con los parámetros `.key` y `.crt` que definen los ficheros .key y .cert necesarios para activar el protocolo https. También se puede definir el puerto con `.port`, pero no es necesario ya que por defecto es el puerto 443. Para más información sobre montar un servidor seguro consulta el [tutorial HTTPS](/pillars/docs/tutorials/https.jade). 
 
 					:highlight(lang='javascript')
 						ENV.server={
@@ -177,7 +178,12 @@ html(lang=gw.language)
 							port:80,
 							timeout:100*1000,
 							maxUploadSize:20*1024*1024,
-							maxZipSize:10*1024*1024
+							maxZipSize:10*1024*1024,
+							https:{
+								key:'./localhost.key',
+								cert:'./localhost.crt',
+								host: '443'
+							}
 						};
 
 					:markdown
@@ -225,8 +231,8 @@ html(lang=gw.language)
 
 					:highlight(lang='javascript')
 						ENV.directories={
-							uploads:'uploads',
-							temp:'temp'
+							uploads:'./uploads',
+							temp:'./temp'
 						};
 
 					:markdown
@@ -242,14 +248,14 @@ html(lang=gw.language)
 					:markdown
 						La propiedad `.templates` es un conjunto de propiedades para configurar opciones de templates y templates en concreto que utilizará el sistema:
 						+ `cache`: Tipo **Boolean** determina si está activa la caché de templates o no. Por defecto está activa en **true**.
-						+ `static`: Tipo **String** para determinar la plantilla estática. Ésta se utiliza en el listado de directorios. Por defecto es: **./templates/static.jade**.
+						+ `directory`: Tipo **String** para determinar la plantilla estática a utilizar al servir directorios estáticos. Por defecto es: **./templates/directory.jade**. Hay que tener en cuenta que el Plugin Directory debe estar activo.
 						+ `error`: Tipo **String** para determinarla plantilla de errores. Se utiliza en cualquier página de error del sistema, por ejemplo un error 404. Por defecto es: **./templates/error.jade**.
 
 					:highlight(lang='javascript')
 						ENV.templates={
 							cache: false,
-							static:'temp',
-							error: ''
+							directory:'./templates/directory.jade',
+							error: './templates/error.jade'
 						};
 
 					:markdown
@@ -302,6 +308,30 @@ html(lang=gw.language)
 				section.description
 					:markdown
 						La propiedad `.plugins` es de solo lectura y devuelve un objeto con todos los objetos plugin que tiene agregado `ENV`. 
+
+
+			//- Property
+			section.property
+				h3#property-crypt: code 
+					small ENV
+					| .crypt
+
+				//- Property description
+				section.description
+					:markdown
+						La [propiedad crypt](https://github.com/bifuer/pillars/blob/master/lib/ENV.js#L71) define el algoritmo de encriptación y la clave mediante ENV.crypt.algorithm y ENV.crypt.password.
+
+					:highlight(lang='javascript')
+						ENV.crypt={
+							algorithm:'aes-256-ctr',
+							password:'pillars'
+						};
+
+					:markdown
+						Esta propiedad es usada junto con los métodos `ENV.encrypt()` y `ENV.decrypt()` para encriptar y desencriptar datos. 
+
+						Actualmente se encripta [gw.etag](/pillars/docs/reference/gangway.jade#property-etag) para enviarlo al cliente.
+
 
 			//- Property
 			section.property
@@ -602,6 +632,31 @@ html(lang=gw.language)
 					h4 Ejemplo
 					:highlight(lang='javascript')
 						route = ENV.getRoute("home");
+
+			//- Method
+			section.method
+				h3#method-moveRoute: code
+					small ENV
+					| .moveRoute()
+
+				//- Method description
+				section.description
+					:markdown
+						Mueve en la lista de objetos route, el orden del route. Para más información acerca de la lista de objetos route consultar la Clase Route.
+
+				//- Method syntax
+				section.syntax
+					h4 Sintaxis
+					codesyntax.
+						ENV.moveRoute();
+
+					:markdown
+						+ *route id*: **String** identificador del objeto route.
+
+				section.example
+					h4 Ejemplo
+					:highlight(lang='javascript')
+						route = ENV.moveRoute();
 			
 			//- Method
 			section.method
@@ -612,7 +667,7 @@ html(lang=gw.language)
 				//- Method description
 				section.description
 					:markdown
-						Elimina un objeto tipo Route hijo. Toma como parámetro el id del route previamente creado.
+						Elimina un objeto tipo Route hijo. Toma como parámetro el id del route previamente creado. Al eliminar un objeto route de ENV éste dejará de estar disponible en la aplicación, por lo tanto la ruta configurada en path no estará disponible. Podremos volverlo a conectar mediante el método addRoute().
 
 				//- Method syntax
 				section.syntax
@@ -714,6 +769,32 @@ html(lang=gw.language)
 
 			//- Method
 			section.method
+				h3#method-movePlugin: code
+					small ENV
+					| .movePlugin()
+
+				//- Method description
+				section.description
+					:markdown
+						Mueve en la cadena de plugins el plugin especificado a otra posición. 
+
+				//- Method syntax
+				section.syntax
+					h4 Sintaxis
+					codesyntax.
+						ENV.movePlugin( );
+
+					:markdown
+						+ *plugin id*: **String** identificador del objeto plugin.
+
+				section.example
+					h4 Ejemplo
+					:highlight(lang='javascript')
+						plugin = ENV.movePlugin("pluginOne");
+
+
+			//- Method
+			section.method
 				h3#method-removePlugin: code
 					small ENV
 					| .removePlugin()
@@ -780,6 +861,51 @@ html(lang=gw.language)
 						ENV.add(plugin)
 
 		
+			//- Method
+			section.method
+				h3#method-encrypt: code
+					small ENV
+					| .encrypt()
+
+				//- Method description
+				section.description
+					:markdown
+						Método para encriptar datos. Devuelve el parámetro encriptado.
+
+				//- Method syntax
+				section.syntax
+					h4 Sintaxis
+					codesyntax.
+						ENV.encrypt(string);
+
+				section.example
+					h4 Ejemplo
+					:highlight(lang='javascript')
+						var encryptedData = ENV.encrypt( decryptedData );
+
+			//- Method
+			section.method
+				h3#method-decrypt: code
+					small ENV
+					| .decrypt()
+
+				//- Method description
+				section.description
+					:markdown
+						Método para desencriptar datos. Devuelve el parámetro desencriptado.
+
+				//- Method syntax
+				section.syntax
+					h4 Sintaxis
+					codesyntax.
+						ENV.decrypt(string);
+
+				section.example
+					h4 Ejemplo
+					:highlight(lang='javascript')
+						var decryptedData = ENV.decrypt( encryptedData );
+
+
 			//- Method
 			section.method
 				h3#method-configure: code
