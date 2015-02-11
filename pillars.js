@@ -1,6 +1,6 @@
 var fs = require('fs');
 
-Date.prototype.toYMDHMS = function toYMDHMS(milliseconds) {
+Date.prototype.toYMDHMS = function toYMDHMS(milliseconds,beautify) {
 	var YMDHMS = {
 		year: this.getUTCFullYear(),
 		month: this.getUTCMonth(),
@@ -15,8 +15,15 @@ Date.prototype.toYMDHMS = function toYMDHMS(milliseconds) {
 	if(YMDHMS.hours<10){YMDHMS.hours='0'+YMDHMS.hours;}
 	if(YMDHMS.minutes<10){YMDHMS.minutes='0'+YMDHMS.minutes;}
 	if(YMDHMS.seconds<10){YMDHMS.seconds='0'+YMDHMS.seconds;}
-	if(milliseconds){YMDHMS.milliseconds = this.getUTCMilliseconds();}
-	return YMDHMS.year+YMDHMS.month+YMDHMS.day+YMDHMS.hours+YMDHMS.minutes+YMDHMS.seconds+YMDHMS.milliseconds;
+	if(milliseconds){
+		YMDHMS.milliseconds = this.getUTCMilliseconds().toString();
+		while(YMDHMS.milliseconds.length<4){YMDHMS.milliseconds='0'+YMDHMS.milliseconds;}
+	}
+	if(!beautify){
+		return YMDHMS.year+YMDHMS.month+YMDHMS.day+YMDHMS.hours+YMDHMS.minutes+YMDHMS.seconds+YMDHMS.milliseconds;
+	} else {
+		return YMDHMS.year+'/'+YMDHMS.month+'/'+YMDHMS.day+' '+YMDHMS.hours+':'+YMDHMS.minutes+':'+YMDHMS.seconds+':'+YMDHMS.milliseconds;
+	}
 };
 
 // Setup Logger & Textualization
@@ -43,9 +50,9 @@ logger.addStore({
 		var format = i18n(node,meta);
 
 		if(format===node){
-			console.log((lvl.toUpperCase()+'.'+groups.join('.')+': ')[(lCC[lvl]?lCC[lvl]:'white')],msg,'\n',meta,'\n');
+			console.log((new Date()).toYMDHMS(true,true).grey,(lvl.toUpperCase()+'.'+groups.join('.')+': ')[(lCC[lvl]?lCC[lvl]:'white')],msg,'\n',meta,'\n');
 		} else {
-			console.log(format,meta.error || '');
+			console.log((new Date()).toYMDHMS(true,true).grey,format);
 		}
 		next();
 	}
@@ -66,7 +73,7 @@ var pillarsLog = fs.createWriteStream('./pillars.log',{flags: 'a'})
 		logger.addStore({
 			id:'logFile',
 			handler: function(groups,lvl,msg,meta,next){
-				var line = (new Date()).toYMDHMS()+'\t'+lvl.toUpperCase()+'.'+groups.join('.')+'\t'+JSON.stringify(msg)+'\t'+JSON.stringify(meta)+'\r';
+				var line = (new Date()).toYMDHMS(true,true)+'\t'+lvl.toUpperCase()+'\t'+groups.join('.')+'\t'+JSON.stringify(msg)+'\t'+JSON.stringify(meta)+'\n';
 				pillarsLog.write(line);
 				next();
 			}

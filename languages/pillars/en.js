@@ -43,8 +43,8 @@
 				return "No exist textualization languages".cyan;
 			}
 		},
-		'load-ok':"Textualization sheet loaded ".cyan+"(%(count)s nodes)".yellow+": ".cyan+"'%(path)s'".yellow+", lenguage: ".cyan+"%(lang)s".yellow,
-		'load-error':"Textualization sheet load error: ".red+"'%(path)s'".yellow+", lenguage: ".red+"%(lang)s".yellow,
+		'load-ok':"Textualization sheet loaded ".cyan+"(%(count)s nodes)".yellow+": ".cyan+"'%(path)s'".yellow+", language: ".cyan+"%(lang)s".yellow,
+		'load-error':"Textualization sheet load error: ".red+"'%(path)s'".yellow+", language: ".red+"%(lang)s".yellow,
 		'heap-rewrite':"Textualization node overwrite ".red+"'%(element)s'".yellow+": ".red+"'%(path)s'".yellow+", language: ".red+"%(lang)s".yellow,
 		'i18n-error':function(){return "Error on i18n translation, node: "+node+", params:["+Object.keys(params).join(',')+"]";}
 	},
@@ -76,7 +76,8 @@
 		}
 	},
 	'gangway':{
-		'close':"%(method)s:".cyan+" %(host)s:%(port)s%(req.url)s".white+" [%(statusCode)s]".cyan+"  %(size)sbytes %(responseTime)sms".grey,
+		'open':"<- %(method)s:".magenta+" %(host)s:%(port)s%(req.url)s".white,
+		'close':"-> %(method)s:".green+" %(host)s:%(port)s%(req.url)s".white+" [%(statusCode)s]".cyan+"  %(size)sbytes %(responseTime)sms".grey,
 		'error':"Gangway error",
 		'error.h1':"Error %(code)s %(explain)s"
 	},

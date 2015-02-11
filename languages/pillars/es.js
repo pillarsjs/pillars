@@ -46,7 +46,7 @@
 		},
 		'load-ok':"Hoja de textualización cargada ".cyan+"(%(count)s nodos)".yellow+": ".cyan+"'%(path)s'".yellow+", lenguaje: ".cyan+"%(lang)s".yellow,
 		'load-error':"Error al carga la hoja de textualización: ".red+"'%(path)s'".yellow+", lenguaje: ".red+"%(lang)s".yellow,
-		'heap-rewrite':"Nodo de textualización sobrescrito ".red+"'%(element)s'".yellow+": ".red+"'%(path)s'".yellow+", languaje: ".red+"%(lang)s".yellow,
+		'heap-rewrite':"Nodo de textualización sobrescrito ".red+"'%(element)s'".yellow+": ".red+"'%(path)s'".yellow+", lenguaje: ".red+"%(lang)s".yellow,
 		'i18n-error':function(){return "Error en i18n, nodo: "+node+", parametros:["+Object.keys(params).join(',')+"]";}
 	},
 	'renderer':{
@@ -81,7 +81,8 @@
 		}
 	},
 	'gangway':{
-		'close':"%(method)s:".cyan+" %(host)s:%(port)s%(req.url)s".white+" [%(statusCode)s]".cyan+"  %(size)sbytes %(responseTime)sms".grey,
+		'open':"<- %(method)s:".magenta+" %(host)s:%(port)s%(req.url)s".white,
+		'close':"-> %(method)s:".green+" %(host)s:%(port)s%(req.url)s".white+" [%(statusCode)s]".cyan+"  %(size)sbytes %(responseTime)sms".grey,
 		'error':"Gangway error",
 		'error.h1':"Error %(code)s %(explain)s, disculpe las molestias"
 	},
