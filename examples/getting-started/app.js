@@ -377,7 +377,6 @@ textualization.load('schemas.system',{
 	}
 });
 
-/* */
+*/
 
-/* pillars.log 2>&1 node app.js & */
 

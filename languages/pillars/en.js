@@ -1,4 +1,4 @@
-'pillars':{
+textualization.pillars = {
 	'statusCodes':function(){
 		switch(code){
 			case 400:
@@ -20,20 +20,20 @@
 		}
 	},
 	'server':{
-		'error':"Server error ".red+"%(params.hostname)s:%(params.port)s".yellow,
-		'listening':"Server listening on ".green+"%(params.hostname)s:%(params.port)s".yellow,
-		'closed':"Server closed ".red+"%(params.hostname)s:%(params.port)s".yellow+" %(timer)sm".grey
+		'error':"Server error ".red+"{params.hostname}:{params.port}".yellow+"\n\n{error}\n".bgRed,
+		'listening':"Server listening on ".green+"{params.hostname}:{params.port}".yellow,
+		'closed':"Server closed ".red+"{params.hostname}:{params.port}".yellow+" {timer}m".grey
 	},
 	'https':{
-		'error':"Server (SSL) error ".red+"%(params.hostname)s:%(params.https.port)s".yellow,
-		'listening':"Server (SSL) listening on ".green+"%(params.hostname)s:%(params.https.port)s".yellow,
-		'closed':"Server (SSL) closed ".red+"%(params.hostname)s:%(params.https.port)s".yellow+" %(timer)sm".grey
+		'error':"Server (SSL) error ".red+"{params.hostname}:{params.https.port}".yellow+"\n\n{error}\n".bgRed,
+		'listening':"Server (SSL) listening on ".green+"{params.hostname}:{params.https.port}".yellow,
+		'closed':"Server (SSL) closed ".red+"{params.hostname}:{params.https.port}".yellow+" {timer}m".grey
 	},
 	'database':{
-		'connect-ok':"Database connected on ".green+"%(url)s".yellow,
-		'connect-error':"Database error on ".red+"%(url)s".yellow,
+		'connect-ok':"Database connected on ".green+"{url}".yellow,
+		'connect-error':"Database error on ".red+"{url}".yellow+"\n\n{error}\n".bgRed,
 		'disconnect-ok':"Database disconnect ok".yellow,
-		'disconnect-error':"Error on database disconnect".red
+		'disconnect-error':"Error on database disconnect".red+"\n\n{error}\n".bgRed
 	},
 	'textualization':{
 		'langs':function(){
@@ -43,15 +43,15 @@
 				return "No exist textualization languages".cyan;
 			}
 		},
-		'load-ok':"Textualization sheet loaded ".cyan+"(%(count)s nodes)".yellow+": ".cyan+"'%(path)s'".yellow+", language: ".cyan+"%(lang)s".yellow,
-		'load-error':"Textualization sheet load error: ".red+"'%(path)s'".yellow+", language: ".red+"%(lang)s".yellow,
-		'heap-rewrite':"Textualization node overwrite ".red+"'%(element)s'".yellow+": ".red+"'%(path)s'".yellow+", language: ".red+"%(lang)s".yellow,
-		'i18n-error':function(){return "Error on i18n translation, node: "+node+", params:["+Object.keys(params).join(',')+"]";}
+		'load-ok':"Textualization sheet loaded ".cyan+"({count} nodes)".yellow+": ".cyan+"'{path}'".yellow+", language: ".cyan+"{lang}".yellow,
+		'load-error':"Textualization sheet load error: ".red+"'{path}'".yellow+", language: ".red+"{lang}".yellow+"\n\n{error}\n".bgRed,
+		'heap-rewrite':"Textualization node overwrite ".red+"'{element}'".yellow+": ".red+"'{path}'".yellow+", language: ".red+"{lang}".yellow,
+		'i18n-error':function(){return "Error on i18n translation, node: ".red+node.yellow+(", params:["+Object.keys(params).join(',')+"]").red+"\n\n{error}\n".bgRed;}
 	},
 	'renderer':{
-		'ok':"Template ".cyan+"'%(path)s'".yellow+" loaded".cyan,
-		'compile-error':"Template load error ".red+"'%(path)s'".yellow,
-		'unknow-engine':"Unknow template engine".red+" '%(path)s'".yellow
+		'ok':"Template ".cyan+"'{path}'".yellow+" loaded".cyan,
+		'compile-error':"Template load error ".red+"'{path}'".yellow+"\n\n{error}\n".bgRed,
+		'unknow-engine':"Unknow template engine".red+" '{path}'".yellow
 	},
 	'plugins':{
 		'loaded':function(){return "Loaded Plugins: ".cyan+("["+list.map(function(e){return e.id;}).join(',')+"]").yellow;},
@@ -61,25 +61,25 @@
 			'update-error':"Unable to update session data"
 		},
 		'BodyReader':{
-			'unlink-ok':"Temp file %(file)s' deleted".green,
-			'unlink-error':"Delete temp file error '%(file)s'".red,
+			'unlink-ok':"Temp file {file}' deleted".green,
+			'unlink-error':"Delete temp file error '{file}'".red,
 			'directories':{
 				'uploads':{
-					'ok':"Directory 'uploads' setted at ".cyan+"'%(path)s'".yellow,
-					'error':"Error on set 'uploads' directory at ".cyan+"'%(path)s'".yellow
+					'ok':"Directory 'uploads' setted at ".cyan+"'{path}'".yellow,
+					'error':"Error on set 'uploads' directory at ".cyan+"'{path}'".yellow
 				},
 				'temp':{
-					'ok':"Directory 'temp' setted at ".cyan+"'%(path)s'".yellow,
-					'error':"Error on set 'temp' directory at ".cyan+"'%(path)s'".yellow
+					'ok':"Directory 'temp' setted at ".cyan+"'{path}'".yellow,
+					'error':"Error on set 'temp' directory at ".cyan+"'{path}'".yellow
 				}
 			}
 		}
 	},
 	'gangway':{
-		'open':"<- %(method)s:".magenta+" %(host)s:%(port)s%(req.url)s".white,
-		'close':"-> %(method)s:".green+" %(host)s:%(port)s%(req.url)s".white+" [%(statusCode)s]".cyan+"  %(size)sbytes %(responseTime)sms".grey,
-		'error':"Gangway error",
-		'error.h1':"Error %(code)s %(explain)s"
+		'open':"<- {method}:".magenta+" {host}:{port}{req.url}".white,
+		'close':"-> {method}:".green+" {host}:{port}{req.url}".white+" [{statusCode}]".cyan+"  {size}bytes {responseTime}ms".grey,
+		'error':"Gangway error".red+"\n\n{error}\n".bgRed,
+		'error-h1':"Error {code} {explain}"
 	},
 	'login':{
 		'title':"Login",
@@ -101,22 +101,22 @@
 		'submit':"Send",
 	},
 	'static':{
-		'title': "Directory listing %(path)s",
-		'h1': "%(path)s"
+		'title': "Directory listing {path}",
+		'h1': "{path}"
 	},
 	'directories':{
 		'uploads':{
 			'alert':'Uploads directory undefined'.yellow.reverse,
-			'error':'Uploads directory no exist,'.red+' path: %(path)s'.magenta,
-			'ok':'Uploads directory set on'.green+' path: %(path)s'.yellow
+			'error':'Uploads directory no exist,'.red+' path: {path}'.magenta,
+			'ok':'Uploads directory set on'.green+' path: {path}'.yellow
 		},
 		'temp':{
 			'alert':'Temp directory undefined'.yellow.reverse,
-			'error':'Temp directory no exist,'.red+' path: %(path)s'.magenta,
-			'ok':'Temp directory set on'.green+' path: %(path)s'.yellow
+			'error':'Temp directory no exist,'.red+' path: {path}'.magenta,
+			'ok':'Temp directory set on'.green+' path: {path}'.yellow
 		}
 	},
 	'mail':{
 		'no-transport':"Unknow transport for mail send. Please set Pillars.smtp values"
 	}
-}
+};

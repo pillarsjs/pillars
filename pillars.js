@@ -1,30 +1,6 @@
 var fs = require('fs');
-
-Date.prototype.toYMDHMS = function toYMDHMS(milliseconds,beautify) {
-	var YMDHMS = {
-		year: this.getUTCFullYear(),
-		month: this.getUTCMonth(),
-		day: this.getUTCDate(),
-		hours: this.getUTCHours(),
-		minutes: this.getUTCMinutes(),
-		seconds: this.getUTCSeconds(),
-		milliseconds: ''
-	};
-	if(YMDHMS.month<10){YMDHMS.month='0'+YMDHMS.month;}
-	if(YMDHMS.day<10){YMDHMS.day='0'+YMDHMS.day;}
-	if(YMDHMS.hours<10){YMDHMS.hours='0'+YMDHMS.hours;}
-	if(YMDHMS.minutes<10){YMDHMS.minutes='0'+YMDHMS.minutes;}
-	if(YMDHMS.seconds<10){YMDHMS.seconds='0'+YMDHMS.seconds;}
-	if(milliseconds){
-		YMDHMS.milliseconds = this.getUTCMilliseconds().toString();
-		while(YMDHMS.milliseconds.length<4){YMDHMS.milliseconds='0'+YMDHMS.milliseconds;}
-	}
-	if(!beautify){
-		return YMDHMS.year+YMDHMS.month+YMDHMS.day+YMDHMS.hours+YMDHMS.minutes+YMDHMS.seconds+YMDHMS.milliseconds;
-	} else {
-		return YMDHMS.year+'/'+YMDHMS.month+'/'+YMDHMS.day+' '+YMDHMS.hours+':'+YMDHMS.minutes+':'+YMDHMS.seconds+':'+YMDHMS.milliseconds;
-	}
-};
+var decycler = require('./lib/decycler');
+var YMDHMS = require('./lib/YMDHMS');
 
 // Setup Logger & Textualization
 var logger = global.Logger = require('./lib/Logger');
@@ -42,6 +18,7 @@ logger.addRule({
 	}
 });
 
+var colors = require('colors');
 var lCC = {log:'cyan',info:'green',alert:'bgYellow',error:'bgRed',warn:'bgRed'}; // lCC = loggerConsoleColors.
 logger.addStore({
 	id:'consoleFormat',
@@ -50,9 +27,9 @@ logger.addStore({
 		var format = i18n(node,meta);
 
 		if(format===node){
-			console.log((new Date()).toYMDHMS(true,true).grey,(lvl.toUpperCase()+'.'+groups.join('.')+': ')[(lCC[lvl]?lCC[lvl]:'white')],msg,'\n',meta,'\n');
+			console.log(YMDHMS((new Date()),true,true).grey,(lvl.toUpperCase()+'.'+groups.join('.')+': ')[(lCC[lvl]?lCC[lvl]:'white')],msg,'\n',meta,'\n');
 		} else {
-			console.log((new Date()).toYMDHMS(true,true).grey,format);
+			console.log(YMDHMS((new Date()),true,true).grey,format);
 		}
 		next();
 	}
@@ -73,7 +50,7 @@ var pillarsLog = fs.createWriteStream('./pillars.log',{flags: 'a'})
 		logger.addStore({
 			id:'logFile',
 			handler: function(groups,lvl,msg,meta,next){
-				var line = (new Date()).toYMDHMS(true,true)+'\t'+lvl.toUpperCase()+'\t'+groups.join('.')+'\t'+JSON.stringify(msg)+'\t'+JSON.stringify(meta)+'\n';
+				var line = YMDHMS((new Date()),true,true)+'\t'+lvl.toUpperCase()+'\t'+groups.join('.')+'\t'+JSON.stringify(decycler(msg))+'\t'+JSON.stringify(decycler(meta))+'\n';
 				pillarsLog.write(line);
 				next();
 			}
@@ -89,12 +66,12 @@ var pillarsLog = fs.createWriteStream('./pillars.log',{flags: 'a'})
 global.Chain = require('./lib/Chain');
 
 global.ENV = module.exports = require('./lib/ENV');
- global.addPlugin = ENV.addPlugin;
- global.getPlugin = ENV.getPlugin;
- global.removePlugin = ENV.removePlugin;
- global.addRoute = ENV.addRoute;
- global.getRoute = ENV.getRoute;
- global.removeRoute = ENV.removeRoute;
+ global.addPlugin = ENV.addPlugin.bind(ENV);
+ global.getPlugin = ENV.getPlugin.bind(ENV);
+ global.removePlugin = ENV.removePlugin.bind(ENV);
+ global.addRoute = ENV.addRoute.bind(ENV);
+ global.getRoute = ENV.getRoute.bind(ENV);
+ global.removeRoute = ENV.removeRoute.bind(ENV);
  global.encrypt = ENV.crypt.encrypt;
  global.decrypt = ENV.crypt.decrypt;
 
