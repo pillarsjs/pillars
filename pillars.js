@@ -1,33 +1,41 @@
 var fs = require('fs');
+var colors = require('colors');
 var decycler = require('./lib/decycler');
 var YMDHMS = require('./lib/YMDHMS');
 
 // Setup Logger & Textualization
-var logger = global.Logger = require('./lib/Logger');
+var logger = require('./lib/Logger').add;
 logger.addLvl('log').addLvl('info').addLvl('alert').addLvl('error').addLvl('warn');
 logger = logger.addGroup('pillars');
 
 global.textualization = require('./lib/textualization');
 global.i18n = textualization.i18n;
 
+logger.alert('Chelo es guapa',{extra:'Muy muy guapa!'});
 
 logger.addRule({
-	id:'console',
-	rule:function(stores,groups,lvl,msg,meta){
-		stores.push('consoleFormat');
+	id:'translate',
+	rule:function(stores,location,lvl,msg,meta){
+		if(location[0]==='pillars'){
+			stores.push('translate');
+		}
 	}
 });
 
-var colors = require('colors');
+
 var lCC = {log:'cyan',info:'green',alert:'bgYellow',error:'bgRed',warn:'bgRed'}; // lCC = loggerConsoleColors.
+
+
+
+
 logger.addStore({
-	id:'consoleFormat',
-	handler: function(groups,lvl,msg,meta,next){
-		var node = groups.join('.')+'.'+msg;
+	id:'translate',
+	handler: function(location,lvl,msg,meta,next){
+		var node = location.join('.')+'.'+msg;
 		var format = i18n(node,meta);
 
 		if(format===node){
-			console.log(YMDHMS((new Date()),true,true).grey,(lvl.toUpperCase()+'.'+groups.join('.')+': ')[(lCC[lvl]?lCC[lvl]:'white')],msg,'\n',meta,'\n');
+			console.log(YMDHMS((new Date()),true,true).grey,(lvl.toUpperCase()+'.'+location.join('.')+': ')[(lCC[lvl]?lCC[lvl]:'white')],msg,'\n',meta,'\n');
 		} else {
 			console.log(YMDHMS((new Date()),true,true).grey,format);
 		}
@@ -35,12 +43,18 @@ logger.addStore({
 	}
 });
 
+
+
+
+
+
+
 var pillarsLog = fs.createWriteStream('./pillars.log',{flags: 'a'})
 	.on('open',function(fd){
 		
 		logger.addRule({
 			id:'console',
-			rule:function(stores,groups,lvl,msg,meta){
+			rule:function(stores,location,lvl,msg,meta){
 				if(['log','alert','error','warn'].indexOf(lvl)>=0){
 					stores.push('logFile');
 				}
@@ -49,18 +63,22 @@ var pillarsLog = fs.createWriteStream('./pillars.log',{flags: 'a'})
 
 		logger.addStore({
 			id:'logFile',
-			handler: function(groups,lvl,msg,meta,next){
-				var line = YMDHMS((new Date()),true,true)+'\t'+lvl.toUpperCase()+'\t'+groups.join('.')+'\t'+JSON.stringify(decycler(msg))+'\t'+JSON.stringify(decycler(meta))+'\n';
+			handler: function(location,lvl,msg,meta,next){
+				var line = YMDHMS((new Date()),true,true)+'\t'+lvl.toUpperCase()+'\t'+location.join('.')+'\t'+JSON.stringify(decycler(msg))+'\t'+JSON.stringify(decycler(meta))+'\n';
 				pillarsLog.write(line);
 				next();
 			}
 		});
+
+		//logger.alert('chelo',{extra:'Muy muy guapa!'});
 
 	})
 	.on('error',function(error){
 		logger.warn('logfile.error',{error:error});
 	})
 ;
+
+
 
 // Globals
 global.Chain = require('./lib/Chain');
@@ -109,5 +127,6 @@ var pillarsStatic = new Route({
 	}
 });
 ENV.add(pillarsStatic);
+
 
 
