@@ -1,42 +1,10 @@
 var querystring = require('querystring');
 var formidable = require('formidable');
 var fs = require('fs');
-var logger = Logger.pillars.plugins.addGroup('BodyReader');
+var crier = require('crier').addGroup('pillars').addGroup('plugins').addGroup('BodyReader');
+var Plugin = require('../lib/Plugin');
 
-var uploadsDirectory;
-Object.defineProperty(ENV.directories,"uploads",{
-	enumerable : true,
-	get : function(){return uploadsDirectory;},
-	set : function(set){
-		fs.stat(set, function(error, stats){
-			if(error){
-				uploadsDirectory = undefined;
-				logger.error('directories.uploads.error',{path:set});
-			} else {
-				uploadsDirectory = set;
-				logger.info('directories.uploads.ok',{path:set});
-			}
-		});
-	}
-});
-var tempDirectory;
-Object.defineProperty(ENV.directories,"temp",{
-	enumerable : true,
-	get : function(){return tempDirectory;},
-	set : function(set){
-		fs.stat(set, function(error, stats){
-			if(error){
-				tempDirectory = undefined;
-				logger.error('directories.temp.error',{path:set});
-			} else {
-				tempDirectory = set;
-				logger.info('directories.temp.ok',{path:set});
-			}
-		});
-	}
-});
-
-module.exports = new Plugin({id:'BodyReader'},function(gw,next){
+var plugin = module.exports = new Plugin({id:'BodyReader'},function(gw,next){
 	var multipart = gw.routing.check('multipart',undefined);
 	// Parse json, urlencoded or multipart body.
 	if(gw.content.type=='application/json'){
@@ -53,6 +21,39 @@ module.exports = new Plugin({id:'BodyReader'},function(gw,next){
 		}
 	} else {
 		next();
+	}
+});
+
+var uploadsDirectory;
+Object.defineProperty(plugin,"uploadsDirectory",{
+	enumerable : true,
+	get : function(){return uploadsDirectory;},
+	set : function(set){
+		fs.stat(set, function(error, stats){
+			if(error){
+				uploadsDirectory = undefined;
+				crier.error('directories.uploads.error',{path:set});
+			} else {
+				uploadsDirectory = set;
+				crier.info('directories.uploads.ok',{path:set});
+			}
+		});
+	}
+});
+var tempDirectory;
+Object.defineProperty(plugin,"tempDirectory",{
+	enumerable : true,
+	get : function(){return tempDirectory;},
+	set : function(set){
+		fs.stat(set, function(error, stats){
+			if(error){
+				tempDirectory = undefined;
+				crier.error('directories.temp.error',{path:set});
+			} else {
+				tempDirectory = set;
+				crier.info('directories.temp.ok',{path:set});
+			}
+		});
 	}
 });
 
@@ -188,9 +189,9 @@ function unlinktemp(file){
 	if(!file.moved){
 		fs.unlink(file.path, function(error){
 			if(error){
-				logger.error('unlink-error',{file:file.path,error:error});
+				crier.error('unlink-error',{file:file.path,error:error});
 			} else {
-				logger.info('unlink-ok',{file:file.path});
+				crier.info('unlink-ok',{file:file.path});
 			}
 		});
 	}

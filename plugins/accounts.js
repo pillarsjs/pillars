@@ -1,5 +1,6 @@
 var ObjectID = require('mongodb').ObjectID;
-var logger = Logger.pillars.plugins.addGroup('Accounts');
+var crier = require('crier').addGroup('pillars').addGroup('plugins').addGroup('Accounts');
+var Plugin = require('../lib/Plugin');
 
 module.exports = new Plugin({id:'Accounts'},function(gw,next){
 	var account = gw.routing.check('account',false);

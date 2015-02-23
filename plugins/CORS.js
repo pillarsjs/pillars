@@ -1,4 +1,5 @@
-var logger = Logger.pillars.plugins.addGroup('CORS');
+var crier = require('crier').addGroup('pillars').addGroup('plugins').addGroup('CORS');
+var Plugin = require('../lib/Plugin');
 
 module.exports = new Plugin({id:'CORS'},function(gw,next){
 	if(gw.origin){

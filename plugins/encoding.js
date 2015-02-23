@@ -1,4 +1,5 @@
-var logger = Logger.pillars.plugins.addGroup('Encoding');
+var crier = require('crier').addGroup('pillars').addGroup('plugins').addGroup('Encoding');
+var Plugin = require('../lib/Plugin');
 
 module.exports = new Plugin({id:'Encoding'},function(gw,next){
 	if(!gw.encoding){

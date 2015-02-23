@@ -60,6 +60,7 @@
     "date.format": "*",
     "string.format": "*",
     "json.decycled": "*",
+    "json.crypt": "*",
     "scheduled": "*",
     "jailer": "*"
   },

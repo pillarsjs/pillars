@@ -1,19 +1,6 @@
-require('../../pillars').configure({
-  database:{store:'primera'},
-  debug:true,
-  languages:['es','en'],
-  templates:{cache:false},
-  server:{
-  	port:3000,
-  	// https:{key:'./localhost.key',cert:'./localhost.crt'}
-  },
-  directories:{
-  	uploads:'./uploads',
-  	temp:'./temp'
-  }
-});
+var pillars = require('../../index').configure({});
 
-addRoute(new Route({id:'Root'},function(gw){gw.html('Hola mundo!');}));
+pillars.routes.add(new Route({id:'Root'},function(gw){gw.html('Hola mundo!');}));
 
 var Utilities = new Route({
   id:'Tools',
@@ -36,9 +23,9 @@ var Utilities = new Route({
     +'</ul>'
   );
 });
-addRoute(Utilities); // o ENV.addRoute(Utilities) indistintamente.
+pillars.routes.add(Utilities); // o ENV.addRoute(Utilities) indistintamente.
 
-Utilities.addRoute(new Route({
+Utilities.routes.add(new Route({
   id:'Status',
   path:'/status',
   // https:true
@@ -47,7 +34,7 @@ Utilities.addRoute(new Route({
   gw.json(ENV.status); // El metodo .json envia un objeto JS como application/json. .send(Object) tiene el mismo funcionamiento.
 }));
 
-Utilities.addRoute(new Route({
+Utilities.routes.add(new Route({
   id:'Source',
   path:'/source'
 },function(gw){
@@ -56,7 +43,7 @@ Utilities.addRoute(new Route({
   // El segundo parametro fuerza un nuevo nombre para el archivo y con el tercer parametro a 'true' podriamos forzar la descarga.
 }));
 
-Utilities.addRoute(new Route({
+Utilities.routes.add(new Route({
   id:'ErrorControl',
   path:'/errorhandler'
 },function(gw){
@@ -65,7 +52,7 @@ Utilities.addRoute(new Route({
   // En caso de establcer el modo 'debug' obtendremos el stack del error.
 }));
 
-Utilities.addRoute(new Route({
+Utilities.routes.add(new Route({
   id:'Template',
   path:'/template'
 },function(gw){
@@ -80,7 +67,7 @@ Utilities.addRoute(new Route({
   // Por defecto Pillars.js utiliza JADE aunque pueden añadirse facilmente otros motores al sistema.
 }));
 
-Utilities.addRoute(new Route({
+Utilities.routes.add(new Route({
   id:'Query',
   path:'queryparams'
 },function(gw){
@@ -88,7 +75,7 @@ Utilities.addRoute(new Route({
   gw.json(gw.query);
 }));
 
-Utilities.addRoute(new Route({
+Utilities.routes.add(new Route({
   id:'PathParams',
   path:'/pathparams/:parametro1/*:restoDeRuta'
 },function(gw){
@@ -97,7 +84,7 @@ Utilities.addRoute(new Route({
   gw.json(gw.pathParams);
 }));
 
-Utilities.addRoute(new Route({
+Utilities.routes.add(new Route({
   id:'Session',
   path:'/session',
   session: true // Algunos Plugins hacen uso de propiedades de ruta, en este caso la propiedad session activa el Plugin Sessions.
@@ -108,7 +95,7 @@ Utilities.addRoute(new Route({
   gw.html('Contador:<strong>'+gw.session.contador+'</strong>');
 }));
 
-Utilities.addRoute(new Route({
+Utilities.routes.add(new Route({
   id:'CacheControl',
   path:'/cache'
 },function(gw){
@@ -127,7 +114,7 @@ Extra = new Route({
   gw.send('Ok');
 });
 
-Utilities.addRoute(new Route({
+Utilities.routes.add(new Route({
   id:'editRoutes',
   path:'/edit-routes'
 },function(gw){
@@ -138,7 +125,7 @@ Utilities.addRoute(new Route({
   // Comprobamos si ya hemos añadido el Route adicional o no.
   if(!Utilities.getRoute('Extra')){
     // Añadidmos un nuevo Route.
-    Utilities.addRoute(Extra);
+    Utilities.routes.add(Extra);
   }
   gw.html('Se ha añadido una nueva ruta, puedes visitarla <a href="/tools/new-route">aqui</a>');
 }));
@@ -152,7 +139,7 @@ Utilities.addRoute(new Route({
 
 
 
-
+/*
 
 var usersSchema = new modelator.Schema({
 	collection : 'users',

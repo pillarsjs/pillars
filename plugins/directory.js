@@ -1,20 +1,11 @@
 
 var paths = require('path');
 var fs = require('fs');
-var logger = Logger.pillars.plugins.addGroup('Directory');
+var crier = require('crier').addGroup('pillars').addGroup('plugins').addGroup('Directory');
+var Plugin = require('../lib/Plugin');
+var templated = require('templated');
 
-var staticTemplate;
-Object.defineProperty(ENV.templates,"directory",{
-	enumerable : true,
-	get : function(){return staticTemplate;},
-	set : function(set){
-		staticTemplate = set;
-		renderer.preload(staticTemplate);
-	}
-});
-ENV.templates.directory = ENV.resolve('templates/directory.jade');
-
-module.exports = new Plugin({id:'Directory'},function(gw,next){
+var plugin = module.exports = new Plugin({id:'Directory'},function(gw,next){
 	var directory = gw.routing.check('directory',false);
 	if(directory){
 		directory.path = directory.path || '/';
@@ -23,7 +14,7 @@ module.exports = new Plugin({id:'Directory'},function(gw,next){
 		var path = paths.join(directory.path,(gw.params.path || ''));
 		var ext = path.replace(/^.*\./,'');
 		var filename = path.replace(/^.*[\\\/]/,'');
-		var reidx = new RegExp('^index\\.('+renderer.engines.join('|')+')$','i');
+		var reidx = new RegExp('^index\\.('+templated.getEngines().join('|')+')$','i');
 
 		if(filename[0] !== '.'){
 			fs.stat(path, function(error, stats){
@@ -44,7 +35,7 @@ module.exports = new Plugin({id:'Directory'},function(gw,next){
 							if(index){
 								gw.render(paths.join(path, index));
 							} else {
-								gw.render(ENV.templates.directory,{
+								gw.render(plugin.staticTemplate,{
 									path:decodeURIComponent(gw.originalPath.replace(/\/$/,'')),
 									files:files
 								});
@@ -52,7 +43,7 @@ module.exports = new Plugin({id:'Directory'},function(gw,next){
 						}
 					});
 				} else if(stats.isFile()) {
-					if(renderer.engines.indexOf(ext) >= 0){
+					if(templated.getEngines().indexOf(ext) >= 0){
 						gw.render(path);
 					} else {
 						stats.path = path;
@@ -69,3 +60,16 @@ module.exports = new Plugin({id:'Directory'},function(gw,next){
 		next();
 	}
 });
+
+var staticTemplate;
+Object.defineProperty(plugin,"staticTemplate",{
+	enumerable : true,
+	get : function(){return staticTemplate;},
+	set : function(set){
+		staticTemplate = set;
+		templated.load(staticTemplate);
+	}
+});
+
+plugin.staticTemplate = paths.join(__dirname,'../templates/directory.jade');
+

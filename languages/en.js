@@ -1,4 +1,4 @@
-textualization.pillars = {
+textualization = {
 	'statusCodes':function(){
 		switch(code){
 			case 400:
