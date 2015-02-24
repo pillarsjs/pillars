@@ -33,7 +33,7 @@ var plugin = module.exports = new Plugin({id:'Directory'},function(gw,next){
 								}
 							}
 							if(index){
-								gw.render(paths.join(path, index));
+								gw.render(paths.join(path, index),{},true);
 							} else {
 								gw.render(plugin.staticTemplate,{
 									path:decodeURIComponent(gw.originalPath.replace(/\/$/,'')),
@@ -44,7 +44,7 @@ var plugin = module.exports = new Plugin({id:'Directory'},function(gw,next){
 					});
 				} else if(stats.isFile()) {
 					if(templated.getEngines().indexOf(ext) >= 0){
-						gw.render(path);
+						gw.render(path,{},true);
 					} else {
 						stats.path = path;
 						gw.file(stats);

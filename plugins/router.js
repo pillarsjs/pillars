@@ -1,5 +1,6 @@
 var crier = require('crier').addGroup('pillars').addGroup('plugins').addGroup('Router');
 var Plugin = require('../lib/Plugin');
+var pillars = require('../index');
 
 module.exports = new Plugin({id:'Router'},function(gw,next){
 
@@ -17,10 +18,10 @@ module.exports = new Plugin({id:'Router'},function(gw,next){
     handlers:[]
   };
 
-  // Search Routes...
+  // Check Routes...
   var found = false;
-  for(var p in ENV.routes){
-    if(routesWalker(gw,ENV.routes[p],gw.path)){
+  for(var i=0,l=pillars.routes.length;i<l;i++){
+    if(routesWalker(gw,pillars.routes[i],gw.path)){
       found = true;
       next();
       break;
@@ -31,38 +32,35 @@ module.exports = new Plugin({id:'Router'},function(gw,next){
   }
 });
 
-// Non inheritable properties.
-// var noInherit = ['domain','handlers','id','pathParams','pathRegexp','path','method','host','priority','active','routes'];
+function routesWalker(gw,route,path){
+  if(route.active && route.pathRegexp.test(path)){ // check partiality or entire path
+    var match = path.match(route.pathRegexp); // Extract matchs from path
+    var matches = match.slice(1); // Only pathParams matches
+    var routePath = match[0]; // Current match segment of the path
+    var subPath = path.replace(route.pathRegexp,''); // Rest of the path
+    var isEndPath = (routePath==path);
+    var haveChildren = (!isEndPath && route.routes.length>0);
 
-function routesWalker(gw,route,path){ // path = /dos/
-  if(route.active && route.pathRegexp.test(path)){ // es activo! & el path (en parte) coincide "/:param2/" "/uno/dos/tres"
-    var match = path.match(route.pathRegexp); // coincidencias varias
-    var matches = match.slice(1); // lo que nos srive de las coincidencias
-    var routePath = match[0]; // En este caso: /dos/
-    var subPath = path.replace(route.pathRegexp,''); // : "" 
-    var isEndPath = (routePath==path); // && route.handlers.length>0 // si somos
-    var haveChildren = (!isEndPath && route.routes.length>0); // nop
-
-    // comprobamos si puede optar a ser comprobado y si es asi, comporbamos si cumple lo que debe
+    // Check "Routing" properties for this route.
     if((isEndPath || haveChildren) && (!route.host || route.host==gw.host) && (!route.method || route.method.indexOf(gw.method)>=0) && (route.https===undefined || route.https===gw.https)){
       
-      // herencia
-      var noInherit = []; // k ['id','path'...]
-      for(var i=0,k=Object.key(route),l=k.length;i<l;i++){
+      // inherits from this route
+      var i, l;
+      for(i=0,k=Object.keys(route),l=k.length;i<l;i++){
         var prop = k[i];
         gw.routing.options[prop]=route[prop];
       }
 
-      // lista de routes
+      // Add route this route to routing property
       gw.routing.routes.push(route);
       
-      // parseo de pathParams
-      for(var i in route.pathParams){ // setea gw.pathParams & gw.params con lo que se pilla de la ruta /:param1/:param2/
+      // Set up pathParams
+      for(i=0,l=route.pathParams.length;i<l;i++){
         gw.pathParams[route.pathParams[i]] = gw.params[route.pathParams[i]] = decodeURIComponent(matches[i] || '');
       }
 
-      // final o walker
-      if(isEndPath){ // si es el ultimo (si la ruta coincide por completo) y el que atendera la petición
+      // Finally or continue walker
+      if(isEndPath){
         gw.routing.handlers = route.handlers;
         return true;
       } else {
@@ -72,7 +70,6 @@ function routesWalker(gw,route,path){ // path = /dos/
           }
         }
       }
-
     } else {
       return false;
     }

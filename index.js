@@ -165,12 +165,12 @@ pillars.start = function(params,callback){
   if(httpServer.running){
     procedure.add(httpServer.close);
   }
-  if(httpServer.httpsMirror.running){
+  if(httpServer.httpsMirror && httpServer.httpsMirror.running){
     procedure.add(httpServer.httpsMirror.close);
   }
   procedure
   .race()
-  .add(function(done){
+  .add(function(stoping,done){
     httpServer.listen(httpServer.port, httpServer.hostname);
     done();
   });
@@ -212,7 +212,7 @@ pillars.start = function(params,callback){
 
   procedure.launch(function(errors){
     if(errors){
-      crier('server.https.error',{server:httpServer,error:errors[0]});
+      crier.error('server.https.error',{server:httpServer,error:errors[0]});
     }
     if(callback){
       callback(errors?errors[0]:undefined);
@@ -227,7 +227,7 @@ pillars.stop = function(callback){
   if(httpServer.running){
     procedure.add(httpServer.close);
   }
-  if(httpServer.httpsMirror.running){
+  if(httpServer.httpsMirror && httpServer.httpsMirror.running){
     procedure.add(httpServer.httpsMirror.close);
   }
   procedure.race().launch(function(errors){
@@ -362,6 +362,7 @@ crier.info('plugins.loaded',{list:plugins});
 
 
 // Gangway handling
+Procedure.Launcher.method = function(f){return f();};
 function gangwayHanling(gw){
   var pluginHandling = new Procedure();
   for(var i=0,l=pillars.plugins.length;i<l;i++){
@@ -373,9 +374,12 @@ function gangwayHanling(gw){
       gw.error(500,errors[0]);
     } else if(gw.routing && gw.routing.handlers && gw.routing.handlers.length>0){
       var routeHandling = new Procedure();
+      var routeNames = ObjectArray.prototype.keys.call(gw.routing.routes).join('.');
       for(var i=0,l=gw.routing.handlers.length;i<l;i++){
         var handler = gw.routing.handlers[i];
-        routeHandling.add(handler,gw);
+        var handlerName = routeNames+".";
+        handlerName += handler.name?handler.name:i+1===l?"handler":"middleware["+i+"]";
+        routeHandling.add(handlerName,handler,gw);
       }
       routeHandling.launch(function(errors){
         if(errors){
@@ -393,7 +397,13 @@ function gangwayHanling(gw){
 
 // Loading....
 
+crier.constructor.errors = function(errors){
+  console.log(errors);
+};
 
+crier.constructor.console.format = function(text,meta,lang){
+  return i18n(text,meta,lang);
+};
 
 var procedure = new Procedure();
 procedure

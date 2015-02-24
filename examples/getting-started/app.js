@@ -1,4 +1,4 @@
-var pillars = require('../../index').configure({});
+var pillars = require('../../index').configure({}).start();
 
 pillars.routes.add(new Route({id:'Root'},function(gw){gw.html('Hola mundo!');}));
 
@@ -31,7 +31,7 @@ Utilities.routes.add(new Route({
   // https:true
 },function(gw){
   // Enviamos el estado de nuestro entorno como datos JSON
-  gw.json(ENV.status); // El metodo .json envia un objeto JS como application/json. .send(Object) tiene el mismo funcionamiento.
+  gw.json(JSON.decycler(pillars)); // El metodo .json envia un objeto JS como application/json. .send(Object) tiene el mismo funcionamiento.
 }));
 
 Utilities.routes.add(new Route({
