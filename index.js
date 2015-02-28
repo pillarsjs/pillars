@@ -1,7 +1,62 @@
-/* jslint node: true */
+// jshint strict:true, node:true, camelcase:true, curly:true, maxcomplexity:15, newcap:true
 "use strict";
 
+var colors = require('colors');
+
+// Splash screen...
+console.log(("\n\n"+
+"------###########################################################\n"+
+"------##                                                       ##\n"+
+"------##         ##############   ###   ##############         ##\n"+
+"------##        ###         ###   ###   ###         ###        ##\n"+
+"------##        ###         ###   ###   ###         ###        ##\n"+
+"------##         ###        ###   ###   ###        ###         ##\n"+
+"------##           ####     ###   ###   ###     ####           ##\n"+
+"------##                    ###   ###   ###                    ##\n"+
+"------##                    ###   ###   ###                    ##\n"+
+"------##                    ###   ###   ###                    ##\n"+
+"------##                    ###   ###   ###                    ##\n"+
+"------##                    ###   ###   ###                    ##\n"+
+"------##                    ###   ###   ###                    ##\n"+
+"------##                    ###   ###   ###                    ##\n"+
+"------##                    ###   ###   ###                    ##\n"+
+"------##           ####     ###   ###   ###     ####           ##\n"+
+"------##         ###        ###   ###   ###        ###         ##\n"+
+"------##        ###         ###   ###   ###         ###        ##\n"+
+"------##        ###         ###   ###   ###         ###        ##\n"+
+"------##         ##############   ###   ##############         ##\n"+
+"------##                                                       ##\n"+
+"------###########################################################\n\n"
+).replace(/ /g,' '.bgRed).replace(/#/g,' '.bgWhite).replace(/-/g,' '));
+
+var fs = require('fs');
+var paths = require('path');
+
+var crier = require('crier').addGroup('pillars');
 var templated = require('templated');
+var i18n = require('textualization');
+crier.constructor.console.language = 'es';
+i18n.load('pillars',paths.join(__dirname,'./languages'));
+crier.constructor.console.format = function(text,meta,lang){
+  return i18n(text,meta,lang);
+};
+
+var Procedure = global.Procedure = require('procedure');
+var ObjectArray = global.ObjectArray = require('objectarray');
+var Jailer = global.Jailer = require('jailer');
+var Scheduled = global.Scheduled = require('scheduled');
+require('date.format');
+require('string.format');
+require('json.decycled');
+
+
+Procedure.Launcher.method = function(func){func();};
+
+// Pillars base export (for cyclical requires)
+var pillars = module.exports = {
+};
+
+// Setup Templated .jade support.
 var jade = require('jade');
 var marked = require('marked');
 var hljs = require('highlight.js');
@@ -12,7 +67,6 @@ function hljsFix(str,lang){
   } else {
     result = hljs.highlightAuto(str).value;
   }
-  
   result = result.replace(/^((<[^>]+>|\s{4}|\t)+)/gm, function(match, r) {
     return r.replace(/\s{4}|\t/g, '  ');
   });
@@ -27,37 +81,37 @@ marked.setOptions({
     return hljsFix(code,lang);
   }
 });
-templated.addEngine('jade',function compiler(source,path){ // return funtion for render by -> function(locals).
+templated.addEngine('jade',function compiler(source,path){
   return jade.compile(source,{filename:path,pretty:true,debug:false,compileDebug:true});
 });
 
 
-
-
-
-var fs = require('fs');
-var paths = require('path');
-var Procedure = require('procedure');
-var ObjectArray = require('objectarray');
-var crier = require('crier').addGroup('pillars');
-var i18n = require('textualization');
-
-require('date.format');
-require('json.decycled');
-
-var Gangway = require('./lib/gangway');
+var Gangway = global.Gangway = require('./lib/gangway');
 var Route = global.Route = require('./lib/Route');
 var Plugin = global.Plugin = require('./lib/Plugin');
 
-var pillars = module.exports = {
-};
+
+
 
 // Configure method
+pillars.config = {
+  cors: false,
+  maxUploadSize: 5*1024*1024,
+  maxZipSize: 5*1024*1024,
+  renderReload: false
+};
+
+pillars.config.staticTemplate = paths.join(__dirname,'./templates/directory.jade');
+templated.load(pillars.config.staticTemplate);
+
+pillars.config.errorTemplate = paths.join(__dirname,'./templates/error.jade');
+templated.load(pillars.config.errorTemplate);
+
 pillars.configure = function(config){
   for(var i=0,k=Object.keys(config),l=k.length;i<l;i++){
-    this[k[i]]=config[k[i]];
+    pillars.config[k[i]]=config[k[i]];
   }
-  return this;
+  return pillars;
 };
 
 // Debug
@@ -65,10 +119,6 @@ pillars.debug = true;
 
 // Package & version
 var pillarsPackage = require('./package');
-Object.defineProperty(pillars,"package",{
-  enumerable : true,
-  get : function(){return pillarsPackage;}
-});
 Object.defineProperty(pillars,"version",{
   enumerable : true,
   get : function(){return pillarsPackage.version;}
@@ -81,289 +131,15 @@ pillars.resolve = function(path){
 };
 
 // Administrator
-pillars.administrator = { // get from process.env ?
+pillars.administrator = { // try to get from process.env ?
   email: undefined,
   firstname: undefined,
   lastname: undefined
 };
 
-// Languages
-Object.defineProperty(pillars,"languages",{
-  enumerable : true,
-  get : function(){return i18n.languages;},
-  set : function(set){
-    i18n.languages = set;
-  }
-});
-
-// Directories
-var directories = {};
-Object.defineProperty(pillars,"directories",{
-  enumerable : true,
-  get : function(){return directories;},
-  set : function(set){
-    for(var i=0,k=Object.keys(set),l=k.length;i<l;i++){
-      directories[k[i]]=set[k[i]];
-    }
-  }
-});
-
-// Templates
-var templates = {};
-Object.defineProperty(pillars,"templates",{
-  enumerable : true,
-  get : function(){return templates;},
-  set : function(set){
-    for(var i=0,k=Object.keys(set),l=k.length;i<l;i++){
-      templates[k[i]]=set[k[i]];
-    }
-  }
-});
-
-// HTTP Server
-var http = require('http');
-var https = require('https');
-var httpServer = http.createServer();
-
-httpServer // Event handling
-.on('error',function(error){
-  httpServer.running = false;
-  crier.error('httpServer.error',{server:httpServer,error:error});
-})
-.on('listening',function(){
-  httpServer.running = true;
-  httpServer.timer=Date.now();
-  crier.info('httpServer.listening',{server:httpServer});
-})
-.on('close',function(){
-  httpServer.running = false;
-  crier.warn('httpServer.closed',{server:httpServer,time:parseInt((Date.now()-httpServer.timer)/1000/60*100, 10)/100});
-})
-.on('request',function(req,res){
+// Pillars handler
+pillars.handler = function pillarsHandler(req,res){
   var gw = new Gangway(req,res);
-  gangwayHanling(gw);
-})
-;
-
-pillars.start = function(params,callback){
-  if(typeof params === 'function'){
-    callback = params;
-    params = {};
-  }
-  if(typeof params === 'string' || typeof params === 'number'){
-    params = {port:parseInt(params, 10)};
-  }
-  params = params || {};
-
-  httpServer.port = params.port || httpServer.port || 3000;
-  httpServer.timeout = params.timeout || httpServer.timeout || 30*1000;
-  httpServer.hostname = params.hostname || httpServer.hostname;
-  httpServer.https = params.https || httpServer.https;
-
-  var procedure = new Procedure();
-
-  if(httpServer.running){
-    procedure.add(httpServer.close);
-  }
-  if(httpServer.httpsMirror && httpServer.httpsMirror.running){
-    procedure.add(httpServer.httpsMirror.close);
-  }
-  procedure
-  .race()
-  .add(function(stoping,done){
-    httpServer.listen(httpServer.port, httpServer.hostname);
-    done();
-  });
-     
-  if(httpServer.https){
-    httpServer.https.port = httpServer.https.port || 443;
-    if(httpServer.https.key && httpServer.https.cert){
-      procedure.add('key',fs.readFile,httpServer.https.key);
-      procedure.add('cert',fs.readFile,httpServer.https.cert);
-    }
-    procedure
-    .race()
-    .add(function(options,done){
-      var httpsServer = httpServer.httpsMirror = https.createServer(options);
-      httpsServer.timeout = httpServer.timeout;
-
-      httpsServer
-      .on('error',function(error){
-        httpsServer.running = false;
-        crier.error('server.https.error',{server:httpServer,error:error});
-      })
-      .on('listening',function(){
-        httpsServer.timer=Date.now();
-        crier.info('server.https.listening',{server:httpServer});
-      })
-      .on('close',function(){
-        httpsServer.running = false;
-        crier.warn('server.https.closed',{server:httpServer,time:parseInt((Date.now()-httpsServer.timer)/1000/60*100, 10)/100});
-      })
-      .on('request',function(req,res){
-        var gw = new Gangway(req,res);
-        gw.https = true;
-        gangwayHanling(gw);
-      })
-      .listen(httpServer.https.port, httpServer.hostname);
-      done();
-    });
-  }
-
-  procedure.launch(function(errors){
-    if(errors){
-      crier.error('server.https.error',{server:httpServer,error:errors[0]});
-    }
-    if(callback){
-      callback(errors?errors[0]:undefined);
-    }
-  });
-  
-  return pillars;
-};
-
-pillars.stop = function(callback){
-  var procedure = new Procedure();
-  if(httpServer.running){
-    procedure.add(httpServer.close);
-  }
-  if(httpServer.httpsMirror && httpServer.httpsMirror.running){
-    procedure.add(httpServer.httpsMirror.close);
-  }
-  procedure.race().launch(function(errors){
-    if(errors){
-      crier.error('server.error',{server:httpServer,error:errors[0]});
-    }
-    if(callback){
-      callback(errors[0]);
-    }
-  });
-  return pillars;
-};
-
-
-
-
-
-
-
-
-
-// DB
-var MongoClient = require('mongodb').MongoClient;
-var database;
-
-pillars.connect = function(params,callback){
-  if(typeof params === 'function'){
-    callback = params;
-    params = {};
-  }
-  if(typeof params === 'string'){
-    params = {store:params};
-  }
-  params = params || {};
-  
-  params.port = params.port || 27017;
-  params.hostname = params.hostname || 'localhost';
-  params.store = params.store || 'pillars';
-  //params.user = params.user;
-  //params.password = params.password;
-
-  pillars.disconnect(function(disconnectError){
-    if(!disconnectError){
-      var url = 'mongodb://';
-      if(params.user){
-        url += params.user;
-        if(params.password){
-          url += ':'+params.password;
-        }
-        url += '@';
-      }
-      url += params.hostname;
-      url += ':'+params.port;
-      if(params.store){
-        url += '/'+params.store;
-      }
-      MongoClient.connect(url, function(error, db) {
-        if(error) {
-          crier.error('db.connect-error',{params:params,url:url,error:error});
-        } else {
-          database = db;
-          crier.info('db.connect-ok',{params:params,url:url});
-        }
-        if(callback){
-          callback(error);
-        }
-      });
-    } else {
-      if(callback){
-        callback(disconnectError);
-      }
-    }
-  });
-  
-  return pillars;
-};
-
-pillars.disconnect = function(callback){
-  if(database){
-    database.close(function(error) {
-      if(!error){
-        database = undefined;
-        crier.info('db.disconnect-ok');
-      } else {
-        crier.error('db.disconnect-error',{error:error});
-      }
-      if(callback){
-        callback(error);
-      }
-    });
-  } else if(callback) {
-    callback();
-  }
-  return pillars;
-};
-
-
-// Shutdown event
-process.on('SIGINT', function() {
-  pillars.stop(function() {
-    process.exit(0);
-  });
-});
-
-
-
-
-// Plugins & Routes
-pillars.plugins = new ObjectArray();
-pillars.routes = new ObjectArray();
-
-// Load builtin Plugins
-var plugins = [
-  require('./plugins/langPath.js'),
-  require('./plugins/encoding.js'),
-  require('./plugins/router.js'),
-  require('./plugins/maxUploadSize.js'),
-  require('./plugins/CORS.js'),
-  require('./plugins/OPTIONS.js'),
-  require('./plugins/sessions.js'),
-  require('./plugins/accounts.js'),
-  require('./plugins/directory.js'),
-  require('./plugins/bodyReader.js')
-];
-
-for(var i=0,l=plugins.length;i<l;i++){
-  pillars.plugins.insert(plugins[i]);
-}
-crier.info('plugins.loaded',{list:plugins});
-
-
-
-
-// Gangway handling
-Procedure.Launcher.method = function(f){return f();};
-function gangwayHanling(gw){
   var pluginHandling = new Procedure();
   for(var i=0,l=pillars.plugins.length;i<l;i++){
     var plugin = pillars.plugins[i];
@@ -390,25 +166,225 @@ function gangwayHanling(gw){
       gw.error(404);
     }
   });
+};
+
+
+// HTTP Server
+var http = require('http');
+var https = require('https');
+pillars.servers = new ObjectArray();
+pillars.createServer = createServer;
+function createServer(options){
+  var server = options?https.createServer(options):http.createServer();
+  pillars.servers.insert(server);
+  var config = server.config = {};
+  server
+    .on('error',function(error){
+      server.running = false;
+      crier.error('server.error',{server:server,error:error});
+    })
+    .on('listening',function(){
+      server.running = true;
+      server.timer=Date.now();
+      crier.info('server.listening',{server:server});
+    })
+    .on('close',function(){
+      server.running = false;
+      crier.warn('server.closed',{server:server,time:parseInt((Date.now()-server.timer)/1000/60*100, 10)/100});
+    })
+    .on('request',pillars.handler)
+  ;
+  server.start = function(params,callback){
+    if(typeof params === 'function'){
+      callback = params;
+      params = {};
+    }
+    if(typeof params === 'string' || typeof params === 'number'){
+      params = {port:parseInt(params, 10)};
+    }
+    params = params || {};
+    config.port = params.port || config.port || 80;
+    config.timeout = params.timeout || config.timeout || 30*1000;
+    config.hostname = params.hostname || config.hostname;
+    
+    server.stop(function(error){
+      if(!error){
+        server.timeout = config.timeout;
+        server.listen(config.port,config.hostname,callback);
+      } else if(callback) {
+        callback(error);
+      }
+    });
+    return server;
+  };
+  server.stop = function(callback){
+    if(server.running){
+      server.close(function(error){
+        if(error){
+          crier.error('server.error',{server:server,error:error});
+        }
+        if(callback){
+          callback();
+        }
+      });
+    } else if(callback){
+      callback();
+    }
+    return server;
+  };
+  return server;
 }
+
+
+// MongoDB
+var MongoClient = require('mongodb').MongoClient;
+pillars.mongos = new ObjectArray();
+pillars.createMongoConnection = createMongoConnection;
+function createMongoConnection(){
+  var connection = new MongoClient();
+  pillars.mongos.insert(connection);
+  connection.params = undefined;
+  connection.database = undefined;
+  connection.start = function(params,callback){
+    var client = this.client;
+    if(typeof params === 'function'){
+      callback = params;
+      params = {};
+    }
+    if(typeof params === 'string'){
+      params = {database:params};
+    }
+    params = params || {};
+
+    if(!params.url){
+      params.port = params.port || 27017;
+      params.hostname = params.hostname || 'localhost';
+      params.database = params.database || 'pillars';
+
+      var url = 'mongodb://';
+      if(params.user){
+        url += params.user;
+        if(params.password){
+          url += ':'+params.password;
+        }
+        url += '@';
+      }
+      url += params.hostname;
+      url += ':'+params.port;
+      if(params.database){
+        url += '/'+params.database;
+      }
+      params.url = url;
+    } 
+
+    params.server = params.server || {};
+    params.server.logger = params.server.logger || crier.addGroup('mongo.server');
+    params.server.auto_reconnect = params.server.auto_reconnect!==false;
+
+    connection.stop(function(error){
+      if(!error){
+        connection.connect(params.url, function(error, db) {
+          if(error) {
+            crier.error('mongo.error',{params:params,error:error});
+          } else {
+            connection.database = db;
+            connection.params = params;
+            crier.info('mongo.connect',{params:params});
+          }
+          if(callback){
+            callback(error);
+          }
+        });
+      } else if(callback){
+        callback(error);
+      }
+    });
+    return connection;
+  };
+  connection.stop = function(callback){
+    if(connection.database){
+      connection.database.close(function(error) {
+        if(!error){
+          connection.database = undefined;
+          crier.info('mongo.disconnect',{params:connection.params});
+        } else {
+          crier.error('mongo.error',{params:connection.params,error:error});
+        }
+        if(callback){
+          callback(error);
+        }
+      });
+    } else if(callback) {
+      callback();
+    }
+    return connection;
+  };
+  return connection;
+}
+
+
+
+
+process.on('SIGINT', function() {
+  var procedure = new Procedure();
+  var i,l;
+  for(i=0,l=pillars.servers.length;i<l;i++){
+    procedure.add(pillars.servers[i].stop);
+  }
+  for(i=0,l=pillars.mongos.length;i<l;i++){
+    procedure.add(pillars.mongos[i].stop);
+  }
+  procedure.race().launch(function(errors){
+    if(errors){
+      crier.error('shutdown.errors',{errors:errors},exit);
+    } else {
+      crier.info('shutdown.ok',exit);
+    }
+  });
+  function exit(){
+    setTimeout(process.exit,1000);
+  }
+});
+
+
+// Plugins & Routes
+pillars.plugins = new ObjectArray();
+pillars.routes = new ObjectArray();
+
+// Load builtin Plugins
+var plugins = [
+  require('./plugins/langPath.js'),
+  require('./plugins/encoding.js'),
+  require('./plugins/router.js'),
+  require('./plugins/maxUploadSize.js'),
+  require('./plugins/CORS.js'),
+  require('./plugins/OPTIONS.js'),
+  require('./plugins/sessions.js'),
+  require('./plugins/accounts.js'),
+  require('./plugins/directory.js'),
+  require('./plugins/bodyReader.js')
+];
+
+for(var i=0,l=plugins.length;i<l;i++){
+  pillars.plugins.insert(plugins[i]);
+}
+crier.info('plugins.loaded',{list:pillars.plugins.keys()});
+
+
+
+
+
 
 
 
 
 // Loading....
 
-crier.constructor.errors = function(errors){
-  console.log(errors);
-};
 
-crier.constructor.console.format = function(text,meta,lang){
-  return i18n(text,meta,lang);
-};
 
 var procedure = new Procedure();
 procedure
-.add(i18n.load,'pillars',paths.join(__dirname,'./languages'))
-.add(function(i18nLoad,done){
+.add(function(done){
   var pillarsLog = fs.createWriteStream('./pillars.log',{flags: 'a'})
     .on('open',function(fd){
       crier.rules.add({

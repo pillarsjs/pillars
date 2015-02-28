@@ -1,6 +1,8 @@
-var ObjectID = require('mongodb').ObjectID;
+
+var pillars = require('../index');
 var crier = require('crier').addGroup('pillars').addGroup('plugins').addGroup('Sessions');
-var Plugin = require('../lib/Plugin');
+
+var ObjectID = require('mongodb').ObjectID;
 
 module.exports = new Plugin({id:'Sessions'},function(gw,next){
   var session = gw.routing.check('session',false);

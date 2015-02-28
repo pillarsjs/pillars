@@ -20,46 +20,25 @@ textualization = {
 		}
 	},
 	'server':{
-		'error':"Error en el servidor ".red+"{params.hostname}:{params.port}".yellow+"\n\n{error}\n".bgRed,
-		'listening':"Servidor escuchando en ".green+"{params.hostname}:{params.port}".yellow,
-		'closed':"Servidor detenido ".red+"{params.hostname}:{params.port}".yellow+" {timer}m".grey
+		'error':"Error en servidor http ".red+"{server.config.hostname}:{server.config.port}".yellow,
+		'listening':"Servidor inciado ".green+"{server.config.hostname}:{server.config.port}".yellow,
+		'closed':"Servidor parado ".red+"{server.config.hostname}:{server.config.port}".yellow+" {time}m".grey
 	},
-	'https':{
-		'error':"Error en el servidor (SSL) ".red+"{params.hostname}:{params.https.port}".yellow+"\n\n{error}\n".bgRed,
-		'listening':"Servidor (SSL) escuchando en ".green+"{params.hostname}:{params.https.port}".yellow,
-		'closed':"Servidor (SSL) detenido ".red+"{params.hostname}:{params.https.port}".yellow+" {timer}m".grey
+	'mongo':{
+		'error':"Error en base de datos mongo ".red+"{params.hostname}:{params.port}".yellow,
+		'connect':"Base de datos mongo conectada ".green+"{params.hostname}:{params.port}".yellow,
+		'disconnect':"Base de datos mongo desconectada ".red+"{params.hostname}:{params.port}".yellow
 	},
-	'db':{
-		'connect-ok':"Base de datos conectada en ".green+"{url}".yellow,
-		'connect-error':"Error en la base de datos ".red+"{url}".yellow+"\n\n{error}\n".bgRed,
-		'disconnect-ok':"Base de datos desconectada".yellow,
-		'disconnect-error':"Error al desconectar la base de datos".red+"\n\n{error}\n".bgRed
-
+	'shutdown':{
+		'ok': "Pillars detenido correctamente".green,
+		'errors': "Errores al detener Pillars: ".red+"\n\n{errors}\n".bgRed
 	},
-	'textualization':{
-		'langs':function(){
-			if(langs && langs.length>0){
-				return "Lenguajes de textualización habilitados: ".cyan+langs.join(',').yellow;
-			} else {
-				return "No existen lenguajes habilitados para textualización".cyan;
-			}
-		},
-		'load-ok':"Hoja de textualización cargada ".cyan+"({count} nodos)".yellow+": ".cyan+"'{path}'".yellow+", lenguaje: ".cyan+"{lang}".yellow,
-		'load-error':"Error al carga la hoja de textualización: ".red+"'{path}'".yellow+", lenguaje: ".red+"{lang}".yellow+"\n\n{error}\n".bgRed,
-		'heap-rewrite':"Nodo de textualización sobrescrito ".red+"'{element}'".yellow+": ".red+"'{path}'".yellow+", lenguaje: ".red+"{lang}".yellow,
-		'i18n-error':function(){return "Error en i18n, nodo: ".red+node.yellow+(", parametros:["+Object.keys(params).join(',')+"]").red+"\n\n{error}\n".bgRed;}
-	},
-	'renderer':{
-		'ok':"Plantilla ".cyan+"'{path}'".yellow+" cargada".cyan,
-		'compile-error':"Error al cargar la plantilla ".red+"'{path}'".yellow+"\n\n{error}\n".bgRed,
-		'unknow-engine':"Template engine desconocida".red+" '{path}'".yellow,
-		'render':{
-			'compile-error':"Error al cargar la plantilla"+"\n\n{error}\n".bgRed,
-			'unknow-engine':"Template engine desconocida",
-		}
+	'logfile':{
+		'ok': "Logfile iniciado correctamente".green,
+		'errors': "Error al iniciar logfile: ".red,
 	},
 	'plugins':{
-		'loaded':function(){return "Plugins cargados: ".cyan+("["+list.map(function(e){return e.id;}).join(',')+"]").yellow;},
+		'loaded': "Plugins cargados: ".cyan+"{list}".yellow,
 		'Sessions':{
 			'store-error':"No es posible acceder al almacén de sesiones",
 			'insert-error':"No ha sido posible crear la sesión",
@@ -83,7 +62,7 @@ textualization = {
 	'gangway':{
 		'open':"<- {method}:".magenta+" {host}:{port}{req.url}".white,
 		'close':"-> {method}:".green+" {host}:{port}{req.url}".white+" [{statusCode}]".cyan+"  {size}bytes {responseTime}ms".grey,
-		'error':"Gangway error".red+"\n\n{error}\n".bgRed,
+		'error':"Gangway error".red,
 		'error-h1':"Error {code} {explain}, disculpe las molestias"
 	},
 	'login':{

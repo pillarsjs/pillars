@@ -43,6 +43,7 @@
     "javascript"
   ],
   "dependencies": {
+    "colors": "*",
 		"http-proxy":"*",
     "jade": "*",
     "marked":"*",

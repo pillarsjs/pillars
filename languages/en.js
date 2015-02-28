@@ -20,41 +20,25 @@ textualization = {
 		}
 	},
 	'server':{
-		'error':"Server error ".red+"{params.hostname}:{params.port}".yellow+"\n\n{error}\n".bgRed,
-		'listening':"Server listening on ".green+"{params.hostname}:{params.port}".yellow,
-		'closed':"Server closed ".red+"{params.hostname}:{params.port}".yellow+" {timer}m".grey
+		'error':"Server error ".red+"{server.config.hostname}:{server.config.port}".yellow,
+		'listening':"Server listening on ".green+"{server.config.hostname}:{server.config.port}".yellow,
+		'closed':"Server closed ".red+"{server.config.hostname}:{server.config.port}".yellow+" {time}m".grey
 	},
-	'https':{
-		'error':"Server (SSL) error ".red+"{params.hostname}:{params.https.port}".yellow+"\n\n{error}\n".bgRed,
-		'listening':"Server (SSL) listening on ".green+"{params.hostname}:{params.https.port}".yellow,
-		'closed':"Server (SSL) closed ".red+"{params.hostname}:{params.https.port}".yellow+" {timer}m".grey
+	'mongo':{
+		'error':"Mongo error ".red+"{params.hostname}:{params.port}".yellow,
+		'connect':"Mongo connect ".green+"{params.hostname}:{params.port}".yellow,
+		'disconnect':"Mongo disconnect ".red+"{params.hostname}:{params.port}".yellow
 	},
-	'database':{
-		'connect-ok':"Database connected on ".green+"{url}".yellow,
-		'connect-error':"Database error on ".red+"{url}".yellow+"\n\n{error}\n".bgRed,
-		'disconnect-ok':"Database disconnect ok".yellow,
-		'disconnect-error':"Error on database disconnect".red+"\n\n{error}\n".bgRed
+	'shutdown':{
+		'ok': "Pillars stop succesfully".green,
+		'errors': "Pillars stop errors: ".red+"\n\n{errors}\n".bgRed
 	},
-	'textualization':{
-		'langs':function(){
-			if(langs && langs.length>0){
-				return "Avaliable textualization languages: ".cyan+langs.join(',').yellow;
-			} else {
-				return "No exist textualization languages".cyan;
-			}
-		},
-		'load-ok':"Textualization sheet loaded ".cyan+"({count} nodes)".yellow+": ".cyan+"'{path}'".yellow+", language: ".cyan+"{lang}".yellow,
-		'load-error':"Textualization sheet load error: ".red+"'{path}'".yellow+", language: ".red+"{lang}".yellow+"\n\n{error}\n".bgRed,
-		'heap-rewrite':"Textualization node overwrite ".red+"'{element}'".yellow+": ".red+"'{path}'".yellow+", language: ".red+"{lang}".yellow,
-		'i18n-error':function(){return "Error on i18n translation, node: ".red+node.yellow+(", params:["+Object.keys(params).join(',')+"]").red+"\n\n{error}\n".bgRed;}
-	},
-	'renderer':{
-		'ok':"Template ".cyan+"'{path}'".yellow+" loaded".cyan,
-		'compile-error':"Template load error ".red+"'{path}'".yellow+"\n\n{error}\n".bgRed,
-		'unknow-engine':"Unknow template engine".red+" '{path}'".yellow
+	'logfile':{
+		'ok': "Logfile setup ok".green,
+		'errors': "Logfile setup error: ".red,
 	},
 	'plugins':{
-		'loaded':function(){return "Loaded Plugins: ".cyan+("["+list.map(function(e){return e.id;}).join(',')+"]").yellow;},
+		'loaded': "Loaded Plugins: ".cyan+"{list}".yellow,
 		'Sessions':{
 			'store-error':"Unable to access the session store",
 			'insert-error':"Unable to create session",
@@ -77,8 +61,8 @@ textualization = {
 	},
 	'gangway':{
 		'open':"<- {method}:".magenta+" {host}:{port}{req.url}".white,
-		'close':"-> {method}:".green+" {host}:{port}{req.url}".white+" [{statusCode}]".cyan+"  {size}bytes {responseTime}ms".grey,
-		'error':"Gangway error".red+"\n\n{error}\n".bgRed,
+		'close':"-> {method}:".green+" {host}:{port}{req.url}".white+" [{statusCode}]".cyan+"  {size}bytes {responseTime}ms".grey+" [finished:{finished}]".grey,
+		'error':"Gangway error".red,
 		'error-h1':"Error {code} {explain}"
 	},
 	'login':{
