@@ -385,6 +385,7 @@ function createMongoConnection(){
 
 // Shutdown control
 var shuttingdown = false;
+var shuttingdownCounter = 0;
 process.on('SIGINT', function() {
   if(!shuttingdown){
     shuttingdown = true;
@@ -405,7 +406,12 @@ process.on('SIGINT', function() {
       }
     });
   } else {
+    shuttingdownCounter++;
     crier.info('shuttingdown');
+    if(shuttingdownCounter>=3){
+      crier.info('forced-shuttingdown');
+      processExit();
+    }
   }
 });
 
