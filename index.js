@@ -1,7 +1,11 @@
 // jshint strict:true, node:true, camelcase:true, curly:true, maxcomplexity:15, newcap:true
 "use strict";
 
+var fs = require('fs');
+var paths = require('path');
 var colors = require('colors');
+
+
 
 // Splash screen...
 console.log(("\n\n"+
@@ -29,18 +33,38 @@ console.log(("\n\n"+
 "------###########################################################\n\n"
 ).replace(/ /g,' '.bgRed).replace(/#/g,' '.bgWhite).replace(/-/g,' '));
 
-var fs = require('fs');
-var paths = require('path');
 
+
+// Pillars base export (for cyclical requires)
+var pillars = module.exports = {
+  debug: true
+};
+
+// Pillars version
+var pillarsPackage = require('./package');
+Object.defineProperty(pillars,"version",{
+  enumerable : true,
+  get : function(){return pillarsPackage.version;}
+});
+
+// Path & resolve
+pillars.path = paths.resolve(__dirname,'../');
+pillars.resolve = function(path){
+  return paths.resolve(pillars.path,path);
+};
+
+
+
+// Dependencies, globals...
 var crier = require('crier').addGroup('pillars');
-var templated = require('templated');
+crier.constructor.console.language = 'en';
 var i18n = require('textualization');
-crier.constructor.console.language = 'es';
 i18n.load('pillars',paths.join(__dirname,'./languages'));
 crier.constructor.console.format = function(text,meta,lang){
   return i18n(text,meta,lang);
 };
-
+i18n.languages = ['en'];
+var templated = require('templated');
 var Procedure = global.Procedure = require('procedure');
 var ObjectArray = global.ObjectArray = require('objectarray');
 var Jailer = global.Jailer = require('jailer');
@@ -50,11 +74,35 @@ require('string.format');
 require('json.decycled');
 
 
-Procedure.Launcher.method = function(func){func();};
 
-// Pillars base export (for cyclical requires)
-var pillars = module.exports = {
-};
+// Setup log file
+var pillarsLog = fs.createWriteStream('./pillars.log',{flags: 'a'})
+  .on('open',function(fd){
+    crier.log('logfile.ok');
+  })
+  .on('error',function(error){
+    crier.warn('logfile.error',{error:error});
+  })
+;
+
+crier.rules.add({
+  id:'logFile',
+  rule:function(stores,location,lvl,msg,meta){
+    if(['log','alert','error','warn'].indexOf(lvl)>=0){
+      stores.push('logFile');
+    }
+  }
+});
+crier.stores.add({
+  id:'logFile',
+  handler: function(location,lvl,msg,meta,done){
+    var line = (new Date()).format('{YYYY}/{MM}/{DD} {hh}:{mm}:{ss}:{mss}',true)+'\t'+lvl.toUpperCase()+'\t'+location.join('.')+'\t'+JSON.decycled(msg)+'\t'+JSON.decycled(meta)+'\n';
+    pillarsLog.write(line);
+    done.result(line);
+  }
+});
+
+
 
 // Setup Templated .jade support.
 var jade = require('jade');
@@ -86,18 +134,23 @@ templated.addEngine('jade',function compiler(source,path){
 });
 
 
+
+// Pillars components
 var Gangway = global.Gangway = require('./lib/gangway');
 var Route = global.Route = require('./lib/Route');
 var Plugin = global.Plugin = require('./lib/Plugin');
 
 
 
-
-// Configure method
+// Configuration propierties & config method
 pillars.config = {
   cors: false,
   maxUploadSize: 5*1024*1024,
-  maxZipSize: 5*1024*1024,
+  maxCacheFileSize : 5*1024*1024,
+  cacheMaxSamples : 100,
+  cacheMaxSize : 250*1024*1024,
+  cacheMaxItems : 5000,
+  fileMaxAge : 7*24*60*60,
   renderReload: false
 };
 
@@ -114,28 +167,34 @@ pillars.configure = function(config){
   return pillars;
 };
 
-// Debug
-pillars.debug = true;
 
-// Package & version
-var pillarsPackage = require('./package');
-Object.defineProperty(pillars,"version",{
-  enumerable : true,
-  get : function(){return pillarsPackage.version;}
-});
 
-// Path & resolve
-pillars.path = paths.resolve(__dirname,'../');
-pillars.resolve = function(path){
-  return paths.resolve(pillars.path,path);
-};
+// Plugins & Routes
+pillars.plugins = new ObjectArray();
+pillars.routes = new ObjectArray();
 
-// Administrator
-pillars.administrator = { // try to get from process.env ?
-  email: undefined,
-  firstname: undefined,
-  lastname: undefined
-};
+
+
+// Load builtin Plugins
+var plugins = [
+  require('./plugins/langPath.js'),
+  require('./plugins/encoding.js'),
+  require('./plugins/router.js'),
+  require('./plugins/maxUploadSize.js'),
+  require('./plugins/CORS.js'),
+  require('./plugins/OPTIONS.js'),
+  require('./plugins/sessions.js'),
+  require('./plugins/accounts.js'),
+  require('./plugins/directory.js'),
+  require('./plugins/bodyReader.js')
+];
+
+for(var i=0,l=plugins.length;i<l;i++){
+  pillars.plugins.insert(plugins[i]);
+}
+crier.info('plugins.loaded',{list:pillars.plugins.keys()});
+
+
 
 // Pillars handler
 pillars.handler = function pillarsHandler(req,res){
@@ -181,16 +240,16 @@ function createServer(options){
   server
     .on('error',function(error){
       server.running = false;
-      crier.error('server.error',{server:server,error:error});
+      crier.error('server.error',{config:config,error:error});
     })
     .on('listening',function(){
       server.running = true;
       server.timer=Date.now();
-      crier.info('server.listening',{server:server});
+      crier.info('server.listening',{config:config});
     })
     .on('close',function(){
       server.running = false;
-      crier.warn('server.closed',{server:server,time:parseInt((Date.now()-server.timer)/1000/60*100, 10)/100});
+      crier.warn('server.closed',{config:config,time:parseInt((Date.now()-server.timer)/1000/60*100, 10)/100});
     })
     .on('request',pillars.handler)
   ;
@@ -221,7 +280,7 @@ function createServer(options){
     if(server.running){
       server.close(function(error){
         if(error){
-          crier.error('server.error',{server:server,error:error});
+          crier.error('server.error',{config:config,error:error});
         }
         if(callback){
           callback();
@@ -324,51 +383,35 @@ function createMongoConnection(){
 
 
 
-
+// Shutdown control
+var shuttingdown = false;
 process.on('SIGINT', function() {
-  var procedure = new Procedure();
-  var i,l;
-  for(i=0,l=pillars.servers.length;i<l;i++){
-    procedure.add(pillars.servers[i].stop);
-  }
-  for(i=0,l=pillars.mongos.length;i<l;i++){
-    procedure.add(pillars.mongos[i].stop);
-  }
-  procedure.race().launch(function(errors){
-    if(errors){
-      crier.error('shutdown.errors',{errors:errors},exit);
-    } else {
-      crier.info('shutdown.ok',exit);
+  if(!shuttingdown){
+    shuttingdown = true;
+    var procedure = new Procedure();
+    var i,l;
+    for(i=0,l=pillars.servers.length;i<l;i++){
+      procedure.add(pillars.servers[i].stop);
     }
-  });
-  function exit(){
-    setTimeout(process.exit,1000);
+    for(i=0,l=pillars.mongos.length;i<l;i++){
+      procedure.add(pillars.mongos[i].stop);
+    }
+    Scheduled.close();
+    procedure.race().launch(function(errors){
+      if(errors){
+        crier.error('shutdown.errors',{errors:errors},processExit);
+      } else {
+        crier.info('shutdown.ok',processExit);
+      }
+    });
+  } else {
+    crier.info('shuttingdown');
   }
 });
 
-
-// Plugins & Routes
-pillars.plugins = new ObjectArray();
-pillars.routes = new ObjectArray();
-
-// Load builtin Plugins
-var plugins = [
-  require('./plugins/langPath.js'),
-  require('./plugins/encoding.js'),
-  require('./plugins/router.js'),
-  require('./plugins/maxUploadSize.js'),
-  require('./plugins/CORS.js'),
-  require('./plugins/OPTIONS.js'),
-  require('./plugins/sessions.js'),
-  require('./plugins/accounts.js'),
-  require('./plugins/directory.js'),
-  require('./plugins/bodyReader.js')
-];
-
-for(var i=0,l=plugins.length;i<l;i++){
-  pillars.plugins.insert(plugins[i]);
+function processExit(){
+  setTimeout(process.exit,500);
 }
-crier.info('plugins.loaded',{list:pillars.plugins.keys()});
 
 
 
@@ -378,53 +421,8 @@ crier.info('plugins.loaded',{list:pillars.plugins.keys()});
 
 
 
-// Loading....
 
 
-
-var procedure = new Procedure();
-procedure
-.add(function(done){
-  var pillarsLog = fs.createWriteStream('./pillars.log',{flags: 'a'})
-    .on('open',function(fd){
-      crier.rules.add({
-        id:'logFile',
-        rule:function(stores,location,lvl,msg,meta){
-          if(['log','alert','error','warn'].indexOf(lvl)>=0){
-            stores.push('logFile');
-          }
-        }
-      });
-      crier.stores.add({
-        id:'logFile',
-        handler: function(location,lvl,msg,meta,done){
-          var line = (new Date()).format('{YYYY}/{MM}/{DD} {hh}:{mm}:{ss}:{mss}',true)+'\t'+lvl.toUpperCase()+'\t'+location.join('.')+'\t'+JSON.decycled(msg)+'\t'+JSON.decycled(meta)+'\n';
-          pillarsLog.write(line);
-          done.result(line);
-        }
-      });
-      crier.info('logfile.ok');
-      done();
-    })
-    .on('error',function(error){
-      crier.warn('logfile.error',{error:error});
-      done(error);
-    })
-  ;
-})
-.launch(function(errors){
-  if(errors){
-
-  } else {
-
-  }
-})
-;
-
-
-
-
-// Globals
 
 
 

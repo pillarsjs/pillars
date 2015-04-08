@@ -1,4 +1,38 @@
-var pillars = require('../../index').configure({}).start();
+
+var pillars = require('../../index');
+
+var server1 = pillars.createServer().start({
+  port:3000
+});
+
+var fs = require('fs');
+var server2 = pillars.createServer({
+  key: fs.readFileSync('./localhost.key'),
+  cert: fs.readFileSync('./localhost.crt')
+}).start({
+  port:3001
+});
+
+var mongoConn = pillars.createMongoConnection().start({
+  database: 'pillars'
+});
+
+
+
+
+var i18n = require('textualization');
+i18n.languages = ['es','en'];
+
+var crier = require('crier').addGroup('gettingStarted');
+crier.constructor.console.language = 'es';
+//crier.log("pillars.server.close",{fgr:'hola',error: new Error('ups!')});
+
+
+
+pillars.plugins.get('Sessions').mongo = mongoConn;
+pillars.plugins.get('Accounts').mongo = mongoConn;
+
+
 
 pillars.routes.add(new Route({id:'Root'},function(gw){gw.html('Hola mundo!');}));
 
@@ -31,7 +65,20 @@ Utilities.routes.add(new Route({
   // https:true
 },function(gw){
   // Enviamos el estado de nuestro entorno como datos JSON
-  gw.json(JSON.decycler(pillars)); // El metodo .json envia un objeto JS como application/json. .send(Object) tiene el mismo funcionamiento.
+  gw.json(JSON.decycler(pillars,false,2)); // El metodo .json envia un objeto JS como application/json. .send(Object) tiene el mismo funcionamiento.
+}));
+
+Utilities.routes.add(new Route({
+  id:'Log',
+  path:'/log',
+},function(gw){
+ 	fs.readFile('./pillars.log',function(error,log){
+ 		if(error){
+ 			gw.error(error);
+ 		} else {
+ 			gw.text(log);
+ 		}
+ 	});
 }));
 
 Utilities.routes.add(new Route({

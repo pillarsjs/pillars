@@ -20,9 +20,9 @@ textualization = {
 		}
 	},
 	'server':{
-		'error':"Server error ".red+"{server.config.hostname}:{server.config.port}".yellow,
-		'listening':"Server listening on ".green+"{server.config.hostname}:{server.config.port}".yellow,
-		'closed':"Server closed ".red+"{server.config.hostname}:{server.config.port}".yellow+" {time}m".grey
+		'error':"Server error ".red+"{config.hostname}:{config.port}".yellow,
+		'listening':"Server listening on ".green+"{config.hostname}:{config.port}".yellow,
+		'closed':"Server closed ".red+"{config.hostname}:{config.port}".yellow+" {time}m".grey
 	},
 	'mongo':{
 		'error':"Mongo error ".red+"{params.hostname}:{params.port}".yellow,
@@ -33,6 +33,7 @@ textualization = {
 		'ok': "Pillars stop succesfully".green,
 		'errors': "Pillars stop errors: ".red+"\n\n{errors}\n".bgRed
 	},
+	'shuttingdown':"Shutting down...",
 	'logfile':{
 		'ok': "Logfile setup ok".green,
 		'errors': "Logfile setup error: ".red,
@@ -60,10 +61,11 @@ textualization = {
 		}
 	},
 	'gangway':{
-		'open':"<- {method}:".magenta+" {host}:{port}{req.url}".white,
-		'close':"-> {method}:".green+" {host}:{port}{req.url}".white+" [{statusCode}]".cyan+"  {size}bytes {responseTime}ms".grey+" [finished:{finished}]".grey,
+		'open':"↩ {method}:".cyan+" {host}:{port}{req.url}".white,
+		'close':"↪ {method}:".green+" {host}:{port}{req.url}".white+" [{statusCode}]".cyan+"  {size}bytes {responseTime}ms".grey+" ·{!params.finished?'broken':''}·".red,
 		'error':"Gangway error".red,
-		'error-h1':"Error {code} {explain}"
+		'error-h1':"Error {code} {explain}",
+		'cacheCleaned': "Gangway file cache cleaned".cyan,
 	},
 	'login':{
 		'title':"Login",

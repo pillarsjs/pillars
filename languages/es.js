@@ -20,9 +20,9 @@ textualization = {
 		}
 	},
 	'server':{
-		'error':"Error en servidor http ".red+"{server.config.hostname}:{server.config.port}".yellow,
-		'listening':"Servidor inciado ".green+"{server.config.hostname}:{server.config.port}".yellow,
-		'closed':"Servidor parado ".red+"{server.config.hostname}:{server.config.port}".yellow+" {time}m".grey
+		'error':"Error en servidor http ".red+"{config.hostname}:{config.port}".yellow,
+		'listening':"Servidor inciado ".green+"{config.hostname}:{config.port}".yellow,
+		'closed':"Servidor detenido ".red+"{config.hostname}:{config.port}".yellow+" {time}m".grey
 	},
 	'mongo':{
 		'error':"Error en base de datos mongo ".red+"{params.hostname}:{params.port}".yellow,
@@ -33,6 +33,7 @@ textualization = {
 		'ok': "Pillars detenido correctamente".green,
 		'errors': "Errores al detener Pillars: ".red+"\n\n{errors}\n".bgRed
 	},
+	'shuttingdown':"Apagando...",
 	'logfile':{
 		'ok': "Logfile iniciado correctamente".green,
 		'errors': "Error al iniciar logfile: ".red,
@@ -60,10 +61,11 @@ textualization = {
 		}
 	},
 	'gangway':{
-		'open':"<- {method}:".magenta+" {host}:{port}{req.url}".white,
-		'close':"-> {method}:".green+" {host}:{port}{req.url}".white+" [{statusCode}]".cyan+"  {size}bytes {responseTime}ms".grey,
+		'open':"↩ {method}:".cyan+" {host}:{port}{req.url}".white,
+		'close':"↪ {method}:".green+" {host}:{port}{req.url}".white+" [{statusCode}]".cyan+"  {size}bytes {responseTime}ms".grey+" ·{!params.finished?'cancelada':''}·".red,
 		'error':"Gangway error".red,
-		'error-h1':"Error {code} {explain}, disculpe las molestias"
+		'error-h1':"Error {code} {explain}, disculpe las molestias",
+		'cacheCleaned': "Cache de archivos Gangway revisada".cyan,
 	},
 	'login':{
 		'title':"Acceder",
