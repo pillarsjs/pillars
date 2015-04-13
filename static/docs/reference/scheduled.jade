@@ -2,28 +2,31 @@ include ../.layout.jade
 
 doctype html
 html(lang=gw.language)
-	- var path = [{label:'Pillars.js Reference',url:'/pillars/docs/reference/'},{label:'Librería i18n',url:'/pillars/docs/reference/i18n.jade'}];
-	+reference-layout("Pillars.js Reference - Librería i18n - 'make it easy!'",path)
+	- var path = [{label:'Pillars.js Reference',url:'/pillars/docs/reference/'},{label:'Scheduled',url:'/pillars/docs/reference/scheduled.jade'}];
+	+reference-layout("Pillars.js Reference - Scheduled - 'make it easy!'",path)
 
 		#title
-			h1 Librería i18n
-				em  Pillars.js Reference
-			a.source(href="https://github.com/bifuer/pillars/blob/master/lib/textualization.js") Source
+			h1 Scheduled
+				em  Librería
+			//a.source(href="https://github.com/bifuer/pillars/blob/master/lib/Cron.js") Source
 
 		//- Summary
 		section.summary
 			h2#summary Sumario
 			:markdown
-				La librería i18n (aka textualization) integra en Pillars.js un completo sistema de internacionalización, liberando al desarrollador de la duplicidad de código para cada idioma, e introduciendo un novedoso sistema de traducciones mediante objetos. 
+				La **librería Scheduled** 
 
-				> Ver [Tutorial i18n](/pillars/docs/tutorials/i18n.jade)
+			:highlight(lang='javascript')
+				require("scheduled");
 
-			.msg.msg-icon.bg-alert Estamos completando la referencia. ¡Disculpa las molestias!. Síguenos en las redes sociales para estar al tanto de las actualizaciones de la documentación. 
+				var task = new Scheduled();
+				task.
 
 
-	
+			.msg.msg-icon.bg-info Estamos completando la referencia. ¡Disculpa las molestias!. Síguenos en las redes sociales para estar al tanto de las actualizaciones de la documentación. 
+
+			
 	//
-		
 		//- Syntax
 		section.syntax
 			h2#syntax Sintaxis

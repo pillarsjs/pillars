@@ -25,9 +25,9 @@ mixin base(title,path)
 				nav#social
 					h2 Social links
 					ul
-						li: a.github(href="#") Github
-						li: a.twitter(href="#") Twitter
-						li: a.gplus(href="#") Google+
+						li: a.github(href="https://github.com/bifuer/pillars") Github
+						li: a.twitter(href="https://twitter.com/PillarsJS") Twitter
+						//li: a.gplus(href="#") Google+
 
 			if path
 				nav#breadcrumbs
@@ -69,12 +69,17 @@ mixin reference-layout(title,path)
 					li
 						a(href="#") Librerías
 						ul
-							li: a(href="/pillars/docs/reference/i18n.jade") i18n
-							li: a(href="/pillars/docs/reference/logger.jade") Logger
-							li: a(href="/pillars/docs/reference/renderer.jade") Renderer
+							li: a(target="_blank" href="https://github.com/bifuer/JSON.decycled") JSON.decycled
+							li: a(target="_blank" href="https://github.com/bifuer/String.format") String.format
+							li: a(target="_blank" href="https://github.com/bifuer/Date.format") Date.format 
+							li: a(href="/pillars/docs/reference/procedure.jade") procedure
+							li: a(href="/pillars/docs/reference/scheduled.jade") scheduled
+							li: a(href="/pillars/docs/reference/t12n.jade") textualization
+							li: a(href="/pillars/docs/reference/crier.jade") crier
+							li: a(target="_blank" href="https://github.com/bifuer/ObjectArray") ObjectArray
+							li: a(href="/pillars/docs/reference/templated.jade") templated
+							li: a(href="/pillars/docs/reference/jailer.jade") jailer
 							li: a(href="/pillars/docs/reference/modelator.jade") Modelator
-							li: a(href="/pillars/docs/reference/mailer.jade") Mailer
-							li: a(href="/pillars/docs/reference/cron.jade") Cron
 					li: a(href="/pillars/docs/reference/plugins.jade") Plugins en Pillars.js
 
 		#contents

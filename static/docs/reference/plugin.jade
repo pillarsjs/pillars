@@ -50,7 +50,7 @@ html(lang=gw.language)
 				// Creación más básica de un objeto plugin. 
 				// Al omitir el objeto de configuración se establecen los valores por defecto
 
-				plugin = new Plugin(function(gw, next){
+				var plugin = new Plugin(function(gw, next){
 					next();
 				});
 
@@ -58,7 +58,7 @@ html(lang=gw.language)
 				// Creación de un objeto plugin con id 'web' y path '/web'. 
 				// El manejador envía al cliente el renderizado del archivo example.jade
 
-				plugin = new Plugin(
+				var plugin = new Plugin(
 					{
 						id: "web",
 						path: "/web/"
@@ -74,7 +74,7 @@ html(lang=gw.language)
 			h2#description Descripción
 			:markdown
 				
-			.msg.msg-icon.bg-alert Estamos completando la referencia. ¡Disculpa las molestias!. Síguenos en las redes sociales para estar al tanto de las actualizaciones de la documentación. 
+			.msg.msg-icon.bg-info Estamos completando la referencia. ¡Disculpa las molestias!. Síguenos en las redes sociales para estar al tanto de las actualizaciones en la documentación. 
 
 
 		//- Properties

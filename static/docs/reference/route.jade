@@ -45,7 +45,7 @@ html(lang=gw.language)
 				// Creación más básica de un objeto route. 
 				// Al omitir el objeto de configuración se establecen los valores por defecto
 
-				route = new Route(function(gw){
+				var route = new Route(function(gw){
 					gw.send("Hola Mundo");
 				});
 
@@ -53,7 +53,7 @@ html(lang=gw.language)
 				// Creación de un objeto route con id 'web' y path '/web'. 
 				// El manejador envía al cliente el renderizado del archivo example.jade
 
-				route = new Route(
+				var route = new Route(
 					{
 						id: "web",
 						path: "/web/"
@@ -68,7 +68,7 @@ html(lang=gw.language)
 				// la aplicación no responderá en /. Y creación
 				// de otros dos routes hijos dependientes de éste.
 
-				route = new Route({id: 'nodo-padre'});
+				var route = new Route({id: 'nodo-padre'});
 
 				route.addRoute(
 						{path: 'hola' }, 
@@ -118,7 +118,7 @@ html(lang=gw.language)
 						**String** identificador del objeto route. Si no se declara el id en la creación del objeto, se autogenera. 
 
 					:highlight(lang='javascript')
-						route = new Route(function(gw){gw.send("Hola Mundo")});
+						var route = new Route(function(gw){gw.send("Hola Mundo")});
 						console.log(route.id);
 						//Imprime: i47a45wc6
 						route.id = "myRoute";
@@ -359,7 +359,7 @@ html(lang=gw.language)
 						GET, POST Y PATH. 
 
 					:highlight(lang='javascript')
-						users = new Route({path:"/user/:param1/:param2"},function(gw){
+						var users = new Route({path:"/user/:param1/:param2"},function(gw){
 							gw.send(users.params);
 						});
 
@@ -575,7 +575,7 @@ html(lang=gw.language)
 
 				:highlight(lang='javascript')
 					//Creación del route
-					route = new Route(function(gw){
+					var route = new Route(function(gw){
 						gw.send("Message");
 					});
 
@@ -600,7 +600,7 @@ html(lang=gw.language)
 
 				:highlight(lang='javascript')
 					//Creación del route
-					route = new Route(function(gw){
+					varr route = new Route(function(gw){
 						gw.send("Message");
 					});
 

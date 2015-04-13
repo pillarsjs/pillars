@@ -33,17 +33,17 @@ html(lang=gw.language)
 
 
 				// Configuración de un objeto route para que sólo responda en https
-				route_https = new Route ({path:'solohttps', https:true},function(gw){
+				var route_https = new Route ({path:'solohttps', https:true},function(gw){
 					gw.send('Sólo verás este mensaje si te conectas por https');
 				});
 
 				// Configuración de un objeto route para que sólo responda en http
-				route_http = new Route ({path:'solohttp', https:flase},function(gw){
+				var route_http = new Route ({path:'solohttp', https:flase},function(gw){
 					gw.send('Sólo verás este mensaje si te conectas por http');
 				});
 
 				// Configuración de un objeto route para que responda tanto en http como en https
-				route_https_http = new Route ({path:'httpyhttps', https:flase}, function(gw){
+				var route_https_http = new Route ({path:'httpyhttps', https:flase}, function(gw){
 					gw.send('Verás este mensaje si te conectas tanto por http como por https');
 				});
 

@@ -296,7 +296,59 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						La propiedad `.routes` es de solo lectura. Devuelve un objeto con todos los objetos route que tiene agregado `ENV`. 
+						La propiedad `.routes` es una instancia de la [Clase ObjectArray](/pillars/docs/reference/objectarray.jade), por lo que es un Array de Objetos, donde **cada objeto es un objeto tipo Route**.
+
+						Por lo tanto, en la propiedad`.routes` se encuentran los objetos route que están disponibles en la aplicación, y además ofrece una serie de métodos, da la clase ObjectArray, para trabajar con los objetos route del array, que son:
+						+ **.add(route)**
+						+ **.get(id)**
+						+ **.remove(id)**
+						+ **.move(id, pos)**
+						+ **.moveBefore()**
+						+ **.moveAfter()**
+
+						
+
+
+
+					:highlight(lang='javascript')
+						require("pillars");
+
+						var route = new Route({
+								path:'hello'
+							},
+							function(gw){
+								gw.send("Hello World!!");
+							});
+
+						ENV.routes.add(route);
+
+					:highlight(lang='javascript')
+						// Se imprime: 
+						[
+							{
+								"domain": null,
+								"_events": {},
+								"_maxListeners": 10,
+								"id": "pillarsStatic",
+								"path": "pillars/*:path",
+								"directory": {
+									"path": "C:\\Users\\NEMESISCBM\\Documents\\pillarsjs\\static",
+									"listing": true
+								},
+								"handlers": [],
+								"params": [
+									"path"
+								],
+								"pathRegex": {},
+								"method": [
+									"GET"
+								],
+								"active": true,
+								"routes": []
+							}
+						]
+
+					:markdown
 
 			//- Property
 			section.property
@@ -307,7 +359,17 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						La propiedad `.plugins` es de solo lectura y devuelve un objeto con todos los objetos plugin que tiene agregado `ENV`. 
+						La propiedad `.plugins` es de solo lectura y devuelve un Array de objetos, con todos los objetos plugin que tiene agregado `ENV`. Los plugins con los que se inicia Pillars.js, en orden, son los siguientes:
+						+ LangPath
+						+ Encoding
+						+ Router
+						+ MaxUploadSize
+						+ CORS
+						+ OPTIONS
+						+ Sessions
+						+ Accounts
+						+ Directory
+						+ BodyReader
 
 
 			//- Property
@@ -376,7 +438,7 @@ html(lang=gw.language)
 				//- Property description
 				section.description
 					:markdown
-						La propiedad `.status` es de solo lectura. Devuelve un objeto con todos los routes y plugins que la aplicación tiene añadidos, además de la configuración del entorno.
+						La propiedad `.status` es de solo lectura. Devuelve un objeto con todos los routes y plugins que la aplicación tiene añadidos.
 
 
 
@@ -631,7 +693,7 @@ html(lang=gw.language)
 				section.example
 					h4 Ejemplo
 					:highlight(lang='javascript')
-						route = ENV.getRoute("home");
+						var route = ENV.getRoute("home");
 
 			//- Method
 			section.method
@@ -656,7 +718,7 @@ html(lang=gw.language)
 				section.example
 					h4 Ejemplo
 					:highlight(lang='javascript')
-						route = ENV.moveRoute();
+						var route = ENV.moveRoute();
 			
 			//- Method
 			section.method
@@ -765,7 +827,7 @@ html(lang=gw.language)
 				section.example
 					h4 Ejemplo
 					:highlight(lang='javascript')
-						plugin = ENV.getPlugin("pluginOne");
+						var plugin = ENV.getPlugin("pluginOne");
 
 			//- Method
 			section.method
@@ -790,7 +852,7 @@ html(lang=gw.language)
 				section.example
 					h4 Ejemplo
 					:highlight(lang='javascript')
-						plugin = ENV.movePlugin("pluginOne");
+						var plugin = ENV.movePlugin("pluginOne");
 
 
 			//- Method
@@ -980,7 +1042,7 @@ html(lang=gw.language)
 				section.example
 					h4 Ejemplo
 					:highlight(lang='javascript')
-						pathStatic = ENV.resolve('./static');
+						var pathStatic = ENV.resolve('./static');
 
 
 		//- Eventos
@@ -988,7 +1050,7 @@ html(lang=gw.language)
 			h2#events Eventos
 
 			section.event
-				h3#property-debug: code
+				h3#property-event-languages: code
 					| languages
 
 				:markdown
@@ -998,7 +1060,7 @@ html(lang=gw.language)
 					//Capturar el evento
 					ENV.on('languages');
 
-				h3#property-debug: code
+				h3#property-event-database: code
 					| database
 
 				:markdown
@@ -1053,7 +1115,7 @@ html(lang=gw.language)
 
 				Y las librerías: 
 
-			.msg.msg-icon.bg-alert Estamos completando la referencia. ¡Disculpa las molestias!. Síguenos en las redes sociales para estar al tanto de las actualizaciones en la documentación. 
+			.msg.msg-icon.bg-info Estamos completando la referencia. ¡Disculpa las molestias!. Síguenos en las redes sociales para estar al tanto de las actualizaciones en la documentación. 
 			//
 				+ modelator
 				+ mailer 
