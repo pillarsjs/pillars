@@ -1,31 +1,89 @@
 {
   "name": "pillars",
-  "description": "Pillars-JS a modular and scalable framework for web development in NodeJS.",
-  "version": "0.0.57",
+  "description": "Pillars.js web development framework for Node.js",
+  "version": "0.1.1",
   "author": {
-    "name": "Bifuer",
+    "name": "Javier Gallego Martín",
     "email": "bifuer@gmail.com"
   },
+  "contributors": [
+    {
+      "name": "Chelo Quilón Gomez",
+      "email": "cheloq@gmail.com"
+    }
+  ],
+  "homepage": "https://github.com/bifuer/pillars",
   "repository": {
     "type": "git",
     "url": "git://github.com/bifuer/pillars"
   },
-  "main": "./pillars.js",
-  "scripts": {
-    "start": "node pillars.js"
+  "bugs": {
+    "url": "https://github.com/bifuer/pillars/issues",
+    "email" : "cheloq@gmail.com"
   },
+  "keywords": [
+    "web",
+    "framework",
+    "tree routes",
+    "routing",
+    "multi language",
+    "web development",
+    "sessions",
+    "http",
+    "http negotiation",
+    "byte serving",
+    "static",
+    "cache control",
+    "php friendly",
+    "log dispatcher",
+    "procedure",
+    "crier",
+    "node",
+    "js",
+    "javascript"
+  ],
   "dependencies": {
-  	"http-proxy":"*",
+    "colors": "*",
+		"http-proxy":"*",
     "jade": "*",
     "marked":"*",
     "highlight.js":"*",
-    "mongodb": "*",
+    "mongodb": "~2.0",
     "formidable": "*",
     "mime": "*",
-    "colors":"*",
-    "jshint":"*",
     "node-fs":"*",
-    "nodemailer":"*"
+    "nodemailer":"*",
+		"crier": "*",
+    "procedure": "*",
+    "templated": "*",
+    "textualization": "*",
+    "objectarray": "*",
+    "date.format": "*",
+    "string.format": "*",
+    "json.decycled": "*",
+    "json.crypt": "*",
+    "scheduled": "*",
+    "jailer": "*"
   },
-  "readmeFilename": "readme.md"
+  "devDependencies": {
+    "mocha": "*",
+    "unit.js": "*"
+  },
+  "main": "./index.js",
+  "scripts":{
+    "test": "mocha test/"
+  },
+  "preferGlobal": false,
+  "files": [
+    "LICENSE",
+    "README.md",
+    "index.js",
+    "lib",
+    "languages",
+    "plugins",
+    "static",
+    "templates"
+  ],
+  "readmeFilename": "README.md",
+  "license": "MIT"
 }
