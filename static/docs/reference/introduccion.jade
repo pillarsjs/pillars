@@ -2,18 +2,21 @@ include ../.layout.jade
 
 doctype html
 html(lang=gw.language)
-	- var path = [{label:'Pillars.js Reference',url:'/pillars/docs/reference/'},{label:'Visión Global',url:'/pillars/docs/reference/vision-global.jade'}];
-	+reference-layout("Pillars.js Reference - Visión global - 'make it easy!'",path)
+	- var path = [{label:'Pillars.js Reference',url:'/pillars/docs/reference/'},{label:'Introducción',url:'/pillars/docs/reference/introduccion.jade'}];
+	+reference-layout("Pillars.js Reference - Introducción - 'make it easy!'",path)
 
 		#title
-			h1 Visión global
+			h1 Introducción
 				em  Pillars.js Reference
 			
 
 		//- Summary
 		section.summary
-			h2#summary Sumario
 			:markdown
+				La librería consiste en la creación de un entorno que ofrece una serie de propiedades y funciones que nos permiten trabajar con el framework para la creación de una aplicación web.
+				
+				Este entorno es creado en el momento que se incluye la librería `var project = require('pillars');`
+
 				En este capítulo se da una visión global de cómo funciona Pillars.js. Se definen qué elementos o eventos captura de Node.js desde que el usuario realiza la petición hasta que le responde.
 
 				Es interesante la lectura de este capítulo, ya que tendrás una perspectiva más amplia del framework.

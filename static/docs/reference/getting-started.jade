@@ -5,9 +5,37 @@ html(lang=gw.language)
 		h1 Getting Started
 			em  Pillars.js Reference
 		:markdown
+			## Hola Mundo
+
+		:highlight(lang='javascript')
+			var pillars = require('pillars');
+
+			// Creación del servidor y puesta en marcha
+			var server = pillars.createServer().start(3000);
+
+			// Creación del controlador de ruta, un objeto tipo Route
+			var route = new Route({
+				id: 'home',
+				path: '/'
+			},function(gw){
+				gw.send("Hello World!!");
+			});
+
+			// Adición al entorno pillars de la ruta que acabamos de crear
+			pillars.routes.add(route);
+
+		:markdown
+			En primer lugar se realiza la inclusión de la librería **Pillars.js**, luego se instancia el servidor y se pone en marcha. Tanto en la instancia del servidor como en la puesta en marcha, se disponen de opciones para configurar el servidor a arrancar. Estas opciones son: host, puerto, etc. [Ver método createServer() en la referencia](#).
+
+			Posteriormente se crean las **rutas a las que responderá la aplicación**, las cuales se construyen mediante objetos (tipo ObjectArray). Al ser objetos contamos con la versatilidad de añadir y/o eliminar rutas con la aplicación incluso en funcionamiento. [Ver enrutado dinámico]().
+
+			Finalmente se añade a la aplicación la ruta que se acaba de crear en su lista de objetos de tipo route, en la cual estarán todas las rutas que atenderá la aplicación.
+
+
+
 			## Preparando el entorno *(noveles en Node.js)*
 
-			Para empezar a utilizar Pillars.js necesitas tener instalado **NodeJS** y **MongoDB**, en los siguientes enlaces puedes encontrar como instalar [NodeJS](http://nodejs.org/) y [MongoDB](https://www.mongodb.org/downloads).
+			Para empezar a utilizar Pillars.js necesitas tener instalado **NodeJS**, en el siguiente enlace puedes encontrar como instalar [NodeJS](http://nodejs.org/).
 
 			Creamos un nuevo directorio para el primer proyecto Pillars.js y añadimos los dos archivos para comenzar a trabajar: *package.json* (un descriptor de la aplicación) y *app.js* (el archivo principal del proyecto).
 
@@ -26,73 +54,83 @@ html(lang=gw.language)
 
 			Ahora utilizamos *npm* para cargar las dependencias, ejecutamos el comando `npm install` en consola en el directorio del proyecto. Esto creará un directorio */node_modules* en el que se colocarán las dependencias descritas en el archivo *package.json*.
 
-			Ya podemos empezar a utilizar Pillars.js, en el archivo *app.js* escribiremos un ejemplo básico para comprobar el funcionamiento, el típico "Hola Mundo":
-
-		:highlight(lang='javascript')
-			require('pillars').start();
-
-			addRoute(new Route(function(gw){
-			  gw.send("Hola Mundo");
-			}));
+			Ya podemos empezar a utilizar Pillars.js, en el archivo *app.js* escribimos un ejemplo básico para comprobar el funcionamiento, el típico "Hola Mundo" que tienes al principio de la página.
 
 		:markdown
 			## El Framework
 
-			Los conceptos principales en los que se basa Pillars.js son:
-			- **ENV**: Punto central de configuración y gestión de nuestro proyecto, permite añadir controladores de ruta (Route) y Plugins entre otras funciones.
+			Los conceptos principales de Pillars.js son:
+			- **pillars**: `var pillars = require('pillars');`. Punto central de configuración y gestión del proyecto, permite añadir controladores de ruta (Route) y Plugins entre otras funciones.
 			- **Route**: Controlador de ruta, define una ruta y propiedades adicionales para un manejador/controlador. Recibe un objeto Gangway como parámetro y son anidables.
 			- **Gangway**: Un objeto con todas las propiedades y métodos relacionados con la gestión de una solicitud.
 			- **Plugin**: Permite añadir controladores al entorno general, pueden modificar el funcionamiento de Gangway y Route, y acceder a sus propiedades.
 
-			## ENV (Entorno)
+			## pillars
 
-			Mediante la variable global `ENV` se administra el entorno de la aplicación Pillars.js. Es un EventEmitter que sirve de punto central de configuración, podremos acceder a las propiedades y métodos de ENV desde cualquier módulo de la aplicación.
+			Es el **punto central de configuración, y gestión del proyecto**.
 
-			Para establecer el entorno sólo es necesario realizar la llamada `require('pillars')`, esto hará que esté disponible de forma global el acceso a las clases, objetos y funciones necesarias para trabajar con Pillars.js; tales como `ENV`, `Route`, `Plugin`, `addRoute()`, entre otras.
+			Para establecer el entorno y comenzar a trabajar es necesario realizar la llamada a la librería: `var pillars = require('pillars')`, esto hará que esté disponible el acceso a propiedades, métodos, clases, objetos y funciones necesarias para trabajar con Pillars.js; 
 
-			Por ejemplo, podemos configurar el servicio HTTP mediante de `ENV.server` estableciendo las propiedades `hostname` y `port`; también podremos establecer el tiempo máximo de espera con `timeout` o el tamaño máximo de subida de archivos con `maxUploadSize`.
-
-		:highlight(lang='javascript')
-			require('pillars');
-			ENV.server = {
-			        hostname:'localhost',
-			        port: 3030,
-			        timeout: 30000
-			};
-		
-		:markdown
-			También podremos establecer el modo `debug` o los datos de conexión a la base de datos. En este sentido nos ayudará el método `ENV.configure()` para configurar múltiples propiedades en una sola función:
-
-		:highlight(lang='javascript')
-			require('pillars').configure(
-			  debug: true, // Por defecto false.
-			  server: {
-			    hostname:'localhost',
-			    port: 3030,
-			    timeout: 30000
-			  },
-			  database: {
-			    hostname:'localhost',
-			    port: 27017,
-			    db: 'PillarsExample'
-			  }
-			);
+			Las **propiedades más destacadas** son:
+			+ `pillars.config`: propiedad de tipo objeto donde se establecen las diferentes variables de configuración del proyecto. Ejemplo: maxUploadSize para determinar el tamaño máximo de archivo en las subidas o CORS para activar la compatibilidad CORS o no.
+			+ `pillars.servers`: propiedad de tipo ObjectArray que alberga todos los **servidores existentes** en el proyecto. Mediante el método `pillars.createServer()` se crean servidores, todos los creados estarán albergados en esta propiedad.
+			+ `pillars.routes`: propiedad de tipo ObjectArray que contiene todos los **controladores de ruta (objetos route)** en el proyecto.
+			+ `pillars.plugins`: propiedad de tipo ObjectArray que contenido todos los **plugins** en el proyecto.
 
 
-		:markdown
-			Por defecto Pillars.js no inicia el servicio HTTP ni la conexión a base de datos, los métodos `ENV.start([config[,callback]])` y `ENV.stop([callback])` inician y detienen el servicio HTTP, mientras `ENV.connect([config[,callback]])` y `ENV.disconnect([callback])` conectan y desconectan la base de datos.
-			
-			Si se setea la propiedad `.server` o `.database` se inicia el servicio HTTP o se conecta a la base de datos respectivamente,  en cada caso de forma automática.
+			Y los métodos: 
+			+ `pillars.createServer()`: para crear un servidor HTTP o HTTPS. Permite crear n servidores.
+			+ `pillars.createMongoConnection()`: creación de conexión con base de datos MongoDB. Permite crear n conexiones, todas las conexiones se almacenan en `pillars.mongos`.
 
-			Por último tenemos los métodos que nos permiten administrar las rutas y plugins de la aplicación:
-
-			- `addRoute()`: Añade una nueva ruta al sistema. Por medio de `removeRoute()` y `getRoute()` se puede eliminar y modificar respectivamente rutas ya insertadas. La propiedad `ENV.routes` devuelve una lista de las rutas ordenadas por prioridad.
-			- `addPlugin()`: Añade un nuevo plugin al sistema. Por medio de `removePlugin()` y `getPlugin()` se puede eliminar y modificar respectivamente plugins ya insertados. La propiedad `ENV.plugins` devuelve una lista de los plugins ordenados por prioridad.
+			En el framework se dispone de acceso global a las clases `Route`y `Plugin` entre otras, lo que permite crear nuevos objetos de una forma ágil: `new Route()` o `new Plugin()`.
 
 
 			## Route
 
-			Esta clase permite asociar un controlador/manejador con una ruta y configuración concretas, un objeto route consiste en una función manejador y una serie de propiedades que servirán para controlar cuándo y cómo ejecutar dicho manejador, la forma más básica de crear un objeto route es declarando sólo su manejador, dejando las opciones por defecto:
+			Esta clase permite declarar objetos route, los cuales asocian un **handler** a una **ruta y configuración concretas**. 
+
+		:highlight(lang='javascript')
+			//Creación del  objeto route
+			myRoute = new Route({ 	// Parámetros de Configuración
+			  id:'Status',
+			  path:'admin/status',
+			  method:'get'
+			},function(gw){ 	// Handler
+			  gw.send('¡Hola Mundo!');
+			});
+
+			//Adición al proyecto
+			pillars.routes.add(myRoute);
+
+		:markdown
+			La **declaración de un objeto route** puede contener: 
+			+ **Parámetros de configuración**, como: 
+				- `.id`: Identificador del objeto.
+				- `.path`: path al que responderá.
+				- `.host`: host al que responderá.
+				- `.port`: puerto al que responderá.
+				- `.method`: método al que responderá.
+				- `.https`: si acepta solicitudes http, https o ambas.
+				- `.active`: si el objeto route está activo o no.
+
+			+ **Handler**. Conjunto de acciones a realizar para la petición.
+
+			El handler del objeto route siempre recibe por parámetro el objeto gangway. El objeto gangway contiene los datos de la petición, como veremos más adelante.
+
+			Para que se ejecute el handler del objeto route será necesario que **coincidan los parámetros path, host, port, method y https** declarados en el objeto con los de la petición, y por supuesto que `.active` sea igual a true. Los valores por defecto de estas propiedades son:
+			- `.id`: En caso de no especificarlo, se genera un identificador único.
+			- `.path`: '/'.
+			- `.host`: undefined.
+			- `.port`: undefined.
+			- `.method`: undefined.
+			- `.https`:undefined.
+			- `.active`: true.
+
+			Es decir, el handler no se disparará necesariamente cuando la ruta del objeto route y de la petición coincidan, ya que será necesario que coincida también la configuración descrita en el objeto con los parámetros de la petición. Parámetros de configuración son por ejemplo el método de petición HTTP (get, post, put, etc.) o si la petición es http o https.
+
+			
+
+			La forma más básica de crear un objeto route es declarando sólo su manejador, dejando las opciones por defecto:
 
 		:highlight(lang='javascript')
 			myRoute = new Route(function(gw){
@@ -100,43 +138,30 @@ html(lang=gw.language)
 			});
 
 		:markdown
-			Aunque en general será necesario configurar el route de la siguiente forma:
+			### Anidamiento de objetos route
+			Los objetos Route a su vez pueden tener sub-rutas u objetos route hijos, de la misma forma que se pueden añadir objetos route al proyecto `pillars.routes.add(myRoute)`, se pueden añadir también objetos route a otros objetos route, estos funcionarán como subrutas, permitiendo organizar el árbol de rutas de una forma más orgánica, y como veremos más adelante nos servirá para trabajar con propiedades con herencia y tener un control organizado sobre grupos de controladores.
 
 		:highlight(lang='javascript')
-			myRoute = new Route({ // Configuración
-			  id:'Status',
-			  path:'admin/status',
-			  method:'get'
-			},function(gw){ // Manejador
-			  gw.send('¡Hola Mundo!');
-			});
-
-		:markdown
-			Route establece por defecto valores para las siguientes propiedades si no son especificadas:
-			- .id: En caso de no especificar uno, se genera un identificador único.
-			- .path: Por defecto es '/'
-			- .method: por defecto es 'GET'
-
-			Los objetos Route a su vez pueden tener sub-rutas, de la misma forma que podemos añadir objetos Route al entorno, podemos añadirlos también como 'hijos' de otro objeto Route, estos funcionarán como subrutas, permitiéndonos organizar el árbol de rutas de forma más orgánica y como veremos más adelante nos servirá para trabajar con propiedades por herencia y tener un control organizado sobre grupos de controladores.
-
-		:highlight(lang='javascript')
-			new Route({
+			myRoute = new Route({
 			  id: 'Administration',
 			  path: '/admin'
 			},function(gw){
 			  gw.send('Admin area');
-			})
-			  .addRoute(new Route({
-			    id: 'Status',
-			    path: '/status'
-			  },function(gw){
-			    gw.send('Admin area: Show status');
-			}))
+			});
+
+			myRouteSon = new Route({
+			  id: 'Status',
+			  path: '/status'
+			 },function(gw){
+			  gw.send('Admin area: Show status');
+			});
+
+			myRoute.routes.add(myRouteSon);
 
 		:markdown
 			El objeto Route con el id 'Status' responderá a la ruta '/admin/status'. Si desactivamos al Route con el id 'Administration', dejarán de estar disponibles todos sus descendientes.
 
-			Para poder establecer un orden en los objetos Route disponemos de la propiedad `.priority` que por defecto es `1000` y nos permite controlar el orden en el que serán comprobados por el Router. También disponemos de la propiedad `.active` que por defecto es `true` y nos permite desactivar un Route junto con su correspondiente descendencia.
+			Como hemos visto anteriormente en los parámetros de configuración, disponemos de la propiedad `.active` que por defecto es `true` y nos permite desactivar un objeto route junto con su correspondiente descendencia.
 
 			## Gangway (gw)
 
