@@ -16,7 +16,7 @@ var plugin = module.exports = new Plugin({
   if (directory) {
     directory.path = directory.path || '/';
     directory.listing = directory.listing || false;
-    directory.template = directory.template || pillars.config.staticTemplate;
+    directory.template = directory.template || pillars.config.directoryTemplate || directoryTemplate;
 
     var path = paths.join(directory.path, (gw.params.path || ''));
     var ext = path.replace(/^.*\./,'');
@@ -73,3 +73,40 @@ var plugin = module.exports = new Plugin({
     done();
   }
 });
+
+function directoryTemplate($){
+  var output = '';
+  output += '<!DOCTYPE html>';
+  output += '<html lang="'+$.gw.language+'">';
+    output += '<head>';
+      output += '<title>'+$.path+'</title>';
+      output += '<meta charset="utf-8">';
+      output += '<meta http-equiv="X-UA-Compatible" content="IE=edge">';
+      output += '<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">';
+      output += '<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">';
+    output += '</head>';
+    output += '<body>';
+      output += '<div class="container">';
+        output += '<header id="header">';
+          output += '<h1>'+$.path+'</h1>';
+        output += '</header>';
+        output += '<div id="page">';
+        if($.path !== $.path.replace(/[^\\\/]*$/,'')){
+          output += '<a href="'+$.path.replace(/[^\\\/]*$/,'')+'">../</a>';
+        }
+        output += '<hr>';
+        for(var i=0,l=$.files.length;i<l;i++){
+          if(/^\./i.test($.files[i])){
+            output += '<a href="'+$.path+'/'+$.files[i]+'" class="help-block">'+$.files[i]+'</a>';
+          } else {
+            output += '<a href="'+$.path+'/'+$.files[i]+'">'+$.files[i]+'</a>';
+          }
+          output += '<hr>';
+        }
+        output += '</div>';
+        output += '<footer id="footer"></footer>';
+      output += '</div>';
+    output += '</body>';
+  output += '</html>';
+  return output;
+}

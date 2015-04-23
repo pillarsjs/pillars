@@ -4,34 +4,34 @@
 var fs = require('fs');
 var paths = require('path');
 var colors = require('colors');
-
+var pillarsPackage = require('./package');
 
 
 // Splash screen...
 console.log(("\n\n"+
-"------###########################################################\n"+
-"------##                                                       ##\n"+
-"------##         ##############   ###   ##############         ##\n"+
-"------##        ###         ###   ###   ###         ###        ##\n"+
-"------##        ###         ###   ###   ###         ###        ##\n"+
-"------##         ###        ###   ###   ###        ###         ##\n"+
-"------##           ####     ###   ###   ###     ####           ##\n"+
-"------##                    ###   ###   ###                    ##\n"+
-"------##                    ###   ###   ###                    ##\n"+
-"------##                    ###   ###   ###                    ##\n"+
-"------##                    ###   ###   ###                    ##\n"+
-"------##                    ###   ###   ###                    ##\n"+
-"------##                    ###   ###   ###                    ##\n"+
-"------##                    ###   ###   ###                    ##\n"+
-"------##                    ###   ###   ###                    ##\n"+
-"------##           ####     ###   ###   ###     ####           ##\n"+
-"------##         ###        ###   ###   ###        ###         ##\n"+
-"------##        ###         ###   ###   ###         ###        ##\n"+
-"------##        ###         ###   ###   ###         ###        ##\n"+
-"------##         ##############   ###   ##############         ##\n"+
-"------##                                                       ##\n"+
-"------###########################################################\n\n"
-).replace(/ /g,' '.bgRed).replace(/#/g,' '.bgWhite).replace(/-/g,' '));
+"      ###########################################################\n"+
+"      ##·······················································##\n"+
+"      ##·········##############···###···##############·········##\n"+
+"      ##········###·········###···###···###·········###········##\n"+
+"      ##········###·········###···###···###·········###········##\n"+
+"      ##·········###········###···###···###········###·········##\n"+
+"      ##···········####·····###···###···###·····####···········##\n"+
+"      ##····················###···###···###····················##\n"+
+"      ##····················###···###···###····················##\n"+
+"      ##····················###···###···###····················##\n"+
+"      ##····················###···###···###····················##\n"+
+"      ##····················###···###···###····················##\n"+
+"      ##····················###···###···###····················##\n"+
+"      ##····················###···###···###····················##\n"+
+"      ##····················###···###···###····················##\n"+
+"      ##···········####·····###···###···###·····####···········##\n"+
+"      ##·········###········###···###···###········###·········##\n"+
+"      ##········###·········###···###···###·········###········##\n"+
+"      ##········###·········###···###···###·········###········##\n"+
+"      ##·········##############···###···##############·········##\n"+
+"      ##·······················································##  "+pillarsPackage.description+"\n"+
+"      ###########################################################  v"+pillarsPackage.version+"\n\n"
+).replace(/·/g,' '.bgRed).replace(/#/g,' '.bgWhite));
 
 
 
@@ -41,18 +41,16 @@ var pillars = module.exports = {
 };
 
 // Pillars version
-var pillarsPackage = require('./package');
 Object.defineProperty(pillars,"version",{
   enumerable : true,
   get : function(){return pillarsPackage.version;}
 });
 
 // Path & resolve
-pillars.path = paths.resolve(__dirname,'../');
+pillars.path = __dirname;
 pillars.resolve = function(path){
   return paths.resolve(pillars.path,path);
 };
-
 
 
 // Dependencies, globals...
@@ -64,7 +62,6 @@ crier.constructor.console.format = function(text,meta,lang){
   return i18n(text,meta,lang);
 };
 i18n.languages = ['en'];
-var templated = require('templated');
 var Procedure = global.Procedure = require('procedure');
 var ObjectArray = global.ObjectArray = require('objectarray');
 var Jailer = global.Jailer = require('jailer');
@@ -103,38 +100,6 @@ crier.stores.add({
 });
 
 
-
-// Setup Templated .jade support.
-var jade = require('jade');
-var marked = require('marked');
-var hljs = require('highlight.js');
-function hljsFix(str,lang){
-  var result;
-  if(lang){
-    result = hljs.highlight(lang,str,true).value;
-  } else {
-    result = hljs.highlightAuto(str).value;
-  }
-  result = result.replace(/^((<[^>]+>|\s{4}|\t)+)/gm, function(match, r) {
-    return r.replace(/\s{4}|\t/g, '  ');
-  });
-  result = result.replace(/\n/g, '<br>');
-  return '<pre class="highlight"><code>'+result+'</pre></code>';
-}
-jade.filters.highlight = function(str,opts){
-  return hljsFix(str,opts.lang);
-};
-marked.setOptions({
-  highlight: function (code,lang) {
-    return hljsFix(code,lang);
-  }
-});
-templated.addEngine('jade',function compiler(source,path){
-  return jade.compile(source,{filename:path,pretty:true,debug:false,compileDebug:true});
-});
-
-
-
 // Pillars components
 var Gangway = global.Gangway = require('./lib/gangway');
 var Route = global.Route = require('./lib/Route');
@@ -153,12 +118,6 @@ pillars.config = {
   fileMaxAge : 7*24*60*60,
   renderReload: false
 };
-
-pillars.config.staticTemplate = paths.join(__dirname,'./templates/directory.jade');
-templated.load(pillars.config.staticTemplate);
-
-pillars.config.errorTemplate = paths.join(__dirname,'./templates/error.jade');
-templated.load(pillars.config.errorTemplate);
 
 pillars.configure = function(config){
   for(var i=0,k=Object.keys(config),l=k.length;i<l;i++){
@@ -424,73 +383,44 @@ function processExit(){
 
 
 
-
-
-
-
-
-
-
-
-/*
-
-// Mailer
-var nodemailer = require('nodemailer');
-
-var mailTransport;
-Object.defineProperty(ENV,"smtp",{
-  enumerable : true,
-  get : function(){return mailTransport;},
-  set : function(set){
-    mailTransport = nodemailer.createTransport(set);
+// Setup Templated .jade support.
+var templated = require('templated');
+var jade = require('jade');
+var marked = require('marked');
+var hljs = require('highlight.js');
+function hljsFix(str,lang){
+  var result;
+  if(lang){
+    result = hljs.highlight(lang,str,true).value;
+  } else {
+    result = hljs.highlightAuto(str).value;
+  }
+  result = result.replace(/^((<[^>]+>|\s{4}|\t)+)/gm, function(match, r) {
+    return r.replace(/\s{4}|\t/g, '  ');
+  });
+  result = result.replace(/\n/g, '<br>');
+  return '<pre class="highlight"><code>'+result+'</pre></code>';
+}
+jade.filters.highlight = function(str,opts){
+  return hljsFix(str,opts.lang);
+};
+marked.setOptions({
+  highlight: function (code,lang) {
+    return hljsFix(code,lang);
   }
 });
+templated.addEngine('jade',function compiler(source,path){
+  return jade.compile(source,{filename:path,pretty:true,debug:false,compileDebug:true});
+});
 
-var mailer = global.mailer = {};
-
-mailer.send = function(mail,callback){
-  if(!mail.from && ENV.administrator && ENV.administrator.mail){
-    mail.from = ENV.administrator.mail;
-    if(ENV.administrator.firstname){
-      var fromName = (ENV.administrator.lastname)?ENV.administrator.firstname+' '+ENV.administrator.lastname:ENV.administrator.firstname;
-      mail.from = fromName+' <'+mail.from+'>';
-    }
-  }
-  if(mailTransport){
-    ENV.emit('mail',mail);
-    mailTransport.sendMail(mail, function(error,info){
-      if(callback){callback(error,info);}
-    });
-  } else {
-    if(callback){callback(new Error(i18n('pillars.mail.no-transport')));}
-  }
-};
-
-
-
-*/
-
-
-
-
-
-
-
-
-
-
-
-// ---------- Pillars static directory -----------------
-
+// Static service
 var pillarsStatic = new Route({
   id:'pillarsStatic',
   path:'/pillars/*:path',
   directory:{
-    path:paths.resolve(__dirname,'./static'),
+    path:pillars.resolve('./static'),
     listing:true
   }
 });
 pillars.routes.add(pillarsStatic);
-
-
 
