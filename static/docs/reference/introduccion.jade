@@ -2,18 +2,29 @@ include ../.layout.jade
 
 doctype html
 html(lang=gw.language)
-	- var path = [{label:'Pillars.js Reference',url:'/pillars/docs/reference/'},{label:'Visión Global',url:'/pillars/docs/reference/vision-global.jade'}];
-	+reference-layout("Pillars.js Reference - Visión global - 'make it easy!'",path)
+	- var path = [{label:'Pillars.js Reference',url:'/pillars/docs/reference/'},{label:'Introducción',url:'/pillars/docs/reference/introduccion.jade'}];
+	+reference-layout("Pillars.js Reference - Introducción - 'make it easy!'",path)
 
 		#title
-			h1 Visión global
+			h1 Introducción
 				em  Pillars.js Reference
 			
 
 		//- Summary
 		section.summary
-			h2#summary Sumario
 			:markdown
+				Pillars.js proporciona un entorno de trabajo y herramientas para el desarrollo de aplicaciones web en Node.js. 
+				
+				En Pillars.js hay cuatro conceptos básicos:
+				+ **Servicios**, conjunto de servicios disponibles y ampliables en el entorno, tales como http, https, MongoDB o MySQL. Un proyecto Pillars.js permite varios servicios http, por ejemplo.
+				+ **Routes**. El soporte a este elemento lo realiza la **Clase Route**, mediante objetos route se definen rutas que atenderá la aplicación. Ofrecen la versatilidad de anidamiento y son conectables y desconectables "en caliente".
+				+ **Gangway**. Se genera un objeto gangway automáticamente en cada petición, contiene el request y el response de Node.js. La potencia de gangway son sus datos del request parseados y listos para su uso así como métodos para la respuesta como `gw.file()` que permite enviar archivos al cliente compatible con el protocolo por partes de http, entre muchos otros.
+				+ **Plugins**. La **Clase Plugin** 
+
+				La librería consiste en la creación de un entorno que ofrece una serie de propiedades y funciones que nos permiten trabajar con el framework para la creación de una aplicación web.
+				
+				Este entorno es creado en el momento que se incluye la librería `var project = require('pillars');`
+
 				En este capítulo se da una visión global de cómo funciona Pillars.js. Se definen qué elementos o eventos captura de Node.js desde que el usuario realiza la petición hasta que le responde.
 
 				Es interesante la lectura de este capítulo, ya que tendrás una perspectiva más amplia del framework.
@@ -141,7 +152,7 @@ html(lang=gw.language)
 
 
 					:highlight(lang='javascript')
-						route = new Route( configuration, handler );
+						var route = new Route( configuration, handler );
 
 
 					:markdown

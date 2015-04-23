@@ -2,50 +2,59 @@ include ../.layout.jade
 
 doctype html
 html(lang=gw.language)
-	- var path = [{label:'Pillars.js Reference',url:'/pillars/docs/reference/'},{label:'project',url:'/pillars/docs/reference/project.jade'}];
-	+reference-layout("Pillars.js Reference - project - 'make it easy!'",path)
+	- var path = [{label:'Pillars.js Reference',url:'/pillars/docs/reference/'},{label:'Entorno (ENV)',url:'/pillars/docs/reference/entorno.jade'}];
+	+reference-layout("Pillars.js Reference - Entorno (ENV) - 'make it easy!'",path)
 
 		#title
-			h1 proyect
+			h1 pillars (Entorno)
 				em  Pillars.js Reference
-			a.source(href="https://github.com/bifuer/pillars/blob/master/index.js") Source
+			a.source(href="https://github.com/bifuer/pillars/blob/master/lib/ENV.js") Source
 
 		//- Summary
 		section.summary
 			h2#summary Sumario
 			:markdown
-				La librería devuelve un proyecto con una configuración mínima inicial y sobre el que se construye el resto de la aplicación.
+				La variable `ENV` está disponible de forma global al realizar la inclusión de la librería. 
 
-				`var project = require('pillars');`
+				Mediante `ENV` se **configura el entorno de la aplicación web** y es el **punto central y de anclaje** para el resto de los elementos que componen el framework.
 
-				project, es el **punto central y de anclaje** para el resto de los elementos que componen el proyecto web. Un proyecto web se compone principalmente de **servicios**, **objetos route** y **objetos plugin**.
+				El entorno de la aplicación es todo aquello que necesitamos configurar para una aplicación web. Podemos configurar elementos como; puerto al que responderá la aplicación, configuración del smtp, configuración de los idiomas de la aplicación, tamaño de archivo máximo permitido por el servidor, etc.
 	
 				
 		//- Syntax
 		section.syntax
 			h2#syntax Sintaxis
 			:highlight(lang='javascript')
-				//Inclusión de la librería
-				var project = require("pillars");
+				//Inclusión de la librería y método start() para arrancar el servidor.
+				require("pillars").start();
 
-				// Creación y arranque del servidor http
-				project.createServer().start();
+				//Configuración del entorno
+				ENV.configure({
+					languages: ['es','en'],
+					debug: true,
+					server:{
+						port: 80,
+						maxUploadSize: 1024*1024*50;
+					}
+				});
+				
 
-				// Adición al proyecto de un handler que muestra "Hola Mundo" en la ruta /
-				project.routes.add(new Route(function(gw){
-					gw.send("Hola Mundo");
-				}));
-			
+				//Añadimos al entono otros componentes del framework
+
+				// - Un objeto route
+				ENV.addRoute(function(gw){gw.send("Hola Mundo!")});
+
+				// - Un objeto plugin
+				ENV.addPlugin();
 				
 
 		//- Description
 		section.description
 			h2#description Descripción
 			:markdown
-				La librería consiste en la creación de un entorno que ofrece una serie de **propiedades** y **funciones** que nos permiten trabajar con el framework para la creación de una aplicación web. 
-
+				Al realizar el require() de la librería obtenemos acceso a `ENV`, el entorno de Pillars.js, que se instancia de forma **global**.
 				
-				La variable global `ENV` es la más importante, punto central de configuración y arranque del entorno. Además tendremos acceso a **Clases como Plugin o Route**, y a las diferentes funciones que nos permitirán construir nuestra aplicación.
+				El entorno consiste en una serie de **propiedades** y **funciones** que nos permiten trabajar con el framework. La variable global `ENV` es la más importante, punto central de configuración y arranque del entorno. Además tendremos acceso a **Clases como Plugin o Route**, y a las diferentes funciones que nos permitirán construir nuestra aplicación.
 
 				`ENV` es un objeto global cuyas propiedades conforman la configuración de nuestra aplicación y sus métodos nos permiten la construción de la misma. Disponemos de propiedades que nos permiten configurar el servicio HTTP o la conexión a la base de datos, mientras otros métodos como `.addRoute()` o `.addPlugin()` son el mecanismo para añadir controladores a nuestro entorno.
 
@@ -57,7 +66,34 @@ html(lang=gw.language)
 
 			:highlight(lang='javascript')
 					ENV.configure({
-						
+						debug : true,
+						directories:{
+							uploads:'./uploads',
+							temp:'./temp'
+						},
+						templates:{
+							cache:false
+						},
+						languages : ['es','en'],
+						administrator:{
+							mail:'administrator@domain.com',
+							firstname:'Name',
+							lastname:'Surname'
+						},
+						server:{
+							port:3000,
+							timeout:10*1000
+						},
+						database:{
+							store:'databaseName'
+						},
+						smtp: {
+							service: 'gmail',
+							auth: {
+								user: 'myuser@gmail.com',
+								pass: '******'
+							}
+						}
 					});
 
 		//- Properties
@@ -77,6 +113,47 @@ html(lang=gw.language)
 						 Es de tipo **Boolean**
 						 Por defecto es: **true**
 
+			//- Property
+			section.property
+				h3#property-languages: code
+					small ENV
+					| .languages
+
+				//- Property description
+				section.description
+					:markdown
+						`.languages` es de tipo **Array**. Define los idiomas disponibles en el entorno. Por defecto el idioma es `['en']`. Nótese que la consola también es traducida, de forma que si establecemos como primer idioma `['es']` los mensajes de la consola aparecerán en español.
+
+						Cuando seteamos `.languages`, se emite el evento `languages`.
+
+					:highlight(lang='javascript')
+						//La aplicación estará disponible en tres idiomas, siendo el predeterminado 'es'.
+						ENV.languages=['es','en','de'];
+
+					:markdown
+						> Para conocer más acerca de los idiomas de una aplicación, consultar el módulo [Textualization (i18n)](/pillars/docs/reference/i18n.jade)
+
+
+			//- Property
+			section.property
+				h3#property-administrator: code 
+					small ENV
+					| .administrator
+
+				//- Property description
+				section.description
+					:markdown
+						La propiedad `.administrator` permite configurar los datos del administrador/a de la aplicación. Es un conjunto de propiedades con los siguientes elementos:
+						+ `mail`: para definir el email del administrador de la aplicación.
+						+ `firstname`: nombre del administrador.
+						+ `lastname`: apellidos del administrador.
+
+					:highlight(lang='javascript')
+						ENV.administrator={
+							mail: correo@tudominio.es,
+							firstname: 'Nombre' ,
+							lastname: 'Apellidos'
+						};
 
 			//- Property
 			section.property
@@ -112,7 +189,53 @@ html(lang=gw.language)
 					:markdown
 						> Nota: El servidor HTTP comprime previamente los envíos a cliente. Esta compresión la realiza dependiendo de los compresores que tenga disponibles el cliente, por defecto si está disponible usa deflate. Con la propiedad `ENV.server.maxZipSize` establecemos a partir de qué tamaño el servidor no comprimirá los archivos.
 
+			//- Property
+			section.property
+				h3#property-database: code 
+					small ENV
+					| .database
 
+				//- Property description
+				section.description
+					:markdown
+						La propiedad `.database` es un conjunto de propiedades para configurar la base de datos:
+						+ `store`: **String**. Nombre de la base de datos.
+						+ `hostname`: **String**. Nombre de host.
+						+ `port`: **Integer**. Puerto de la base de datos.
+						+ `user`: **String**, nombre de usuario con privilegios para la base de datos.
+						+ `password`: **String** Contraseña del usuario.
+
+					:highlight(lang='javascript')
+						ENV.database={
+							store:'dbtest',
+							hostname:'127.0.0.1',
+							port:'27017',
+							user:'myname',
+							password:'mypass'
+						};
+
+					:markdown
+
+			//- Property
+			section.property
+				h3#property-directories: code 
+					small ENV
+					| .directories
+
+				//- Property description
+				section.description
+					:markdown
+						La propiedad `.directories` es un conjunto de propiedades para configurar los directorios del sistema:
+						+ `uploads`: **String**. Ruta relativa o absoluta del directorio donde se almacenarán los archivos subidos al servidor. Por defecto es undefined.
+						+ `temp`: **String**. Ruta relativa o absoluta del directorio de archivos temporales. Por defecto es undefined.
+
+					:highlight(lang='javascript')
+						ENV.directories={
+							uploads:'./uploads',
+							temp:'./temp'
+						};
+
+					:markdown
 
 			//- Property
 			section.property
@@ -138,11 +261,36 @@ html(lang=gw.language)
 					:markdown
 						> Nota: Pillars.js cuenta por defecto con Jade como lenguaje de templating. Se pueden añadir más motores con renderer.addEngine().
 
+			//- Property
+			section.property
+				h3#property-smtp: code 
+					small ENV
+					| .smtp
+
+				//- Property description
+				section.description
+					:markdown
+						La propiedad `.smtp` es un conjunto de propiedades para configurar el servidor smtp.  Utiliza la librería [node-mailer](https://github.com/andris9/Nodemailer):
+						+ `hostname`: nombre de host
+						+ `port`: puerto 
+						+ `user`: usuario del servidor de correo. Tipo **String**.
+						+ `password`: contraseña del usuario. Tipo **String**.
+
+					:highlight(lang='javascript')
+						ENV.smtp={
+							hostname:'',
+							port:'',
+							user:'',
+							password:''
+						};
+
+					:markdown
+
 
 			//- Property
 			section.property
 				h3#property-routes: code 
-					small project
+					small ENV
 					| .routes
 
 				//- Property description
@@ -157,6 +305,9 @@ html(lang=gw.language)
 						+ **.move(id, pos)**
 						+ **.moveBefore()**
 						+ **.moveAfter()**
+
+						
+
 
 
 					:highlight(lang='javascript')
@@ -202,7 +353,7 @@ html(lang=gw.language)
 			//- Property
 			section.property
 				h3#property-plugins: code 
-					small project
+					small ENV
 					| .plugins
 
 				//- Property description
@@ -219,7 +370,42 @@ html(lang=gw.language)
 						+ Accounts
 						+ Directory
 						+ BodyReader
-			
+
+
+			//- Property
+			section.property
+				h3#property-crypt: code 
+					small ENV
+					| .crypt
+
+				//- Property description
+				section.description
+					:markdown
+						La [propiedad crypt](https://github.com/bifuer/pillars/blob/master/lib/ENV.js#L71) define el algoritmo de encriptación y la clave mediante ENV.crypt.algorithm y ENV.crypt.password.
+
+					:highlight(lang='javascript')
+						ENV.crypt={
+							algorithm:'aes-256-ctr',
+							password:'pillars'
+						};
+
+					:markdown
+						Esta propiedad es usada junto con los métodos `ENV.encrypt()` y `ENV.decrypt()` para encriptar y desencriptar datos. 
+
+						Actualmente se encripta [gw.etag](/pillars/docs/reference/gangway.jade#property-etag) para enviarlo al cliente.
+
+
+			//- Property
+			section.property
+				h3#property-package: code 
+					small ENV
+					| .package
+
+				//- Property description
+				section.description
+					:markdown
+						`.package` es de solo lectura. Devuelve el contenido de `package.json` en un objeto.
+
 			//- Property
 			section.property
 				h3#property-version: code 

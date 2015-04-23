@@ -2,24 +2,28 @@ include ../.layout.jade
 
 doctype html
 html(lang=gw.language)
-	- var path = [{label:'Pillars.js Reference',url:'/pillars/docs/reference/'},{label:'Librería i18n',url:'/pillars/docs/reference/cron.jade'}];
-	+reference-layout("Pillars.js Reference - Librería cron - 'make it easy!'",path)
+	- var path = [{label:'Pillars.js Reference',url:'/pillars/docs/reference/'},{label:'Librería textualization',url:'/pillars/docs/reference/t12n.jade'}];
+	+reference-layout("Pillars.js Reference - Librería textualization - 'make it easy!'",path)
 
 		#title
-			h1 Librería i18n
-				em  Pillars.js Reference
-			a.source(href="https://github.com/bifuer/pillars/blob/master/lib/Cron.js") Source
+			h1 textualization
+				em  Librería
+			//a.source(href="https://github.com/bifuer/pillars/blob/master/lib/textualization.js") Source
 
 		//- Summary
 		section.summary
 			h2#summary Sumario
 			:markdown
-				La librería cron integra en Pillars.js un **programador de tareas**. 
+				La librería textualization, o t12n en su forma abreviada, permite integrar un completo sistema de traducciones para aplicaciones en múltiples idiomas. 
 
-			.msg.msg-icon.bg-alert Estamos completando la referencia. ¡Disculpa las molestias!. Síguenos en las redes sociales para estar al tanto de las actualizaciones de la documentación. 
+				> Ver [Tutorial i18n](/pillars/docs/tutorials/i18n.jade)
 
-			
+			.msg.msg-icon.bg-info Estamos completando la referencia. ¡Disculpa las molestias!. Síguenos en las redes sociales para estar al tanto de las actualizaciones en la documentación. 
+
+
+	
 	//
+		
 		//- Syntax
 		section.syntax
 			h2#syntax Sintaxis
