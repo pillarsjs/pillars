@@ -61,8 +61,8 @@ textualization = {
 		}
 	},
 	'gangway':{
-		'open':"↩ {method}:".cyan+" {host}:{port}{req.url}".white,
-		'close':"↪ {method}:".green+" {host}:{port}{req.url}".white+" [{statusCode}]".cyan+"  {size}bytes {responseTime}ms".grey+" ·{!params.finished?'broken':''}·".red,
+		'open':"<< {method}:".cyan+" {host}:{port}{req.url}".white,
+		'close':">> {method}:".green+" {host}:{port}{req.url}".white+" [{statusCode}]".cyan+"  {size}bytes {responseTime}ms".grey+" ·{!params.finished?'broken':''}·".red,
 		'error':"Gangway error".red,
 		'error-h1':"Error {code} {explain}",
 		'cacheCleaned': "Gangway file cache cleaned".cyan,
