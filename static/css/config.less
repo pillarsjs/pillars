@@ -99,7 +99,80 @@
 @dropdowns-paddings: 0 @dropdowns-padding-right 0 @dropdowns-padding-left;
 @dropdowns-height: @dropdowns-line-height + @dropdowns-padding-top + @dropdowns-padding-bottom;
 
+.action, .bg-action,  .info, .bg-info, .ok, .bg-ok, .alert, .bg-alert, .danger, .bg-danger, .soft, .bg-soft {
+	&.field>label:before, &.msg-icon:before {
+		.faclass;
+		content: "";
+		margin-right: 0.4em;
+	}
+}
+.action, .bg-action {&.field>label:before, &.msg-icon:before {content: "\f192";}}
+.info, .bg-info {&.field>label:before, &.msg-icon:before {content: "\f05a";}}
+.ok, .bg-ok {&.field>label:before, &.msg-icon:before {content: "\f058";}}
+.alert, .bg-alert {&.field>label:before, &.msg-icon:before {content: "\f06a";}}
+.danger, .bg-danger {&.field>label:before, &.msg-icon:before {content: "\f057";}}
+.soft, .bg-soft {&.field>label:before, &.msg-icon:before {content: "locked";}}
 
+.action {
+	border-color: darken(@color-action,10%)  !important;
+	color: @color-action !important;
+}
+.info {
+	border-color: darken(@color-info,10%)  !important;
+	color: @color-info !important;
+}
+.ok {
+	border-color: darken(@color-ok,10%)  !important;
+	color: @color-ok !important;
+}
+.alert {
+	border-color: darken(@color-alert,10%)  !important;
+	color: @color-alert !important;
+}
+.danger {
+	border-color: darken(@color-danger,10%)  !important;
+	color: @color-danger !important;
+}
+.soft {
+	border-color: darken(@color-soft,10%)  !important;
+	color: @color-soft !important;
+}
+
+.bg-action, .bg-info, .bg-ok, .bg-alert, .bg-danger, .bg-soft {
+	color: #ffffff !important;
+	text-shadow: 0 0 1px rgba(0, 0, 0, 0.2) !important;
+}
+
+.bg-action {
+	background-color: @color-action !important;
+	border-color: darken(@color-action,10%)  !important;
+}
+.bg-info {
+	background-color: @color-info !important;
+	border-color: darken(@color-info,10%)  !important;
+}
+.bg-ok {
+	background-color: @color-ok  !important;
+	border-color:  darken(@color-ok,10%) !important;
+}
+.bg-alert {
+	background-color: @color-alert !important;
+	border-color:  darken(@color-alert,10%) !important;
+}
+.bg-danger {
+	background-color: @color-danger !important;
+	border-color:  darken(@color-danger,10%) !important;
+}
+.bg-soft {
+	background-color: @color-soft !important;
+	border-color:  darken(@color-soft,10%) !important;
+}
+
+.msg {
+	border-radius: @inputs-border-radius;
+	padding: 0.5em;
+	border: 1px solid @color-soft;
+}
 
 .a {
 	color: darken(@color-action,10%);
@@ -113,7 +186,7 @@
 	*/
 }
 .code {
-	font-family: 'Inconsolata', monospace;
+	font-family: Consolas, monaco, monospace;
 	//background-color: lighten(@color-soft,10%);
 	background-color: #f9f9f9;
 	//border: 1px solid @color-soft;

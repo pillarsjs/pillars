@@ -1,4 +1,46 @@
 @import "normalize.less";
+
+//'http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css',
+@import "font-awesome.min.less";
+
+//'http://fonts.googleapis.com/css?family=Inconsolata:400,700|Source+Sans+Pro:400,400italic,700,700italic',
+@font-face {
+  font-family: 'Inconsolata';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Inconsolata'), url(http://fonts.gstatic.com/s/inconsolata/v10/BjAYBlHtW3CJxDcjzrnZCIgp9Q8gbYrhqGlRav_IXfk.woff2) format('woff2'), url(http://fonts.gstatic.com/s/inconsolata/v10/BjAYBlHtW3CJxDcjzrnZCLrIa-7acMAeDBVuclsi6Gc.woff) format('woff');
+}
+@font-face {
+  font-family: 'Inconsolata';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Inconsolata Bold'), local('Inconsolata-Bold'), url(http://fonts.gstatic.com/s/inconsolata/v10/AIed271kqQlcIRSOnQH0yf79_ZuUxCigM2DespTnFaw.woff2) format('woff2'), url(http://fonts.gstatic.com/s/inconsolata/v10/AIed271kqQlcIRSOnQH0yRbnBKKEOwRKgsHDreGcocg.woff) format('woff');
+}
+@font-face {
+  font-family: 'Source Sans Pro';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Source Sans Pro'), local('SourceSansPro-Regular'), url(http://fonts.gstatic.com/s/sourcesanspro/v9/ODelI1aHBYDBqgeIAH2zlJbPFduIYtoLzwST68uhz_Y.woff2) format('woff2'), url(http://fonts.gstatic.com/s/sourcesanspro/v9/ODelI1aHBYDBqgeIAH2zlNHq-FFgoDNV3GTKpHwuvtI.woff) format('woff');
+}
+@font-face {
+  font-family: 'Source Sans Pro';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Source Sans Pro Bold'), local('SourceSansPro-Bold'), url(http://fonts.gstatic.com/s/sourcesanspro/v9/toadOcfmlt9b38dHJxOBGJkF8H8ye47wsfpWywda8og.woff2) format('woff2'), url(http://fonts.gstatic.com/s/sourcesanspro/v9/toadOcfmlt9b38dHJxOBGIqjGYJUyOXcBwUQbRaNH6c.woff) format('woff');
+}
+@font-face {
+  font-family: 'Source Sans Pro';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Source Sans Pro Italic'), local('SourceSansPro-It'), url(http://fonts.gstatic.com/s/sourcesanspro/v9/M2Jd71oPJhLKp0zdtTvoM2Sl3jWJ3D9poyJPMfASioc.woff2) format('woff2'), url(http://fonts.gstatic.com/s/sourcesanspro/v9/M2Jd71oPJhLKp0zdtTvoM_bce-VcyLJMRR1FC9qWbU8.woff) format('woff');
+}
+@font-face {
+  font-family: 'Source Sans Pro';
+  font-style: italic;
+  font-weight: 700;
+  src: local('Source Sans Pro Bold Italic'), local('SourceSansPro-BoldIt'), url(http://fonts.gstatic.com/s/sourcesanspro/v9/fpTVHK8qsXbIeTHTrnQH6H0cQ2LOPDPk8GfVMt0MqYH3rGVtsTkPsbDajuO5ueQw.woff2) format('woff2'), url(http://fonts.gstatic.com/s/sourcesanspro/v9/fpTVHK8qsXbIeTHTrnQH6PgYMAt3u4NmhhzLLLPJ5qH3rGVtsTkPsbDajuO5ueQw.woff) format('woff');
+}
+
 @import "config.less";
 
 * {
@@ -16,14 +58,12 @@ body {
 	//font-family: 'Roboto', sans-serif;
 	font-size: 14px;
 	color: @color-default;
-	line-height: 1.5;
 	display: block;
 }
 
 a {
 	color: inherit;
 	text-decoration: none;
-	border-bottom: 1px dotted transparent;
 	background-color: transparent;
 	&:hover {
 		text-decoration: underline;
@@ -31,39 +71,34 @@ a {
 }
 h1,h2,h3,h4,h5,h6 {
 	margin:0 0 0.3em;
-	font-weight: 400;
+	font-weight: 700;
 	line-height: 1.3;
-	code {
-		color: darken(@color-action,30%);
-	}
 }
-h1 {font-size: 4.0em;}
-h2 {font-size: 3.0em;}
-h3 {font-size: 1.5em;}
+h1 {font-size: 2.2em;}
+h2 {font-size: 1.8em;}
+h3 {font-size: 1.4em;}
 h4 {font-size: 1.3em;}
 h5 {font-size: 1.2em;}
-h6 {font-size: 1em;}
+h6 {font-size: 1.1em;}
 
-p {
+p, li {
+	line-height: 1.5;
+	text-align: justify;
+}
+
+p, ul {
 	margin: 0 0 1em;
 	code {
 		.code;
 	}
 	a {
 		.a;
-		code {
-			//color:inherit;
-			//border-bottom-color: @color-action;
-			&:hover {
-		
-			}
-		}
 	}
 	em {
-		.em;
+		//.em;
 	}
 	strong {
-		.strong;
+		//.strong;
 	}
 	del {
 		.del;
@@ -74,10 +109,13 @@ p {
 }
 
 ul {
-	margin: 2em 1em 3em 1em;
 	padding: 0;
 	li {
-		margin: 0 0 1em 1.5em;
+		margin: 0 0 0.5em 1em;
+		ul {
+			margin-top: 1em;
+			margin-bottom: 1em;
+		}
 	}
 }
 
@@ -112,9 +150,8 @@ dl {
 }
 
 nav {
-	h2,h3,h4,h5,h6 {
+	&>h2,&>h3,&>h4,&>h5,&>h6 {
 		display: none;
-		font-size: 1em;
 	}
 	.select {
 		display: none;
@@ -124,121 +161,41 @@ nav {
 		padding: 0;
 		display: block;
 		list-style-type: none;
-		ul {
-			margin-left: 1em;
-		}
 		li {
 			margin: 0;
 			padding: 0;
 			display: block;
+			text-align: left;
 			a {
-				padding: @inputs-padding-top @inputs-padding-right @inputs-padding-bottom @inputs-padding-left;
-				display: block;
+				padding: 0.2em 0.5em;
+				display: inline-block;
+			}
+			ul {
+				margin: 0;
+				margin-left: 1em;
+				margin-bottom: 1em;
 			}
 		}
 	}
 }
 
-/*Chelo*/
-
-codesyntax{
-	display: block;
-	background-color: #efefef;
-	padding: 5px 10px;
-
-}
 pre {
 	margin: 1.5em 0;
 	&>code {
-		font-family: 'Inconsolata', monospace;
+		.code;
 		overflow-x: auto;
 		margin: 0 0 0.5em;
-		padding: 1.2em !important;
+		padding: 1.2em;
 		color: #ffffff;
 		border: 1px solid #000000;
-		box-shadow: 0 0 15px 5px #000000 inset;
+		box-shadow: 0 0 10px 0 #000000 inset;
 		width: 100%;
 		background-color: @color-default;
 		display: block;
-		white-space: pre !important;
+		white-space: pre;
+		font-size: 14px;
 	}
 }
-
-.action, .bg-action,  .info, .bg-info, .ok, .bg-ok, .alert, .bg-alert, .danger, .bg-danger, .soft, .bg-soft {
-	&.field>label:before, &.msg-icon:before {
-		.faclass;
-		content: "";
-		margin-right: 0.4em;
-	}
-}
-.action, .bg-action {&.field>label:before, &.msg-icon:before {content: "\f192";}}
-.info, .bg-info {&.field>label:before, &.msg-icon:before {content: "\f05a";}}
-.ok, .bg-ok {&.field>label:before, &.msg-icon:before {content: "\f058";}}
-.alert, .bg-alert {&.field>label:before, &.msg-icon:before {content: "\f06a";}}
-.danger, .bg-danger {&.field>label:before, &.msg-icon:before {content: "\f057";}}
-.soft, .bg-soft {&.field>label:before, &.msg-icon:before {content: "locked";}}
-
-.action {
-	border-color: darken(@color-action,10%)  !important;
-	color: @color-action !important;
-}
-.info {
-	border-color: darken(@color-info,10%)  !important;
-	color: @color-info !important;
-}
-.ok {
-	border-color: darken(@color-ok,10%)  !important;
-	color: @color-ok !important;
-}
-.alert {
-	border-color: darken(@color-alert,10%)  !important;
-	color: @color-alert !important;
-}
-.danger {
-	border-color: darken(@color-danger,10%)  !important;
-	color: @color-danger !important;
-}
-.soft {
-	border-color: darken(@color-soft,10%)  !important;
-	color: @color-soft !important;
-}
-
-.bg-action, .bg-info, .bg-ok, .bg-alert, .bg-danger, .bg-soft {
-	color: #ffffff !important;
-	text-shadow: 0 0 1px rgba(0, 0, 0, 0.2) !important;
-}
-
-.bg-action {
-	background-color: @color-action !important;
-	border-color: darken(@color-action,10%)  !important;
-}
-.bg-info {
-	background-color: @color-info !important;
-	border-color: darken(@color-info,10%)  !important;
-}
-.bg-ok {
-	background-color: @color-ok  !important;
-	border-color:  darken(@color-ok,10%) !important;
-}
-.bg-alert {
-	background-color: @color-alert !important;
-	border-color:  darken(@color-alert,10%) !important;
-}
-.bg-danger {
-	background-color: @color-danger !important;
-	border-color:  darken(@color-danger,10%) !important;
-}
-.bg-soft {
-	background-color: @color-soft !important;
-	border-color:  darken(@color-soft,10%) !important;
-}
-
-.msg {
-	border-radius: @inputs-border-radius;
-	padding: 0.5em;
-	border: 1px solid @color-soft;
-}
-
 
 table {
 	width: auto;

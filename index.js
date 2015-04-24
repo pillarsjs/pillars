@@ -404,6 +404,12 @@ function hljsFix(str,lang){
 jade.filters.highlight = function(str,opts){
   return hljsFix(str,opts.lang);
 };
+jade.filters.codesyntax = function(str,opts){
+  str = str.replace(/^((<[^>]+>|\s{4}|\t)+)/gm, function(match, r) {
+    return r.replace(/\s{4}|\t/g, '  ');
+  });
+  return '<pre class="codesyntax"><code>'+str+'</pre></code>';
+};
 marked.setOptions({
   highlight: function (code,lang) {
     return hljsFix(code,lang);

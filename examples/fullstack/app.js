@@ -1,5 +1,7 @@
 
-var pillars = require('../../index');
+var pillars = require('../../index').configure({
+  renderReload: true
+});
 
 var server = pillars.createServer().start({
   port:3000
