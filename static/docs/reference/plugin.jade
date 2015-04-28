@@ -14,38 +14,24 @@ html(lang=gw.language)
 		section.summary
 			h2#summary Sumario
 			:markdown
-				La Clase Plugin permiten ampliar las funcionalidades del framework. Por ejemplo añadir soporte de sesiones, etc. El framework Pillars.js en su versión actual ofrece una serie de [plugins integrados](https://github.com/bifuer/pillars/tree/master/lib/plugins): 
-				estan en orden de ejecución
+				La Clase Plugin permiten ampliar las funcionalidades del framework. 
 
-				+ langPath.js: [en, es] - coge la ruta, detecta si el comienzo de la ruta coincide con algun idioma de los delcarados en languages que no sean el primero. elimina del gw.path el idioma correspondiente.(/es/tools -> /tools). Actúa sobre gangway antes del router. Una vez hecho eso setea gw.languages al idioma que ha eliminado.
-				+ encoding.js: filtro chorra que devulve un 406, que es codificación no válida.
-				+ router.js: cuando llega pa ejecutarse el plugin router, empieza a comprar el listado de objetos route y los constrasta con el objeto gangway, que coincidan el path, host, method y protocolo http o https. El plugin mira en ENV los routes que se han añadido directamente a ENV. Si alguno coincide, pues sigue comparando con los hijos. Conforme va localizando los que coindicen, lo acumula en gw.routing; options. propiedades de cada route, al final me queda un listado de propiedades heredadas. Check: chequeo rápido de los options. Routes: array de route por los que pasa. handlers: handler del route que atiende finalmente la petición.
-				+ maxUploadSize.js: para cualquier petición de usuario se comprueba que el tamaño del cuerpo de la petición no supere el tamaño declarado en ENV.maxUploadSize. Este plugin se puede customizar. Cada route tiene una propiedad de configuración que es maxsize que nos permite especificar si para ese route concreto no le echa cuenta a la propiedad ENV.maxUploadSize. Utiliza la propiedad maxsize que permite especificar el tamaño máximo de la petición con un valor concreto y no el valor por defecto que viene de la propiedad ENV.maxUploadSize. El error devuelto en el caso de superar el tamño es un 413. 
-				+ CORS.js: Cross-origin resource sharing. Compartición de recursos entre distintos dominios. De que dominio utilizan recursos tuyos, porque cuando se hace una solicitud http, desde un dominio diferente, a ese otro en el encabezado HTTP aparece origin, que es desde donde se está haciendo lapetición. COMO FUNCIONA CORS. utiliza la propiedad cors del route. cors: true, cors: false, o un array de los dominios que van a poder hacerme peticiones http de ese tipo.
-				+ OPTIONS.js: POST, GET, PUT, Y el nuevo.... OPTIONS :O que sirve para preguntar al servidor por una ruta dada qués metodos son soportados, por eso se ejecuta posterior al ruter.
-				+ sessions.js: Con estas propiedades session: true o account: true se activa el plugin sessions. Tener en cuenta la herencia. activa el estado de sesiones, iniciando una sesion en la base de datos, y asociando eso con una cookie que se le envía al usauario encriptada, ( se utiliza un me´todo de encriptación que es ENV.crypt.password, clave genérica con la que se encripta las cookies y el etag. ) dejando la propiedad gw.session lista para usar. es un objeto perene dentro de la sesión.
-				+ **Sistema de usuarios**: accounts.js. se ejecuta con account: true - cuentas de usuario. setea gw.user con los datos del usuario, utilizando el sistema de usuarios de PIllars.js
-				+ bodyReader.js: lee el cuerpo de la petición, lo mete en gw.content.params. La propiedad del route, multipart debe ser true para que el route acepte ficheros. Los ficheros los mete en gw.files.
-	
-		
+				Estas funcionalidades pueden afectar a todas las rutas del proyecto o sólo a aquellas en las que la configuración del objeto route lo indique.
+					
 		//- Syntax
 		section.syntax
 			h2#syntax Constructor
-			codesyntax.
+			:codesyntax
 				plugin = new Plugin( configuration, handler );
 
 			:markdown
 				+ *configuration*: opcional. Objeto de configuración del plugin. En la creación del plugin se pueden configurar los siguientes parámetros: 
-					+ [id](#property-id): Identificador del plugin.
-					+ [priority](#property-priority): prioridad del plugin.
+					+ [id](#property-id): Identificador del plugin.					
 					+ [active](#property-active): si está activo o no.
 
 				+ *handler*: opcional. Controlador que se ejecutará el plugin. El controller siempre recibe como parámetro el [objeto gangway](gangway.jade) y **next**.
 
-
 				
-
-
 			:highlight(lang='javascript')
 				// Creación más básica de un objeto plugin. 
 				// Al omitir el objeto de configuración se establecen los valores por defecto
@@ -73,8 +59,9 @@ html(lang=gw.language)
 		section.description
 			h2#description Descripción
 			:markdown
-				
-			.msg.msg-icon.bg-info Estamos completando la referencia. ¡Disculpa las molestias!. Síguenos en las redes sociales para estar al tanto de las actualizaciones en la documentación. 
+				La Clase Plugin es primordial en el funcionamiento del framework, ya que éste está construido a base de Plugins que realizan diversas funciones. 	
+
+				Ver [Plugins integrados](https://github.com/bifuer/pillars/tree/master/lib/plugins) en Pillars.js. 		
 
 
 		//- Properties
@@ -102,43 +89,20 @@ html(lang=gw.language)
 				section.description
 					:markdown
 						**Boolean** que indica si el plugin está activo o no. Por defecto es **true**.
-
-			//- Property
-			section.property
-				h3#property-priority: code
-					small Plugin.prototype
-					| .priority
-
-				//- Property description
-				section.description
-					:markdown
-						Prioridad de ejecución del objeto plugin. **Integer**. Por defecto es **1000**.
-						Pregunta: ¿la prioridad de ejecutación del un plugin está en la misma cola de ejecución que un route?
-		
+			
 
 		//- Eventos
-		section.events
-			h2#events Eventos
+		section.yyy
+			h2#yyy yyy
 
-			section.event
-				h3#property-idUpdate: code
-					| idUpdate
+			section.yyy
+				h3#property-vvv: code
+					| bbb
 
 				:markdown
-					Evento que se emite cuando se actualiza el id del plugin. [Código](https://github.com/bifuer/pillars/blob/master/lib/Plugin.js#L26)
+					abc
 
 				:highlight(lang='javascript')
 					//Capturar el evento
 					ENV.on('idUpdate');
-
-			section.event
-				h3#property-priorityUpdate: code
-					| priorityUpdate
-
-				:markdown
-					Evento que se emite cuando se actualiza la prioridad del plugin. [Código](https://github.com/bifuer/pillars/blob/master/lib/Plugin.js#L39)
-
-				:highlight(lang='javascript')
-					//Capturar el evento
-					ENV.on('priorityUpdate');
 		

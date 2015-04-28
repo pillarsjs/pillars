@@ -13,22 +13,34 @@ html(lang=gw.language)
 		//- Summary
 		section.summary
 			:markdown
-				Pillars.js proporciona un entorno de trabajo y herramientas para el desarrollo de aplicaciones web en Node.js. 
+				Pillars.js proporciona un entorno de trabajo con herramientas para el desarrollo de aplicaciones web en Node.js. 
 				
-				En Pillars.js hay cuatro conceptos básicos:
-				+ **Servicios**, conjunto de servicios disponibles y ampliables en el entorno, tales como http, https, MongoDB o MySQL. Un proyecto Pillars.js permite varios servicios http, por ejemplo.
+				En Pillars.js hay cinco conceptos básicos:
+				+ **El entorno** o **proyecto**, es la variable que devuelve la librería `var proyect = require('pillars');`. Nos ofrece un entorno inicial y herramientas para la construcción de la aplicación web.
+				+ **Servicios**, conjunto de servicios disponibles y ampliables en el entorno, tales como http, https, MongoDB o MySQL. Un proyecto Pillars.js permite varios servicios del mismo tipo, por ejemplo varios servicios http.
 				+ **Routes**. El soporte a este elemento lo realiza la **Clase Route**, mediante objetos route se definen rutas que atenderá la aplicación. Ofrecen la versatilidad de anidamiento y son conectables y desconectables "en caliente".
 				+ **Gangway**. Se genera un objeto gangway automáticamente en cada petición, contiene el request y el response de Node.js. La potencia de gangway son sus datos del request parseados y listos para su uso así como métodos para la respuesta como `gw.file()` que permite enviar archivos al cliente compatible con el protocolo por partes de http, entre muchos otros.
-				+ **Plugins**. La **Clase Plugin** 
+				+ **Plugins**. La **Clase Plugin** permite ampliar las funcionalidades del framework.
 
-				La librería consiste en la creación de un entorno que ofrece una serie de propiedades y funciones que nos permiten trabajar con el framework para la creación de una aplicación web.
 				
-				Este entorno es creado en el momento que se incluye la librería `var project = require('pillars');`
+				-----------------------------------
+				Funcionamiento
 
-				En este capítulo se da una visión global de cómo funciona Pillars.js. Se definen qué elementos o eventos captura de Node.js desde que el usuario realiza la petición hasta que le responde.
+				El funcionamiento y el flujo de trabajo de Pillars.js se basa en la **Cadena de Plugins**. 
 
-				Es interesante la lectura de este capítulo, ya que tendrás una perspectiva más amplia del framework.
+				La Cadena de Plugins es una variable de tipo ObjectArray, es decir, un Array de Objetos con métodos para añadir, mover y eliminar objetos en el Array. Así, se conforma una lista ordenada de Plugins que se ejecutan de manera secuencial por cada petición de usuario.
+
+				[Dibujo-------------------------------]
+
+				Pillars.js incorpora una serie de [Plugins nativos]. El más importante de todos ellos es el **plugin Router**, que es el encargado de enroutar la petición del usuario, haciendo por lo tanto que dada una petición ésta la ejecute el *handler* del objeto route pertinente.
+
+				Dicho de otra forma, todas las rutas que atiende el proyecto web, se construyen mediante objetos route. Todos estos objetos route están contenidos en la **Cadena de Routes**, que es de tipo ObjectArray, dando de esta forma la versatilidad de añadir o eliminar rutas de la aplicación incluso en funcionamiento.
+
+				En Pillars.js hay dos objetos que no forman parte en sí mismos de las herramientas de desarrollo, pero que dotan de funcionalidades excepcionales al framework, estos objetos son: 
+				+ La Cadena de Routes. La cadena de routes es una variable de tipo ObjectArray que contiene objetos de tipo Route.
+				+ La Cadena de Plugins. La cadena de plugins es una variable de tipo ObjectArray que contiene objetos de tipo Plugin. 
 				
+
 
 	
 		//- Properties

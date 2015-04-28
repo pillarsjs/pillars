@@ -16,10 +16,7 @@ html(lang=gw.language)
 			:markdown
 				Pillars.js **genera de forma automática** un objeto gangway en cada petición. Contiene como propiedades los **datos del request parseados** y métodos para la respuesta. 
 
-				Este objeto está disponible en el *handler* tanto del **objeto route**, como en el **objeto plugin**.
-
-				Olvida el request y el response, ahora con gangway lo tienes todo parseado, directo y sin complicaciones.
-				
+				Este objeto está disponible en el *handler* tanto del **objeto route**, como en el **objeto plugin**.				
 		
 		//- Syntax
 		section.syntax
@@ -71,15 +68,15 @@ html(lang=gw.language)
 				Algunos parses, como el parser del contenido de la petición HTTP, es posible desactivarlos para que no ocupen tiempo de proceso, si fuera necesario. 
 
 				Los Parses que realiza el objeto gangway son: 
-				+ **Parser del contenido de la Petición HTTP**. Setea la propiedad [`gw.content`](#property-content), por lo que podremos acceder directamente al POST con la propiedad `gw.content.params` en formato JSON, por ejemplo.
+				+ **Parser del contenido de la Petición HTTP**. Setea la propiedad [`gw.content`](#property-content), por lo que podremos acceder directamente al POST en la propiedad `gw.content.params` en formato JSON, entre otras.
 
-				+ **Parser de las cabeceras HTTP accepts**. Teniendo toda esta información en [`gw.accepts`]() y pudiendo acceder directamente, entre otras cosas, a los idiomas que espera el navegador en `gw.accepts.language`. En este caso, también se resuelve el idioma que va a utilizar el servidor para el response y lo setea en `gw.language`. 
+				+ **Parser de las cabeceras HTTP accepts**. Teniendo toda esta información en [`gw.accepts`]() y pudiendo acceder directamente a los idiomas que espera el navegador en `gw.accepts.language`, por ejemplo. En este caso, también se resuelve el idioma que va a utilizar el servidor para el response y lo setea en `gw.language`. 
 				
-				+ **Parser de Ranges**. Gracias a este Pillars.js es compatible con HTTP-ranges, que permite entre otras cosas enviar archivos de gran tamaño con pausa y stop del navegador, o emitir un video en streaming.
+				+ **Parser de Ranges**. Gracias a este parser Pillars.js es compatible con HTTP-ranges, que permite entre otras cosas enviar archivos de gran tamaño con pausa y stop en el navegador, o emitir un video en streaming.
 
 				+ **Parser auth**. Ofrece en la propiedad `gw.auth` un objeto JSON con el user y pass enviados como respuesta a una petición de autenticación HTTP básica. Esta petición HTTP de autenticación básica se realiza con el método [`gw.authenticate()`](#method-authenticate).
 
-				+ **Parser User Agent**. Acceso directo en un único string al motor de renderizado, navegador que usa, si es móvil o no, y os del cliente.
+				+ **Parser User Agent**. Acceso directo en un único string al motor de renderizado, navegador que usa, si es móvil o no, y OS del cliente.
 
 				+ **Parser del encabezado cookie del request**. Deja las cookies setedas en un objeto JSON en la propiedad `gw.cookie`.
 
