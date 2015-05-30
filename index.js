@@ -149,7 +149,7 @@ var plugins = [
   require('./plugins/maxUploadSize.js'),
   require('./plugins/CORS.js'),
   require('./plugins/OPTIONS.js'),
-  require('./plugins/sessions.js'),
+  //require('./plugins/sessions.js'),
   require('./plugins/directory.js'),
   require('./plugins/bodyReader.js')
 ];
