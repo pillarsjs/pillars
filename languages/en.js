@@ -19,21 +19,22 @@ textualization = {
 				return 'Unknow code';
 		}
 	},
-	'server':{
-		'error':"Server error ".red+"{config.hostname}:{config.port}".yellow,
-		'listening':"Server listening on ".green+"{config.hostname}:{config.port}".yellow,
-		'closed':"Server closed ".red+"{config.hostname}:{config.port}".yellow+" {time}m".grey
+	'httpService':{
+		'error':"Server error ".red+"{service.hostname}:{service.port}".yellow,
+		'listening':"Server listening on ".green+"{service.hostname}:{service.port}".yellow,
+		'closed':"Server closed ".red+"{service.hostname}:{service.port}".yellow+" {time}m".grey
 	},
-	'mongo':{
-		'error':"Mongo error ".red+"{params.hostname}:{params.port}".yellow,
-		'connect':"Mongo connect ".green+"{params.hostname}:{params.port}".yellow,
-		'disconnect':"Mongo disconnect ".red+"{params.hostname}:{params.port}".yellow
+	'mongoService':{
+		'error':"Mongo error ".red+"{service.hostname}:{service.port}".yellow,
+		'connect':"Mongo connect ".green+"{service.hostname}:{service.port}".yellow,
+		'disconnect':"Mongo disconnect ".red+"{service.hostname}:{service.port}".yellow
 	},
 	'shutdown':{
 		'ok': "Pillars stop succesfully".green,
 		'errors': "Pillars stop errors: ".red+"\n\n{errors}\n".bgRed
 	},
-	'shuttingdown':"Shutting down...",
+	'forced-shuttingdown': "Forced shutting down.".yellow,
+	'shuttingdown':"Shutting down...".cyan,
 	'logfile':{
 		'ok': "Logfile setup ok".green,
 		'errors': "Logfile setup error: ".red,
@@ -66,41 +67,6 @@ textualization = {
 		'error':"Gangway error".red,
 		'error-h1':"Error {code} {explain}",
 		'cacheCleaned': "Gangway file cache cleaned".cyan,
-	},
-	'login':{
-		'title':"Login",
-		'h1':"Enter your user name and password",
-		'ok':"Login ok, you are logged",
-		'fail':"User name or/and password incorrect, try again",
-		'user':{
-			'label':"User",
-			'placeholder':"User name"
-		},
-		'password':{
-			'label':"Password",
-			'placeholder':"Your super secure password"
-		},
-		'redirect':{
-			'label':"Redirect",
-			'placeholder':"URL for success automatic redirection, yes seriusly"
-		},
-		'submit':"Send",
-	},
-	'static':{
-		'title': "Directory listing {path}",
-		'h1': "{path}"
-	},
-	'directories':{
-		'uploads':{
-			'alert':'Uploads directory undefined'.yellow.reverse,
-			'error':'Uploads directory no exist,'.red+' path: {path}'.magenta,
-			'ok':'Uploads directory set on'.green+' path: {path}'.yellow
-		},
-		'temp':{
-			'alert':'Temp directory undefined'.yellow.reverse,
-			'error':'Temp directory no exist,'.red+' path: {path}'.magenta,
-			'ok':'Temp directory set on'.green+' path: {path}'.yellow
-		}
 	},
 	'mail':{
 		'no-transport':"Unknow transport for mail send. Please set Pillars.smtp values"
