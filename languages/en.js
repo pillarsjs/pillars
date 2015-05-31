@@ -37,7 +37,7 @@ textualization = {
 	'shuttingdown':"Shutting down...".cyan,
 	'logfile':{
 		'ok': "Logfile setup ok".green,
-		'errors': "Logfile setup error: ".red,
+		'error': "Logfile setup error: ".red,
 	},
 	'plugins':{
 		'loaded': "Loaded Plugins: ".cyan+"{list}".yellow,

@@ -1,9 +1,12 @@
+// Pillars.js require & config
 var project = require('../../index').configure({
   renderReload: true
 });
 
+// Default HTTP server config & start
 project.services.get('http').configure({port:3000}).start();
 
+// Add HTTPS service
 var fs = require('fs');
 project.services.insert((new HttpService({
 	id:'https',
@@ -12,9 +15,21 @@ project.services.insert((new HttpService({
   port: 3001
 })).start());
 
+// Config i18n
 var i18n = require('textualization');
 i18n.languages = ['es','en'];
 
+// Example translation sheet
+i18n.load('overview',{
+  welcome: "Hello World!",
+  language: "English"
+},'en');
+i18n.load('overview',{
+  welcome: "Hola mundo",
+  language: "Español"
+},'es');
+
+// Config Log manager
 var crier = require('crier').addGroup('overview');
 crier.constructor.console.language = 'es';
 
@@ -23,85 +38,6 @@ crier.constructor.console.language = 'es';
 
 
 
-/*
-
-
-// Setup Templated .jade support.
-var templated = require('templated');
-var jade = require('jade');
-var marked = require('marked');
-var hljs = require('highlight.js');
-function hljsFix(str,lang){
-  var result;
-  if(lang){
-    result = hljs.highlight(lang,str,true).value;
-  } else {
-    result = hljs.highlightAuto(str).value;
-  }
-  result = result.replace(/^((<[^>]+>|\s{4}|\t)+)/gm, function(match, r) {
-    return r.replace(/\s{4}|\t/g, '  ');
-  });
-  result = result.replace(/\n/g, '<br>');
-  return '<pre class="highlight"><code>'+result+'</pre></code>';
-}
-jade.filters.highlight = function(str,opts){
-  return hljsFix(str,opts.lang);
-};
-jade.filters.codesyntax = function(str,opts){
-  str = str.replace(/^((<[^>]+>|\s{4}|\t)+)/gm, function(match, r) {
-    return r.replace(/\s{4}|\t/g, '  ');
-  });
-  return '<pre class="codesyntax"><code>'+str+'</pre></code>';
-};
-marked.setOptions({
-  highlight: function (code,lang) {
-    return hljsFix(code,lang);
-  }
-});
-templated.addEngine('jade',function compiler(source,path){
-  return jade.compile(source,{filename:path,pretty:true,debug:false,compileDebug:true});
-});
-
-
-*/
-
-
-/*
-
-
-
-// Static service
-var pillarsStatic = new Route({
-  id:'pillarsStatic',
-  path:'/pillars/*:path',
-  directory:{
-    path:pillars.resolve('./static'),
-    listing:true
-  }
-});
-pillars.routes.add(pillarsStatic);
-
-
-*/
-
-
-
-
-
-
-/*
-
-var mongoConn = pillars.createMongoConnection().start({
-  database: 'pillars'
-});
-
-pillars.plugins.get('Sessions').mongo = mongoConn;
-pillars.plugins.get('Accounts').mongo = mongoConn;
-
-*/
-
-
-//crier.log("pillars.server.close",{fgr:'hola',error: new Error('ups!')});
 
 
 
@@ -109,7 +45,15 @@ pillars.plugins.get('Accounts').mongo = mongoConn;
 
 
 
-project.routes.add(new Route({id:'Root'},function(gw){gw.html('Hola mundo!');}));
+
+
+// Controllers
+
+project.routes.add(new Route({
+  id:'Root'
+},function(gw){
+  gw.html(i18n("overview.welcome"));
+}));
 
 var Utilities = new Route({
   id:'Tools',
@@ -132,7 +76,7 @@ var Utilities = new Route({
     +'</ul>'
   );
 });
-project.routes.add(Utilities); // o ENV.addRoute(Utilities) indistintamente.
+project.routes.add(Utilities);
 
 Utilities.routes.add(new Route({
   id:'Status',
@@ -148,7 +92,7 @@ Utilities.routes.add(new Route({
   path:'/source'
 },function(gw){
   // Mediante .file() podemos enviar un archivo al cliente, en este caso enviamos el propio fuente de nuestra aplicación.
-  gw.file('./app.js','Código fuente de mi aplicación');
+  gw.file('./app.js','Código fuente de mi aplicación.txt');
   // El segundo parametro fuerza un nuevo nombre para el archivo y con el tercer parametro a 'true' podriamos forzar la descarga.
 }));
 
@@ -160,6 +104,13 @@ Utilities.routes.add(new Route({
   var a = b + c;
   // En caso de establcer el modo 'debug' obtendremos el stack del error.
 }));
+
+
+// Add Jade support to Templated
+var jade = require('jade');
+global.templated.addEngine('jade',function compiler(source,path){
+  return jade.compile(source,{filename:path,pretty:true,debug:false,compileDebug:true});
+});
 
 Utilities.routes.add(new Route({
   id:'Template',
@@ -228,11 +179,11 @@ Utilities.routes.add(new Route({
   path:'/edit-routes'
 },function(gw){
   // Eliminamos el Route 'CacheControl' del entorno.
-  Utilities.removeRoute('CacheControl');
-  // Loclaizamos el Route 'ErrorControl' y modificamos su propiedad '.path' y la prioridad
-  Utilities.getRoute('ErrorControl').configure({path:'geterror',priority:900});
+  Utilities.routes.remove('CacheControl');
+  // Loclaizamos el Route 'ErrorControl' y modificamos su propiedad '.path'
+  Utilities.routes.get('ErrorControl').configure({path:'geterror'});
   // Comprobamos si ya hemos añadido el Route adicional o no.
-  if(!Utilities.getRoute('Extra')){
+  if(!Utilities.routes.get('Extra')){
     // Añadidmos un nuevo Route.
     Utilities.routes.add(Extra);
   }
@@ -240,8 +191,97 @@ Utilities.routes.add(new Route({
 }));
 
 
+// pruebas de plugins, uno por uno.
+/*
+  require('./plugins/langPath.js'),
+  require('./plugins/encoding.js'),
+  require('./plugins/router.js'),
+  require('./plugins/maxUploadSize.js'),
+  require('./plugins/CORS.js'),
+  require('./plugins/OPTIONS.js'),
+  //require('./plugins/sessions.js'),
+  require('./plugins/directory.js'),
+  require('./plugins/bodyReader.js')
+*/
 
+var Plugins = new Route({
+  id:'Plugins',
+  path:'/plugins'
+},function(gw){
+  gw.html(
+    '<h1>Utilidades</h1>'
+    +'<ul>'
+      +'<li><a href="/plugins/langPath">langPath</li>'
+      +'<li><a href="/plugins/bodyReader">bodyReader</li>'
+    +'</ul>'
+  );
+});
+project.routes.add(Plugins);
 
+Plugins.routes.add(new Route({
+  id:'langPathPlugin',
+  path:'/langPath'
+},function(gw){
+  gw.html(
+    '<h1>'+gw.i18n('overview.language')+'</h1>'
+    +'<ul>'
+      +'<li><a href="/en/plugins/langPath">langPath (en)</li>'
+      +'<li><a href="/plugins/langPath">langPath (es)</li>'
+    +'</ul>'
+  );
+}));
+
+Plugins.routes.add(new Route({
+  id:'bodyReaderPlugin',
+  path:'/bodyReader',
+  method: ['post','get'],
+  multipart: true
+},function(gw){
+
+  if(gw.params.upload && gw.params.upload.path){
+    var uploadFile = gw.params.upload;
+    fs.rename(uploadFile.path, './uploads/'+uploadFile.name, function(error){
+      if(!error){
+        uploadFile.moved = true;
+        end();
+      } else {
+        end();
+      }
+    });
+  } else {
+    end();
+  }
+
+  function end(){
+    gw.html(
+      '<fieldset>'
+        +'<legend>Form POST method</legend>'
+        +'<form method="POST">'
+          +'<input type="text" name="A" />'
+          +'<input type="text" name="B" />'
+          +'<input type="text" name="C" />'
+          +'<input type="submit" />'
+        +'</form>'
+      +'</fieldset>'
+      +'<fieldset>'
+        +'<legend>Form multipart</legend>'
+        +'<form enctype="multipart/form-data" method="POST">'
+          +'<input type="text" name="A" />'
+          +'<input type="text" name="B" />'
+          +'<input type="text" name="C" />'
+          +'<input type="file" name="upload" />'
+          +'<input type="file" name="uploadMulti" multiple="multiple" />'
+          +'<input type="submit" />'
+        +'</form>'
+      +'</fieldset>'
+      +'<pre>'+JSON.decycled(gw.params,false,5,'  ')+'</pre>'
+    );
+  }
+}));
+// añadir control de global en librerias pillars
+// meter en i18n todos los textos, o no?
+// sessiones por defecto
+// servicio MongoDB
 
 
 

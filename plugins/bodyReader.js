@@ -8,42 +8,26 @@ var querystring = require('querystring');
 var formidable = require('formidable');
 var fs = require('fs');
 
-var plugin = module.exports = new Plugin({id: 'BodyReader'}, function (gw, next) {
+var plugin = module.exports = new Plugin({id: 'BodyReader'}, function (gw, done) {
   var multipart = gw.routing.check('multipart', undefined);
   // Parse json, urlencoded or multipart body.
   if (gw.content.type === 'application/json') {
-    jsonEncoded(gw, next);
+    jsonEncoded(gw, done);
   } else if (gw.content.type === 'application/x-www-form-urlencoded') {
-    urlEncoded(gw, next);
-  } else if (gw.content.type === 'multipart/form-data' && gw.content.boundary && ENV.directories.temp) {
+    urlEncoded(gw, done);
+  } else if (gw.content.type === 'multipart/form-data' && gw.content.boundary) {
     if (multipart === undefined) {
-      next();
+      done();
     } else if (multipart === false) {
       gw.error(400);
     } else {
-      multipartEncoded(gw, next);
+      multipartEncoded(gw, done);
     }
   } else {
-    next();
+    done();
   }
 });
 
-var uploadsDirectory;
-Object.defineProperty(plugin, "uploadsDirectory", {
-  enumerable : true,
-  get : function () {return uploadsDirectory;},
-  set : function (set) {
-    fs.stat(set, function (error, stats){
-      if (error) {
-        uploadsDirectory = undefined;
-        crier.error('directories.uploads.error',{path: set});
-      } else {
-        uploadsDirectory = set;
-        crier.info('directories.uploads.ok',{path: set});
-      }
-    });
-  }
-});
 var tempDirectory;
 Object.defineProperty(plugin, "tempDirectory", {
   enumerable : true,
@@ -60,6 +44,7 @@ Object.defineProperty(plugin, "tempDirectory", {
     });
   }
 });
+plugin.tempDirectory = "./temp";
 
 // JSON-encoded parser.
 
@@ -124,7 +109,7 @@ function multipartEncoded(gw, callback){
 
   gw.on('close',cleanTemp);
 
-  upload.uploadDir = ENV.directories.temp;
+  upload.uploadDir = tempDirectory;
   upload.keepExtensions = true;
   upload.onPart = function(part) {
     if (part.filename!="") {
@@ -145,6 +130,7 @@ function multipartEncoded(gw, callback){
       }
     })
     .on('file', function(field, file) {
+      file.ext =  file.name.replace(/^.*\./,'');
       if (fields[field]) {
         if(!Array.isArray(fields[field])){fields[field]=[fields[field]];}
         fields[field].push(file);
@@ -171,7 +157,6 @@ function multipartEncoded(gw, callback){
 
 function cleanTemp(gw){
   // Remove temp files
-  var gw = this;
   for (var f in gw.files) {
     if (Array.isArray(gw.files[f])) {
       for (var sf in gw.files[f]) {
