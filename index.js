@@ -75,9 +75,11 @@ pillars.configure = function(config){
 
 
 // Dependencies, globals...
-var crier = require('crier').addGroup('pillars');
+global.templated = require('templated');
+global.crier = require('crier');
+var crier = global.crier.addGroup('pillars');
 crier.constructor.console.language = 'en';
-var i18n = require('textualization');
+var i18n = global.textualization = require('textualization');
 i18n.load('pillars',paths.join(__dirname,'./languages'));
 i18n.languages = ['en'];
 var Procedure = global.Procedure = require('procedure');
