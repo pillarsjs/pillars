@@ -106,7 +106,7 @@ function logFileLoader(){
   if(pillars.logFile){
     pillars.logFile.end();
   }
-  pillars.logFile = fs.createWriteStream('./'+(new Date()).format('{YYYY}{MM}{DD}')+'.log',{flags: 'a'})
+  pillars.logFile = fs.createWriteStream('./logs/'+(new Date()).format('{YYYY}{MM}{DD}')+'.log',{flags: 'a'})
     .on('open',function(fd){
       crier.log('logfile.ok');
     })
