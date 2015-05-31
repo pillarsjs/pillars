@@ -216,15 +216,14 @@ process.on('SIGINT', function() {
       if(errors){
         crier.error('shutdown.errors',{errors:errors},processExit);
       } else {
-        crier.info('shutdown.ok',processExit);
+        crier.info('shutdown.ok',{},processExit);
       }
     });
   } else {
     shuttingdownCounter++;
     crier.info('shuttingdown');
     if(shuttingdownCounter>=3){
-      crier.info('forced-shuttingdown');
-      processExit();
+      crier.info('forced-shuttingdown',{},processExit);
     }
   }
 });
