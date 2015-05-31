@@ -74,9 +74,7 @@
     "index.js",
     "lib",
     "languages",
-    "plugins",
-    "static",
-    "templates"
+    "plugins"
   ],
   "readmeFilename": "README.md",
   "license": "MIT"
