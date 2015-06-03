@@ -1,6 +1,12 @@
 // jshint strict:true, node:true, camelcase:true, curly:true, maxcomplexity:15, newcap:true
 "use strict";
 
+global.modulesCache = global.modulesCache || {};
+if(global.modulesCache.pillars){
+  module.exports = global.modulesCache.pillars;
+  return;
+}
+
 var fs = require('fs');
 var paths = require('path');
 var colors = require('colors');
@@ -35,7 +41,7 @@ console.log(("\n\n"+
 
 
 // Pillars base export (for cyclical requires)
-var pillars = module.exports = {
+var pillars = module.exports = global.modulesCache.pillars = {
   debug: true
 };
 

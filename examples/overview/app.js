@@ -31,13 +31,6 @@ i18n.load('overview',{
 
 // Config Log manager
 var crier = require('crier').addGroup('overview');
-crier.constructor.console.language = 'es';
-
-
-
-
-
-
 
 
 
@@ -282,9 +275,58 @@ Plugins.routes.add(new Route({
 // meter en i18n todos los textos, o no?
 // sessiones por defecto
 // servicio MongoDB
+// revisar nombres de propiedades y metodos de Gangway para comprobar que se usa camelCase
 
 
+/*
 
+Utilities.addRoute(new Route({
+  id:'Query',
+  path:'queryparams'
+},function(gw){
+  // Enviamos los parámetros recibidos por query como objeto JSON
+  gw.json(gw.query);
+}));
+
+Utilities.addRoute(new Route({
+  id:'Session',
+  path:'/session',
+  session: true // Algunos Plugins hacen uso de propiedades de ruta, en este caso la propiedad session activa el Plugin Sessions.
+},function(gw){
+  // El Plugin Sessions nos aporta la propiedad .session de Gangway que nos permitirá guardar datos entre diferentes solicitudes.
+  gw.session.contador = gw.session.contador || 0; // Iniciamos la vriable contador.
+  gw.session.contador++;
+  gw.html('Contador:<strong>'+gw.session.contador+'</strong>');
+}));
+
+Utilities.addRoute(new Route({
+  id:'Authenticate',
+  path:'/secret'
+},function(gw){
+  // Este contenido sólo será visible bajo autenticación.
+  // comprobamos si exite autenticación y es correcta, en caso contrario utilizamos .authenticate(msg):
+  if(gw.auth && gw.auth.user=='admin' && gw.auth.pass=='1234'){
+    gw.render('./example.jade',{
+      title: 'El sentido de la vida, el universo y todo lo demás',
+      h1: 'El sentido de la vida, el universo y todo lo demás',
+      contents: '<h2>42</h2><blockquote><p>The Hitchhiker´s Guide to the Galaxy</p></blockquote>'
+    })
+  } else {
+    gw.authenticate('Es necesario usuario y clave para ver este contenido');
+  }
+}));
+
+Utilities.addRoute(new Route({
+  id:'pillarsStatic',
+  path:'/static/*:path'
+  // Utilizamos una ruta abierta mediante '/:', nos permite capturar el resto de la ruta como parámetro.
+},precasts.static({
+        // Mediante el precast 'static' creamos un manejador de directorios estáticos.
+  directory:'./static', // Indicamos el directorio a servir.
+  listing:true // Habilitamos el listado de directorios.
+})));
+
+*/
 
 
 
