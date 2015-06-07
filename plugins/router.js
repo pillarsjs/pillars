@@ -7,7 +7,7 @@ var Plugin = require('../lib/Plugin');
 
 module.exports = new Plugin({
   id:'Router'
-}, function (gw, next) {
+}, function (gw, done) {
 
   // Start 'routing' property.
   gw.routing = {
@@ -28,7 +28,7 @@ module.exports = new Plugin({
   for (var i=0,l=pillars.routes.length;i<l;i++) {
     if (routesWalker(gw, pillars.routes[i], gw.path)) {
       found = true;
-      next();
+      done();
       break;
     }
   }

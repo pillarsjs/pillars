@@ -1,4 +1,4 @@
-/* jslint node: true */
+// jshint strict:true, node:true, camelcase:true, curly:true, maxcomplexity:15, newcap:true
 "use strict";
 
 var pillars = require('../index');

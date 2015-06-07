@@ -6,44 +6,40 @@ var crier = require('crier').addGroup('pillars').addGroup('plugins').addGroup('S
 var Plugin = require('../lib/Plugin');
 
 require('json.crypt');
-var ObjectID = require('mongodb').ObjectID;
+require('objectarray');
 
-var plugin = module.exports = new Plugin({id:'Sessions'},function(gw,next){
+var sessionStore = new ObjectArray();
+
+var plugin = module.exports = new Plugin({id:'Sessions'},function(gw,done){
   var session = gw.routing.check('session',false);
-  var account = gw.routing.check('account',false);
-  if((session || account) && !gw.session){
+  if(session){
     getSession(gw,function(error){
       if(error){
         gw.error(500,error);
       } else {
         gw.on('close',saveSession);
-        next();
+        done();
       }
     });
   } else {
-    next();
+    done();
   }
 });
 
 function getSession(gw,callback){
-  // Check cookie for session id+key, if not, create a new session and send session cokkie.
-  if(!plugin.mongo) {
-    callback(new Error(gw.i18n('pillars.plugins.session.store-error')));
-  } else if(!gw.cookie.sid) {
+  // Check cookie for session id+key, if not, create a new session and send session cookie.
+  if(!gw.cookie.sid) {
     newSession(gw,callback);
   } else {
     var sid = gw.cookie.sid = JSON.decrypt(gw.cookie.sid);
-    if(sid && sid.id && /^[a-f0-9]{24}$/i.test(sid.id)){
-      var sessions = plugin.mongo.database.collection('sessions');
-      var _id = new ObjectID.createFromHexString(sid.id);
-      sessions.findOne({_id:_id,key:sid.key},function(error, result) {
-        if(!error && result){
-          gw.session = result.session;
-          callback();
-        } else {
-          newSession(gw,callback);
-        }
-      });
+    if(sid && sid.id){
+      var session = sessionStore.get(sid.id);
+      if(!session){
+        newSession(gw,callback);
+      } else {
+        gw.session = session;
+        if(callback){callback();}
+      }
     } else {
       newSession(gw,callback);
     }
@@ -51,39 +47,29 @@ function getSession(gw,callback){
 }
 
 function newSession(gw,callback){
-  // Create a new session on database.
-  var sessions = plugin.mongo.database.collection('sessions');
-  crier.info('SessionsCollection:',sessions);
-  var key = Math.round(Math.random()*100000000000000000000000000000).toString(36);
-  sessions.insertOne({timestamp:(new Date()),lastaccess:(new Date()),key:key},function(error, result) {
-    if(!error && result.insertedCount==1){
-      gw.cookie.sid = {
-        id:result.insertedId.toString(),
-        key:key
-      };
-      gw.setCookie('sid',JSON.encrypt(gw.cookie.sid),{maxAge:365*24*60*60});
-      gw.session = {};
-      callback();
-    } else {
-      callback(new Error(gw.i18n('pillars.plugins.session.insert-error')));
-    }
-  });
+  // Create a new session on datastore.
+  var id = Math.round(Math.random()*100000000000000000000000000000).toString(36);
+  var session = {
+    id:id,
+    timestamp:(new Date()),
+    lastaccess:(new Date()),
+  };
+  sessionStore.add(session);
+  var cookie = {
+    id:id
+  };
+  gw.setCookie('sid',JSON.encrypt(cookie),{maxAge:365*24*60*60});
+  gw.cookie.sid = cookie; // Forced cookie setting
+  gw.session = session;
+  if(callback){callback();}
 }
 
 function saveSession(gw,meta,callback){
-  // Save gw.session Objet on database.
+  // Save gw.session Objet on datastore.
   var sid = gw.cookie.sid || false;
-  if(gw.session && sid && sid.id && /^[a-f0-9]{24}$/i.test(sid.id)){
-    sid = new ObjectID.createFromHexString(sid.id);
-    var sessions = plugin.mongo.database.collection('sessions');
-    sessions.updateOne({_id:sid},{$set:{session:gw.session,lastaccess:(new Date())}},function(error, result) {
-      if(!error && result.modifiedCount==1){
-        // Session saved
-      } else {
-        crier.error('session.update-error',{error:error});
-      }
-      if(callback){callback(error);}
-    });
+  if(gw.session && sid && sid.id){
+    gw.session.lastaccess = new Date();
+    if(callback){callback();}
   } else {
     if(callback){callback(new Error('Unable to save the session, no SID or empty session.'));}
   }

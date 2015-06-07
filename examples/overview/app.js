@@ -60,6 +60,7 @@ var Utilities = new Route({
       +'<li><a href="/tools/status">Estado del entorno</li>'
       +'<li><a href="/tools/source">C&oacute;digo fuente</li>'
       +'<li><a href="/tools/errorhandler">Test de error interno</li>'
+      +'<li><a href="/tools/session">Sesiones</li>'
       +'<li><a href="/tools/template">Test de platilla HTML</li>'
       +'<li><a href="/tools/queryparams?a=1&b=2&c=3">Test de parametros query</li>'
       +'<li><a href="/tools/pathparams/a/b/c">Test de parametros de ruta</li>'
@@ -98,6 +99,17 @@ Utilities.routes.add(new Route({
   // En caso de establcer el modo 'debug' obtendremos el stack del error.
 }));
 
+
+Utilities.routes.add(new Route({
+  id:'Session',
+  path:'/session',
+  session: true // Algunos Plugins hacen uso de propiedades de ruta, en este caso la propiedad session activa el Plugin Sessions.
+},function(gw){
+  // El Plugin Sessions nos aporta la propiedad .session de Gangway que nos permitirá guardar datos entre diferentes solicitudes.
+  gw.session.contador = gw.session.contador || 0; // Iniciamos la vriable contador.
+  gw.session.contador++;
+  gw.html('Contador:<strong>'+gw.session.contador+'</strong>');
+}));
 
 // Add Jade support to Templated
 var jade = require('jade');
@@ -273,7 +285,7 @@ Plugins.routes.add(new Route({
 }));
 // añadir control de global en librerias pillars
 // meter en i18n todos los textos, o no?
-// sessiones por defecto
+// sesiones por defecto
 // servicio MongoDB
 // revisar nombres de propiedades y metodos de Gangway para comprobar que se usa camelCase
 
