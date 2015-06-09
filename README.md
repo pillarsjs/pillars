@@ -47,7 +47,6 @@ With a simple and modular approach lets you introduce in Node.js with a soft lea
 
 ## Getting started
 
- - **[en]**: [PillarsJS Getting started] (https://github.com/bifuer/pillars/wiki/Pillars.js-Getting-Started)
  - **[es]**: [Comenzando con PillarsJS](https://github.com/bifuer/pillars/wiki/Comenzando-con-Pillars.js)
 
 
