@@ -20,14 +20,14 @@ textualization = {
 		}
 	},
 	'httpService':{
-		'error':"Server error ".red+"{service.hostname}:{service.port}".yellow,
-		'listening':"Server listening on ".green+"{service.hostname}:{service.port}".yellow,
-		'closed':"Server closed ".red+"{service.hostname}:{service.port}".yellow+" {time}m".grey
+		'error':"Server '{service.id}' error ".red+"{service.hostname}:{service.port}".yellow,
+		'listening':"Server '{service.id}' listening on ".green+"{service.hostname}:{service.port}".yellow,
+		'closed':"Server '{service.id}' closed ".red+"{service.hostname}:{service.port}".yellow+" {time}m".grey
 	},
 	'mongoService':{
-		'error':"Mongo error ".red+"{service.hostname}:{service.port}".yellow,
-		'connect':"Mongo connect ".green+"{service.hostname}:{service.port}".yellow,
-		'disconnect':"Mongo disconnect ".red+"{service.hostname}:{service.port}".yellow
+		'error':"Mongo '{service.id}' error ".red+"{service.hostname}:{service.port}".yellow,
+		'connect':"Mongo '{service.id}' connect ".green+"{service.hostname}:{service.port}".yellow,
+		'disconnect':"Mongo '{service.id}' disconnect ".red+"{service.hostname}:{service.port}".yellow
 	},
 	'shutdown':{
 		'ok': "Pillars stop succesfully".green,
@@ -41,11 +41,6 @@ textualization = {
 	},
 	'plugins':{
 		'loaded': "Loaded Plugins: ".cyan+"{list}".yellow,
-		'Sessions':{
-			'store-error':"Unable to access the session store",
-			'insert-error':"Unable to create session",
-			'update-error':"Unable to update session data"
-		},
 		'BodyReader':{
 			'unlink-ok':"Temp file {file}' deleted".green,
 			'unlink-error':"Delete temp file error '{file}'".red,

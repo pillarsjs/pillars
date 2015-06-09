@@ -20,14 +20,14 @@ textualization = {
 		}
 	},
 	'httpService':{
-		'error':"Error en servidor http ".red+"{service.hostname}:{service.port}".yellow,
-		'listening':"Servidor inciado ".green+"{service.hostname}:{service.port}".yellow,
-		'closed':"Servidor detenido ".red+"{service.hostname}:{service.port}".yellow+" {time}m".grey
+		'error':"Error en servidor '{service.id}' ".red+"{service.hostname}:{service.port}".yellow,
+		'listening':"Servidor '{service.id}' inciado ".green+"{service.hostname}:{service.port}".yellow,
+		'closed':"Servidor '{service.id}' detenido ".red+"{service.hostname}:{service.port}".yellow+" {time}m".grey
 	},
 	'mongoService':{
-		'error':"Error en base de datos mongo ".red+"{service.hostname}:{service.port}".yellow,
-		'connect':"Base de datos mongo conectada ".green+"{service.hostname}:{service.port}".yellow,
-		'disconnect':"Base de datos mongo desconectada ".red+"{service.hostname}:{service.port}".yellow
+		'error':"Error en base de datos mongo '{service.id}' ".red+"{service.hostname}:{service.port}".yellow,
+		'connect':"Base de datos mongo '{service.id}' conectada ".green+"{service.hostname}:{service.port}".yellow,
+		'disconnect':"Base de datos mongo '{service.id}' desconectada ".red+"{service.hostname}:{service.port}".yellow
 	},
 	'shutdown':{
 		'ok': "Pillars detenido correctamente".green,
@@ -41,11 +41,6 @@ textualization = {
 	},
 	'plugins':{
 		'loaded': "Plugins cargados: ".cyan+"{list}".yellow,
-		'Sessions':{
-			'store-error':"No es posible acceder al almacén de sesiones",
-			'insert-error':"No ha sido posible crear la sesión",
-			'update-error':"No ha sido posible actualizar los datos de sesión"
-		},
 		'BodyReader':{
 			'unlink-ok':"Archivo temporal {file}' borrado".green.inverse.white,
 			'unlink-error':"Error al borrar el archivo temporal '{file}'".red.inverse.white,
