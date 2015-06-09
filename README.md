@@ -42,7 +42,7 @@ With a simple and modular approach lets you introduce in Node.js with a soft lea
 
 
 ##Scope
- -  **[es]**: [Alcance](https://github.com/bifuer/pillars/wiki/alcance-pillarsjs)
+ -  **[es]**: [Alcance](https://github.com/bifuer/pillars/wiki/Alcance)
 
 
 ## Getting started
