@@ -1,6 +1,8 @@
+![license](https://img.shields.io/badge/license-MIT-blue.svg ) [![Build Status](https://img.shields.io/travis/bifuer/pillars/master.svg)](https://travis-ci.org/bifuer/pillars) [![npm version](https://img.shields.io/npm/v/pillars.svg)](https://www.npmjs.com/package/pillars) [![Github release](https://img.shields.io/github/release/bifuer/pillars.svg)](https://github.com/bifuer/pillars) [![npm downloads](https://img.shields.io/npm/dm/pillars.svg)](https://www.npmjs.com/package/pillars)
+
 # [![Pillars - make it easy ](http://pillarsjs.com/logo.png)](http://pillarsjs.com/)
 
-# Welcome to **Pillars.js**, a modular and scalable framework for Web Development in NodeJS.
+# Welcome to **Pillars.js**, a modular and scalable framework for Web Development in Node.js.
 
 With a simple and modular approach lets you introduce in Node.js with a soft learning curve, if you're an advanced JS developer, get an organized and efficient environment. 
 
@@ -39,6 +41,7 @@ With a simple and modular approach lets you introduce in Node.js with a soft lea
   - *Templated*, adds **support to any template engine** and cache managed centrally.
   - *Crier*, allow create log groups and managing associated warehouses to each one.
   - *Scheduled*, schedule automated tasks.
+  - *Procedure*, manage async blocks in declarative way, no more callbacks hell
 
 
 ##Scope
