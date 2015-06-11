@@ -47,7 +47,7 @@ function routesWalker(gw, route, path){
     var haveChildren = (!isEndPath && route.routes.length>0);
 
     // Check "Routing" properties for this route.
-    if ((isEndPath || haveChildren) && (!route.host || route.host === gw.host) && (!route.port || route.port === gw.port) && (!route.method || route.method.indexOf(gw.method) >= 0) && (route.https === undefined || route.https === gw.https)) {
+    if ((isEndPath || haveChildren) && (!route.host || route.host === gw.host) && (route.port === undefined || route.port === gw.port) && (!route.method || route.method.indexOf(gw.method) >= 0) && (route.https === undefined || route.https === gw.https)) {
       
       // inherits from this route
       var i, l, k;
