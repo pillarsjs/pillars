@@ -38,21 +38,21 @@ textualization = {
 	'logfile':{
 		'ok': "Logfile ".green+"'{path}'".yellow+" iniciado correctamente".green,
 		'error': "Error al iniciar logfile ".red+"'{path}'".yellow+": ".red,
+		'dir':{
+			'ok':"Directorio 'logs' ubicado correctamente en ".cyan+"'{path}'".yellow,
+			'error':"Error al ubicar el directorio 'logs' en ".red+"'{path}'".yellow,
+			'exists':"Error al ubicar el directorio 'logs' en ".red+"'{path}'".yellow+", la ruta existe pero no es un directorio.".red
+		}
 	},
 	'plugins':{
 		'loaded': "Plugins cargados: ".cyan+"{list}".yellow,
 		'BodyReader':{
 			'unlink-ok':"Archivo temporal {file}' borrado".green.inverse.white,
 			'unlink-error':"Error al borrar el archivo temporal '{file}'".red.inverse.white,
-			'directories':{
-				'uploads':{
-					'ok':"Directorio 'uploads' ubicado correctamente en ".cyan+"'{path}'".yellow,
-					'error':"Error al ubicar el directorio 'uploads' en ".cyan+"'{path}'".yellow
-				},
-				'temp':{
-					'ok':"Directorio 'temp' ubicado correctamente en ".cyan+"'{path}'".yellow,
-					'error':"Error al ubicar el directorio 'temp' en ".cyan+"'{path}'".yellow
-				}
+			'temp':{
+				'ok':"Directorio 'temp' ubicado correctamente en ".cyan+"'{path}'".yellow,
+				'error':"Error al ubicar el directorio 'temp' en ".red+"'{path}'".yellow,
+				'exists':"Error al ubicar el directorio 'temp' en ".red+"'{path}'".yellow+", la ruta existe pero no es un directorio.".red
 			}
 		}
 	},

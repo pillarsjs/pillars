@@ -108,13 +108,32 @@ pillars.plugins = new ObjectArray();
 pillars.routes = new ObjectArray();
 pillars.services = new ObjectArray();
 
+// Check log && temp directory
+var logsDir = "./logs";
+fs.stat(logsDir, function (error, stats){
+  if(error){
+    fs.mkdir(logsDir,function(error){
+      if(error){
+        crier.error('logfile.dir.error',{path: logsDir});
+      } else {
+        crier.info('logfile.dir.ok',{path: logsDir});
+        logFileStart();
+      }
+    });
+  } else if(!stats.isDirectory()){
+    crier.info('logfile.dir.exists',{path: logsDir});
+  } else {
+    crier.info('logfile.dir.ok',{path: logsDir});
+    logFileStart();
+  }
+});
 
 // Setup log file
 function logFileLoader(){
   if(pillars.logFile){
     pillars.logFile.end();
   }
-  var path = './logs/'+(new Date()).format('{YYYY}{MM}{DD}')+'.log';
+  var path = logsDir+'/'+(new Date()).format('{YYYY}{MM}{DD}')+'.log';
   pillars.logFile = fs.createWriteStream(path,{flags: 'a'})
     .on('open',function(fd){
       crier.log('logfile.ok',{path:path});
@@ -124,30 +143,33 @@ function logFileLoader(){
     })
   ;
 }
-logFileLoader();
 
-crier.rules.add({
-  id:'logFile',
-  rule:function(stores,location,lvl,msg,meta){
-    if(['log','alert','error','warn'].indexOf(lvl)>=0){
-      stores.push('logFile');
+function logFileStart(){
+  logFileLoader();
+
+  crier.rules.add({
+    id:'logFile',
+    rule:function(stores,location,lvl,msg,meta){
+      if(['log','alert','error','warn'].indexOf(lvl)>=0){
+        stores.push('logFile');
+      }
     }
-  }
-});
-crier.stores.add({
-  id:'logFile',
-  handler: function(location,lvl,msg,meta,done){
-    var line = (new Date()).format('{YYYY}/{MM}/{DD} {hh}:{mm}:{ss}:{mss}',true)+'\t'+lvl.toUpperCase()+'\t'+location.join('.')+'\t'+JSON.decycled(msg)+'\t'+JSON.decycled(meta)+'\n';
-    pillars.logFile.write(line);
-    done.result(line);
-  }
-});
+  });
+  crier.stores.add({
+    id:'logFile',
+    handler: function(location,lvl,msg,meta,done){
+      var line = (new Date()).format('{YYYY}/{MM}/{DD} {hh}:{mm}:{ss}:{mss}',true)+'\t'+lvl.toUpperCase()+'\t'+location.join('.')+'\t'+JSON.decycled(msg)+'\t'+JSON.decycled(meta)+'\n';
+      pillars.logFile.write(line);
+      done.result(line);
+    }
+  });
 
-pillars.logCleaner = new Scheduled({
-  id: 'logCleaner',
-  pattern: '0 0 *',
-  task: logFileLoader
-}).start();
+  pillars.logCleaner = new Scheduled({
+    id: 'logCleaner',
+    pattern: '0 0 *',
+    task: logFileLoader
+  }).start();
+}
 
 
 // Load builtin Plugins

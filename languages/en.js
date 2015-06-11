@@ -38,21 +38,21 @@ textualization = {
 	'logfile':{
 		'ok': "Logfile ".green+"'{path}'".yellow+" setup ok.".green,
 		'error': "Logfile ".red+"'{path}'".yellow+" setup error: ".red,
+		'dir':{
+			'ok':"Directory 'logs' setted at ".cyan+"'{path}'".yellow,
+			'error':"Error on set 'logs' directory at ".red+"'{path}'".yellow,
+			'exists':"Error on set 'logs' directory at ".red+"'{path}'".yellow+", path exists but is not a directory".red
+		}
 	},
 	'plugins':{
 		'loaded': "Loaded Plugins: ".cyan+"{list}".yellow,
 		'BodyReader':{
 			'unlink-ok':"Temp file {file}' deleted".green,
 			'unlink-error':"Delete temp file error '{file}'".red,
-			'directories':{
-				'uploads':{
-					'ok':"Directory 'uploads' setted at ".cyan+"'{path}'".yellow,
-					'error':"Error on set 'uploads' directory at ".cyan+"'{path}'".yellow
-				},
-				'temp':{
-					'ok':"Directory 'temp' setted at ".cyan+"'{path}'".yellow,
-					'error':"Error on set 'temp' directory at ".cyan+"'{path}'".yellow
-				}
+			'temp':{
+				'ok':"Directory 'temp' setted at ".cyan+"'{path}'".yellow,
+				'error':"Error on set 'temp' directory at ".red+"'{path}'".yellow,
+				'exists':"Error on set 'temp' directory at ".red+"'{path}'".yellow+", path exists but is not a directory".red
 			}
 		}
 	},

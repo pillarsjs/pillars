@@ -35,11 +35,21 @@ Object.defineProperty(plugin, "tempDirectory", {
   set : function (set) {
     fs.stat(set, function (error, stats){
       if(error){
+        fs.mkdir(set,function(error){
+          if(error){
+            tempDirectory = undefined;
+            crier.error('temp.error',{path: set});
+          } else {
+            tempDirectory = set;
+            crier.info('temp.ok',{path: set});
+          }
+        });
+      } else if(!stats.isDirectory()){
         tempDirectory = undefined;
-        crier.error('directories.temp.error',{path: set});
+        crier.info('temp.exists',{path: set});
       } else {
         tempDirectory = set;
-        crier.info('directories.temp.ok',{path: set});
+        crier.info('temp.ok',{path: set});
       }
     });
   }
