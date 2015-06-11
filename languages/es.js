@@ -36,8 +36,8 @@ textualization = {
 	'forced-shuttingdown': "Detención del sistema forzada.".yellow,
 	'shuttingdown':"Deteniendo el sistema...".cyan,
 	'logfile':{
-		'ok': "Logfile iniciado correctamente".green,
-		'error': "Error al iniciar logfile: ".red,
+		'ok': "Logfile ".green+"'{path}'".yellow+" iniciado correctamente".green,
+		'error': "Error al iniciar logfile ".red+"'{path}'".yellow+": ".red,
 	},
 	'plugins':{
 		'loaded': "Plugins cargados: ".cyan+"{list}".yellow,

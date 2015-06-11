@@ -42,7 +42,6 @@ console.log(("\n\n"+
 
 // Pillars base export (for cyclical requires)
 var pillars = module.exports = global.modulesCache.pillars = {
-  debug: true
 };
 
 
@@ -62,6 +61,7 @@ pillars.resolve = function(path){
 
 // Configuration propierties & config method
 pillars.config = {
+  debug: false,
   cors: false,
   maxUploadSize: 5*1024*1024,
   maxCacheFileSize : 5*1024*1024,
@@ -69,7 +69,8 @@ pillars.config = {
   cacheMaxSize : 250*1024*1024,
   cacheMaxItems : 5000,
   fileMaxAge : 7*24*60*60,
-  renderReload: false
+  renderReload: false,
+  favicon: pillars.resolve('./favicon.ico')
 };
 
 pillars.configure = function(config){
@@ -84,7 +85,6 @@ pillars.configure = function(config){
 global.templated = require('templated');
 global.crier = require('crier');
 var crier = global.crier.addGroup('pillars');
-crier.constructor.console.language = 'en';
 var i18n = global.textualization = require('textualization');
 i18n.load('pillars',paths.join(__dirname,'./languages'));
 i18n.languages = ['en'];
@@ -114,12 +114,13 @@ function logFileLoader(){
   if(pillars.logFile){
     pillars.logFile.end();
   }
-  pillars.logFile = fs.createWriteStream('./logs/'+(new Date()).format('{YYYY}{MM}{DD}')+'.log',{flags: 'a'})
+  var path = './logs/'+(new Date()).format('{YYYY}{MM}{DD}')+'.log';
+  pillars.logFile = fs.createWriteStream(path,{flags: 'a'})
     .on('open',function(fd){
-      crier.log('logfile.ok');
+      crier.log('logfile.ok',{path:path});
     })
     .on('error',function(error){
-      crier.warn('logfile.error',{error:error});
+      crier.warn('logfile.error',{path:path,error:error});
     })
   ;
 }
@@ -153,6 +154,7 @@ pillars.logCleaner = new Scheduled({
 var plugins = [
   require('./plugins/langPath.js'),
   require('./plugins/encoding.js'),
+  require('./plugins/favicon.js'),
   require('./plugins/router.js'),
   require('./plugins/maxUploadSize.js'),
   require('./plugins/CORS.js'),

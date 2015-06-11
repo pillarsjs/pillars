@@ -36,8 +36,8 @@ textualization = {
 	'forced-shuttingdown': "Forced shutting down.".yellow,
 	'shuttingdown':"Shutting down...".cyan,
 	'logfile':{
-		'ok': "Logfile setup ok".green,
-		'error': "Logfile setup error: ".red,
+		'ok': "Logfile ".green+"'{path}'".yellow+" setup ok.".green,
+		'error': "Logfile ".red+"'{path}'".yellow+" setup error: ".red,
 	},
 	'plugins':{
 		'loaded': "Loaded Plugins: ".cyan+"{list}".yellow,
