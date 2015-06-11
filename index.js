@@ -9,6 +9,7 @@ if(global.modulesCache.pillars){
 
 var fs = require('fs');
 var paths = require('path');
+var colors = require('colors');
 var pillarsPackage = require('./package');
 
 

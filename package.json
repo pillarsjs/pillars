@@ -43,6 +43,7 @@
     "javascript"
   ],
   "dependencies": {
+    "colors": "*",
     "formidable": "*",
     "mime": "*",
     "node-fs":"*",
