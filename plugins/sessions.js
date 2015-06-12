@@ -17,7 +17,7 @@ var plugin = module.exports = new Plugin({id:'Sessions'},function(gw,done){
       if(error){
         gw.error(500,error);
       } else {
-        gw.on('close',saveSession);
+        gw.eventium.on('close',saveSession);
         done();
       }
     });
@@ -64,13 +64,13 @@ function newSession(gw,callback){
   if(callback){callback();}
 }
 
-function saveSession(gw,meta,callback){
+function saveSession(gw,meta,done){
   // Save gw.session Objet on datastore.
   var sid = gw.cookie.sid || false;
   if(gw.session && sid && sid.id){
     gw.session.lastaccess = new Date();
-    if(callback){callback();}
+    done();
   } else {
-    if(callback){callback(new Error('Unable to save the session, no SID or empty session.'));}
+    done(new Error('Unable to save the session, no SID or empty session.'));
   }
 }
