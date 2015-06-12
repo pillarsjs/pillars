@@ -22,11 +22,17 @@ i18n.languages = ['es','en'];
 // Example translation sheet
 i18n.load('overview',{
   welcome: "Hello World!",
-  language: "English"
+  language: "English",
+  paths: {
+    events: "/events"
+  }
 },'en');
 i18n.load('overview',{
   welcome: "Hola mundo",
-  language: "Español"
+  language: "Español",
+  paths: {
+    events: "/eventos"
+  }
 },'es');
 
 // Config Log manager
@@ -34,6 +40,27 @@ var crier = require('crier').addGroup('overview');
 
 
 // Controllers
+
+project.routes.add(new Route({
+  id:'test',
+  path: '/test'
+},function(gw){
+  gw.json(gw.req.socket.server,{deep:1});
+}));
+
+project.routes.add(new Route({
+  id:'objectarray',
+  path: '/objectarray'
+},function(gw){
+  gw.json(project.services.getAll(HttpService,'constructor'),{deep:1});
+}));
+
+project.routes.add(new Route({
+  id:'iPathsTest',
+  iPath: 'overview.paths.events'
+},function(gw){
+  gw.html('<h1>'+gw.i18n('overview.language')+'</h1>');
+}));
 
 project.routes.add(new Route({
   id:'Root'

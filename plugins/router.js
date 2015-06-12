@@ -5,6 +5,8 @@ var pillars = require('../index');
 var crier = require('crier').addGroup('pillars').addGroup('plugins').addGroup('Router');
 var Plugin = require('../lib/Plugin');
 
+var i18n = require('textualization');
+
 module.exports = new Plugin({
   id:'Router'
 }, function (gw, done) {
@@ -38,16 +40,21 @@ module.exports = new Plugin({
 });
 
 function routesWalker(gw, route, path){
-  if (route.active && route.pathRegexp.test(path)) { // check partiality or entire path
-    var match = path.match(route.pathRegexp); // Extract matchs from path
+  var pathComponents = route.pathComponents( route.iPath !== undefined? gw.i18n(route.iPath) : route.path );
+  //TODO: Log error for not translated paths
+  var pathRegexp = pathComponents.regexp;
+  var pathParams = pathComponents.params;
+
+  if (route.active && pathRegexp.test(path)) { // check partiality or entire path
+    var match = path.match(pathRegexp); // Extract matchs from path
     var matches = match.slice(1); // Only pathParams matches
     var routePath = match[0]; // Current match segment of the path
-    var subPath = path.replace(route.pathRegexp, ''); // Rest of the path
+    var subPath = path.replace(pathRegexp, ''); // Rest of the path
     var isEndPath = (routePath === path);
     var haveChildren = (!isEndPath && route.routes.length>0);
 
     // Check "Routing" properties for this route.
-    if ((isEndPath || haveChildren) && (!route.host || route.host === gw.host) && (route.port === undefined || route.port === gw.port) && (!route.method || route.method.indexOf(gw.method) >= 0) && (route.https === undefined || route.https === gw.https)) {
+    if ((isEndPath || haveChildren) && (!route.host || route.host == gw.host) && (route.port === undefined || route.port == gw.port) && (!route.method || route.method.indexOf(gw.method) >= 0) && (route.https === undefined || route.https === gw.https)) {
       
       // inherits from this route
       var i, l, k;
@@ -60,8 +67,8 @@ function routesWalker(gw, route, path){
       gw.routing.routes.push(route);
       
       // Set up pathParams
-      for (i=0,l=route.pathParams.length;i<l;i++) {
-        gw.pathParams[route.pathParams[i]] = gw.params[route.pathParams[i]] = decodeURIComponent(matches[i] || '');
+      for (i=0,l=pathParams.length;i<l;i++) {
+        gw.pathParams[pathParams[i]] = gw.params[pathParams[i]] = decodeURIComponent(matches[i] || '');
       }
 
       // Finally or continue walker
