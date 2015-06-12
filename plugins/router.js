@@ -15,8 +15,8 @@ module.exports = new Plugin({
   gw.routing = {
     inheritance: {},
     check: function(prop, preset){
-      if (typeof this.inheritance[prop] !== 'undefined') {
-        return this.inheritance[prop];
+      if (typeof gw.routing.inheritance[prop] !== 'undefined') {
+        return gw.routing.inheritance[prop];
       } else {
         return preset;
       }
@@ -60,7 +60,9 @@ function routesWalker(gw, route, path){
       var i, l, k;
       for (i=0,k=Object.keys(route),l=k.length;i<l;i++) {
         var prop = k[i];
-        gw.routing.inheritance[prop] = route[prop];
+        if(route[prop]!==undefined && ['id','path','iPath','handlers','routes','pathComponentsCache'].indexOf(prop)===-1){
+          gw.routing.inheritance[prop] = route[prop];
+        }
       }
 
       // Add route this route to routing property

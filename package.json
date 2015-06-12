@@ -1,7 +1,7 @@
 {
   "name": "pillars",
   "description": "Pillars.js web development framework for Node.js",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "author": {
     "name": "Javier Gallego Martín",
     "email": "bifuer@gmail.com"
@@ -57,6 +57,7 @@
     "json.decycled": "*",
     "json.crypt": "*",
     "scheduled": "*",
+    "eventium": "*",
     "jailer": "*"
   },
   "devDependencies": {

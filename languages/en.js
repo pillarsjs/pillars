@@ -47,8 +47,8 @@ textualization = {
 	'plugins':{
 		'loaded': "Loaded Plugins: ".cyan+"{list}".yellow,
 		'BodyReader':{
-			'unlink-ok':"Temp file {file}' deleted".green,
-			'unlink-error':"Delete temp file error '{file}'".red,
+			'unlink-ok':"Temp file {file}' deleted".bgGreen,
+			'unlink-error':"Delete temp file error '{file}'".bgRed,
 			'temp':{
 				'ok':"Directory 'temp' setted at ".cyan+"'{path}'".yellow,
 				'error':"Error on set 'temp' directory at ".red+"'{path}'".yellow,

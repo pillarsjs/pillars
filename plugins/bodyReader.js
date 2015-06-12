@@ -117,7 +117,7 @@ function multipartEncoded(gw, callback){
   var files = {};
   var fields = {};    
 
-  gw.on('close',cleanTemp);
+  gw.eventium.on('close',cleanTemp);
 
   upload.uploadDir = tempDirectory;
   upload.keepExtensions = true;
@@ -165,7 +165,7 @@ function multipartEncoded(gw, callback){
   upload.parse(gw.req);
 }
 
-function cleanTemp(gw){
+function cleanTemp(gw,meta,done){
   // Remove temp files
   for (var f in gw.files) {
     if (Array.isArray(gw.files[f])) {
@@ -182,6 +182,7 @@ function cleanTemp(gw){
       }
     }     
   }
+  done();
 }
 
 function unlinktemp(file){

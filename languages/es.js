@@ -47,8 +47,8 @@ textualization = {
 	'plugins':{
 		'loaded': "Plugins cargados: ".cyan+"{list}".yellow,
 		'BodyReader':{
-			'unlink-ok':"Archivo temporal {file}' borrado".green.inverse.white,
-			'unlink-error':"Error al borrar el archivo temporal '{file}'".red.inverse.white,
+			'unlink-ok':"Archivo temporal {file}' borrado".bgGreen,
+			'unlink-error':"Error al borrar el archivo temporal '{file}'".bgRed,
 			'temp':{
 				'ok':"Directorio 'temp' ubicado correctamente en ".cyan+"'{path}'".yellow,
 				'error':"Error al ubicar el directorio 'temp' en ".red+"'{path}'".yellow,

@@ -43,9 +43,16 @@ var crier = require('crier').addGroup('overview');
 
 project.routes.add(new Route({
   id:'test',
-  path: '/test'
+  path: '/test',
+  port: 3001,
+  https: true,
+  host: 'localhost',
+  method: 'get',
+  session: true,
+  active: true,
+  dummy: 'dummy'
 },function(gw){
-  gw.json(gw.req.socket.server,{deep:1});
+  gw.json(gw.routing,{deep:10});
 }));
 
 project.routes.add(new Route({
