@@ -234,11 +234,12 @@ var shuttingdownCounter = 0;
 process.on('SIGINT', function() {
   if(!shuttingdown){
     shuttingdown = true;
+    crier.info('shutdown.shuttingdown');
     var procedure = new Procedure();
     var i,l;
     for(i=0,l=pillars.services.length;i<l;i++){
       if(typeof pillars.services[i].stop === 'function'){
-        procedure.add(pillars.services[i].stop);
+        procedure.add(pillars.services[i].stop.bind(pillars.services[i]));
       }
     }
     Scheduled.close();
@@ -251,9 +252,8 @@ process.on('SIGINT', function() {
     });
   } else {
     shuttingdownCounter++;
-    crier.info('shuttingdown');
     if(shuttingdownCounter>=3){
-      crier.info('forced-shuttingdown',{},processExit);
+      crier.info('shutdown.forced',{},processExit);
     }
   }
 });
