@@ -24,17 +24,12 @@ textualization = {
 		'listening':"Servidor '{service.id}' inciado ".green+"{service.hostname}:{service.port}".yellow,
 		'closed':"Servidor '{service.id}' detenido ".red+"{service.hostname}:{service.port}".yellow+" {time}m".grey
 	},
-	'mongoService':{
-		'error':"Error en base de datos mongo '{service.id}' ".red+"{service.hostname}:{service.port}".yellow,
-		'connect':"Base de datos mongo '{service.id}' conectada ".green+"{service.hostname}:{service.port}".yellow,
-		'disconnect':"Base de datos mongo '{service.id}' desconectada ".red+"{service.hostname}:{service.port}".yellow
-	},
 	'shutdown':{
 		'ok': "Pillars detenido correctamente".green,
-		'errors': "Errores al detener Pillars: ".red+"\n\n{errors}\n".bgRed
+		'errors': "Errores al detener Pillars: ".red+"\n\n{errors}\n".bgRed,
+		'forced': "Detención del sistema forzada.".yellow,
+		'shuttingdown': "Deteniendo el sistema...".green,
 	},
-	'forced-shuttingdown': "Detención del sistema forzada.".yellow,
-	'shuttingdown':"Deteniendo el sistema...".cyan,
 	'logfile':{
 		'ok': "Logfile ".green+"'{path}'".yellow+" iniciado correctamente".green,
 		'error': "Error al iniciar logfile ".red+"'{path}'".yellow+": ".red,
@@ -57,13 +52,11 @@ textualization = {
 		}
 	},
 	'gangway':{
-		'open':"<< {method}:".cyan+" {host}:{port}{req.url}".white,
-		'close':">> {method}:".green+" {host}:{port}{req.url}".white+" [{statusCode}]".cyan+"  {size}bytes {responseTime}ms".grey+" ·{!params.finished?'cancelada':''}·".red,
-		'error':"Gangway error".red,
-		'error-h1':"Error {code} {explain}, disculpe las molestias",
+		'start':"<< {gw.method}:".cyan+" {gw.host}:{gw.port}{gw.req.url}".white,
+		'finish':">> {gw.method}:".green+" {gw.host}:{gw.port}{gw.req.url}".white+" [{gw.statusCode}]".cyan+"  {gw.size}bytes {gw.responseTime}ms".grey,
+		'close':"x>> {gw.method}:".red+" {gw.host}:{gw.port}{gw.req.url}".white+", Solicitud cancelada.".red,
+		'broken':"<<x {gw.method}:".red+" {gw.host}:{gw.port}{gw.req.url}".white+", Error en la comunicación:".red,
+		'error':"!>> {gw.method}:".red+" {gw.host}:{gw.port}{gw.req.url}".white+", Error:".red,
 		'cacheCleaned': "Cache de archivos Gangway revisada".cyan,
-	},
-	'mail':{
-		'no-transport':"Servicio para envio de mails desconocido, es necesario especificar estos valores en Pillars.smtp"
 	}
 };

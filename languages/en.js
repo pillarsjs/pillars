@@ -24,17 +24,12 @@ textualization = {
 		'listening':"Server '{service.id}' listening on ".green+"{service.hostname}:{service.port}".yellow,
 		'closed':"Server '{service.id}' closed ".red+"{service.hostname}:{service.port}".yellow+" {time}m".grey
 	},
-	'mongoService':{
-		'error':"Mongo '{service.id}' error ".red+"{service.hostname}:{service.port}".yellow,
-		'connect':"Mongo '{service.id}' connect ".green+"{service.hostname}:{service.port}".yellow,
-		'disconnect':"Mongo '{service.id}' disconnect ".red+"{service.hostname}:{service.port}".yellow
-	},
 	'shutdown':{
 		'ok': "Pillars stop succesfully".green,
-		'errors': "Pillars stop errors: ".red+"\n\n{errors}\n".bgRed
+		'errors': "Pillars stop errors: ".red+"\n\n{errors}\n".bgRed,
+		'forced': "Forced shutting down.".yellow,
+		'shuttingdown':"Shutting down...".green,
 	},
-	'forced-shuttingdown': "Forced shutting down.".yellow,
-	'shuttingdown':"Shutting down...".cyan,
 	'logfile':{
 		'ok': "Logfile ".green+"'{path}'".yellow+" setup ok.".green,
 		'error': "Logfile ".red+"'{path}'".yellow+" setup error: ".red,
@@ -57,13 +52,11 @@ textualization = {
 		}
 	},
 	'gangway':{
-		'open':"<< {method}:".cyan+" {host}:{port}{req.url}".white,
-		'close':">> {method}:".green+" {host}:{port}{req.url}".white+" [{statusCode}]".cyan+"  {size}bytes {responseTime}ms".grey+" ·{!params.finished?'broken':''}·".red,
-		'error':"Gangway error".red,
-		'error-h1':"Error {code} {explain}",
+		'start':"<< {gw.method}:".cyan+" {gw.host}:{gw.port}{gw.req.url}".white,
+		'finish':">> {gw.method}:".green+" {gw.host}:{gw.port}{gw.req.url}".white+" [{gw.statusCode}]".cyan+"  {gw.size}bytes {gw.responseTime}ms".grey,
+		'close':"x>> {gw.method}:".red+" {gw.host}:{gw.port}{gw.req.url}".white+", Request canceled".red,
+		'broken':"<<x {gw.method}:".red+" {gw.host}:{gw.port}{gw.req.url}".white+", Communication stream Error:".red,
+		'error':"!>> {gw.method}:".red+" {gw.host}:{gw.port}{gw.req.url}".white+", Error:".red,
 		'cacheCleaned': "Gangway file cache cleaned".cyan,
-	},
-	'mail':{
-		'no-transport':"Unknow transport for mail send. Please set Pillars.smtp values"
 	}
 };
