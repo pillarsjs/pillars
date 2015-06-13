@@ -17,7 +17,7 @@ var plugin = module.exports = new Plugin({id:'Sessions'},function(gw,done){
       if(error){
         gw.error(500,error);
       } else {
-        gw.eventium.on('close',saveSession);
+        gw.eventium.on('end',saveSession);
         done();
       }
     });

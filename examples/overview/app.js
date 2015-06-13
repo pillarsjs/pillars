@@ -42,6 +42,22 @@ var crier = require('crier').addGroup('overview');
 // Controllers
 
 project.routes.add(new Route({
+  id:'timeout',
+  path: 'timeout'
+},function(gw){
+  // ...
+}));
+
+project.routes.add(new Route({
+  id:'slowchunk',
+  path: 'slowchunk'
+},function(gw){
+  gw.chunkedHead();
+  gw.write("h");gw.write("o");gw.write("l");gw.write("a");
+  gw.end("adios");
+}));
+
+project.routes.add(new Route({
   id:'test',
   path: '/test',
   port: 3001,

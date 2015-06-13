@@ -102,7 +102,7 @@ function urlEncoded(gw, callback){
     if ($error) {
       gw.error(400);
     } else {
-      var params = gw.queryHeap(querystring.parse(buffer, '&', '='));
+      var params = gw.constructor.queryHeap(querystring.parse(buffer, '&', '='));
       gw.content.params = params;
       for (var v in params) {gw.params[v] = params[v];}
       callback();
@@ -117,7 +117,7 @@ function multipartEncoded(gw, callback){
   var files = {};
   var fields = {};    
 
-  gw.eventium.on('close',cleanTemp);
+  gw.eventium.on('end',cleanTemp);
 
   upload.uploadDir = tempDirectory;
   upload.keepExtensions = true;
@@ -155,7 +155,7 @@ function multipartEncoded(gw, callback){
       }
     })
     .on('end', function() {
-      fields = gw.queryHeap(fields);
+      fields = gw.constructor.queryHeap(fields);
       gw.content.params = fields;
       for (var v in fields) {gw.params[v] = fields[v];}
       gw.files = files;
