@@ -4,12 +4,13 @@ var project = require('../../index').configure({
 });
 
 // Default HTTP server config & start
-project.services.get('http').configure({port:3000}).start();
+project.services.get('http').configure({timeout:500,port:3000}).start();
 
 // Add HTTPS service
 var fs = require('fs');
 project.services.insert((new HttpService({
 	id:'https',
+  timeout:500,
 	key: fs.readFileSync('./localhost.key'),
 	cert: fs.readFileSync('./localhost.crt'),
   port: 3001
@@ -251,6 +252,17 @@ Utilities.routes.add(new Route({
   require('./plugins/directory.js'),
   require('./plugins/bodyReader.js')
 */
+
+// Static service
+var pillarsDocsStatic = new Route({
+  id:'pillarsDocsStatic',
+  path:'/static/*:path',
+  directory:{
+    path:'./static',
+    listing:true
+  }
+});
+project.routes.add(pillarsDocsStatic);
 
 var Plugins = new Route({
   id:'Plugins',
