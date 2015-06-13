@@ -78,8 +78,8 @@ function routesWalker(gw, route, path){
         gw.routing.handlers = route.handlers;
         return true;
       } else {
-        for (var c in route.routes) {
-          if (routesWalker(gw,route.routes[c],subPath)) {
+        for (i=0,l=route.routes.length;i<l;i++) {
+          if (routesWalker(gw,route.routes[i],subPath)) {
             return true;
           }
         }
