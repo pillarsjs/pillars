@@ -4,15 +4,17 @@ var project = require('../../index').configure({
 });
 
 // Default HTTP server config & start
-project.services.get('http').configure({timeout:500,port:3000}).start();
+project.services.get('http').configure({timeout:5000,port:3000}).start();
 
 // Add HTTPS service
 var fs = require('fs');
+var key = fs.readFileSync('./localhost.key');
+var cert = fs.readFileSync('./localhost.crt');
 project.services.insert((new HttpService({
 	id:'https',
-  timeout:500,
-	key: fs.readFileSync('./localhost.key'),
-	cert: fs.readFileSync('./localhost.crt'),
+  timeout:5000,
+	key: key,
+	cert: cert,
   port: 3001
 })).start());
 
@@ -53,9 +55,19 @@ project.routes.add(new Route({
   id:'slowchunk',
   path: 'slowchunk'
 },function(gw){
-  gw.chunkedHead();
-  gw.write("h");gw.write("o");gw.write("l");gw.write("a");
-  gw.end("adios");
+  var slowchuncking = new Procedure();
+  function chunking(chunk,done){
+    gw.write(chunk);
+    setTimeout(done,1000);
+  }
+  slowchuncking.add(chunking,key);
+  slowchuncking.add(chunking,key);
+  slowchuncking.add(chunking,key);
+  slowchuncking.add(chunking,key);
+  slowchuncking.add(chunking,key);
+  slowchuncking.launch(function(errors){
+    gw.end(cert);
+  });
 }));
 
 project.routes.add(new Route({

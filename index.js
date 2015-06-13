@@ -268,3 +268,157 @@ function processExit(){
 
 
 
+
+var fileCache = pillars.cache = {
+  size:0,
+  items:{}, // item: {uses:[],average:AverageTimeStamp}
+  get : function(id,callback){
+    var item = fileCache.items[id];
+    if(typeof item !== 'undefined'){
+      var uses = item.uses;
+      uses.push(Date.now());
+      if(uses.length>=pillars.config.cacheMaxSamples){
+        uses.splice(0,uses.length-pillars.config.cacheMaxSamples);
+      }
+      // All samples sum
+      var timesum = 0;
+      for(var i=0,l=uses.length;i<l;i++){
+        timesum+=uses[i];
+      }
+      // Average timestamp of all samples for this item
+      item.average = Math.round(timesum/uses.length);
+
+      if(item.timeStamp<Date.now()-30*1000){
+        callback(null,item);
+      } else {
+        fileCache.file(id,callback,item);
+      }
+    } else {
+      fileCache.file(id,callback);
+    }
+  },
+  file: function(id,callback,update){
+    var item = update?update:{};
+    
+    fs.stat(id, function(error,stats){
+      if(error){
+        callback(error);
+      } else if(stats.size > pillars.config.maxCacheFileSize){
+        delete item.identity;
+        delete item.deflate;
+        delete item.gzip;
+        delete fileCache.items[id];
+        callback(null,{stats:stats});
+      } else {
+        item.timeStamp = Date.now();
+        if(!update || stats.mtime>item.stats.mtime){
+          fs.readFile(id, function(error,data){
+            if(error){
+              callback(error);
+            } else {
+              fileCache.items[id] = item;
+              fileCache.size += stats.size;
+              item.uses = item.uses || [Date.now()];
+              item.stats = stats;
+              delete item.identity;
+              delete item.deflate;
+              delete item.gzip;
+              item.identity = data;
+              callback(null,item);
+            }
+          });
+        } else {
+          callback(null,item);
+        }
+      }
+    });
+  },
+  cleaner: function(){
+    // Get a list of items ids/paths
+    var rank = Object.keys(fileCache.items);
+    // Sort by average.
+    rank.sort(function(a, b) {
+      a = fileCache.items[a].average;
+      b = fileCache.items[b].average;
+      if(typeof a === 'undefined'){return -1;}
+      if(typeof b === 'undefined'){return 1;}
+      return a-b;
+    });
+    // Reduce while
+    while(fileCache.size>pillars.config.cacheMaxSize || fileCache.items.length>pillars.config.cacheMaxItems){
+      var removed = rank.shift();
+      var size = fileCache.items[removed].stats.size;
+      delete fileCache.items[removed];
+      fileCache.size -= size;
+    }
+    crier.info('fileCache.cacheCleaned');
+  }
+};
+
+fileCache.cleanerJob = new Scheduled({
+  id: 'fileCacheCleaner',
+  pattern: '*',
+  task: fileCache.cleaner
+}).start();
+
+
+// Add default template engines support to Templated
+/*
+var jade = require('jade');
+templated.addEngine('jade',function compiler(source,path){
+  return jade.compile(source,{filename:path,pretty:false,debug:false,compileDebug:true});
+});
+
+var handlebars = require("handlebars");
+templated.addEngine('hbs',function compiler(source,path){
+  return handlebars.compile(source);
+});
+
+var hogan = require("hogan.js");
+templated.addEngine('hgn',function compiler(source,path){
+  return hogan.compile(source);
+});
+
+// Simple JavaScript Templating
+// John Resig - http://ejohn.org/ - MIT Licensed
+// From: http://ejohn.org/blog/javascript-micro-templating/
+var jmt = (function(){
+  var cache = {};
+  return function tmpl(str, data){
+    // Figure out if we're getting a template, or if we need to
+    // load the template - and be sure to cache the result.
+    var fn = new Function("obj",
+        "var p=[],print=function(){p.push.apply(p,arguments);};" +
+       
+        // Introduce the data as local variables using with(){}
+        "with(obj){p.push('" +
+       
+        // Convert the template into pure JavaScript
+        str
+          .replace(/[\r\t\n]/g, " ")
+          .split("<%").join("\t")
+          .replace(/((^|%>)[^\t]*)'/g, "$1\r")
+          .replace(/\t=(.*?)%>/g, "',$1,'")
+          .split("\t").join("');")
+          .split("%>").join("p.push('")
+          .split("\r").join("\\'")
+      + "');}return p.join('');");
+   
+    // Provide some basic currying to the user
+    return data ? fn( data ) : fn;
+  };
+})();
+templated.addEngine('jmt',function compiler(source,path){
+  return jmt.compile(source);
+});
+
+var nunjucks = require("nunjucks");
+templated.addEngine('njk',function compiler(source,path){
+  return nunjucks.compile(source);
+});
+
+var swig = require("swig");
+templated.addEngine('swg',function compiler(source,path){
+  return swig.compile(source);
+});
+*/

@@ -51,12 +51,14 @@ textualization = {
 			}
 		}
 	},
+	'fileCache':{
+		'cacheCleaned': "File cache cleaned".cyan
+	},
 	'gangway':{
 		'start':"<< {gw.method}:".cyan+" {gw.host}:{gw.port}{gw.req.url}".white,
 		'finish':">> {gw.method}:".green+" {gw.host}:{gw.port}{gw.req.url}".white+" [{gw.statusCode}]".cyan+"  {gw.size}bytes {gw.responseTime}ms".grey,
 		'close':"x>> {gw.method}:".red+" {gw.host}:{gw.port}{gw.req.url}".white+", Request canceled".red,
 		'broken':"<<x {gw.method}:".red+" {gw.host}:{gw.port}{gw.req.url}".white+", Communication stream Error:".red,
-		'error':"!>> {gw.method}:".red+" {gw.host}:{gw.port}{gw.req.url}".white+", Error:".red,
-		'cacheCleaned': "Gangway file cache cleaned".cyan,
+		'error':"!>> {gw.method}:".red+" {gw.host}:{gw.port}{gw.req.url}".white+", Error:".red
 	}
 };
