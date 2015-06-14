@@ -4,7 +4,7 @@ var project = require('../../index').configure({
 });
 
 // Default HTTP server config & start
-project.services.get('http').configure({timeout:5000,port:3000}).start();
+project.services.get('http').configure({timeout:5000,port:3001}).start();
 
 // Add HTTPS service
 var fs = require('fs');
@@ -15,7 +15,7 @@ project.services.insert((new HttpService({
   timeout:5000,
 	key: key,
 	cert: cert,
-  port: 3001
+  port: 3002
 })).start());
 
 // Config i18n
