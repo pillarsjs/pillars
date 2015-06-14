@@ -288,7 +288,7 @@ var fileCache = pillars.cache = {
       // Average timestamp of all samples for this item
       item.average = Math.round(timesum/uses.length);
 
-      if(item.timeStamp<Date.now()-30*1000){
+      if(Date.now()<=item.timeStamp+5000){
         callback(null,item);
       } else {
         fileCache.file(id,callback,item);
