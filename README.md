@@ -9,10 +9,10 @@ With a simple and modular approach lets you introduce in Node.js with a soft lea
 ## Current Status
 
 > *Pillars.js is still an Beta version. Now we are writing reference, test, tutorials...*
-> We are working on the English version of the reference. Sorry for the inconvenience, if you have a good knowledge of Spanish and English would be a wonderful help to us your contribution. The entire site pillarsjs.com is available (Spanish) in [pillars.docs](http://github.com/bifuer/pillars.docs) repository. Please contact us!
-> **Very soon you'll see Node web development in a different way.**
 
-> For English speakers, sample codes are available fully commented in English [overview](https://github.com/bifuer/pillars/blob/master/examples/overview/app.js).
+> We are working on the English version of the reference and web site. Sorry for the inconvenience, if you have a good knowledge of Spanish and English would be a wonderful help to us your contribution. The entire site [pillarsjs.com](http://pillarsjs.com) is available (Spanish) in [pillars.docs](http://github.com/bifuer/pillars.docs) repository. Please contact us!
+
+> For English speakers, sample codes are available fully commented in English [overview](https://github.com/bifuer/pillars/blob/master/examples/overview/app.js). It is a review of some of the basic features of the framework.
 
 ## Scope
 
@@ -50,13 +50,9 @@ With a simple and modular approach lets you introduce in Node.js with a soft lea
   - *Procedure*, manage async blocks in declarative way, no more callbacks hell
 
 
-##Scope
- -  **[es]**: [Alcance](https://github.com/bifuer/pillars/wiki/Alcance)
-
-
 ## Getting started
 
- - **[es]**: [Comenzando con PillarsJS](https://github.com/bifuer/pillars/wiki/Comenzando-con-Pillars.js)
+ - **[Spanish]**: [Comenzando con PillarsJS](https://github.com/bifuer/pillars/wiki/Comenzando-con-Pillars.js)
 
 
 ## Licence
