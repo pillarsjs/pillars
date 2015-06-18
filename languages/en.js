@@ -1,4 +1,4 @@
-textualization = {
+({
 	'statusCodes':function(){
 		switch(code){
 			case 400:
@@ -61,4 +61,4 @@ textualization = {
 		'broken':"<<x {gw.method}:".red+" {gw.host}:{gw.port}{gw.req.url}".white+", Communication stream Error:".red,
 		'error':"!>> {gw.method}:".red+" {gw.host}:{gw.port}{gw.req.url}".white+", Error:".red
 	}
-};
+})
