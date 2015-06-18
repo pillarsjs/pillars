@@ -24,7 +24,7 @@ With a simple and modular approach lets you introduce in Node.js with a soft lea
   - Full HTTP Headers parsing, with priority management for headers as *accept* and *languages*.
   - Request management by *Gangway*, wrap for *request* and *response* objects of Node.js 
   - Automatic control error in handlers.
-  - **CORS** managed by route, and tons of other utilities.
+  - **CORS** managed by route, and lots of other utilities.
   - Automatic **Compression** in response.
   - **Cookies** Management.
 
