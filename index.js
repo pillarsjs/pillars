@@ -13,6 +13,7 @@ var colors = require('colors');
 var pillarsPackage = require('./package');
 
 
+
 // Splash screen...
 console.log(("\n\n"+
 "      ###########################################################\n"+
@@ -40,9 +41,11 @@ console.log(("\n\n"+
 ).replace(/·/g,' '.bgRed).replace(/#/g,' '.bgWhite));
 
 
+
 // Pillars base export (for cyclical requires)
 var pillars = module.exports = global.modulesCache.pillars = {
 };
+
 
 
 // Pillars version
@@ -52,11 +55,25 @@ Object.defineProperty(pillars,"version",{
 });
 
 
+
 // Path & resolve
 pillars.path = __dirname;
 pillars.resolve = function(path){
   return paths.resolve(pillars.path,path);
 };
+
+
+
+// Get argv > args
+var arvRegexp = /^([\w]+)\=(.*)$/;
+pillars.args = {};
+for(var i=0,l=process.argv.length;i<l;i++){
+  if(arvRegexp.test(process.argv[i])){
+    var m = arvRegexp.exec(process.argv[i]);
+    pillars.args[m[1]]=m[2];
+  }
+}
+
 
 
 // Configuration propierties & config method
@@ -81,11 +98,11 @@ pillars.configure = function(config){
 };
 
 
+
 // Dependencies, globals...
-global.templated = require('templated');
-global.crier = require('crier');
-var crier = global.crier.addGroup('pillars');
-var i18n = global.textualization = require('textualization');
+var templated = global.templated = require('templated');
+var crier = global.crier = require('crier').addGroup('pillars');
+var i18n = global.i18n = require('textualization');
 i18n.load('pillars',paths.join(__dirname,'./languages'));
 i18n.languages = ['en'];
 var Procedure = global.Procedure = require('procedure');
@@ -96,6 +113,7 @@ require('string.format');
 require('json.decycled');
 
 
+
 // Pillars components
 var Gangway = global.Gangway = require('./lib/Gangway');
 var Route = global.Route = require('./lib/Route');
@@ -103,10 +121,13 @@ var Plugin = global.Plugin = require('./lib/Plugin');
 var HttpService = global.HttpService = require('./lib/HttpService');
 
 
+
 // Plugins & Routes & Services
 pillars.plugins = new ObjectArray();
 pillars.routes = new ObjectArray();
 pillars.services = new ObjectArray();
+
+
 
 // Check log && temp directory
 var logsDir = "./logs";
@@ -128,13 +149,16 @@ fs.stat(logsDir, function (error, stats){
   }
 });
 
+
+
 // Setup log file
+var logFile = false;
 function logFileLoader(){
-  if(pillars.logFile){
-    pillars.logFile.end();
+  if(logFile){
+    logFile.end();
   }
   var path = logsDir+'/'+(new Date()).format('{YYYY}{MM}{DD}')+'.log';
-  pillars.logFile = fs.createWriteStream(path,{flags: 'a'})
+  logFile = fs.createWriteStream(path,{flags: 'a'})
     .on('open',function(fd){
       crier.log('logfile.ok',{path:path});
     })
@@ -159,17 +183,18 @@ function logFileStart(){
     id:'logFile',
     handler: function(location,lvl,msg,meta,done){
       var line = (new Date()).format('{YYYY}/{MM}/{DD} {hh}:{mm}:{ss}:{mss}',true)+'\t'+lvl.toUpperCase()+'\t'+location.join('.')+'\t'+JSON.decycled(msg)+'\t'+JSON.decycled(meta)+'\n';
-      pillars.logFile.write(line);
+      logFile.write(line);
       done.result(line);
     }
   });
 
-  pillars.logCleaner = new Scheduled({
+  new Scheduled({
     id: 'logCleaner',
     pattern: '0 0 *',
     task: logFileLoader
   }).start();
 }
+
 
 
 // Load builtin Plugins
@@ -190,6 +215,7 @@ for(var i=0,l=plugins.length;i<l;i++){
   pillars.plugins.insert(plugins[i]);
 }
 crier.info('plugins.loaded',{list:pillars.plugins.keys()});
+
 
 
 // Pillars handler
@@ -224,8 +250,10 @@ pillars.handler = function pillarsHandler(req,res){
 };
 
 
+
 // Default http service
 pillars.services.insert(new HttpService({id:'http'}));
+
 
 
 // Shutdown control
