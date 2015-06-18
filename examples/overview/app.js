@@ -1,353 +1,420 @@
 // Pillars.js require & config
 var project = require('../../index').configure({
-  renderReload: true
+  debug: true,                     //> Show detailed errors on response. (Error 500...)
+  renderReload: true               // Check modified template files and refresh render.
+
+  /* More options */
+
+  // cors: false,                  //> Enable, disable or avaliable origins array for CORS
+  // maxUploadSize: 5*1024*1024,   //> Default max upload size for request body
+  
+  // fileMaxAge : 7*24*60*60,        //> Default max age (client cache negotiation) for served files.
+  
+  // favicon: project.resolve('./favicon.ico') //> favicon place
+
+  // directoryTemplate: false  //> Custom directory listing template
+  // errorTemplate: false      //> Custom error template
+
+  // maxCacheFileSize : 5*1024*1024, //> Memory file cache aceptable file size
+  // cacheMaxSamples : 100,          //> Limit of request log (average usage) for each file
+  // cacheMaxSize : 250*1024*1024,   //> Cache size limit
+  // cacheMaxItems : 5000,           //> Max number of files in memory cache
+
+  /* ... */
 });
 
-// Default HTTP server config & start
-project.services.get('http').configure({timeout:5000,port:3001}).start();
 
-// Add HTTPS service
+
+// HTTP server config & start (default builtin http service)
+project.services.get('http').configure({timeout:8000,port:3001}).start();
+
+
+
+// Add more HTTP/HTTPS services
 var fs = require('fs');
 var key = fs.readFileSync('./localhost.key');
 var cert = fs.readFileSync('./localhost.crt');
 project.services.insert((new HttpService({
-	id:'https',
-  timeout:5000,
-	key: key,
+	id:'https',            //> For get by project.services.get('https')...configure({})...start()....stop()...
+  timeout:8000,
+	key: key,              //> If is set key & cert, httpService create a HTTPS service.
 	cert: cert,
-  port: 3002
+  port: 3002             //> Port, default as 8080
+  // hostname: undefined //> Restricted hostname
+
+  /* ... Each property is passed to createServer method for full config control */
 })).start());
 
-// Config i18n
-var i18n = require('textualization');
-i18n.languages = ['es','en'];
 
-// Example translation sheet
-i18n.load('overview',{
-  welcome: "Hello World!",
-  language: "English",
-  paths: {
-    events: "/events"
-  }
-},'en');
-i18n.load('overview',{
-  welcome: "Hola mundo",
-  language: "Español",
-  paths: {
-    events: "/eventos"
-  }
-},'es');
+
+// Config i18n
+i18n.languages = ['en','es'];        //> Set project accepted languages (First element used as default language)
+i18n.load('overview','./languages'); //> Example translation sheet
+
+
 
 // Config Log manager
-var crier = require('crier').addGroup('overview');
+var crier = global.crier.addGroup('overview'); //> Get global log manager and set local version, you can add unlimited tree subgroups
+
 
 
 // Controllers
 
 project.routes.add(new Route({
-  id:'timeout',
-  path: 'timeout'
+  id:'Root',
+  path: '/'
 },function(gw){
-  // ...
+  gw.redirect("/examples",307); //> default redirect is 301
 }));
 
-project.routes.add(new Route({
-  id:'slowchunk',
-  path: 'slowchunk'
+var ExamplesRoot = new Route({
+  id:'Examples',
+  path:'/examples',
+  method: ['get','post']
 },function(gw){
-  var slowchuncking = new Procedure();
-  function chunking(chunk,done){
-    gw.write(chunk);
-    setTimeout(done,1000);
-  }
-  slowchuncking.add(chunking,key);
-  slowchuncking.add(chunking,key);
-  slowchuncking.add(chunking,key);
-  slowchuncking.add(chunking,key);
-  slowchuncking.add(chunking,key);
-  slowchuncking.launch(function(errors){
-    gw.end(cert);
-  });
-}));
 
-project.routes.add(new Route({
-  id:'test',
-  path: '/test',
-  port: 3001,
-  https: true,
-  host: 'localhost',
-  method: 'get',
-  session: true,
-  active: true,
-  dummy: 'dummy'
-},function(gw){
-  gw.json(gw.routing,{deep:10});
-}));
+  // Examples link list
+  var sections = [
+    {title:"Status",path:"/examples/status"},
+    {title:"Source",path:"/examples/source"},
+    {title:"Error handling",path:"/examples/error-handling"},
+    {title:"Timeout (wait 10 seconds please)",path:"/examples/timeout"},
+    {title:"Sessions (no persistable)",path:"/examples/session"},
+    {title:"Query string",path:"/examples/query?a=1&b=2&c=3&d[x]=X&d[y]=Y&d[z]=Z&e.x=X&e.y=Y&e.z=Z"},
+    {title:"Path parameters",path:"/examples/path-params/a/b/c"},
+    {title:"Template",path:"/examples/template"},
+    {title:"Advanced routing control (restricted to GET>https://localhost:3002)",path:"/examples/routing"},
+    {title:"Basic cache (304)",path:"/examples/cache"},
+    {title:"Request body read (Forms & uploads)",path:"/examples/body-reader"},
+    {title:"File directory service",path:"/examples/static"},
+    {title:"Auto directory file render (Gangway overview)",path:"/examples/static/auto-render.jade"},
+    {title:"Chunked",path:"/examples/chunked"},
+    {title:"Show http services",path:"/examples/http-services"},
+    {title:"Show scheduled jobs",path:"/examples/scheduled-tasks"},
+    {title:"Route config inheritance",path:"/examples/inheritance"},
+    {title:"Multi language sites (http://www.example.com/es style)",path:"/examples/lang-path"},
+    {title:"Multi language sites [es]",path:"/es/examples/lang-path"},
+    {title:"i18n URLs",path:"/examples"+i18n("overview.iPathExample",{},'en')}, //> Get the path from i18n sheet
+    {title:"i18n URLs (es)",path:"/es/examples"+i18n("overview.iPathExample",{},'es')},
+  ];
 
-project.routes.add(new Route({
-  id:'objectarray',
-  path: '/objectarray'
-},function(gw){
-  gw.json(project.services.getAll(HttpService,'constructor'),{deep:1});
-}));
+  // HTML for examples link list
+  var output = '';
+  output += '<!DOCTYPE html>';
+  output += '<html lang="'+gw.language+'">';
+    output += '<head>';
+      output += '<title>'+gw.i18n('overview.welcome')+'</title>'; //> gw.i18n translates to request language
+      output += '<meta charset="utf-8">';
+      output += '<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">';
+    output += '</head>';
+    output += '<body>';
+      output += '<div class="container">';
+        output += '<header>';
+          output += '<h1>'+gw.i18n('overview.welcome')+'</h1>';
+        output += '</header>';
+        output += '<div id="page">';
+          output += '<ul>';
+          for(var i=0,l=sections.length;i<l;i++){
+            output += '<li><a href="'+sections[i].path+'">'+sections[i].title+'</li>';
+          }
+          output += '</ul>';
+        output += '</div>';
+      output += '</div>';
+    output += '</body>';
+  output += '</html>';
 
-project.routes.add(new Route({
-  id:'iPathsTest',
-  iPath: 'overview.paths.events'
-},function(gw){
-  gw.html('<h1>'+gw.i18n('overview.language')+'</h1>');
-}));
+  // Finally response output as HTML.
+  gw.html(output);
 
-project.routes.add(new Route({
-  id:'Root'
-},function(gw){
-  gw.html(i18n("overview.welcome"));
-}));
-
-var Utilities = new Route({
-  id:'Tools',
-  path:'/tools'
-},function(gw){
-  // Podemos enviar HTML directamente por medio del metodo .html(), .send(String) tiene el mismo funcionamiento.
-  // Utilizaremos este metodo para crear una pagina de inicio básica para nuestros ejemplos.
-  gw.html(
-    '<h1>Utilidades</h1>'
-    +'<ul>'
-      +'<li><a href="/tools/status">Estado del entorno</li>'
-      +'<li><a href="/tools/source">C&oacute;digo fuente</li>'
-      +'<li><a href="/tools/errorhandler">Test de error interno</li>'
-      +'<li><a href="/tools/session">Sesiones</li>'
-      +'<li><a href="/tools/template">Test de platilla HTML</li>'
-      +'<li><a href="/tools/queryparams?a=1&b=2&c=3">Test de parametros query</li>'
-      +'<li><a href="/tools/pathparams/a/b/c">Test de parametros de ruta</li>'
-      +'<li><a href="/tools/session">Test de sesi&oacute;n</li>'
-      +'<li><a href="/tools/cache">Control de cach&eacute;</li>'
-      +'<li><a href="/tools/edit-routes">A&ntilde;adir Route</li>'
-    +'</ul>'
-  );
 });
-project.routes.add(Utilities);
 
-Utilities.routes.add(new Route({
+// Important! Add the new Route object to the project. project.routes is a ObjectArray (github.com/bifuer/ObjectArray)
+project.routes.add(ExamplesRoot); //> You can get, move... project.routes.get(id).configure({})...
+
+
+
+// Show project info, the project object as is
+ExamplesRoot.routes.add(new Route({
   id:'Status',
-  path:'/status',
-  // https:true
+  path:'/status'
 },function(gw){
-  // Enviamos el estado de nuestro entorno como datos JSON
-  gw.json(JSON.decycler(project,false,2)); // El metodo .json envia un objeto JS como application/json. .send(Object) tiene el mismo funcionamiento.
+  gw.json(project,{deep:3});
+  // gw.json limit (by default) the object deep to one level and clean circular references (github.com/bifuer/JSON.decycled)
+  // gw.json accept JSON.decycled params optionally {deep,dates,functions...}
 }));
 
-Utilities.routes.add(new Route({
+
+
+// Send this file and show as text file.
+ExamplesRoot.routes.add(new Route({
   id:'Source',
   path:'/source'
 },function(gw){
-  // Mediante .file() podemos enviar un archivo al cliente, en este caso enviamos el propio fuente de nuestra aplicación.
-  gw.file('./app.js','Código fuente de mi aplicación.txt');
-  // El segundo parametro fuerza un nuevo nombre para el archivo y con el tercer parametro a 'true' podriamos forzar la descarga.
+  gw.file('./app.js','pillarsjs-overview-source.txt'); //> Second paramater force new name for file, third parameter force download.
+  // gw.file() support byte-serving (broken downloads, video players...), memCache, clientCache, compression and preprocesors
 }));
 
-Utilities.routes.add(new Route({
-  id:'ErrorControl',
-  path:'/errorhandler'
+
+
+// Test auto error handling
+ExamplesRoot.routes.add(new Route({
+  id:'ErrorHanling',
+  path:'/error-handling'
 },function(gw){
-  // Cualquier error dentro de un manejador de ruta sera gestionado por el framework enviando el correspondiente codigo 500.
-  var a = b + c;
-  // En caso de establcer el modo 'debug' obtendremos el stack del error.
+  var a = b + c; //> throw a exception
 }));
 
 
-Utilities.routes.add(new Route({
+
+// Timeout handler example
+ExamplesRoot.routes.add(new Route({
+  id:'timeout',
+  path: '/timeout'
+},function(gw){
+  // ... Response Server timeout error.
+}));
+
+
+
+// Basic no persistable session support
+ExamplesRoot.routes.add(new Route({
   id:'Session',
   path:'/session',
-  session: true // Algunos Plugins hacen uso de propiedades de ruta, en este caso la propiedad session activa el Plugin Sessions.
+  session: true //> launch session support for this controller.
 },function(gw){
-  // El Plugin Sessions nos aporta la propiedad .session de Gangway que nos permitirá guardar datos entre diferentes solicitudes.
-  gw.session.contador = gw.session.contador || 0; // Iniciamos la vriable contador.
-  gw.session.contador++;
-  gw.html('Contador:<strong>'+gw.session.contador+'</strong>');
+  gw.session.counter = gw.session.counter || 0; //> Get&set counter value
+  gw.session.counter++;
+  gw.json(gw.session); //> Show session values as JSON
 }));
 
-// Add Jade support to Templated
+
+
+// Query string example
+ExamplesRoot.routes.add(new Route({
+  id:'Query',
+  path:'/query'
+},function(gw){
+  // The query string (and request body values) support 'heaping': a[b][c] || a.b.c
+  gw.json(gw.query); //> Aditionally copied in gw.params
+}));
+
+
+
+// Parametrized paths example
+ExamplesRoot.routes.add(new Route({
+  id:'PathParams',
+  path:'/path-params/:param1/*:restOfPath'
+},function(gw){
+  gw.json(gw.pathParams); //> Aditionally copied in gw.params
+}));
+
+
+
+// Add Jade support to Templated (Used in next Route)
 var jade = require('jade');
-global.templated.addEngine('jade',function compiler(source,path){
+templated.addEngine('jade',function compiler(source,path){
   return jade.compile(source,{filename:path,pretty:true,debug:false,compileDebug:true});
 });
 
-Utilities.routes.add(new Route({
+
+
+// Template engine example
+ExamplesRoot.routes.add(new Route({
   id:'Template',
   path:'/template'
 },function(gw){
-  // El metodo .render() nos permite utilizar plantillas.
-  // Establecemos la ruta del template y las variables locales que tendra disponibles.
   gw.render('./example.jade',{
-    title: 'Mi primer template en Pillars',
-    h1: 'Ejemplo de template básico',
-    contents: '<strong>Hola mundo!</strong>'
+    contents: '<strong>I❤︎Pillars.js</strong>'
   });
-  // El código del template puedes encontrar tras el código de este ejemplo.
-  // Por defecto Pillars.js utiliza JADE aunque pueden añadirse facilmente otros motores al sistema.
 }));
 
-Utilities.routes.add(new Route({
-  id:'Query',
-  path:'queryparams'
+
+
+// Advanced routing control example
+ExamplesRoot.routes.add(new Route({
+  id:'Routing',
+  path:'/routing',
+  https: true,                   //> only ssl requests
+  host: 'localhost',             //> only on localhost
+  method: ['GET'],               //> only GET method
+  // port: 8080,                 //> Filter by port
+  // maxUploadSize: 10*1024*1024 //> Add some controller instance properties overwrite defaults
 },function(gw){
-  // Enviamos los parametros recibidos por query como objeto JSON
-  gw.json(gw.query);
+  gw.text("Hello! This is a very exquisite Route.");
 }));
 
-Utilities.routes.add(new Route({
-  id:'PathParams',
-  path:'/pathparams/:parametro1/*:restoDeRuta'
-},function(gw){
-  // Al establcer la propiedad 'path' podremos usar capturas de parametros en la ruta
-  // utilizando /: capturaremos un solo parametro mientras que con /*: capturaremos cualquier subruta.
-  gw.json(gw.pathParams);
-}));
 
-Utilities.routes.add(new Route({
-  id:'Session',
-  path:'/session',
-  session: true // Algunos Plugins hacen uso de propiedades de ruta, en este caso la propiedad session activa el Plugin Sessions.
-},function(gw){
-  // El Plugin Sessions nos aporta la propiedad .session de Gangway que nos permitira guardar datos entre diferentes solicitudes.
-  gw.session.contador = gw.session.contador || 0; // Inciamos la variable contador.
-  gw.session.contador++;
-  gw.html('Contador:<strong>'+gw.session.contador+'</strong>');
-}));
 
-Utilities.routes.add(new Route({
+// Client cache negotiation
+ExamplesRoot.routes.add(new Route({
   id:'CacheControl',
   path:'/cache'
 },function(gw){
-  var lastmod = new Date(0); // Establecemos una fecha antigua
-  if(!gw.cacheck(lastmod)){
-    gw.send('Este contenido no ha sido modificado desde '+lastmod.toUTCString());
+  var hash = new Date(1); //> Set old date as identificative 'hash' for the response.
+  if(!gw.cacheck(hash)){
+    gw.text("Hello!");
   }
-  // Podras comprobar en la consola o con herramientas de desarrollo en el nevegador como se responde con un código 200 o 304 dependiendo de la caché.
-}));
-
-// Creamos un nuevo Route que usaremos más adelante, simplemente responde con un 'Ok'.
-Extra = new Route({
-  id:'Extra',
-  path:'/new-route'
-},function(gw){
-  gw.send('Ok');
-});
-
-Utilities.routes.add(new Route({
-  id:'editRoutes',
-  path:'/edit-routes'
-},function(gw){
-  // Eliminamos el Route 'CacheControl' del entorno.
-  Utilities.routes.remove('CacheControl');
-  // Loclaizamos el Route 'ErrorControl' y modificamos su propiedad '.path'
-  Utilities.routes.get('ErrorControl').configure({path:'geterror'});
-  // Comprobamos si ya hemos añadido el Route adicional o no.
-  if(!Utilities.routes.get('Extra')){
-    // Añadidmos un nuevo Route.
-    Utilities.routes.add(Extra);
-  }
-  gw.html('Se ha añadido una nueva ruta, puedes visitarla <a href="/tools/new-route">aqui</a>');
+  // cmd+R reponses as 304, cmd+shift+R reponses with "Hello!" and 200 statusCode
 }));
 
 
-// pruebas de plugins, uno por uno.
-/*
-  require('./plugins/langPath.js'),
-  require('./plugins/encoding.js'),
-  require('./plugins/router.js'),
-  require('./plugins/maxUploadSize.js'),
-  require('./plugins/CORS.js'),
-  require('./plugins/OPTIONS.js'),
-  //require('./plugins/sessions.js'),
-  require('./plugins/directory.js'),
-  require('./plugins/bodyReader.js')
-*/
 
-// Static service
-var pillarsDocsStatic = new Route({
-  id:'pillarsDocsStatic',
-  path:'/static/*:path',
-  directory:{
-    path:'./static',
-    listing:true
-  }
-});
-project.routes.add(pillarsDocsStatic);
-
-var Plugins = new Route({
-  id:'Plugins',
-  path:'/plugins'
-},function(gw){
-  gw.html(
-    '<h1>Utilidades</h1>'
-    +'<ul>'
-      +'<li><a href="/plugins/langPath">langPath</li>'
-      +'<li><a href="/plugins/bodyReader">bodyReader</li>'
-    +'</ul>'
-  );
-});
-project.routes.add(Plugins);
-
-Plugins.routes.add(new Route({
-  id:'langPathPlugin',
-  path:'/langPath'
-},function(gw){
-  gw.html(
-    '<h1>'+gw.i18n('overview.language')+'</h1>'
-    +'<ul>'
-      +'<li><a href="/en/plugins/langPath">langPath (en)</li>'
-      +'<li><a href="/plugins/langPath">langPath (es)</li>'
-    +'</ul>'
-  );
-}));
-
-Plugins.routes.add(new Route({
-  id:'bodyReaderPlugin',
-  path:'/bodyReader',
+// BodyReader Plugin example
+ExamplesRoot.routes.add(new Route({
+  id:'BodyReaderPlugin',
+  path:'/body-reader',
   method: ['post','get'],
   multipart: true
 },function(gw){
 
-  if(gw.params.upload && gw.params.upload.path){
-    var uploadFile = gw.params.upload;
+  var uploadFile = gw.params.upload;
+  if(uploadFile && uploadFile.path){
     fs.rename(uploadFile.path, './uploads/'+uploadFile.name, function(error){
       if(!error){
         uploadFile.moved = true;
-        end();
+        form();
       } else {
-        end();
+        form();
       }
     });
   } else {
-    end();
+    form();
   }
 
-  function end(){
-    gw.html(
-      '<fieldset>'
-        +'<legend>Form POST method</legend>'
-        +'<form method="POST">'
-          +'<input type="text" name="A" />'
-          +'<input type="text" name="B" />'
-          +'<input type="text" name="C" />'
-          +'<input type="submit" />'
-        +'</form>'
-      +'</fieldset>'
-      +'<fieldset>'
-        +'<legend>Form multipart</legend>'
-        +'<form enctype="multipart/form-data" method="POST">'
-          +'<input type="text" name="A" />'
-          +'<input type="text" name="B" />'
-          +'<input type="text" name="C" />'
-          +'<input type="file" name="upload" />'
-          +'<input type="file" name="uploadMulti" multiple="multiple" />'
-          +'<input type="submit" />'
-        +'</form>'
-      +'</fieldset>'
-      +'<pre>'+JSON.decycled(gw.params,false,5,'  ')+'</pre>'
-    );
+  function form(){
+    var output = '';
+    output += '<!DOCTYPE html>';
+    output += '<html lang="'+gw.language+'">';
+      output += '<head>';
+        output += '<title>'+'Forms and files uploads'+'</title>';
+        output += '<meta charset="utf-8">';
+        output += '<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">';
+      output += '</head>';
+      output += '<body>';
+        output += '<div class="container">';
+          output += '<header>';
+            output += '<h1>'+'Tools'+'</h1>';
+          output += '</header>';
+          output += '<div id="page">';
+            
+            output += '<fieldset>'+
+               '<legend>Form POST method</legend>'+
+              '<form method="POST">'+
+                'A.<input type="text" name="A" /><br/>'+
+                'B.<input type="text" name="B" /><br/>'+
+                'C.<input type="text" name="C" /><br/>'+
+                '<input type="submit" />'+
+              '</form>'+
+            '</fieldset>'+
+            '<fieldset>'+
+              '<legend>Form multipart</legend>'+
+              '<form enctype="multipart/form-data" method="POST">'+
+                'A.<input type="text" name="A" /><br/>'+
+                'B.<input type="text" name="B" /><br/>'+
+                'C.<input type="text" name="C" /><br/>'+
+                'Upload.<input type="file" name="upload" /><br/>'+
+                'MultipleUpload.<input type="file" name="uploadMulti" multiple="multiple" /><br/>'+
+                '<input type="submit" />'+
+              '</form>'+
+            '</fieldset>'+
+            '<pre>'+JSON.decycled(gw.params,3,'  ')+'</pre>';
+            
+          output += '</div>';
+        output += '</div>';
+      output += '</body>';
+    output += '</html>';
+    gw.html(output);
   }
+
 }));
+
+
+
+// Static service
+ExamplesRoot.routes.add(new Route({
+  id:'DirectoryPlugin',
+  directory: {       //> this property launch the static directory Plugin "Directory".
+    path:'./static', //> File system path to serve
+    listing:true     //> directory listing?
+  },
+  path:'/static/*:path', //> Directory Plugin expects a 'path' parameter for real directory navigation
+}));
+
+
+
+// Chunked response example
+ExamplesRoot.routes.add(new Route({
+  id:'Chunked',
+  path: '/chunked'
+},function(gw){
+  var slowchuncking = new Procedure(); //> Procedure is a utility for easy aync block executions (github.com/bifuer/procedure)
+  function chunking(chunk,done){
+    gw.write(chunk);
+    setTimeout(done,1000); //> Write and little sleep.
+  }
+  for(var i=0;i<10;i++){
+    slowchuncking.add(chunking,key); //> Use key (localhost.key file) as example data block 
+  }
+  slowchuncking.launch(function(errors){ //> Procedure handler, receives a errors array or false if all is ok.
+    gw.end();
+  });
+}));
+
+
+
+// Show only HTTP services in project
+ExamplesRoot.routes.add(new Route({
+  id:'HttpServices',
+  path: '/http-services'
+},function(gw){
+  gw.json(project.services.getAll(HttpService,'constructor'),{deep:2}); //> See ObjectArray methods & JSON.decycled options
+}));
+
+
+
+// Show Scheduled task
+ExamplesRoot.routes.add(new Route({
+  id:'ScheduledTasks',
+  path: '/scheduled-tasks'
+},function(gw){
+  gw.json(Scheduled.jobs,{deep:2}); //> See ObjectArray methods & JSON.decycled options
+}));
+
+
+
+// Route config inheritance example
+ExamplesRoot.routes.add(new Route({
+  id:'Inheritance',
+  path: '/inheritance',
+  method: ['get'],
+  session: true,
+  multipart: true,
+  cors: false,
+  dummy: 'dummyOption'
+},function(gw){
+  // Show routing result as JSON
+  gw.json(gw.routing,{deep:4}); //> gw.json accept JSON.decycled params optionally (github.com/bifuer/JSON.decycled)
+}));
+
+
+
+// Internazionalized sites, site.com/en/... site.com/de/...
+ExamplesRoot.routes.add(new Route({
+  id:'LangPathPlugin',
+  path:'/lang-path'
+},function(gw){
+  // LangPath plugin auto redirect any localized path and set gw.language property.
+  gw.text(gw.i18n('overview.language'));
+}));
+
+
+
+// Internacionalized paths
+ExamplesRoot.routes.add(new Route({
+  id:'iPathsTest',
+  iPath: 'overview.iPathExample' //> A i18n node as path for friendly localized URLs
+},function(gw){
+  gw.text(gw.i18n('overview.language')); //> Response text/plain
+}));
+
 
