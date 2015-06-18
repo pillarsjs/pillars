@@ -76,7 +76,9 @@ function jsonEncoded(gw, callback){
       try {
         var params = JSON.parse(buffer);
         gw.content.params = params;
-        for(var v in params){gw.params[v] = params[v];}
+        for(var i=0,k=Object.keys(params),l=k.length;i<l;i++){
+          gw.params[k[i]]=params[k[i]];
+        }
         callback();
       } catch (error) {
         gw.error(400);
@@ -104,7 +106,9 @@ function urlEncoded(gw, callback){
     } else {
       var params = gw.constructor.queryHeap(querystring.parse(buffer, '&', '='));
       gw.content.params = params;
-      for (var v in params) {gw.params[v] = params[v];}
+      for(var i=0,k=Object.keys(params),l=k.length;i<l;i++){
+        gw.params[k[i]]=params[k[i]];
+      }
       callback();
     }
   });
@@ -157,7 +161,9 @@ function multipartEncoded(gw, callback){
     .on('end', function() {
       fields = gw.constructor.queryHeap(fields);
       gw.content.params = fields;
-      for (var v in fields) {gw.params[v] = fields[v];}
+      for(var i=0,k=Object.keys(fields),l=k.length;i<l;i++){
+        gw.params[k[i]]=fields[k[i]];
+      }
       gw.files = files;
       callback();
     })
@@ -167,20 +173,19 @@ function multipartEncoded(gw, callback){
 
 function cleanTemp(gw,meta,done){
   // Remove temp files
-  for (var f in gw.files) {
-    if (Array.isArray(gw.files[f])) {
-      for (var sf in gw.files[f]) {
-        if (gw.files[f][sf].path) {
-          unlinktemp(gw.files[f][sf]);
-          delete gw.files[f][sf];
+  for(var i=0,k=Object.keys(gw.files),l=k.length;i<l;i++){
+    var file = gw.files[k[i]];
+    if (Array.isArray(file)) {
+      for(var fi=0,fk=Object.keys(file),fl=fk.length;fi<fl;fi++){
+        if (file[fk[fi]].path) {
+          unlinktemp(file[fk[fi]]);
+          delete file[fk[fi]];
         }
       }
-    } else {
-      if (gw.files[f].path) {
-        unlinktemp(gw.files[f]);
-        delete gw.files[f];
-      }
-    }     
+    } else if (file.path) {
+      unlinktemp(file);
+      delete gw.files[k[i]];
+    }
   }
   done();
 }
