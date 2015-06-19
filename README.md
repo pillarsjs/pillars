@@ -35,7 +35,7 @@ With a simple and modular approach lets you introduce in Node.js with a soft lea
   - Named controllers, give organization and control over the environment.
   - **Inheritance** system for controllers trees
 
-- **Internacionalization**
+- **Internationalization**
   - Full **i18n** integration.
   - Translations based in nodes. 
   - Attached to each message context and adapts the translation in each case from translation sheets.
