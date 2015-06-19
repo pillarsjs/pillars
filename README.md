@@ -1,4 +1,4 @@
-![license](https://img.shields.io/badge/license-MIT-blue.svg ) [![Build Status](https://img.shields.io/travis/bifuer/pillars/master.svg)](https://travis-ci.org/bifuer/pillars) [![npm version](https://img.shields.io/npm/v/pillars.svg)](https://www.npmjs.com/package/pillars) [![Github release](https://img.shields.io/github/release/bifuer/pillars.svg)](https://github.com/bifuer/pillars) [![npm downloads](https://img.shields.io/npm/dm/pillars.svg)](https://www.npmjs.com/package/pillars)
+![license](https://img.shields.io/badge/license-MIT-blue.svg ) [![Build Status](https://img.shields.io/travis/bifuer/pillars/master.svg)](https://travis-ci.org/bifuer/pillars) [![npm version](https://img.shields.io/npm/v/pillars.svg)](https://www.npmjs.com/package/pillars) [![npm downloads](https://img.shields.io/npm/dm/pillars.svg)](https://www.npmjs.com/package/pillars)
 
 # [![Pillars - make it easy ](http://pillarsjs.com/img/pillars.png)](http://pillarsjs.com/)
 
