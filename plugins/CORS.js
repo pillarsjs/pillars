@@ -13,7 +13,7 @@ var plugin = module.exports = new Plugin({
     if (cors === true || (Array.isArray(cors) && cors.indexOf(gw.origin) >= 0)) {
       gw.cors.origin = gw.origin;
       gw.cors.credentials = true;
-      gw.cors.methods = gw.beam.method.concat(['OPTIONS', 'HEAD']);
+      gw.cors.methods = gw.pillar.method.concat(['OPTIONS', 'HEAD']);
     }
   }
   done();
