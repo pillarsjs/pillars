@@ -9,7 +9,7 @@ module.exports = new Plugin({
   id:'OPTIONS'
 }, function (gw, done) {
   if (gw.method == 'OPTIONS') {
-    gw.setHeader("Allow", gw.beam.method.concat(['OPTIONS', 'HEAD']));
+    gw.setHeader("Allow", gw.routing.inheritance.method.concat(['OPTIONS', 'HEAD']).join(', '));
     gw.send();
   } else {
     done();
