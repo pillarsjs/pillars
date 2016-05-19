@@ -9,7 +9,8 @@ module.exports = new Plugin({
   id:'OPTIONS'
 }, function (gw, done) {
   if (gw.method == 'OPTIONS') {
-    gw.setHeader("Allow", gw.routing.inheritance.method.concat(['OPTIONS', 'HEAD']).join(', '));
+    var methods = Array.isArray(gw.routing.inheritance.method)?gw.routing.inheritance.method.concat(['OPTIONS', 'HEAD']):['GET','PUT','POST','DELETE','OPTIONS', 'HEAD'];
+    gw.setHeader("Allow", methods.join(', '));
     gw.send();
   } else {
     done();

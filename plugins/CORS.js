@@ -13,7 +13,7 @@ var plugin = module.exports = new Plugin({
     if (cors === true || (Array.isArray(cors) && cors.indexOf(gw.origin) >= 0)) {
       gw.cors.origin = gw.origin;
       gw.cors.credentials = true;
-      gw.cors.methods = gw.routing.inheritance.method.concat(['OPTIONS', 'HEAD']);
+      gw.cors.methods = Array.isArray(gw.routing.inheritance.method)?gw.routing.inheritance.method.concat(['OPTIONS', 'HEAD']):['GET','PUT','POST','DELETE','OPTIONS', 'HEAD'];
     }
   }
   done();
