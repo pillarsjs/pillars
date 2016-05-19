@@ -1,4 +1,4 @@
-![license](https://img.shields.io/badge/license-MIT-blue.svg ) [![Build Status](https://img.shields.io/travis/bifuer/pillars/master.svg)](https://travis-ci.org/bifuer/pillars) [![npm version](https://img.shields.io/npm/v/pillars.svg)](https://www.npmjs.com/package/pillars) [![npm downloads](https://img.shields.io/npm/dm/pillars.svg)](https://www.npmjs.com/package/pillars)
+![license](https://img.shields.io/badge/license-MIT-blue.svg ) [![Build Status](https://img.shields.io/travis/pillars/pillars/master.svg)](https://travis-ci.org/pillars/pillars) [![npm version](https://img.shields.io/npm/v/pillars.svg)](https://www.npmjs.com/package/pillars) [![npm downloads](https://img.shields.io/npm/dm/pillars.svg)](https://www.npmjs.com/package/pillars)
 
 # [![Pillars - make it easy ](http://pillarsjs.com/img/pillars.png)](http://pillarsjs.com/)
 
@@ -10,9 +10,9 @@ With a simple and modular approach lets you introduce in Node.js with a soft lea
 
 > *Pillars.js is still an Beta version. Now we are writing reference, test, tutorials...*
 
-> We are working on the English version of the reference and web site. Sorry for the inconvenience, if you have a good knowledge of Spanish and English would be a wonderful help to us your contribution. The entire site [pillarsjs.com](http://pillarsjs.com) is available (Spanish) in [pillars.docs](http://github.com/bifuer/pillars.docs) repository. Please contact us!
+> We are working on the English version of the reference and web site. Sorry for the inconvenience, if you have a good knowledge of Spanish and English would be a wonderful help to us your contribution. The entire site [pillarsjs.com](http://pillarsjs.com) is available (Spanish) in [pillars.docs](http://github.com/pillars/pillars.docs) repository. Please contact us!
 
-> For English speakers, sample codes are available fully commented in English [overview](https://github.com/bifuer/pillars/blob/master/examples/overview/app.js). It is a review of some of the basic features of the framework.
+> For English speakers, sample codes are available fully commented in English [overview](https://github.com/pillars/pillars/blob/master/examples/overview/app.js). It is a review of some of the basic features of the framework.
 
 ## Scope
 
@@ -52,7 +52,7 @@ With a simple and modular approach lets you introduce in Node.js with a soft lea
 
 ## Getting started
 
- - **[Spanish]**: [Comenzando con PillarsJS](https://github.com/bifuer/pillars/wiki/Comenzando-con-Pillars.js)
+ - **[Spanish]**: [Comenzando con PillarsJS](https://github.com/pillars/pillars/wiki/Comenzando-con-Pillars.js)
 
 
 ## Licence
