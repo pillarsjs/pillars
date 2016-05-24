@@ -179,14 +179,6 @@ function logFileStart(){
       }
     }
   });
-  crier.rules.add({
-    id:'consoleLogs',
-    rule:function(stores,location,lvl,msg,meta){
-      if(lvl === 'log' && !pillars.config.consoleLog){
-        stores.splice(stores.indexOf('console'),1);
-      }
-    }
-  });
   crier.stores.add({
     id:'logFile',
     handler: function(location,lvl,msg,meta,done){
