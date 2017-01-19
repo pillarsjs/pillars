@@ -100,14 +100,14 @@ pillars.configure = function(config){
 
 
 // Dependencies, globals...
-var templated = global.templated = require('templated');
-var crier = global.crier = require('crier').addGroup('pillars');
-var i18n = global.i18n = require('textualization');
+var templated = global.templated = pillars.templated = require('templated');
+var crier = global.crier = pillars.crier = require('crier').addGroup('pillars');
+var i18n = global.i18n = pillars.i18n = require('textualization');
 i18n.load('pillars',paths.join(__dirname,'./languages'));
 i18n.languages = ['en'];
 var Procedure = global.Procedure = require('procedure');
 var ObjectArray = global.ObjectArray = require('objectarray');
-var Scheduled = global.Scheduled = require('scheduled');
+var Scheduled = global.Scheduled = pillars.scheduled = require('scheduled');
 require('date.format');
 require('string.format');
 require('json.decycled');
@@ -118,12 +118,13 @@ templated.loadDefaultEngines();
 // Pillars components
 var Gangway = global.Gangway = require('./lib/Gangway');
 var Route = global.Route = require('./lib/Route');
-var Plugin = global.Plugin = require('./lib/Plugin');
+var Middleware = global.Middleware = require('./lib/Middleware');
+//var Plugin = global.Plugin = require('./lib/Middleware'); // For old name support
 var HttpService = global.HttpService = require('./lib/HttpService');
 
 
 
-// Plugins & Routes & Services
+// Middleware & Routes & Services
 pillars.plugins = new ObjectArray();
 pillars.routes = new ObjectArray();
 pillars.services = new ObjectArray();
@@ -189,7 +190,7 @@ function logFileStart(){
     }
   });
 
-  new Scheduled({
+  Scheduled({
     id: 'logCleaner',
     pattern: '0 0 *',
     task: logFileLoader

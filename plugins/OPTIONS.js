@@ -2,10 +2,10 @@
 "use strict";
 
 var pillars = require('../index');
-var crier = require('crier').addGroup('pillars').addGroup('plugins').addGroup('OPTIONS');
-var Plugin = require('../lib/Plugin');
+var crier = require('crier').addGroup('pillars').addGroup('midleware').addGroup('OPTIONS');
+var Midleware = require('../lib/Midleware');
 
-module.exports = new Plugin({
+var midleware = module.exports = new Midleware({
   id:'OPTIONS'
 }, function (gw, done) {
   if (gw.method == 'OPTIONS') {

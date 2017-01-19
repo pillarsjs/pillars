@@ -2,13 +2,13 @@
 "use strict";
 
 var pillars = require('../index');
-var crier = require('crier').addGroup('pillars').addGroup('plugins').addGroup('BodyReader');
-var Plugin = require('../lib/Plugin');
+var crier = require('crier').addGroup('pillars').addGroup('midleware').addGroup('BodyReader');
+var Midleware = require('../lib/Midleware');
 var querystring = require('querystring');
 var formidable = require('formidable');
 var fs = require('fs');
 
-var plugin = module.exports = new Plugin({id: 'BodyReader'}, function (gw, done) {
+var middleware = module.exports = new Midleware({id: 'BodyReader'}, function (gw, done) {
   var multipart = gw.routing.check('multipart', undefined);
   // Parse json, urlencoded or multipart body.
   if (gw.content.type === 'application/json') {
@@ -29,7 +29,7 @@ var plugin = module.exports = new Plugin({id: 'BodyReader'}, function (gw, done)
 });
 
 var tempDirectory;
-Object.defineProperty(plugin, "tempDirectory", {
+Object.defineProperty(middleware, "tempDirectory", {
   enumerable : true,
   get : function () {return tempDirectory;},
   set : function (set) {
@@ -54,7 +54,7 @@ Object.defineProperty(plugin, "tempDirectory", {
     });
   }
 });
-plugin.tempDirectory = "./temp";
+middleware.tempDirectory = "./temp";
 
 // JSON-encoded parser.
 

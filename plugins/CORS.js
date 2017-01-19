@@ -2,10 +2,10 @@
 "use strict";
 
 var pillars = require('../index');
-var crier = require('crier').addGroup('pillars').addGroup('plugins').addGroup('CORS');
-var Plugin = require('../lib/Plugin');
+var crier = require('crier').addGroup('pillars').addGroup('midleware').addGroup('CORS');
+var Midleware = require('../lib/Midleware');
 
-var plugin = module.exports = new Plugin({
+var midleware = module.exports = new Midleware({
   id: 'CORS'
 }, function (gw, done) {
   if (gw.origin) {

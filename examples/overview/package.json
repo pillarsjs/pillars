@@ -7,7 +7,6 @@
     "email": "bifuer@gmail.com"
   },
   "dependencies": {
-    "jade":"*"
   },
   "main": "./app.js",
   "license": "MIT"

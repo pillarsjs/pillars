@@ -2,14 +2,14 @@
 "use strict";
 
 var pillars = require('../index');
-var crier = require('crier').addGroup('pillars').addGroup('plugins').addGroup('Directory');
-var Plugin = require('../lib/Plugin');
+var crier = require('crier').addGroup('pillars').addGroup('midleware').addGroup('Directory');
+var Midleware = require('../lib/Midleware');
 
 var templated = require('templated');
 var paths = require('path');
 var fs = require('fs');
 
-var plugin = module.exports = new Plugin({
+var midleware = module.exports = new Midleware({
   id: 'Directory'
 }, function (gw, done) {
   var directory = gw.routing.check('directory',false);

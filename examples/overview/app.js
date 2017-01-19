@@ -210,14 +210,6 @@ ExamplesRoot.routes.add(new Route({
 
 
 
-// Add Jade support to Templated (Used in next Route)
-var jade = require('jade');
-templated.addEngine('jade',function compiler(source,path){
-  return jade.compile(source,{filename:path,pretty:true,debug:false,compileDebug:true});
-});
-
-
-
 // Template engine example
 ExamplesRoot.routes.add(new Route({
   id:'Template',

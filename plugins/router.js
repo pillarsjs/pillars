@@ -2,12 +2,12 @@
 "use strict";
 
 var pillars = require('../index');
-var crier = require('crier').addGroup('pillars').addGroup('plugins').addGroup('Router');
-var Plugin = require('../lib/Plugin');
+var crier = require('crier').addGroup('pillars').addGroup('midleware').addGroup('Router');
+var Midleware = require('../lib/Midleware');
 
 var i18n = require('textualization');
 
-module.exports = new Plugin({
+var midleware = module.exports = new Midleware({
   id:'Router'
 }, function (gw, done) {
 

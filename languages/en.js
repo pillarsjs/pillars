@@ -39,7 +39,7 @@
 			'exists':"Error on set 'logs' directory at ".red+"'{path}'".yellow+", path exists but is not a directory".red
 		}
 	},
-	'plugins':{
+	'midleware':{
 		'loaded': "Loaded Plugins: ".cyan+"{list}".yellow,
 		'BodyReader':{
 			'unlink-ok':"Temp file {file}' deleted".bgGreen,

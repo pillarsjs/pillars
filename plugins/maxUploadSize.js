@@ -2,10 +2,10 @@
 "use strict";
 
 var pillars = require('../index');
-var crier = require('crier').addGroup('pillars').addGroup('plugins').addGroup('MaxUploadSize');
-var Plugin = require('../lib/Plugin');
+var crier = require('crier').addGroup('pillars').addGroup('midleware').addGroup('MaxUploadSize');
+var Midleware = require('../lib/Midleware');
 
-var plugin = module.exports = new Plugin({
+var midleware = module.exports = new Midleware({
   id:'MaxUploadSize'
 }, function (gw, done) {
   var maxsize = gw.routing.check('maxUploadSize', pillars.config.maxUploadSize || 5*1024*1024);
