@@ -2,10 +2,10 @@
 "use strict";
 
 var pillars = require('../index');
-var crier = require('crier').addGroup('pillars').addGroup('midleware').addGroup('favicon');
-var Midleware = require('../lib/Midleware');
+var crier = require('crier').addGroup('pillars').addGroup('middleware').addGroup('favicon');
+var Middleware = require('../lib/Middleware');
 
-var midleware = module.exports = new Midleware({
+var middleware = module.exports = new Middleware({
   id:'favicon'
 }, function (gw, done){
   if (pillars.config.favicon && gw.originalPath==='/favicon.ico') {

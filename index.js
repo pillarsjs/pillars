@@ -125,7 +125,7 @@ var HttpService = global.HttpService = require('./lib/HttpService');
 
 
 // Middleware & Routes & Services
-pillars.plugins = new ObjectArray();
+pillars.middleware = new ObjectArray();
 pillars.routes = new ObjectArray();
 pillars.services = new ObjectArray();
 
@@ -199,36 +199,36 @@ function logFileStart(){
 
 
 
-// Load builtin Plugins
-var plugins = [
-  require('./plugins/langPath.js'),
-  require('./plugins/encoding.js'),
-  require('./plugins/favicon.js'),
-  require('./plugins/router.js'),
-  require('./plugins/maxUploadSize.js'),
-  require('./plugins/CORS.js'),
-  require('./plugins/OPTIONS.js'),
-  require('./plugins/sessions.js'),
-  require('./plugins/directory.js'),
-  require('./plugins/bodyReader.js')
+// Load builtin Middleware
+var middleware = [
+  require('./middleware/langPath.js'),
+  require('./middleware/encoding.js'),
+  require('./middleware/favicon.js'),
+  require('./middleware/router.js'),
+  require('./middleware/maxUploadSize.js'),
+  require('./middleware/CORS.js'),
+  require('./middleware/OPTIONS.js'),
+  require('./middleware/sessions.js'),
+  require('./middleware/directory.js'),
+  require('./middleware/bodyReader.js')
 ];
 
-for(var i=0,l=plugins.length;i<l;i++){
-  pillars.plugins.insert(plugins[i]);
+for(var i=0,l=middleware.length;i<l;i++){
+  pillars.middleware.insert(middleware[i]);
 }
-crier.info('plugins.loaded',{list:pillars.plugins.keys()});
+crier.info('middleware.loaded',{list:pillars.middleware.keys()});
 
 
 
 // Pillars handler
 pillars.handler = function pillarsHandler(req,res){
   var gw = new Gangway(req,res);
-  var pluginHandling = new Procedure();
-  for(var i=0,l=pillars.plugins.length;i<l;i++){
-    var plugin = pillars.plugins[i];
-    pluginHandling.add(plugin.id,plugin.handler,gw);
+  var middlewareHandling = new Procedure();
+  for(var i=0,l=pillars.middleware.length;i<l;i++){
+    var middleware = pillars.middleware[i];
+    middlewareHandling.add(middleware.id,middleware.handler,gw);
   }
-  pluginHandling.launch(function(errors){
+  middlewareHandling.launch(function(errors){
     if(errors){
       gw.error(500,errors[0]);
     } else if(gw.routing && gw.routing.handlers && gw.routing.handlers.length>0){

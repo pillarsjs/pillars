@@ -39,7 +39,7 @@
 			'exists':"Error al ubicar el directorio 'logs' en ".red+"'{path}'".yellow+", la ruta existe pero no es un directorio.".red
 		}
 	},
-	'midleware':{
+	'middleware':{
 		'loaded': "Plugins cargados: ".cyan+"{list}".yellow,
 		'BodyReader':{
 			'unlink-ok':"Archivo temporal {file}' borrado".bgGreen,

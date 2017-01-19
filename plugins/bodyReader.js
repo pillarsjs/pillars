@@ -2,13 +2,13 @@
 "use strict";
 
 var pillars = require('../index');
-var crier = require('crier').addGroup('pillars').addGroup('midleware').addGroup('BodyReader');
-var Midleware = require('../lib/Midleware');
+var crier = require('crier').addGroup('pillars').addGroup('middleware').addGroup('BodyReader');
+var Middleware = require('../lib/Middleware');
 var querystring = require('querystring');
 var formidable = require('formidable');
 var fs = require('fs');
 
-var middleware = module.exports = new Midleware({id: 'BodyReader'}, function (gw, done) {
+var middleware = module.exports = new Middleware({id: 'BodyReader'}, function (gw, done) {
   var multipart = gw.routing.check('multipart', undefined);
   // Parse json, urlencoded or multipart body.
   if (gw.content.type === 'application/json') {

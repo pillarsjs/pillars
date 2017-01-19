@@ -2,12 +2,12 @@
 "use strict";
 
 var pillars = require('../index');
-var crier = require('crier').addGroup('pillars').addGroup('midleware').addGroup('LangPath');
-var Midleware = require('../lib/Midleware');
+var crier = require('crier').addGroup('pillars').addGroup('middleware').addGroup('LangPath');
+var Middleware = require('../lib/Middleware');
 
 var i18n = require('textualization');
 
-var midleware = module.exports = new Midleware({
+var middleware = module.exports = new Middleware({
   id:'LangPath'
 }, function (gw, done){
   if (i18n.languages.length > 0) {

@@ -2,15 +2,15 @@
 "use strict";
 
 var pillars = require('../index');
-var crier = require('crier').addGroup('pillars').addGroup('midleware').addGroup('Sessions');
-var Midleware = require('../lib/Midleware');
+var crier = require('crier').addGroup('pillars').addGroup('middleware').addGroup('Sessions');
+var Middleware = require('../lib/Middleware');
 
 require('json.crypt');
 require('objectarray');
 
 var sessionStore = new ObjectArray();
 
-var midleware = module.exports = new Midleware({id:'Sessions'},function(gw,done){
+var middleware = module.exports = new Middleware({id:'Sessions'},function(gw,done){
   var session = gw.routing.check('session',false);
   if(session){
     getSession(gw,function(error){
