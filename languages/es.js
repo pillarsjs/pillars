@@ -40,7 +40,7 @@
 		}
 	},
 	'middleware':{
-		'loaded': "Plugins cargados: ".cyan+"{list}".yellow,
+		'loaded': "Middleware cargado: ".cyan+"{list}".yellow,
 		'BodyReader':{
 			'unlink-ok':"Archivo temporal {file}' borrado".bgGreen,
 			'unlink-error':"Error al borrar el archivo temporal '{file}'".bgRed,

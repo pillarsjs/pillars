@@ -40,7 +40,7 @@
 		}
 	},
 	'middleware':{
-		'loaded': "Loaded Plugins: ".cyan+"{list}".yellow,
+		'loaded': "Loaded Middleware: ".cyan+"{list}".yellow,
 		'BodyReader':{
 			'unlink-ok':"Temp file {file}' deleted".bgGreen,
 			'unlink-error':"Delete temp file error '{file}'".bgRed,

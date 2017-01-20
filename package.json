@@ -1,7 +1,7 @@
 {
   "name": "pillars",
   "description": "Pillars.js web development framework for Node.js",
-  "version": "0.4.0",
+  "version": "0.4.2",
   "author": {
     "name": "Javier Gallego Martín",
     "email": "bifuer@gmail.com"
@@ -79,7 +79,7 @@
     "index.js",
     "lib",
     "languages",
-    "plugins"
+    "middleware"
   ],
   "readmeFilename": "README.md",
   "license": "MIT"
