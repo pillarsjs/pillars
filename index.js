@@ -226,8 +226,21 @@ pillars.handler = function pillarsHandler(req,res){
   var middlewareHandling = new Procedure();
   for(var i=0,l=pillars.middleware.length;i<l;i++){
     var middleware = pillars.middleware[i];
-    middlewareHandling.add(middleware.id,middleware.handler,gw);
+
+    if(middleware.handler.isConnect){
+      middlewareHandling.add(middleware.id,middleware.handler,gw.req,gw.res);
+    } else {
+      middlewareHandling.add(middleware.id,middleware.handler,gw);
+    }
   }
+  // Express binds (TODO: Move this as formal Middleware)
+  middlewareHandling.add("ExpressBinds",function(gw,done){
+    gw.res.redirect = gw.redirect;
+    gw.req.body = gw.content.params;
+    gw.req.query = gw.query;
+    gw.req.session = gw.session;
+    done();
+  },gw);
   middlewareHandling.launch(function(errors){
     if(errors){
       gw.error(500,errors[0]);
@@ -238,7 +251,11 @@ pillars.handler = function pillarsHandler(req,res){
         var handler = gw.routing.handlers[i];
         var handlerName = routeNames+".";
         handlerName += handler.name?handler.name:i+1===l?"handler":"middleware["+i+"]";
-        routeHandling.add(handlerName,handler,gw);
+        if(handler.isConnect){
+          routeHandling.add(handlerName,handler,gw.req,gw.res);
+        } else {
+          routeHandling.add(handlerName,handler,gw);
+        }
       }
       routeHandling.launch(function(errors){
         if(errors){

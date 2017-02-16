@@ -16,17 +16,52 @@ var middleware = module.exports = new Middleware({
   if (directory) {
     directory.path = directory.path || '/';
     directory.listing = directory.listing || false;
+    directory.hideExt = directory.hideExt || false;
     directory.template = directory.template || pillars.config.directoryTemplate || directoryTemplate;
 
     var path = paths.join(directory.path, (gw.params.path || ''));
+    var parent = path.replace(/[\/][^\/]*$/,'');
     var ext = path.replace(/^.*\./,'');
     var filename = path.replace(/^.*[\\\/]/,'');
-    var reidx = new RegExp('^index\\.('+templated.getEngines().concat(['htm','html']).join('|')+')$', 'i');
+    var nameonly = filename.replace(/\.[^\.]*$/,'');
+    var checkExt = new RegExp('\\.('+templated.getEngines().concat(['htm','html']).join('|')+')$', 'i');
+    var reidx = new RegExp('^index'+checkExt.source, 'i');
 
     if (filename[0] !== '.') {
       fs.stat(path, function (error, stats) {
         if (error || (!stats.isFile() && !stats.isDirectory())) {
-          gw.error(404,error);
+          fs.stat(parent, function (error2, stats) {
+            if (!error2 && stats.isDirectory()) {
+              fs.readdir(parent, function (error, files){
+                if (error) {
+                  gw.error(404, error);
+                } else {
+                  var template = false;
+                  for (var i in files) {
+                    var check = new RegExp('^'+nameonly+checkExt.source, 'i');
+                    if (check.test(files[i])) {
+                      template = files[i];
+                      break;
+                    }
+                  }
+                  if (template) {
+                    var templateExt = template.replace(/^.*\./,'');
+                    if (templateExt === 'html' || templateExt === 'htm') {
+                      gw.file(paths.join(parent, template));
+                    } else {
+                      gw.render(paths.join(parent, template));
+                    }
+                  } else {
+                    gw.error(404);
+                  }
+                }
+              });
+
+            } else {
+              gw.error(404,error);
+            }
+          });
+
         } else if (stats.isDirectory()) {
           fs.readdir(path, function (error, files){
             if (error) {
@@ -57,7 +92,8 @@ var middleware = module.exports = new Middleware({
           });
         } else if (stats.isFile()) {
           if (templated.getEngines().indexOf(ext) >= 0) {
-            gw.render(path);
+            //gw.render(path);
+            gw.redirect(gw.path.replace(/\.[^\.]*$/,''));
           } else {
             stats.path = path;
             gw.file(stats);
