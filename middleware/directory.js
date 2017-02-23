@@ -22,8 +22,8 @@ var middleware = module.exports = new Middleware({
     var parent = path.replace(/[\/][^\/]*$/,'');
     var ext = path.replace(/^.*\./,'');
     var filename = path.replace(/^.*[\\\/]/,'');
-    var nameonly = filename.replace(/\.[^\.]*$/,'');
-    var checkExt = new RegExp('\\.('+templated.getEngines().concat(['htm','html']).join('|')+')$', 'i');
+    //var nameonly = filename.replace(/\.[^\.]*$/,'');
+    var checkExt = new RegExp('\\.('+templated.getEngines().concat(['htm','html']).join('|').replace(".","\\.").replace("-","\\-")+')$', 'i');
     var reidx = new RegExp('^index'+checkExt.source, 'i');
 
     if (filename[0] !== '.') {
