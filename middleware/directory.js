@@ -16,7 +16,6 @@ var middleware = module.exports = new Middleware({
   if (directory) {
     directory.path = directory.path || '/';
     directory.listing = directory.listing || false;
-    directory.hideExt = directory.hideExt || false;
     directory.template = directory.template || pillars.config.directoryTemplate || directoryTemplate;
 
     var path = paths.join(directory.path, (gw.params.path || ''));
@@ -38,7 +37,7 @@ var middleware = module.exports = new Middleware({
                 } else {
                   var template = false;
                   for (var i in files) {
-                    var check = new RegExp('^'+nameonly+checkExt.source, 'i');
+                    var check = new RegExp('^'+filename+checkExt.source, 'i');
                     if (check.test(files[i])) {
                       template = files[i];
                       break;

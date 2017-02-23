@@ -234,13 +234,6 @@ pillars.handler = function pillarsHandler(req,res){
     }
   }
   // Express binds (TODO: Move this as formal Middleware)
-  middlewareHandling.add("ExpressBinds",function(gw,done){
-    gw.res.redirect = gw.redirect;
-    gw.req.body = gw.content.params;
-    gw.req.query = gw.query;
-    gw.req.session = gw.session;
-    done();
-  },gw);
   middlewareHandling.launch(function(errors){
     if(errors){
       gw.error(500,errors[0]);
