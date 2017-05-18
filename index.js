@@ -79,6 +79,7 @@ for(var i=0,l=process.argv.length;i<l;i++){
 // Configuration propierties & config method
 pillars.config = {
   debug: false,
+  logFile: false,
   cors: false,
   maxUploadSize: 5*1024*1024,
   maxCacheFileSize : 5*1024*1024,
@@ -131,70 +132,91 @@ pillars.services = new ObjectArray();
 
 
 
-// Check log && temp directory
-var logsDir = "./logs";
-fs.stat(logsDir, function (error, stats){
-  if(error){
-    fs.mkdir(logsDir,function(error){
-      if(error){
-        crier.error('logfile.dir.error',{path: logsDir});
-      } else {
-        crier.info('logfile.dir.ok',{path: logsDir});
-        logFileStart();
-      }
-    });
-  } else if(!stats.isDirectory()){
-    crier.info('logfile.dir.exists',{path: logsDir});
-  } else {
-    crier.info('logfile.dir.ok',{path: logsDir});
-    logFileStart();
+// Crier default rule
+crier.rules.add({
+  id:'default',
+  rule:function(stores,location,lvl,msg,meta){
+    var consoleLogLevels = ['alert','error','warn'];
+    if(pillars.config.debug){
+      consoleLogLevels.push('log','info');
+    }
+    var haveConsoleStore = stores.indexOf("console");
+    if(haveConsoleStore>=0){
+      stores.splice(haveConsoleStore,1);
+    }
+    if(consoleLogLevels.indexOf(lvl)>=0){
+      stores.push('console');
+    }
   }
 });
 
 
 
+
 // Setup log file
-var logFile = false;
-function logFileLoader(){
-  if(logFile){
-    logFile.end();
-  }
-  var path = logsDir+'/'+(new Date()).format('{YYYY}{MM}{DD}')+'.log';
-  logFile = fs.createWriteStream(path,{flags: 'a'})
-    .on('open',function(fd){
-      crier.log('logfile.ok',{path:path});
-    })
-    .on('error',function(error){
-      crier.warn('logfile.error',{path:path,error:error});
-    })
-  ;
-}
+if(pillars.config.logfile){
+  // Check log directory
+  var logsDir = "./logs";
+  fs.stat(logsDir, function (error, stats){
+    if(error){
+      fs.mkdir(logsDir,function(error){
+        if(error){
+          crier.error('logfile.dir.error',{path: logsDir});
+        } else {
+          crier.info('logfile.dir.ok',{path: logsDir});
+          logFileStart();
+        }
+      });
+    } else if(!stats.isDirectory()){
+      crier.info('logfile.dir.exists',{path: logsDir});
+    } else {
+      crier.info('logfile.dir.ok',{path: logsDir});
+      logFileStart();
+    }
+  });
 
-function logFileStart(){
-  logFileLoader();
+  var logFile = false;
+  var logFileLoader = function(){
+    if(logFile){
+      logFile.end();
+    }
+    var path = logsDir+'/'+(new Date()).format('{YYYY}{MM}{DD}')+'.log';
+    logFile = fs.createWriteStream(path,{flags: 'a'})
+      .on('open',function(fd){
+        crier.info('logfile.ok',{path:path});
+      })
+      .on('error',function(error){
+        crier.warn('logfile.error',{path:path,error:error});
+      })
+    ;
+  };
 
-  crier.rules.add({
-    id:'logFile',
-    rule:function(stores,location,lvl,msg,meta){
-      if(['log','alert','error','warn'].indexOf(lvl)>=0){
-        stores.push('logFile');
+  var logFileStart = function(){
+    logFileLoader();
+
+    crier.rules.add({
+      id:'logFile',
+      rule:function(stores,location,lvl,msg,meta){
+        if(['log','alert','error','warn'].indexOf(lvl)>=0){
+          stores.push('logFile');
+        }
       }
-    }
-  });
-  crier.stores.add({
-    id:'logFile',
-    handler: function(location,lvl,msg,meta,done){
-      var line = (new Date()).format('{YYYY}/{MM}/{DD} {hh}:{mm}:{ss}:{mss}',true)+'\t'+lvl.toUpperCase()+'\t'+location.join('.')+'\t'+JSON.decycled(msg)+'\t'+JSON.decycled(meta)+'\n';
-      logFile.write(line);
-      done.result(line);
-    }
-  });
+    });
+    crier.stores.add({
+      id:'logFile',
+      handler: function(location,lvl,msg,meta,done){
+        var line = (new Date()).format('{YYYY}/{MM}/{DD} {hh}:{mm}:{ss}:{mss}',true)+'\t'+lvl.toUpperCase()+'\t'+location.join('.')+'\t'+JSON.decycled(msg)+'\t'+JSON.decycled(meta)+'\n';
+        logFile.write(line);
+        done.result(line);
+      }
+    });
 
-  Scheduled({
-    id: 'logCleaner',
-    pattern: '0 0 *',
-    task: logFileLoader
-  }).start();
+    new Scheduled({
+      id: 'logCleaner',
+      pattern: '0 0 *',
+      task: logFileLoader
+    }).start();
+  };
 }
 
 
