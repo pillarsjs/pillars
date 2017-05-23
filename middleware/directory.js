@@ -19,9 +19,9 @@ var middleware = module.exports = new Middleware({
     directory.template = directory.template || pillars.config.directoryTemplate || directoryTemplate;
 
     var path = paths.join(directory.path, (gw.params.path || ''));
-    var parent = path.replace(/[\/][^\/]*$/,'');
-    var ext = path.replace(/^.*\./,'');
-    var filename = path.replace(/^.*[\\\/]/,'');
+    var parent = (/(.+)\//.exec(path) || ["",""])[1];
+    var ext = (/\.([^\.]+)$/.exec(path) || ["",""])[1];
+    var filename = (/[^\/]+$/.exec(path) || [""])[0];
     //var nameonly = filename.replace(/\.[^\.]*$/,'');
     var checkExt = new RegExp('\\.('+templated.getEngines().concat(['htm','html']).join('|').replace(".","\\.").replace("-","\\-")+')$', 'i');
     var reidx = new RegExp('^index'+checkExt.source, 'i');
