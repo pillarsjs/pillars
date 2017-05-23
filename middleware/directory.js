@@ -19,9 +19,9 @@ var middleware = module.exports = new Middleware({
     directory.template = directory.template || pillars.config.directoryTemplate || directoryTemplate;
 
     var path = paths.join(directory.path, (gw.params.path || ''));
-    var parent = (/(.+)\//.exec(path) || ["",""])[1];
+    var parent = (/(.+)[\/\\]/.exec(path) || ["",""])[1];
     var ext = (/\.([^\.]+)$/.exec(path) || ["",""])[1];
-    var filename = (/[^\/]+$/.exec(path) || [""])[0];
+    var filename = (/[^\/\\]+$/.exec(path) || [""])[0];
     //var nameonly = filename.replace(/\.[^\.]*$/,'');
     var checkExt = new RegExp('\\.('+templated.getEngines().concat(['htm','html']).join('|').replace(".","\\.").replace("-","\\-")+')$', 'i');
     var reidx = new RegExp('^index'+checkExt.source, 'i');
@@ -81,7 +81,7 @@ var middleware = module.exports = new Middleware({
                 }
               } else if (directory.listing) {
                 gw.render(directory.template, {
-                  path:decodeURIComponent(gw.originalPath.replace(/\/$/, '')),
+                  path:decodeURIComponent(gw.originalPath.replace(/[\/\\]$/, '')),
                   files:files
                 });
               } else {
