@@ -1,7 +1,7 @@
 {
   "name": "pillars",
   "description": "Pillars.js web development framework for Node.js",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "author": {
     "name": "Javier Gallego Martín",
     "email": "bifuer@gmail.com"
@@ -19,7 +19,7 @@
   },
   "bugs": {
     "url": "https://github.com/pillarsjs/pillars/issues",
-    "email" : "cheloq@gmail.com"
+    "email": "cheloq@gmail.com"
   },
   "keywords": [
     "web",
@@ -45,9 +45,9 @@
   "dependencies": {
     "colors": "*",
     "formidable": "*",
-    "mime": "*",
-    "node-fs":"*",
-		"crier": "*",
+    "mime": "<2.0.0",
+    "node-fs": "*",
+    "crier": "*",
     "procedure": "*",
     "templated": "*",
     "textualization": "*",
@@ -64,11 +64,11 @@
     "mocha": "*",
     "unit.js": "*"
   },
-  "engines" : {
-    "node" : ">=6.9.5"
+  "engines": {
+    "node": ">=6.9.5"
   },
   "main": "./index.js",
-  "scripts":{
+  "scripts": {
     "test": "mocha test/"
   },
   "preferGlobal": false,
