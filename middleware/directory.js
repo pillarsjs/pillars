@@ -37,10 +37,14 @@ var middleware = module.exports = new Middleware({
                 } else {
                   var template = false;
                   for (var i in files) {
-                    var check = new RegExp('^'+filename+checkExt.source, 'i');
-                    if (check.test(files[i])) {
-                      template = files[i];
-                      break;
+                    try {
+                      var check = new RegExp('^'+filename+checkExt.source, 'i');
+                      if (check.test(files[i])) {
+                        template = files[i];
+                        break;
+                      }
+                    } catch(error){
+                      // Nothing to do
                     }
                   }
                   if (template) {
