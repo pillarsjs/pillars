@@ -154,7 +154,7 @@ crier.rules.add({
 
 
 // Setup log file
-if(pillars.config.logfile){
+if(pillars.config.logFile){
   // Check log directory
   var logsDir = "./logs";
   fs.stat(logsDir, function (error, stats){
