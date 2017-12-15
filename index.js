@@ -79,7 +79,6 @@ for(var i=0,l=process.argv.length;i<l;i++){
 // Configuration propierties & config method
 pillars.config = {
   debug: false,
-  logFile: false,
   cors: false,
   maxUploadSize: 5*1024*1024,
   maxCacheFileSize : 5*1024*1024,
@@ -152,72 +151,104 @@ crier.rules.add({
 
 
 
-
 // Setup log file
-if(pillars.config.logFile){
-  // Check log directory
-  var logsDir = "./logs";
-  fs.stat(logsDir, function (error, stats){
-    if(error){
-      fs.mkdir(logsDir,function(error){
+// Hay un problema y es que cuando el logFile se setea a true, no se queda seteado a true
+// Sino que toma como valor el puntero al fichero de logs. 
+// Sería ideal poder controlar el patrón de cron del logs
+// Sería ideal poder controlar el directorio de logs, 
+// Tengo que controlar bien la librería crier para hcer el sistema de logs genérico, como un servicio
+// y que puediera levantar un servicio de logs, de x tipo a y directorio. 
+
+let logFile = false;
+const logsDir = "./logs";
+
+const logFileLoader = function(){  
+  if(logFile){
+    logFile.end();
+  }
+  var path = logsDir+'/'+(new Date()).format('{YYYY}{MM}{DD}{h}{m}')+'.log';
+  logFile = fs.createWriteStream(path,{flags: 'a'})
+    .on('open',function(fd){
+      crier.info('logfile.ok',{path:path});
+    })
+    .on('error',function(error){
+      crier.warn('logfile.error',{path:path,error:error});
+    })
+  ;
+};
+
+const logScheduled = new Scheduled({
+    id: 'logCleaner',
+    //pattern: '0 0 *',
+    // Cada minuto
+    pattern: '*',
+    task: logFileLoader
+  });
+
+const logFileStart = function(){
+  logFileLoader();
+
+  crier.rules.add({
+    id:'logFile',
+    rule:function(stores,location,lvl,msg,meta){
+      if(['log','alert','error','warn'].indexOf(lvl)>=0){
+        stores.push('logFile');
+      }
+    }
+  });
+  crier.stores.add({
+    id:'logFile',
+    handler: function(location,lvl,msg,meta,done){
+      var line = (new Date()).format('{YYYY}/{MM}/{DD} {hh}:{mm}:{ss}:{mss}',true)+'\t'+lvl.toUpperCase()+'\t'+location.join('.')+'\t'+JSON.decycled(msg)+'\t'+JSON.decycled(meta)+'\n';
+      logFile.write(line);
+      done.result(line);
+    }
+  });
+  logScheduled.start();
+};
+
+const logFileStop = function(){
+  if (logFile){
+    logFile.end();
+    logScheduled.stop();
+    crier.rules.remove("logFile");
+    crier.stores.remove("logFile");
+  }
+}
+
+
+Object.defineProperty(pillars.config,"logFile",{
+  enumerable : true,
+  configurable: true,
+  get : function(){return logFile;},
+  set: function(v){
+    console.log("Se seta el valor de logFile");    
+    if(v===true){
+      // Check log directory      
+      fs.stat(logsDir, function (error, stats){
         if(error){
-          crier.error('logfile.dir.error',{path: logsDir});
+          fs.mkdir(logsDir,function(error){
+            if(error){
+              crier.error('logfile.dir.error',{path: logsDir});
+            } else {
+              crier.info('logfile.dir.ok',{path: logsDir});
+              logFileStart();
+            }
+          });          
+        } else if(!stats.isDirectory()){
+          crier.info('logfile.dir.exists',{path: logsDir});
         } else {
           crier.info('logfile.dir.ok',{path: logsDir});
           logFileStart();
         }
-      });
-    } else if(!stats.isDirectory()){
-      crier.info('logfile.dir.exists',{path: logsDir});
-    } else {
-      crier.info('logfile.dir.ok',{path: logsDir});
-      logFileStart();
+      });          
+    } else {      
+      logFileStop();
+      logFile = false;
     }
-  });
+  }
+});
 
-  var logFile = false;
-  var logFileLoader = function(){
-    if(logFile){
-      logFile.end();
-    }
-    var path = logsDir+'/'+(new Date()).format('{YYYY}{MM}{DD}')+'.log';
-    logFile = fs.createWriteStream(path,{flags: 'a'})
-      .on('open',function(fd){
-        crier.info('logfile.ok',{path:path});
-      })
-      .on('error',function(error){
-        crier.warn('logfile.error',{path:path,error:error});
-      })
-    ;
-  };
-
-  var logFileStart = function(){
-    logFileLoader();
-
-    crier.rules.add({
-      id:'logFile',
-      rule:function(stores,location,lvl,msg,meta){
-        if(['log','alert','error','warn'].indexOf(lvl)>=0){
-          stores.push('logFile');
-        }
-      }
-    });
-    crier.stores.add({
-      id:'logFile',
-      handler: function(location,lvl,msg,meta,done){
-        var line = (new Date()).format('{YYYY}/{MM}/{DD} {hh}:{mm}:{ss}:{mss}',true)+'\t'+lvl.toUpperCase()+'\t'+location.join('.')+'\t'+JSON.decycled(msg)+'\t'+JSON.decycled(meta)+'\n';
-        logFile.write(line);
-        done.result(line);
-      }
-    });
-
-    new Scheduled({
-      id: 'logCleaner',
-      pattern: '0 0 *',
-      task: logFileLoader
-    }).start();
-  };
-}
 
 
 
