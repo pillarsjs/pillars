@@ -166,7 +166,7 @@ const logFileLoader = function(){
   if(logFile){
     logFile.end();
   }
-  var path = logsDir+'/'+(new Date()).format('{YYYY}{MM}{DD}{h}{m}')+'.log';
+  var path = logsDir+'/'+(new Date()).format('{YYYY}{MM}{DD}{h}{m}')+'.log';  
   logFile = fs.createWriteStream(path,{flags: 'a'})
     .on('open',function(fd){
       crier.info('logfile.ok',{path:path});
@@ -220,11 +220,10 @@ const logFileStop = function(){
 Object.defineProperty(pillars.config,"logFile",{
   enumerable : true,
   configurable: true,
-  get : function(){return logFile;},
-  set: function(v){
-    console.log("Se seta el valor de logFile");    
+  get : function(){return logFile?true:false;},
+  set: function(v){    
     if(v===true){
-      // Check log directory      
+      // Check log directory
       fs.stat(logsDir, function (error, stats){
         if(error){
           fs.mkdir(logsDir,function(error){
@@ -232,19 +231,19 @@ Object.defineProperty(pillars.config,"logFile",{
               crier.error('logfile.dir.error',{path: logsDir});
             } else {
               crier.info('logfile.dir.ok',{path: logsDir});
-              logFileStart();
+              logFileStart();              
             }
           });          
         } else if(!stats.isDirectory()){
           crier.info('logfile.dir.exists',{path: logsDir});
         } else {
           crier.info('logfile.dir.ok',{path: logsDir});
-          logFileStart();
+          logFileStart();          
         }
       });          
     } else {      
       logFileStop();
-      logFile = false;
+      logFile = false;      
     }
   }
 });
