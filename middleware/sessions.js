@@ -13,11 +13,11 @@ var sessionStore = new ObjectArray();
 var middleware = module.exports = new Middleware({id:'Sessions'},function(gw,done){
   var session = gw.routing.check('session',false);
   if(session){
-    getSession(gw,function(error){
+    middleware.getSession(gw,function(error){
       if(error){
         gw.error(500,error);
       } else {
-        gw.eventium.on('end',saveSession);
+        gw.eventium.on('end', middleware.saveSession);
         done();
       }
     });
@@ -26,27 +26,27 @@ var middleware = module.exports = new Middleware({id:'Sessions'},function(gw,don
   }
 });
 
-function getSession(gw,callback){
+middleware.getSession = function(gw,callback){
   // Check cookie for session id+key, if not, create a new session and send session cookie.
   if(!gw.cookie.sid) {
-    newSession(gw,callback);
+    middleware.newSession(gw,callback);
   } else {
     var sid = gw.cookie.sid = JSON.decrypt(gw.cookie.sid);
     if(sid && sid.id){
       var session = sessionStore.get(sid.id);
       if(!session){
-        newSession(gw,callback);
+        middleware.newSession(gw,callback);
       } else {
         gw.session = session;
         if(callback){callback();}
       }
     } else {
-      newSession(gw,callback);
+      middleware.newSession(gw,callback);
     }
   }
-}
+};
 
-function newSession(gw,callback){
+middleware.newSession = function(gw,callback){
   // Create a new session on datastore.
   var id = Math.round(Math.random()*100000000000000000000000000000).toString(36);
   var session = {
@@ -62,9 +62,9 @@ function newSession(gw,callback){
   gw.cookie.sid = cookie; // Forced cookie setting
   gw.session = session;
   if(callback){callback();}
-}
+};
 
-function saveSession(gw,meta,done){
+middleware.saveSession = function(gw,meta,done){
   // Save gw.session Objet on datastore.
   var sid = gw.cookie.sid || false;
   if(gw.session && sid && sid.id){
@@ -73,4 +73,4 @@ function saveSession(gw,meta,done){
   } else {
     done(new Error('Unable to save the session, no SID or empty session.'));
   }
-}
+};
