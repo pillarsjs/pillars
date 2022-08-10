@@ -2,12 +2,6 @@
   "name": "pillars-overview",
   "description": "Pillars.js examples",
   "version": "0.0.1",
-  "author": {
-    "name": "Javier Gallego Martín",
-    "email": "bifuer@gmail.com"
-  },
-  "dependencies": {
-  },
   "main": "./app.js",
   "license": "MIT"
 }
